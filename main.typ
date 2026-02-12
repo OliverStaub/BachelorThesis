@@ -246,7 +246,7 @@ This is a template of #acr("hslu") and then. This section usually comprises diff
 
 == First Section
 
-Followed by a brief introduction, the section may comprise several subsections explaining various concepts and referring to external results @christen_exogenous_2020.
+Followed by a brief introduction, the section may comprise several subsections explaining various concepts and referring to external results.
 
 === First Subsection
 
