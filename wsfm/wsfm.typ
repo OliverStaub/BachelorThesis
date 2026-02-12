@@ -1,31 +1,25 @@
-#let thesis-language = "en"  // "en" or "de"
-#let author-name = "Author Name"
-#let author-city = "Lucerne (Switzerland)"
-#let thesis-title = "Thesis Title"
-#let thesis-subtitle = "subtitle"
-#let thesis-year = "2024"
-#let defense-date = "October 27th, 2024"
-#let defense-location = "Lucerne"
-#let external-expert = "Expert Name"
-#let industry-partner = "Company Name"
-#let supervisor = "Prof. Dr. Name Surname"
-#let dean = "Prof. Dr. Name Surname"
-#let acknowledgments-text = "Thanks to my family, relatives and friends for all the support given to finish this thesis."
-
-#let jury-members = (
-  "Prof. Dr. Name Surname from Lucerne University of Applied Sciences and Arts, Switzerland (President of the Jury)",
-  "Prof. Dr. Name Surname from Lucerne University of Applied Sciences and Arts, Switzerland (Thesis Supervisor)",
-  "Prof. Dr. Name Surname from Lucerne University of Applied Sciences and Arts, Switzerland (External Expert)",
-)
+// ==========================================================================
+//  WSFM Forschungsskizze – HSLU Template
+//  Compile with: typst compile forschungsskizze.typ
+//  Watch mode:   typst watch forschungsskizze.typ
+// ==========================================================================
 
 
-// --------------------------------------------------------------------------
-//  FONT & PAGE SETUP
-// --------------------------------------------------------------------------
+// --- CONFIGURATION --------------------------------------------------------
+#let author-name = "Oliver NACHNAME"
+#let module-name = "Wissenschaftliches Schreiben & Forschungsmethodik (WSFM)"
+#let semester = "HS 2025"
+#let submission-date = "20. Februar 2026"
+#let thesis-title = "Website Fingerprinting im Tor-Netzwerk: Reproduktion und Evaluation unter simulierten Laborbedingungen"
+#let supervisor = "Dr. Radwan Eskhita"
+#let group = "Gruppe 2"
+
+
+// --- PAGE & TEXT SETUP ----------------------------------------------------
 #set text(
-  font: "New Computer Modern",
+  font: "New Computer Modern",   // classic LaTeX look — alternatives: "Linux Libertine", "Source Serif Pro"
   size: 12pt,
-  lang: if thesis-language == "de" { "de" } else { "en" },
+  lang: "en",                    // change to "de" if writing in German
 )
 
 #set page(
@@ -35,40 +29,31 @@
 
 #set par(
   justify: true,
-  leading: 0.65em,  // similar to LaTeX's default line spacing
+  leading: 0.65em,
+  first-line-indent: 0em,        // no indent — change to 1.5em for traditional style
 )
 
-#show math.equation: set text(font: "New Computer Modern Math")
+// Spacing between paragraphs
+#show par: set block(spacing: 0.8em)
+
+// --- HEADING STYLES -------------------------------------------------------
 #set heading(numbering: "1.1")
 
 #show heading.where(level: 1): it => {
-  pagebreak(weak: true)
-  v(2em)
-  text(size: 24pt, weight: "bold")[
+  v(1.5em)
+  text(size: 16pt, weight: "bold")[
     #if it.numbering != none {
       counter(heading).display()
       h(0.5em)
     }
     #it.body
   ]
-  v(1.5em)
+  v(1em)
 }
 
 #show heading.where(level: 2): it => {
-  v(1.2em)
-  text(size: 17pt, weight: "bold")[
-    #if it.numbering != none {
-      counter(heading).display()
-      h(0.4em)
-    }
-    #it.body
-  ]
-  v(0.8em)
-}
-
-#show heading.where(level: 3): it => {
   v(1em)
-  text(size: 14pt, weight: "bold")[
+  text(size: 13pt, weight: "bold")[
     #if it.numbering != none {
       counter(heading).display()
       h(0.4em)
@@ -79,176 +64,167 @@
 }
 
 
-// --------------------------------------------------------------------------
-//  ACRONYMS / GLOSSARY (define inline or import)
-// --------------------------------------------------------------------------
-
-// Simple acronym dictionary — expand as needed
-#let acronyms = (
-  "hslu": ("HSLU", "Lucerne University of Applied Sciences and Arts"),
-  "cww": ("CWW", "Computing with Words"),
-  "nn": ("NN", "Neural Network"),
-)
-
-// Track which acronyms have been used (first use shows long form)
-#let acr-used = state("acr-used", (:))
-
-#let acr(key) = {
-  context {
-    let used = acr-used.get()
-    if key in used {
-      acronyms.at(key).at(0)
-    } else {
-      acr-used.update(d => { d.insert(key, true); d })
-      [#acronyms.at(key).at(1) (#acronyms.at(key).at(0))]
-    }
-  }
-}
-
-
-// --------------------------------------------------------------------------
-//  TITLE PAGE
-// --------------------------------------------------------------------------
-
-// Disable page numbering for front matter initially
+// --- TITLE PAGE (no page number) ------------------------------------------
 #set page(numbering: none)
 
 #align(center)[
-  // HSLU logo — replace with actual logo path
-  // #image("figs/hslu-logo.png", width: 6cm)
-
-  #v(1cm)
+  // Uncomment and adjust path if you have the HSLU logo:
+  // #image("hslu-logo.png", width: 6cm)
+  // #v(1cm)
 
   #text(size: 11pt)[
-    Lucerne University of Applied Sciences and Arts
+    Hochschule Luzern – Informatik \
+    #module-name \
+    #semester
+  ]
+
+  #v(4cm)
+
+  #text(size: 20pt, weight: "bold")[
+    Forschungsskizze
+  ]
+
+  #v(0.5cm)
+
+  #text(size: 14pt)[
+    #thesis-title
   ]
 
   #v(3cm)
 
-  #text(size: 24pt, weight: "bold")[#thesis-title]
-
-  #v(0.5cm)
-
-  #text(size: 14pt)[#thesis-subtitle]
-
-  #v(2cm)
-
-  #text(size: 14pt)[
-    Bachelor Thesis
-  ]
-
-  #v(1cm)
-
   #text(size: 12pt)[
     #author-name \
-    #author-city
-  ]
-
-  #v(2cm)
-
-  #text(size: 12pt)[
-    Defense Date: #defense-date \
-    Defense Location: #defense-location
+    #group
   ]
 
   #v(1cm)
 
   #text(size: 12pt)[
-    Supervisor: #supervisor \
-    External Expert: #external-expert \
-    Industry Partner: #industry-partner
+    Betreuer: #supervisor
   ]
 
   #v(1fr)
 
-  #text(size: 12pt)[#thesis-year]
+  #text(size: 12pt)[
+    #submission-date
+  ]
 ]
 
 
-// --------------------------------------------------------------------------
-//  ACKNOWLEDGMENTS
-// --------------------------------------------------------------------------
-
+// --- TABLE OF CONTENTS ----------------------------------------------------
 #pagebreak()
-
-#heading(numbering: none)[Acknowledgments]
-
-#acknowledgments-text
+#outline(title: "Contents", depth: 2)
 
 
-// --------------------------------------------------------------------------
-//  ABSTRACT
-// --------------------------------------------------------------------------
-
+// --- MAIN CONTENT (page numbering starts here) ----------------------------
 #pagebreak()
-
-#heading(numbering: none)[Abstract]
-
-The content of your thesis in brief.
-
-
-// --------------------------------------------------------------------------
-//  TABLE OF CONTENTS, LIST OF FIGURES, LIST OF TABLES
-// --------------------------------------------------------------------------
-
-#pagebreak()
-#outline(title: "Contents", depth: 1)
-
-#pagebreak()
-#outline(title: "List of Figures", target: figure.where(kind: image))
-
-#pagebreak()
-#outline(title: "List of Tables", target: figure.where(kind: table))
-
-
-// --------------------------------------------------------------------------
-//  ACRONYM LIST
-// --------------------------------------------------------------------------
-
-#pagebreak()
-#heading(numbering: none)[List of Acronyms]
-
-#for (key, value) in acronyms {
-  [*#value.at(0)* — #value.at(1) \ ]
-}
-
-
-// --------------------------------------------------------------------------
-//  MAIN CONTENT — page numbering starts here
-// --------------------------------------------------------------------------
-
 #set page(numbering: "1")
 #counter(page).update(1)
 
-= Main Content
 
-This is a template of #acr("hslu") and then. This section usually comprises different chapters and subchapters.
+// ==========================================================================
+//  SECTION 1: Background, Problem Statement, Objectives
+//  Target: ~1,500 characters (incl. spaces)
+// ==========================================================================
 
-== First Section
+= Background, Problem Statement, and Objectives
 
-Followed by a brief introduction, the section may comprise several subsections explaining various concepts and referring to external results.
+// TODO: Write in your own words — do NOT copy the Aufgabenstellung!
+// Tip: Check character count with `wc -m` or an online tool.
 
-=== First Subsection
-
-Content may also refer to special expressions that have to be explained in a separate section. Here we also have #acr("cww") enough space to discuss the concept of #acr("nn") and so on.
-
-
-// --------------------------------------------------------------------------
-//  BIBLIOGRAPHY
-// --------------------------------------------------------------------------
-
-// Uses APA 7 style — change to "ieee" if you want IEEE like the LaTeX original
-#bibliography("references.bib", style: "ieee")
+#lorem(80)
 
 
-// --------------------------------------------------------------------------
-//  APPENDIX
-// --------------------------------------------------------------------------
+// ==========================================================================
+//  SECTION 2: Research Questions and Methods
+//  Target: ~1,500 characters (incl. spaces)
+// ==========================================================================
 
-// Reset heading numbering to letters for appendix
-#set heading(numbering: "A.1")
-#counter(heading).update(0)
+= Research Questions and Methods
 
-= Appendix
+// TODO: State each research question, then describe and justify the method.
 
-Additional materials go here.
+== Research Question 1
+
+#lorem(40)
+
+== Research Question 2
+
+#lorem(40)
+
+== Research Question 3
+
+#lorem(40)
+
+
+// ==========================================================================
+//  SECTION 3: Personal Reflection
+//  Target: ~1,000 characters (incl. spaces)
+// ==========================================================================
+
+= Personal Reflection
+
+// TODO: Honest assessment — challenges, limitations, what you'd do differently.
+
+#lorem(60)
+
+
+// ==========================================================================
+//  SECTION 4: Literature Review
+//  Target: ~2,000–3,000 characters (incl. spaces)
+//  Requirements: min. 3 sources (min. 1 methods, min. 1 domain)
+// ==========================================================================
+
+= Literature Review
+
+// TODO: Summarize each source and explain its relevance to your work.
+// Remember: correct APA7 in-text citations!
+
+== Deep Fingerprinting (Sirinam et al., 2018)
+
+// Domain literature — the core WF attack you are reproducing
+#lorem(60)
+
+== Data-Explainable Website Fingerprinting (Jansen et al., 2023)
+
+// Domain literature — Shadow-based WF methodology
+#lorem(60)
+
+== Research Methods Literature
+
+// Methods literature — e.g., experimental research design, network simulation methodology
+#lorem(60)
+
+
+// ==========================================================================
+//  BIBLIOGRAPHY (APA7)
+// ==========================================================================
+
+// Option A: Use a .bib file (recommended)
+// Create a file called "references.bib" with your BibTeX entries and uncomment:
+// #bibliography("references.bib", style: "apa")
+
+// Option B: Manual bibliography (if you don't want to use BibTeX)
+#pagebreak()
+#heading(numbering: none)[References]
+
+// TODO: Replace with your actual references in APA7 format.
+// These are examples:
+
+Sirinam, P., Imani, M., Juarez, M., & Wright, M. (2018). Deep fingerprinting: Undermining website fingerprinting defenses with deep learning. _Proceedings of the 2018 ACM SIGSAC Conference on Computer and Communications Security_, 1928–1943. https://doi.org/10.1145/3243734.3243768
+
+#v(0.8em)
+
+Jansen, R., Wails, R., & Johnson, A. (2023). Data-explainable website fingerprinting with network simulation. _Proceedings on Privacy Enhancing Technologies_, 2023(1), 1–20.
+
+#v(0.8em)
+
+// TODO: Add your methods literature source here
+
+
+// ==========================================================================
+//  APPENDIX: Aufgabenstellung
+// ==========================================================================
+
+#pagebreak()
+#heading(numbering: none)[Appendix: Aufgabenstellung]
