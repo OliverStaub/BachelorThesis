@@ -1,16 +1,16 @@
-//  WSFM Forschungsskizze – HSLU Template
-//  Compile with: typst compile forschungsskizze.typ
-//  Watch mode:   typst watch forschungsskizze.typ
+//  WSFM Research Proposal – HSLU Template
+//  Compile with: typst compile wsfm.typ
+//  Watch mode:   typst watch wsfm.typ
 
 
 // --- CONFIGURATION --------------------------------------------------------
-#let author-name = "Oliver NACHNAME"
-#let module-name = "Wissenschaftliches Schreiben & Forschungsmethodik (WSFM)"
-#let semester = "HS 2025"
-#let submission-date = "20. Februar 2026"
-#let thesis-title = "Website Fingerprinting im Tor-Netzwerk: Reproduktion und Evaluation unter simulierten Laborbedingungen"
-#let supervisor = "Dr. Radwan Eskhita"
-#let group = "Gruppe 2"
+#let author-name = "Oliver LASTNAME"
+#let module-name = "Scientific Writing & Research Methods (WSFM)"
+#let semester = "Fall 2025"
+#let submission-date = "February 20, 2026"
+#let thesis-title = "Website Fingerprinting in the Tor Network: Reproduction and Evaluation under Simulated Laboratory Conditions"
+#let supervisor = ""
+#let group = "Group 2"
 
 
 // --- PAGE & TEXT SETUP ----------------------------------------------------
@@ -71,7 +71,7 @@
   // #v(1cm)
 
   #text(size: 11pt)[
-    Hochschule Luzern – Informatik \
+    Lucerne University of Applied Sciences – Computer Science \
     #module-name \
     #semester
   ]
@@ -79,7 +79,7 @@
   #v(4cm)
 
   #text(size: 20pt, weight: "bold")[
-    Forschungsskizze
+    Research Proposal
   ]
 
   #v(0.5cm)
@@ -98,7 +98,7 @@
   #v(1cm)
 
   #text(size: 12pt)[
-    Betreuer: #supervisor
+    Supervisor: #supervisor
   ]
 
   #v(1fr)
@@ -127,8 +127,9 @@
 
 = Background, Problem Statement, and Objectives
 
-// TODO: Write in your own words — do NOT copy the Aufgabenstellung!
+// TODO: Write in your own words — do NOT copy the assignment!
 // Tip: Check character count with `wc -m` or an online tool.
+I guess here I should write something about the Tor network and fingerprinting in general etc.
 
 #lorem(80)
 
@@ -140,7 +141,7 @@
 
 = Research Questions and Methods
 
-// TODO: State each research question, then describe and justify the method.
+To what extent can the Deep Fingerprinting attack be reproduced in a Shadow-simulated Tor network, and how does classification accuracy compare to results reported on live Tor traffic?
 
 == Research Question 1
 
@@ -221,8 +222,8 @@ Jansen, R., Wails, R., & Johnson, A. (2023). Data-explainable website fingerprin
 
 
 // ==========================================================================
-//  APPENDIX: Aufgabenstellung
+//  APPENDIX: Assignment
 // ==========================================================================
 
 #pagebreak()
-#heading(numbering: none)[Appendix: Aufgabenstellung]
+#heading(numbering: none)[Appendix: Assignment]

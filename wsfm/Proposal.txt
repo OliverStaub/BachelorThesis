@@ -1,0 +1,2 @@
+To what extent can the Deep Fingerprinting attack be reproduced in a Shadow-simulated Tor network,
+and how does classification accuracy compare to results reported on live Tor traffic?

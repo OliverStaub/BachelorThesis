@@ -24,7 +24,6 @@
 
 - Deanonymization of onion services
 - More often its not a breach in the protocol but user errors such as misconfigurations
--
 
 ## @saputra2016detecting
 
