@@ -1,8 +1,6 @@
-// ==========================================================================
 //  WSFM Forschungsskizze – HSLU Template
 //  Compile with: typst compile forschungsskizze.typ
 //  Watch mode:   typst watch forschungsskizze.typ
-// ==========================================================================
 
 
 // --- CONFIGURATION --------------------------------------------------------
