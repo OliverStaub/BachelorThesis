@@ -13,11 +13,10 @@
 #let group = "Group 2"
 
 
-// --- PAGE & TEXT SETUP ----------------------------------------------------
 #set text(
-  font: "New Computer Modern",   // classic LaTeX look — alternatives: "Linux Libertine", "Source Serif Pro"
+  font: "New Computer Modern",
   size: 12pt,
-  lang: "en",                    // change to "de" if writing in German
+  lang: "en",                  
 )
 
 #set page(
@@ -28,13 +27,10 @@
 #set par(
   justify: true,
   leading: 0.65em,
-  first-line-indent: 0em,        // no indent — change to 1.5em for traditional style
+  first-line-indent: 0em,
 )
 
-// Spacing between paragraphs
-#show par: set block(spacing: 0.8em)
-
-// --- HEADING STYLES -------------------------------------------------------
+#show par: set par(spacing: 0.8em)
 #set heading(numbering: "1.1")
 
 #show heading.where(level: 1): it => {
@@ -62,11 +58,9 @@
 }
 
 
-// --- TITLE PAGE (no page number) ------------------------------------------
 #set page(numbering: none)
 
 #align(center)[
-  // Uncomment and adjust path if you have the HSLU logo:
   // #image("hslu-logo.png", width: 6cm)
   // #v(1cm)
 
@@ -109,43 +103,37 @@
 ]
 
 
-// --- TABLE OF CONTENTS ----------------------------------------------------
 #pagebreak()
 #outline(title: "Contents", depth: 2)
 
 
-// --- MAIN CONTENT (page numbering starts here) ----------------------------
 #pagebreak()
 #set page(numbering: "1")
 #counter(page).update(1)
 
 
-// ==========================================================================
-//  SECTION 1: Background, Problem Statement, Objectives
-//  Target: ~1,500 characters (incl. spaces)
-// ==========================================================================
-
 = Background, Problem Statement, and Objectives
 
 // TODO: Write in your own words — do NOT copy the assignment!
-// Tip: Check character count with `wc -m` or an online tool.
+
+
+Tor is an acronym for The Onion Router. The Onion Router is a distributed Protocol with the goal o
+
+
+- vor und Nachteile aufzeigen
+- Wo wird es genutzt und eingesetzt
+- Probleme
+- Moegliche Attack angels und so
 
 
 
-// ==========================================================================
-//  SECTION 2: Research Questions and Methods
-//  Target: ~1,500 characters (incl. spaces)
-// ==========================================================================
+
 
 = Research Questions and Methods
 
 To what extent can the Deep Fingerprinting attack be reproduced in a Shadow-simulated Tor network, and how does classification accuracy compare to results reported on live Tor traffic?
 
 
-// ==========================================================================
-//  SECTION 3: Personal Reflection
-//  Target: ~1,000 characters (incl. spaces)
-// ==========================================================================
 
 = Personal Reflection
 
@@ -154,11 +142,6 @@ To what extent can the Deep Fingerprinting attack be reproduced in a Shadow-simu
 #lorem(60)
 
 
-// ==========================================================================
-//  SECTION 4: Literature Review
-//  Target: ~2,000–3,000 characters (incl. spaces)
-//  Requirements: min. 3 sources (min. 1 methods, min. 1 domain)
-// ==========================================================================
 
 = Literature Review
 
@@ -167,17 +150,14 @@ To what extent can the Deep Fingerprinting attack be reproduced in a Shadow-simu
 
 == Deep Fingerprinting (Sirinam et al., 2018)
 
-// Domain literature — the core WF attack you are reproducing
 #lorem(60)
 
 == Data-Explainable Website Fingerprinting (Jansen et al., 2023)
 
-// Domain literature — Shadow-based WF methodology
 #lorem(60)
 
 == Research Methods Literature
 
-// Methods literature — e.g., experimental research design, network simulation methodology
 #lorem(60)
 
 
@@ -185,26 +165,10 @@ To what extent can the Deep Fingerprinting attack be reproduced in a Shadow-simu
 //  BIBLIOGRAPHY (APA7)
 // ==========================================================================
 
-// Option A: Use a .bib file (recommended)
-// Create a file called "references.bib" with your BibTeX entries and uncomment:
-// #bibliography("references.bib", style: "apa")
+#bibliography("references.bib", style: "apa")
 
-// Option B: Manual bibliography (if you don't want to use BibTeX)
 #pagebreak()
 #heading(numbering: none)[References]
-
-// TODO: Replace with your actual references in APA7 format.
-// These are examples:
-
-Sirinam, P., Imani, M., Juarez, M., & Wright, M. (2018). Deep fingerprinting: Undermining website fingerprinting defenses with deep learning. _Proceedings of the 2018 ACM SIGSAC Conference on Computer and Communications Security_, 1928–1943. https://doi.org/10.1145/3243734.3243768
-
-#v(0.8em)
-
-Jansen, R., Wails, R., & Johnson, A. (2023). Data-explainable website fingerprinting with network simulation. _Proceedings on Privacy Enhancing Technologies_, 2023(1), 1–20.
-
-#v(0.8em)
-
-// TODO: Add your methods literature source here
 
 
 // ==========================================================================
