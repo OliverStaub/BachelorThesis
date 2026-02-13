@@ -129,9 +129,7 @@
 
 // TODO: Write in your own words — do NOT copy the assignment!
 // Tip: Check character count with `wc -m` or an online tool.
-I guess here I should write something about the Tor network and fingerprinting in general etc.
 
-#lorem(80)
 
 
 // ==========================================================================
@@ -142,18 +140,6 @@ I guess here I should write something about the Tor network and fingerprinting i
 = Research Questions and Methods
 
 To what extent can the Deep Fingerprinting attack be reproduced in a Shadow-simulated Tor network, and how does classification accuracy compare to results reported on live Tor traffic?
-
-== Research Question 1
-
-#lorem(40)
-
-== Research Question 2
-
-#lorem(40)
-
-== Research Question 3
-
-#lorem(40)
 
 
 // ==========================================================================
