@@ -127,13 +127,21 @@ The Tor Network is a decentralized communication service anonymizing internet tr
 
 The Tor Network is used by journalists, whistleblowers and activists to circumvent censorship and surveillance. However it is also used by malicious actors of all sort to evade law enforcement. @tornews-2025
 
-As a result several techniques have been developed to de-anonymize Tor Network users. One of them is called Website Fingerprinter or WF. T
+As a result several techniques have been developed to de-anonymize Tor Network users. One of them is called Website Fingerprinter or WF.
+
+In a WF attack, a passive observer — such as an ISP or a compromised entry node — analyses patterns in the encrypted traffic from the user, and compares against pre-recorded fingerprints from known webistes.@juarez2014critical. 
+Some of the compared patterns include 
+
+ such as packet sizes, timing, and direction, to infer which website a Tor user is visiting. Over the past decade, various WF approaches have been proposed, ranging from statistical classifiers to deep learning models, with varying degrees of success. This proposal aims to survey these approaches and compare them with respect to the traffic features they exploit and the classification accuracy they achieve.
 
 
 = Research Questions and Methods
 
 == Research Question
 What traffic features do website fingerprinting attacks on Tor exploit, and how do the different approaches compare in terms of classification accuracy?
+
+== Research Question
+What countermeasures are availabel and how effective 0are they ? What Problems are there. how effective is fingerprinting? What about circuit padding
 
 
 
