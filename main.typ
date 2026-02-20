@@ -240,17 +240,73 @@ The content of your thesis in brief.
 #set page(numbering: "1")
 #counter(page).update(1)
 
-= Main Content
+= Introduction
 
-This is a template of #acr("hslu") and then. This section usually comprises different chapters and subchapters.
+This chapter provides an overview of the thesis topic.
 
-== First Section
+== Problem Statement
 
-Followed by a brief introduction, the section may comprise several subsections explaining various concepts and referring to external results.
+The Tor network is widely considered secure, but theoretical studies demonstrate that timing analyses and traffic correlation attacks can compromise user anonymity. However, practical investigations under controlled, local conditions are lacking.
 
-=== First Subsection
+== Motivation
 
-Content may also refer to special expressions that have to be explained in a separate section. Here we also have #acr("cww") enough space to discuss the concept of #acr("nn") and so on.
+Understanding the practical implications of de-anonymization attacks is crucial for developing effective countermeasures. This thesis examines Website Fingerprinting attacks and the effectiveness of traffic padding defenses.
+
+
+= Literature Review
+
+This chapter reviews existing research on Tor anonymization, website fingerprinting attacks, and traffic analysis techniques.
+
+
+= Methodology
+
+This chapter describes the research approach and methods used in this thesis.
+
+== Phase 1: Shadow Setup
+
+Tor network configuration using tornettools, Wikipedia mirror cloning, and wget2 client setup.
+
+== Phase 2: Baseline Data Collection
+
+Packet capture and feature extraction from client nodes, WF classifier training and evaluation.
+
+== Phase 3: Circuit Padding Activation
+
+Configuration of Tor's built-in padding mechanisms at various levels and corresponding data collection.
+
+== Phase 4: Comparison and Analysis
+
+Comparative analysis of detection rates with and without padding, overhead measurement, and trade-off quantification.
+
+
+= Results
+
+Presentation of findings from each experimental phase.
+
+== Baseline WF Attack Results
+
+Results without padding countermeasures.
+
+== Circuit Padding Impact
+
+Analysis of how circuit padding affects detection rates.
+
+== Performance Overhead
+
+Measurement of bandwidth and latency impacts.
+
+
+= Discussion
+
+Critical analysis and interpretation of results, limitations, and practical implications.
+
+== Limitations
+
+Discussion of Shadow simulation limitations compared to real-world scenarios.
+
+== Ethical Considerations
+
+Reflection on ethical aspects of the research.
 
 
 // --------------------------------------------------------------------------

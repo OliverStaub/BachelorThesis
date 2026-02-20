@@ -71,3 +71,7 @@
 ## bhat2018var
 
 - Improved Deep WF Fingerprinting
+
+## jansen2023data
+
+- WF Simulation in shadow. sehr relevant. mit sourcecode und tools
