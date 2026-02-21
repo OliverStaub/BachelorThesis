@@ -26,10 +26,6 @@
 #let study-program = "Information & Cyber Security"
 #let supervisor = "TODO"                        // TODO
 #let dean = "TODO"                              // TODO
-#let acknowledgments-text = [
-  Thanks to my family, relatives, and friends for all the support given to finish this thesis.
-  // TODO: customise
-]
 
 #let jury-members = (
   "Prof. Dr. Name Surname from Lucerne University of Applied Sciences and Arts, Switzerland (President of the Jury)",
@@ -189,16 +185,6 @@
   #text(size: 12pt)[#thesis-year]
 ]
 
-
-// --------------------------------------------------------------------------
-//  ACKNOWLEDGMENTS
-// --------------------------------------------------------------------------
-
-#pagebreak()
-#heading(numbering: none)[Acknowledgments]
-#acknowledgments-text
-
-
 // --------------------------------------------------------------------------
 //  I  — ABSTRACT
 // --------------------------------------------------------------------------
@@ -257,6 +243,25 @@ The Tor network is widely considered secure, yet theoretical studies demonstrate
 // ══════════════════════════════════════════════════════════════════════════
 
 = State of Research
+
+== The Tor Network
+When browsing the internet, user traffic is typically encrypted through HTTPS. However, Internet Service Providers (ISPs) can still observe the IP addresses of connection attempts, thereby identifying which websites and services a user accesses. Furthermore the websites themselves can see what IP addresses are accessing them. To mitigate this visibility, several privacy-enhancing technologies exist, one of them is Tor.
+
+The Tor Network is a decentralized communication service anonymizing internet traffic by encapsulating traffic in onion like encrypted layers. The traffic is then routed through three nodes which all decrypt one layer of the package. Therefore no single node learns both the origin and the destinationnd of the package. @tornews-2025
+
+#figure(
+  image("images/tor-schema.png", width: 80%),
+  caption: [Overview of the Tor network architecture @sysdig-tor-2024],
+) <fig-tor-schema>
+
+The Tor Network is used by journalists, whistleblowers and activists to circumvent censorship and surveillance. However it is also used by malicious actors of all sort to evade law enforcement. @tornews-2025
+
+As a result several techniques have been developed to de-anonymize Tor Network users. One of them is called Website Fingerprinter or WF.
+
+In a WF attack, a passive observer — such as an ISP or a compromised entry node — analyses patterns in the encrypted traffic from the user, and compares against pre-recorded fingerprints from known webistes.@juarez2014critical. 
+Some of the compared patterns include 
+
+ such as packet sizes, timing, and direction, to infer which website a Tor user is visiting. Over the past decade, various WF approaches have been proposed, ranging from statistical classifiers to deep learning models, with varying degrees of success. This proposal aims to survey these approaches and compare them with respect to the traffic features they exploit and the classification accuracy they achieve.
 
 // TODO: Show how others have solved this or related problems.
 // What existing knowledge can you build on? What is new?
@@ -399,23 +404,15 @@ Reflection on ethical aspects of the research.
 // TODO: List all AI tools used during the thesis (e.g. ChatGPT, Claude, Copilot)
 // and describe how they were used.
 
-== List of Formulas
-
-// TODO: Add if applicable.
-
 
 // ══════════════════════════════════════════════════════════════════════════
 //  10  Bibliography
 // ══════════════════════════════════════════════════════════════════════════
 
 // TODO: Uncomment when you have a .bib file ready.
-// Typst's #bibliography() auto-generates its own heading, so we suppress
-// the default and use our own numbered chapter heading instead:
-//
-// #show bibliography: it => {
-//   // Strip the auto-generated heading, keep only the entries
-//   show heading: none
-//   it
-// }
-// = Bibliography
-// #bibliography("references.bib", style: "ieee")
+#show bibliography: it => {
+  show heading: none
+  it
+}
+= Bibliography
+#bibliography("references.bib", style: "apa")
