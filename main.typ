@@ -217,24 +217,6 @@ The content of your thesis in brief.
 #pagebreak()
 #outline(title: "Contents", depth: 2)
 
-#pagebreak()
-#outline(title: "List of Figures", target: figure.where(kind: image))
-
-#pagebreak()
-#outline(title: "List of Tables", target: figure.where(kind: table))
-
-
-// --------------------------------------------------------------------------
-//  ACRONYM LIST
-// --------------------------------------------------------------------------
-
-#pagebreak()
-#heading(numbering: none)[List of Acronyms]
-
-#for (key, value) in acronyms {
-  [*#value.at(0)* — #value.at(1) \ ]
-}
-
 
 // ==========================================================================
 //  MAIN CONTENT — Arabic page numbering starts at 1
@@ -378,24 +360,8 @@ Reflection on ethical aspects of the research.
 
 
 // ══════════════════════════════════════════════════════════════════════════
-//  10  Bibliography
-// ══════════════════════════════════════════════════════════════════════════
-
-// NOTE: Chapters 8 (Appendices) and 9 (Lists) follow after the bibliography
-//       in the document, but the bibliography reference list is placed here
-//       per HSLU convention. Adjust order if your supervisor prefers otherwise.
-
-// TODO: Uncomment when you have a .bib file ready:
-// #bibliography("references.bib", style: "ieee")
-
-
-// ══════════════════════════════════════════════════════════════════════════
 //  8  Appendices
 // ══════════════════════════════════════════════════════════════════════════
-
-// Reset heading numbering to letters for appendix
-#set heading(numbering: "A.1")
-#counter(heading).update(0)
 
 = Appendices
 
@@ -406,3 +372,50 @@ Reflection on ethical aspects of the research.
 == Project Management
 
 // TODO: Project plan, milestones, time tracking.
+
+
+// ══════════════════════════════════════════════════════════════════════════
+//  9  Lists of Abbreviations, Figures, Tables, AI Tools, and Formulas
+// ══════════════════════════════════════════════════════════════════════════
+
+= Lists of Abbreviations, Figures, Tables, AI Tools, and Formulas
+
+== List of Abbreviations
+
+#for (key, value) in acronyms {
+  [*#value.at(0)* — #value.at(1) \ ]
+}
+
+== List of Figures
+
+#outline(title: none, target: figure.where(kind: image))
+
+== List of Tables
+
+#outline(title: none, target: figure.where(kind: table))
+
+== AI Tools Declaration
+
+// TODO: List all AI tools used during the thesis (e.g. ChatGPT, Claude, Copilot)
+// and describe how they were used.
+
+== List of Formulas
+
+// TODO: Add if applicable.
+
+
+// ══════════════════════════════════════════════════════════════════════════
+//  10  Bibliography
+// ══════════════════════════════════════════════════════════════════════════
+
+// TODO: Uncomment when you have a .bib file ready.
+// Typst's #bibliography() auto-generates its own heading, so we suppress
+// the default and use our own numbered chapter heading instead:
+//
+// #show bibliography: it => {
+//   // Strip the auto-generated heading, keep only the entries
+//   show heading: none
+//   it
+// }
+// = Bibliography
+// #bibliography("references.bib", style: "ieee")
