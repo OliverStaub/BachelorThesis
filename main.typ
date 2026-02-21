@@ -1,14 +1,3 @@
-// =========================================================================
-// Lucerne University of Applied Sciences and Arts
-// HSLU-I: Bachelor Thesis Template — Typst Version
-//
-// Structure follows the official "Aufbau WIPRO/BAA-Bericht" guidelines
-// (valid from HS25, dated 30 April 2025)
-//
-// Font: New Computer Modern (= LaTeX's Computer Modern)
-// =========================================================================
-
-
 // --------------------------------------------------------------------------
 //  DOCUMENT INFORMATION (edit these)
 // --------------------------------------------------------------------------
@@ -131,16 +120,6 @@
 
 #set page(numbering: none)
 
-
-// --------------------------------------------------------------------------
-//  TITLE PAGE
-//  NOTE: If you need to use the exact official HSLU title page from the
-//        LaTeX/Word template, generate pages 1–3 as a PDF from the .docx
-//        and include them here instead:
-//        #include "titlepage.pdf"  (Typst ≥ 0.12 planned)
-//  For now this recreates it in Typst as closely as possible.
-// --------------------------------------------------------------------------
-
 #align(center)[
   // TODO: Uncomment and point to actual HSLU logo
   // #image("figs/hslu-logo.png", width: 6cm)
@@ -245,7 +224,7 @@ The Tor network is widely considered secure, yet theoretical studies demonstrate
 = State of Research
 
 == The Tor Network
-When browsing the internet, user traffic is typically encrypted through HTTPS. However, Internet Service Providers (ISPs) can still observe the IP addresses of connection attempts, thereby identifying which websites and services a user accesses. Furthermore the websites themselves can see what IP addresses are accessing them. To mitigate this visibility, several privacy-enhancing technologies exist, one of them is Tor.
+When browsing the internet, user traffic is typically encrypted through HTTPS. However, Internet Service Providers (ISPs) can still observe the IP addresses of connection attempts, thereby identifying which websites and services a user accesses. Furthermore the websites themselves can see what IP addresses are accessing them. To mitigate this visibility, several privacy-enhancing technologies have been developed, one of them being Tor.
 
 The Tor Network is a decentralized communication service anonymizing internet traffic by encapsulating traffic in onion like encrypted layers. The traffic is then routed through three nodes which all decrypt one layer of the package. Therefore no single node learns both the origin and the destinationnd of the package. @tornews-2025
 
@@ -263,11 +242,9 @@ Some of the compared patterns include
 
  such as packet sizes, timing, and direction, to infer which website a Tor user is visiting. Over the past decade, various WF approaches have been proposed, ranging from statistical classifiers to deep learning models, with varying degrees of success. This proposal aims to survey these approaches and compare them with respect to the traffic features they exploit and the classification accuracy they achieve.
 
-// TODO: Show how others have solved this or related problems.
-// What existing knowledge can you build on? What is new?
-// How does your approach differ from prior work?
-
 This chapter reviews existing research on Tor anonymization, website fingerprinting attacks, traffic analysis techniques, and circuit padding defenses.
+
+== WF Attack
 
 
 // ══════════════════════════════════════════════════════════════════════════
