@@ -1,9 +1,11 @@
 // =========================================================================
 // Lucerne University of Applied Sciences and Arts
-// HSLU-I: Thesis Template — Typst Version
+// HSLU-I: Bachelor Thesis Template — Typst Version
 //
-// Converted from the official LaTeX template (v0.4, 2025-03-11)
-// Font: Latin Modern Roman (= LaTeX's Computer Modern)
+// Structure follows the official "Aufbau WIPRO/BAA-Bericht" guidelines
+// (valid from HS25, dated 30 April 2025)
+//
+// Font: New Computer Modern (= LaTeX's Computer Modern)
 // =========================================================================
 
 
@@ -11,19 +13,23 @@
 //  DOCUMENT INFORMATION (edit these)
 // --------------------------------------------------------------------------
 
-#let thesis-language = "en"  // "en" or "de"
-#let author-name = "Author Name"
-#let author-city = "Lucerne (Switzerland)"
-#let thesis-title = "Thesis Title"
-#let thesis-subtitle = "subtitle"
-#let thesis-year = "2024"
-#let defense-date = "October 27th, 2024"
-#let defense-location = "Lucerne"
-#let external-expert = "Expert Name"
-#let industry-partner = "Company Name"
-#let supervisor = "Prof. Dr. Name Surname"
-#let dean = "Prof. Dr. Name Surname"
-#let acknowledgments-text = "Thanks to my family, relatives and friends for all the support given to finish this thesis."
+#let thesis-language = "en"
+#let author-name = "Oliver TODO"               // TODO
+#let author-city = "Zürich (Switzerland)"
+#let thesis-title = "Practical De-Anonymization in the Tor Network"
+#let thesis-subtitle = "Timing Leaks, Traffic Correlation, and Website Fingerprinting"
+#let thesis-year = "2026"
+#let defense-date = "TODO"                      // TODO
+#let defense-location = "Rotkreuz"
+#let external-expert = "TODO"                   // TODO
+#let industry-partner = "TODO"                  // TODO — or "none"
+#let study-program = "Information & Cyber Security"
+#let supervisor = "TODO"                        // TODO
+#let dean = "TODO"                              // TODO
+#let acknowledgments-text = [
+  Thanks to my family, relatives, and friends for all the support given to finish this thesis.
+  // TODO: customise
+]
 
 #let jury-members = (
   "Prof. Dr. Name Surname from Lucerne University of Applied Sciences and Arts, Switzerland (President of the Jury)",
@@ -36,13 +42,10 @@
 //  FONT & PAGE SETUP
 // --------------------------------------------------------------------------
 
-// Latin Modern Roman is the OpenType version of LaTeX's Computer Modern.
-// Install it from: https://www.gust.org.pl/projects/e-foundry/latin-modern
-// Fallback: "New Computer Modern" also works.
 #set text(
   font: "New Computer Modern",
   size: 12pt,
-  lang: if thesis-language == "de" { "de" } else { "en" },
+  lang: "en",
 )
 
 #set page(
@@ -52,10 +55,9 @@
 
 #set par(
   justify: true,
-  leading: 0.65em,  // similar to LaTeX's default line spacing
+  leading: 0.65em,
 )
 
-// Use Latin Modern Math for equations (matches LaTeX math rendering)
 #show math.equation: set text(font: "New Computer Modern Math")
 
 // Heading styles (approximating LaTeX book class)
@@ -100,17 +102,18 @@
 
 
 // --------------------------------------------------------------------------
-//  ACRONYMS / GLOSSARY (define inline or import)
+//  ACRONYMS (expand as needed)
 // --------------------------------------------------------------------------
 
-// Simple acronym dictionary — expand as needed
 #let acronyms = (
   "hslu": ("HSLU", "Lucerne University of Applied Sciences and Arts"),
-  "cww": ("CWW", "Computing with Words"),
+  "tor": ("Tor", "The Onion Router"),
+  "wf": ("WF", "Website Fingerprinting"),
+  "isp": ("ISP", "Internet Service Provider"),
   "nn": ("NN", "Neural Network"),
+  "ids": ("IDS", "Intrusion Detection System"),
 )
 
-// Track which acronyms have been used (first use shows long form)
 #let acr-used = state("acr-used", (:))
 
 #let acr(key) = {
@@ -126,53 +129,56 @@
 }
 
 
-// --------------------------------------------------------------------------
-//  TITLE PAGE
-// --------------------------------------------------------------------------
+// ==========================================================================
+//  FRONT MATTER (no page numbers in header; Roman numeral counting optional)
+// ==========================================================================
 
-// Disable page numbering for front matter initially
 #set page(numbering: none)
 
+
+// --------------------------------------------------------------------------
+//  TITLE PAGE
+//  NOTE: If you need to use the exact official HSLU title page from the
+//        LaTeX/Word template, generate pages 1–3 as a PDF from the .docx
+//        and include them here instead:
+//        #include "titlepage.pdf"  (Typst ≥ 0.12 planned)
+//  For now this recreates it in Typst as closely as possible.
+// --------------------------------------------------------------------------
+
 #align(center)[
-  // HSLU logo — replace with actual logo path
+  // TODO: Uncomment and point to actual HSLU logo
   // #image("figs/hslu-logo.png", width: 6cm)
 
   #v(1cm)
-
   #text(size: 11pt)[
     Lucerne University of Applied Sciences and Arts
   ]
 
   #v(3cm)
-
   #text(size: 24pt, weight: "bold")[#thesis-title]
 
   #v(0.5cm)
-
   #text(size: 14pt)[#thesis-subtitle]
 
   #v(2cm)
+  #text(size: 14pt)[Bachelor Thesis]
 
-  #text(size: 14pt)[
-    Bachelor Thesis
-  ]
+  #v(0.5cm)
+  #text(size: 12pt)[Study Program: #study-program]
 
   #v(1cm)
-
   #text(size: 12pt)[
     #author-name \
     #author-city
   ]
 
   #v(2cm)
-
   #text(size: 12pt)[
     Defense Date: #defense-date \
     Defense Location: #defense-location
   ]
 
   #v(1cm)
-
   #text(size: 12pt)[
     Supervisor: #supervisor \
     External Expert: #external-expert \
@@ -180,7 +186,6 @@
   ]
 
   #v(1fr)
-
   #text(size: 12pt)[#thesis-year]
 ]
 
@@ -190,29 +195,27 @@
 // --------------------------------------------------------------------------
 
 #pagebreak()
-
 #heading(numbering: none)[Acknowledgments]
-
 #acknowledgments-text
 
 
 // --------------------------------------------------------------------------
-//  ABSTRACT
+//  I  — ABSTRACT
 // --------------------------------------------------------------------------
 
 #pagebreak()
-
 #heading(numbering: none)[Abstract]
 
+// TODO: Write your abstract here
 The content of your thesis in brief.
 
 
 // --------------------------------------------------------------------------
-//  TABLE OF CONTENTS, LIST OF FIGURES, LIST OF TABLES
+//  II — TABLE OF CONTENTS  +  Lists
 // --------------------------------------------------------------------------
 
 #pagebreak()
-#outline(title: "Contents", depth: 1)
+#outline(title: "Contents", depth: 2)
 
 #pagebreak()
 #outline(title: "List of Figures", target: figure.where(kind: image))
@@ -233,42 +236,81 @@ The content of your thesis in brief.
 }
 
 
-// --------------------------------------------------------------------------
-//  MAIN CONTENT — page numbering starts here
-// --------------------------------------------------------------------------
+// ==========================================================================
+//  MAIN CONTENT — Arabic page numbering starts at 1
+// ==========================================================================
 
 #set page(numbering: "1")
 #counter(page).update(1)
 
-= Introduction
 
-This chapter provides an overview of the thesis topic.
+// ══════════════════════════════════════════════════════════════════════════
+//  1  Problem Statement, Research Questions, and Vision
+// ══════════════════════════════════════════════════════════════════════════
+
+= Problem Statement, Research Questions, and Vision
+
+// TODO: What goals and research questions does the project pursue?
+// State the significance, impact, and relevance for all stakeholders.
+// Include a reference to the task description in the appendix.
 
 == Problem Statement
 
-The Tor network is widely considered secure, but theoretical studies demonstrate that timing analyses and traffic correlation attacks can compromise user anonymity. However, practical investigations under controlled, local conditions are lacking.
+The Tor network is widely considered secure, yet theoretical studies demonstrate that timing analyses and traffic correlation attacks can compromise user anonymity. However, practical investigations under controlled, local conditions remain scarce.
 
-== Motivation
+== Research Questions
 
-Understanding the practical implications of de-anonymization attacks is crucial for developing effective countermeasures. This thesis examines Website Fingerprinting attacks and the effectiveness of traffic padding defenses.
+// Use a custom command or simple numbered list:
++ Can Website Fingerprinting attacks successfully de-anonymize Tor users in a locally simulated Shadow network?
++ To what extent do Tor's built-in circuit padding mechanisms reduce detection accuracy of such attacks?
++ What bandwidth and latency overhead do these defenses introduce?
+
+== Vision
+
+// TODO: Describe the overarching goal / desired outcome of the thesis.
 
 
-= Literature Review
+// ══════════════════════════════════════════════════════════════════════════
+//  2  State of Research
+// ══════════════════════════════════════════════════════════════════════════
 
-This chapter reviews existing research on Tor anonymization, website fingerprinting attacks, and traffic analysis techniques.
+= State of Research
+
+// TODO: Show how others have solved this or related problems.
+// What existing knowledge can you build on? What is new?
+// How does your approach differ from prior work?
+
+This chapter reviews existing research on Tor anonymization, website fingerprinting attacks, traffic analysis techniques, and circuit padding defenses.
 
 
-= Methodology
+// ══════════════════════════════════════════════════════════════════════════
+//  3  Ideas and Concepts
+// ══════════════════════════════════════════════════════════════════════════
 
-This chapter describes the research approach and methods used in this thesis.
+= Ideas and Concepts
 
-== Phase 1: Shadow Setup
+// TODO: How do you plan to achieve the stated goals?
+// Record initial ideas, sketch solution approaches.
+// If multiple paths exist, justify your chosen direction.
 
-Tor network configuration using tornettools, Wikipedia mirror cloning, and wget2 client setup.
+
+// ══════════════════════════════════════════════════════════════════════════
+//  4  Method(s)
+// ══════════════════════════════════════════════════════════════════════════
+
+= Method(s)
+
+// TODO: State and justify your project methodology / process model.
+// Describe planned scientific methods (quantitative/qualitative).
+// Reference schedules and milestones (appendix or Ch. 5).
+
+== Phase 1: Shadow Network Setup
+
+Tor network simulation using Shadow/tornettools, Wikipedia mirror cloning, and wget2-based client configuration.
 
 == Phase 2: Baseline Data Collection
 
-Packet capture and feature extraction from client nodes, WF classifier training and evaluation.
+Packet capture and feature extraction from client nodes; training and evaluation of WF classifiers (e.g.\ Deep Fingerprinting CNN).
 
 == Phase 3: Circuit Padding Activation
 
@@ -279,52 +321,88 @@ Configuration of Tor's built-in padding mechanisms at various levels and corresp
 Comparative analysis of detection rates with and without padding, overhead measurement, and trade-off quantification.
 
 
-= Results
+// ══════════════════════════════════════════════════════════════════════════
+//  5  Implementation
+// ══════════════════════════════════════════════════════════════════════════
 
-Presentation of findings from each experimental phase.
+= Implementation
+
+// This is the MAIN chapter!
+// Implement your ideas/concepts (Ch. 3), building on the state of
+// research (Ch. 2), following the chosen methods (Ch. 4).
+// Document decisions, difficulties, and limitations.
 
 == Baseline WF Attack Results
 
-Results without padding countermeasures.
+// Results without padding countermeasures.
 
-== Circuit Padding Impact
+== Circuit Padding Configuration
 
-Analysis of how circuit padding affects detection rates.
+// Details of padding setup and data collection.
+
+
+// ══════════════════════════════════════════════════════════════════════════
+//  6  Validation and Evaluation
+// ══════════════════════════════════════════════════════════════════════════
+
+= Validation and Evaluation
+
+// Validation: Does the solution do the RIGHT thing?
+// Evaluation: How WELL does it meet the requirements?
 
 == Performance Overhead
 
-Measurement of bandwidth and latency impacts.
-
-
-= Discussion
-
-Critical analysis and interpretation of results, limitations, and practical implications.
+// Measurement of bandwidth and latency impacts.
 
 == Limitations
 
-Discussion of Shadow simulation limitations compared to real-world scenarios.
+// Discussion of Shadow simulation limitations vs. real-world scenarios.
+
+
+// ══════════════════════════════════════════════════════════════════════════
+//  7  Outlook
+// ══════════════════════════════════════════════════════════════════════════
+
+= Outlook
+
+// Reflect on your own work, point out unsolved problems, and
+// suggest ideas for future development.
 
 == Ethical Considerations
 
 Reflection on ethical aspects of the research.
 
+== Future Work
 
-// --------------------------------------------------------------------------
-//  BIBLIOGRAPHY
-// --------------------------------------------------------------------------
-
-// Uses APA 7 style — change to "ieee" if you want IEEE like the LaTeX original
-#bibliography("references.bib", style: "ieee")
+// TODO
 
 
-// --------------------------------------------------------------------------
-//  APPENDIX
-// --------------------------------------------------------------------------
+// ══════════════════════════════════════════════════════════════════════════
+//  10  Bibliography
+// ══════════════════════════════════════════════════════════════════════════
+
+// NOTE: Chapters 8 (Appendices) and 9 (Lists) follow after the bibliography
+//       in the document, but the bibliography reference list is placed here
+//       per HSLU convention. Adjust order if your supervisor prefers otherwise.
+
+// TODO: Uncomment when you have a .bib file ready:
+// #bibliography("references.bib", style: "ieee")
+
+
+// ══════════════════════════════════════════════════════════════════════════
+//  8  Appendices
+// ══════════════════════════════════════════════════════════════════════════
 
 // Reset heading numbering to letters for appendix
 #set heading(numbering: "A.1")
 #counter(heading).update(0)
 
-= Appendix
+= Appendices
 
-Additional materials go here.
+== Task Description
+
+// TODO: Include the signed task description (Aufgabenstellung).
+
+== Project Management
+
+// TODO: Project plan, milestones, time tracking.
