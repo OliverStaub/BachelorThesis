@@ -1,3 +1,13 @@
+#import "@preview/acrostiche:0.7.0": *
+
+#init-acronyms((
+  "Tor": ("The Onion Router"),
+  "WF":  ("Website Fingerprinting"),
+  "ISP": ("Internet Service Provider","Internet Service Providers"),
+  "NN":  ("Neural Network","Neural Networks"),
+  "IDS": ("Intrusion Detection System"),
+))
+
 // --------------------------------------------------------------------------
 //  DOCUMENT INFORMATION (edit these)
 // --------------------------------------------------------------------------
@@ -83,34 +93,6 @@
     #it.body
   ]
   v(0.6em)
-}
-
-
-// --------------------------------------------------------------------------
-//  ACRONYMS (expand as needed)
-// --------------------------------------------------------------------------
-
-#let acronyms = (
-  "hslu": ("HSLU", "Lucerne University of Applied Sciences and Arts"),
-  "tor": ("Tor", "The Onion Router"),
-  "wf": ("WF", "Website Fingerprinting"),
-  "isp": ("ISP", "Internet Service Provider"),
-  "nn": ("NN", "Neural Network"),
-  "ids": ("IDS", "Intrusion Detection System"),
-)
-
-#let acr-used = state("acr-used", (:))
-
-#let acr(key) = {
-  context {
-    let used = acr-used.get()
-    if key in used {
-      acronyms.at(key).at(0)
-    } else {
-      acr-used.update(d => { d.insert(key, true); d })
-      [#acronyms.at(key).at(1) (#acronyms.at(key).at(0))]
-    }
-  }
 }
 
 
@@ -203,7 +185,7 @@ The content of your thesis in brief.
 
 == Problem Statement
 
-The Tor network is widely considered secure, yet theoretical studies demonstrate that timing analyses and traffic correlation attacks can compromise user anonymity. However, practical investigations under controlled, local conditions remain scarce.
+#acr("Tor") is widely considered secure, yet theoretical studies demonstrate that timing analyses and traffic correlation attacks can compromise user anonymity. However, practical investigations under controlled, local conditions remain scarce.
 
 == Research Questions
 
@@ -224,9 +206,8 @@ The Tor network is widely considered secure, yet theoretical studies demonstrate
 = State of Research
 
 == The Tor Network
-When browsing the internet, user traffic is typically encrypted through HTTPS. However, Internet Service Providers (ISPs) can still observe the IP addresses of connection attempts, thereby identifying which websites and services a user accesses. Furthermore the websites themselves can see what IP addresses are accessing them. To mitigate this visibility, several privacy-enhancing technologies have been developed, one of them being Tor.
 
-The Tor Network is a decentralized communication service anonymizing internet traffic by encapsulating traffic in onion like encrypted layers. The traffic is then routed through three nodes which all decrypt one layer of the package. Therefore no single node learns both the origin and the destinationnd of the package. @tornews-2025
+When browsing the internet, user traffic is typically encrypted through HTTPS. However, Internet Service Providers (ISPs) can still observe the IP addresses of connection attempts, thereby identifying which websites and services a user accesses. Furthermore the websites themselves can see what IP addresses are accessing them. To mitigate this visibility, several privacy-enhancing technologies have been developed, one of them being Tor.
 
 #figure(
   image("images/tor-schema.png", width: 80%),
@@ -234,6 +215,8 @@ The Tor Network is a decentralized communication service anonymizing internet tr
 ) <fig-tor-schema>
 
 The Tor Network is used by journalists, whistleblowers and activists to circumvent censorship and surveillance. However it is also used by malicious actors of all sort to evade law enforcement. @tornews-2025
+
+=== De-Anonymization Techniques
 
 As a result several techniques have been developed to de-anonymize Tor Network users. One of them is called Website Fingerprinter or WF.
 
@@ -364,9 +347,7 @@ Reflection on ethical aspects of the research.
 
 == List of Abbreviations
 
-#for (key, value) in acronyms {
-  [*#value.at(0)* — #value.at(1) \ ]
-}
+#print-index()
 
 == List of Figures
 
