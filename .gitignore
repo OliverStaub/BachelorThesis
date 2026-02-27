@@ -3,3 +3,19 @@ sources/*
 claude.md
 *.DS_Store
 ~*.docx
+# LaTeX build artifacts
+*.aux
+*.bbl
+*.blg
+*.log
+*.out
+*.toc
+*.lof
+*.lot
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.bcf
+*.run.xml
+src/thesis/hslu_thesis.pdf
+*-eps-converted-to.pdf
