@@ -1,3 +1,5 @@
 sources/*
 */agents/*
 claude.md
+*.DS_Store
+~*.docx
