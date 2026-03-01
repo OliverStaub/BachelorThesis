@@ -14,3 +14,7 @@
 - Switch to latex
 - Kickoff meeting
 - Defining the Proposal
+
+## Mar 1
+
+- Aufgabenstellung Ausarbeitung
