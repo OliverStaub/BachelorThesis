@@ -18,3 +18,7 @@
 ## Mar 1
 
 - Aufgabenstellung Ausarbeitung
+
+## Mar 12
+
+- Ich habe 3 Wochen WK und habe derzeit nicht viel Zeit für die BAA
