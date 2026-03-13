@@ -17,5 +17,6 @@ claude.md
 *.synctex.gz
 *.bcf
 *.run.xml
+*.xmpi
 src/thesis/hslu_thesis.pdf
 *-eps-converted-to.pdf
