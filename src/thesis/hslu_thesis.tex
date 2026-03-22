@@ -179,17 +179,45 @@ Shadow executes application code as native Processe while changing / simulating 
 
 
 There are Network Emulators and Network simulators. 
-Emulators run real application code in real time. Therefore they cant scale and are also non-deterministic.
+Emulators run real application code in real time.
+Therefore they cant scale and are also non-deterministic.
 Network Simulatoren auf der anderen Seite skalieren besser führen aber angepasste simulierten Applikationscode aus.
 
-Der Shadow Simulator füllt diese Lücke indem originaler Applikationscode ausgeführt werden kann. Gleichzeitig ist er skalierbar da er nicht in Echtzeit läuft.
+Der Shadow Simulator füllt diese Lücke indem originaler Applikationscode ausgeführt werden kann.
+Gleichzeitig ist er skalierbar da er nicht in Echtzeit läuft.
 Simulationen grosser Netzwerke können durchaus lange Zeit dauern, bis zu mehreren Wochen.
 
+Shadow macht eine hybride Implementation zwischen Simulation und Emulation.
+Er fängt gewisse Syscalls wie Netzwerk oder Zeitkritische ab.
+Damit kann er die Netzwerkschicht simulieren und die Simulation von der Echtzeit entkoppeln.
+Gleichzeitig werden die restlichen Syscalls nativ und unverändert ausgeführt, bspw. Dateizugriffeﬁn.
+\cite{jansen2011shadow}
+
+Der Shadow Shim fängt calls ab.
+Shim implementiert gleichnamige Funktionen mit der LD\_PRELOAD Variable.
+Diese bewirkt dass die Funktion zuerst geladen wird und überschattet damit die andere Funktion.
+
+
+
+"jansen2011shadow"
 Why it matters:
 This is what allows Shadow to run unmodified binaries — like real Tor, TGen, or other applications — inside the simulation. The application doesn't know it's being simulated; it just makes normal syscalls, and the shim transparently redirects them. This is a big advantage over simulators that require you to rewrite applications against a custom API.
 
 Derzeit unterstützt Shadow über 150 Funktionen der system call API, allerdings nicht ganz alle.
 Jegliche von \gls{tor} benötigte werden jedoch vollumfänglich unterstützt.
+
+
+
+
+TGEN Traffic Simulation und Erstellung muss ich auch noch beschreiben.
+
+Shadow ist multithreaded.
+
+
+
+
+Diesen Abschnitt sauber schreiben mit sauberen Quellen Zitaten und allem.
+Dann diese Woche ein paar erste Simulationen laufen lassen.
 
 
 \chapter{Methoden}
