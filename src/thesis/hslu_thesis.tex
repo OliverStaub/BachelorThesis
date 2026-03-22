@@ -149,7 +149,6 @@
 This is a template of \gls{hslu} and then. This section usually comprises different chapters and subchapters.
 
 \section{First Section}
-Followed by a brief introduction, the section may comprise several subsections explaining various concepts and refering to external results \cite{christen_exogenous_2020}.
 
 \subsection{First Subsection}
 Content may also refer to special expressions such as that has to be explained in a separate section. Here we also have \gls{fuzzy logic} enough space and \gls{cww} to discuss the concept of \gls{nn} and so on.
@@ -159,10 +158,38 @@ Content may also refer to special expressions such as that has to be explained i
 \end{comment}
 
 \chapter{Stand der Technik}
-Das Tor Netzwerk
-Wie soll ich darin einführen. hmm was alles dazu sagen
+\gls{tor} Ist eine Technologie um Anonymität im Internet zu erlangen. Die Daten werden mittels Onion Routing verschlüsselt so dass kein Teilnehmer im Netzwerk die Herkunft und das Ziel des Datenverkehrs kennen kann. \cite{jansen2011shadow}
+
 
 \section{Shadow Netzwerk Simulator}
+
+\subsection{Vorteile Simulation}
+Sehr viel Forschung wird innerhalb von Simulator
+
+Der Shadow Netzwerk Simulator wurden von Robert Jansen in einem Paper im Jahr 2011 vorgestellt. \cite{jansen2011shadow}
+
+Mit Shadow können Netzwerke deterministisch simuliert werden
+
+
+
+Erklären wie Shadow funktioniert mit Shims und allem.
+
+
+Shadow executes application code as native Processe while changing / simulating the network calls only.
+
+
+There are Network Emulators and Network simulators. 
+Emulators run real application code in real time. Therefore they cant scale and are also non-deterministic.
+Network Simulatoren auf der anderen Seite skalieren besser führen aber angepasste simulierten Applikationscode aus.
+
+Der Shadow Simulator füllt diese Lücke indem originaler Applikationscode ausgeführt werden kann. Gleichzeitig ist er skalierbar da er nicht in Echtzeit läuft.
+Simulationen grosser Netzwerke können durchaus lange Zeit dauern, bis zu mehreren Wochen.
+
+Why it matters:
+This is what allows Shadow to run unmodified binaries — like real Tor, TGen, or other applications — inside the simulation. The application doesn't know it's being simulated; it just makes normal syscalls, and the shim transparently redirects them. This is a big advantage over simulators that require you to rewrite applications against a custom API.
+
+Derzeit unterstützt Shadow über 150 Funktionen der system call API, allerdings nicht ganz alle.
+Jegliche von \gls{tor} benötigte werden jedoch vollumfänglich unterstützt.
 
 
 \chapter{Methoden}
