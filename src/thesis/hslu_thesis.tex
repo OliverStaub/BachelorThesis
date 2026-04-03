@@ -158,7 +158,8 @@ Content may also refer to special expressions such as that has to be explained i
 \end{comment}
 
 \chapter{Stand der Technik}
-\gls{tor} Ist eine Technologie um Anonymität im Internet zu erlangen. Die Daten werden mittels Onion Routing verschlüsselt so dass kein Teilnehmer im Netzwerk die Herkunft und das Ziel des Datenverkehrs kennen kann. \cite{jansen2011shadow}
+\gls{tor} Ist eine Technologie um Anonymität im Internet zu erlangen. 
+Die Daten werden mittels Onion Routing verschlüsselt, so dass kein Teilnehmer im Netzwerk die Herkunft und das Ziel des Datenverkehrs kennen kann. \cite{jansen2011shadow}
 
 
 \section{Shadow Netzwerk Simulator}
@@ -170,13 +171,9 @@ Der Shadow Netzwerk Simulator wurden von Robert Jansen in einem Paper im Jahr 20
 
 Mit Shadow können Netzwerke deterministisch simuliert werden
 
-
-
 Erklären wie Shadow funktioniert mit Shims und allem.
 
-
 Shadow executes application code as native Processe while changing / simulating the network calls only.
-
 
 There are Network Emulators and Network simulators. 
 Emulators run real application code in real time.
@@ -193,18 +190,49 @@ Damit kann er die Netzwerkschicht simulieren und die Simulation von der Echtzeit
 Gleichzeitig werden die restlichen Syscalls nativ und unverändert ausgeführt, bspw. Dateizugriffeﬁn.
 \cite{jansen2011shadow}
 
+Derzeit unterstützt Shadow über 150 Funktionen der system call API, allerdings nicht ganz alle.
+Jegliche von \gls{tor} benötigte werden jedoch vollumfänglich unterstützt.
+
 Der Shadow Shim fängt calls ab.
 Shim implementiert gleichnamige Funktionen mit der LD\_PRELOAD Variable.
-Diese bewirkt dass die Funktion zuerst geladen wird und überschattet damit die andere Funktion.
+Diese bewirkt dass die Funktion zu
+erst geladen wird und überschattet damit die andere Funktion.
+Diese netsim quelle muss offiziell erwähnt werden wenn man shadow benutzt
+\cite{netsim-atc2022}
 
 
+Tornettools hilft uns die Shadow Simulation automatisiert zu konfigurieren.
+Es werden Daten vom geladen und genutzt um eine realistische Simulation aufzubauen.
+\cite{neverenough-sec2021}
+In Tornettools wird auch beschrieben was stating und so bedeutet und was die einzelnen Stufen genau machen.
+
+https://www.robgjansen.com/publications/neverenough-sec2021.pdf
+
+Ausarbeiten wieso das jetzt eine realistische Simulation vom Tor Netzwerk ist.
+
+Pcap logging wird nicht so einfach sein die richtige Stelle zu finden wo man das loggen kann.
+Quellen durchsuchen und alles.
+
+
+Tornettools besser beschreiben was sie können und wie das alles funktionietrt. Von wo kommt der Beweis oder so dass es die Simulation auch wie durchführt.
+Fingerprinting setup aufbauen.
+
+OnionTrace und OnionTraceTool besser beschreiben damit man den Versuchsaufbau nachvollziehen kann.
+
+
+Chutney und NetMirage als Simulator Alternativen.
+
+Wir nutzen Onion Trace und Tgen ebenfalls um die Simulation korrekt aufzusetzen
+
+Mehr Research machen zum Tor Netzwerk im Allgemeinen und wo die Probleme liegen. Grafiken erstellen.
+
+Mit dem Tornettools lässt sich eine Shadow config generieren die man dann noch anpassen kann wenn man möchte.
 
 "jansen2011shadow"
 Why it matters:
 This is what allows Shadow to run unmodified binaries — like real Tor, TGen, or other applications — inside the simulation. The application doesn't know it's being simulated; it just makes normal syscalls, and the shim transparently redirects them. This is a big advantage over simulators that require you to rewrite applications against a custom API.
 
-Derzeit unterstützt Shadow über 150 Funktionen der system call API, allerdings nicht ganz alle.
-Jegliche von \gls{tor} benötigte werden jedoch vollumfänglich unterstützt.
+
 
 
 
