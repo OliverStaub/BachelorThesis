@@ -22,3 +22,20 @@
 ## Mar 12
 
 - Ich habe 3 Wochen WK und habe derzeit nicht viel Zeit für die BAA
+
+## Apr 2 8h
+- Install Tornettools
+- Experimentieren mit Shadow
+
+## Apr 3 8h
+- Tornettools Hilf Skript erstellt
+- Erste Simulation Tor Network mit Shadow Tool
+- Latex Kompilations Issues
+
+## Apr 4 8h
+
+
+## Apr 6 6h
+- Erste Beschreibung Tornettools in der Arbeit
+
+

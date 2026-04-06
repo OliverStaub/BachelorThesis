@@ -63,7 +63,7 @@
 \usepackage{tabularx}
 \usepackage{tikzscale}
 
-
+\hyphenation{Ano-ny-mi-sie-rungs-tech-no-lo-gie}
 \hypersetup{hidelinks}                          % hide red border in hyperlinks
 \setcounter{tocdepth}{1}                        % hide subsections from TOC
 \makenoidxglossaries
@@ -150,6 +150,9 @@ This is a template of \gls{hslu} and then. This section usually comprises differ
 
 \section{First Section}
 
+//TODO: Die Funktionsweise vom Tor Netzwerk besser beschreiben. Sinn und Zweck, aufbau, mögliche Attackangles, auch das degrading von Service qualität usw.
+
+
 \subsection{First Subsection}
 Content may also refer to special expressions such as that has to be explained in a separate section. Here we also have \gls{fuzzy logic} enough space and \gls{cww} to discuss the concept of \gls{nn} and so on.
 
@@ -161,15 +164,28 @@ Content may also refer to special expressions such as that has to be explained i
 \gls{tor} Ist eine Technologie um Anonymität im Internet zu erlangen. 
 Die Daten werden mittels Onion Routing verschlüsselt, so dass kein Teilnehmer im Netzwerk die Herkunft und das Ziel des Datenverkehrs kennen kann. \cite{jansen2011shadow}
 
-
-Das Tor Netzwerk hat 2 - 8 Millionen Nutzer \cite{neverenough-sec2021} - seite 1
-
+\gls{tor} ist die am meistgenutzte Anonymisierungstechnologie im Internet.
+Schätzungen gehen von bis zu 8 Millionen täglichen Nutzer aus. \cite[p. 1]{mani2018understanding}
 
 \section{Shadow Netzwerk Simulator}
 
 \subsection{Vorteile Simulation}
 Sehr viel Forschung wird innerhalb von Simulator
 
+Derzeit unterstützt Shadow über 150 Funktionen der system call API, allerdings nicht ganz alle.
+Jegliche von \gls{tor} benötigte werden jedoch vollumfänglich unterstützt.
+
+Der Shadow Shim fängt calls ab.
+Shim implementiert gleichnamige Funktionen mit der LD\_PRELOAD Variable.
+Diese bewirkt dass die Funktion zuerst geladen wird und überschattet damit die andere Funktion.
+Diese Netsim Quelle muss offiziell erwähnt werden wenn man shadow benutzt
+\cite{netsim-atc2022}
+
+\section{Versuchsaufbaue Simulation}
+Um eine Simulation des Website Fingerprintings Angriff durchzuführen nutzen wir Shadow mit Tornettools.
+Damit werden 
+
+\subsection{Shadow Simulator}
 Der Shadow Netzwerk Simulator wurden von Robert Jansen in einem Paper im Jahr 2011 vorgestellt. \cite{jansen2011shadow}
 
 Mit Shadow können Netzwerke deterministisch simuliert werden
@@ -193,29 +209,41 @@ Damit kann er die Netzwerkschicht simulieren und die Simulation von der Echtzeit
 Gleichzeitig werden die restlichen Syscalls nativ und unverändert ausgeführt, bspw. Dateizugriffeﬁn.
 \cite{jansen2011shadow}
 
-Derzeit unterstützt Shadow über 150 Funktionen der system call API, allerdings nicht ganz alle.
-Jegliche von \gls{tor} benötigte werden jedoch vollumfänglich unterstützt.
-
-Der Shadow Shim fängt calls ab.
-Shim implementiert gleichnamige Funktionen mit der LD\_PRELOAD Variable.
-Diese bewirkt dass die Funktion zu
-erst geladen wird und überschattet damit die andere Funktion.
-Diese netsim quelle muss offiziell erwähnt werden wenn man shadow benutzt
-\cite{netsim-atc2022}
-
-
+\subsection{Tornettools}
+Shadow wird mithilfe der Tornettools konfiguriert.
 Tornettools hilft uns die Shadow Simulation automatisiert zu konfigurieren.
 Es werden Daten vom geladen und genutzt um eine realistische Simulation aufzubauen.
 \cite{neverenough-sec2021}
-In Tornettools wird auch beschrieben was stating und so bedeutet und was die einzelnen Stufen genau machen.
 
-https://www.robgjansen.com/publications/neverenough-sec2021.pdf
 
-Ausarbeiten wieso das jetzt eine realistische Simulation vom Tor Netzwerk ist.
+\subsubsection{Tornettools}
+Das Tor Netzwerk wird in mehreren Stufen modelliert.
+Ziel ist es die rechenintensive Staging Stufe von der rechenunintensiven Generationsstufe zu trennen. 
+So kann der Arbeitsablauf der Simulation verbessert und beschleunigt werden.
 
-Pcap logging wird nicht so einfach sein die richtige Stelle zu finden wo man das loggen kann.
-Quellen durchsuchen und alles.
+\subsubsection{Daten Download}
 
+Als Grundlage der Simulation werden öffentlich verfügbare Daten abgerufen.
+//TODO: Ausarbeiten von wo genau die Tor Netzwerkdaten kommen und wie diese beschafft werden. (evt. auch im Sourcecode überprüfen.)
+
+\subsubsection{Staging}
+
+In der Staging Phase werden die Daten nun verarbeitet.
+Nützliche Attribute werden aus den Files extrahiert. \cite{neverenough-sec2021}
+//TODO: Tiefer im Detail ausarbeiten welche Daten wie verwendet werden.
+
+\subsubsection{Generation}
+
+In der Generationsphase wird nun die Netzwerktopologie erstellt.
+Als Resultat erhalten wir eine Shadow Konfigurationsdatei.
+
+Die Tornettools erlauben es die gewünschte Netzwerkgrösse anzugeben.
+Mit dem Wert 100\% wird die vollständige Netzwerktopologie simuliert, mit 1\% ein hundertstel davon.
+
+
+
+
+\subsection{Risiken von Simulationen vs Real World und Alternativen}
 
 Tornettools besser beschreiben was sie können und wie das alles funktionietrt. Von wo kommt der Beweis oder so dass es die Simulation auch wie durchführt.
 Fingerprinting setup aufbauen.
@@ -246,8 +274,14 @@ Why it matters:
 This is what allows Shadow to run unmodified binaries — like real Tor, TGen, or other applications — inside the simulation. The application doesn't know it's being simulated; it just makes normal syscalls, and the shim transparently redirects them. This is a big advantage over simulators that require you to rewrite applications against a custom API.
 
 
+\begin{comment}
+//TODO: Mögliche schwächen ausarbeiten meiner Arbeit. Wo kann die Simulation zu kurz greifen. Welche Aspekte können wir etwa nicht simulieren.
+    - Wir simiulieren nur eine WF Attacke gegen ganz wenige webisten
+    - Je mehr websiten man überwachen möchte desto schlechter
+    - das paper zitieren wo real world sich ganz anders verhalten hat als Simulationen
+    - Es kann trotzdem von wert sein weil man genau sieht unter Laborbedingungne wie sich cirucit padding auswirkt.
 
-
+\end{comment}
 
 
 TGEN Traffic Simulation und Erstellung muss ich auch noch beschreiben.
@@ -262,7 +296,7 @@ Dann diese Woche ein paar erste Simulationen laufen lassen.
 
 
 \chapter{Methoden}
-Es wird eine Literaturrecherche und ein Experiment durchgeführt.
+//TODO: Kapitel mit der Wipro vergleichen. Ich benötige Literatur & Quellenrechereche. Experiment durchführen. Und Zeit und Projektmanagement (Jokes on me)
 
 
 
