@@ -151,7 +151,16 @@ This is a template of \gls{hslu} and then. This section usually comprises differ
 \section{First Section}
 
 //TODO: Die Funktionsweise vom Tor Netzwerk besser beschreiben. Sinn und Zweck, aufbau, mögliche Attackangles, auch das degrading von Service qualität usw.
+//TODO: Was ist ein circuit? wie viele Nutzer gibt es, wie viele gleichzeitige Nutzer gibt es.
 
+//TODO: WTF-PAD ausführlich beschreiben und erklären.
+
+//TODO: Snowflake has become increasingly important since around 2022 when Russia escalated Tor blocking — it became one of the primary ways Russian users could still reach Tor. But it's still opt-in: the user selects it manually when direct Tor connections and obfs4 bridges are blocked.
+//TODO: Snowflake funktionsweise erklären und testweise aktivieren für eine Simulation - midtlien2025fingerprint - sehr aktuelles paper
+
+
+//TODO: Jansen und Wail paper lesen. Setup einer WF Attacke besser verstehen.
+    -> Dann eine Grafik und so und einen korrekten Aufbau der Simulation aufbuaen und erklären können.
 
 \subsection{First Subsection}
 Content may also refer to special expressions such as that has to be explained in a separate section. Here we also have \gls{fuzzy logic} enough space and \gls{cww} to discuss the concept of \gls{nn} and so on.
@@ -166,6 +175,9 @@ Die Daten werden mittels Onion Routing verschlüsselt, so dass kein Teilnehmer i
 
 \gls{tor} ist die am meistgenutzte Anonymisierungstechnologie im Internet.
 Schätzungen gehen von bis zu 8 Millionen täglichen Nutzer aus. \cite[p. 1]{mani2018understanding}
+
+//TODO: Es gibt Bestrebungen Tor Traffic nicht als Tor traffic sichtbar zu machen wie obfs4 und snowflake. 
+//TODO: Und dann gibt es Bestrebungen den Traffic besser zu anonymisieren und gegen WF abzusichern. In diesem Paper geht es hauptsächlich um das.
 
 \section{Shadow Netzwerk Simulator}
 
@@ -182,8 +194,11 @@ Diese Netsim Quelle muss offiziell erwähnt werden wenn man shadow benutzt
 \cite{netsim-atc2022}
 
 \section{Versuchsaufbaue Simulation}
+//TODO: Eine bewertung der anderen verfügbaren Tools vornehmen und Argumentieren weshalb der jetztige setup genommen wird. auch shadow mit einer iegenen simulation oder echten daten / echtes netzwerk. jansenshadow und neverenough und andere quellen hinzuziehen und fertig argumenetierne.
 Um eine Simulation des Website Fingerprintings Angriff durchzuführen nutzen wir Shadow mit Tornettools.
 Damit werden 
+
+For your thesis, this is worth mentioning briefly in your threat model section — something like: "We assume the attacker can identify Tor traffic, which is realistic since public relay IPs are published in the Tor consensus. The attacker's goal is not to detect Tor usage but to determine which website is being accessed through Tor." This aligns with all the papers you've been reading.
 
 \subsection{Shadow Simulator}
 Der Shadow Netzwerk Simulator wurden von Robert Jansen in einem Paper im Jahr 2011 vorgestellt. \cite{jansen2011shadow}
@@ -238,8 +253,24 @@ In der Generationsphase wird nun die Netzwerktopologie erstellt.
 Als Resultat erhalten wir eine Shadow Konfigurationsdatei.
 
 Die Tornettools erlauben es die gewünschte Netzwerkgrösse anzugeben.
-Mit dem Wert 100\% wird die vollständige Netzwerktopologie simuliert, mit 1\% ein hundertstel davon.
+Mit dem Wert 100\% wird die vollständige Netzwerktopologie simuliert, mit 1\% ein hundertstel davon. \cite{neverenough-sec2021}
 
+Es werden etwa 792k gleichzeitige Nutzer simuliert realistisch auf die jeweiligen Länder aufgeteilt.
+Dann wird mittels TGEN realistischen Traffic erzeugt.
+
+\subsubsection{TGEN}
+//Todo: Was ist TGEN und was macht diese Library.
+//Todo: Die Markov Modelle und alles beschreiben aus dem neverenough paper
+
+
+
+\subsubsection{Simulationssetup und Entscheidungen}
+
+Die eavesdrop attacke wird auf dem client ausgeführt.
+Es werden Pcap files extrahiert und diese genutzt.
+
+Alternativ könnte man die Tor Netzwerk binaries verwenden und direkt informationen daraus ziehen wie bei jansen beschrieben.
+Dagegen entschieden da es Aufwand ist extra die Tor Binaries anzupassen.
 
 
 
@@ -280,8 +311,12 @@ This is what allows Shadow to run unmodified binaries — like real Tor, TGen, o
     - Je mehr websiten man überwachen möchte desto schlechter
     - das paper zitieren wo real world sich ganz anders verhalten hat als Simulationen
     - Es kann trotzdem von wert sein weil man genau sieht unter Laborbedingungne wie sich cirucit padding auswirkt.
+    - Es gibt keinen NICHT Tor Traffic in dieser Simulation
 
 \end{comment}
+
+//TODO: https://arxiv.org/html/2510.11804v2
+-> Erklärt Webiste Fingerprinting attacken ziemlich gut
 
 
 TGEN Traffic Simulation und Erstellung muss ich auch noch beschreiben.
@@ -289,6 +324,7 @@ TGEN Traffic Simulation und Erstellung muss ich auch noch beschreiben.
 Shadow ist multithreaded.
 
 
+//TODO: Snowflake als Defense Mechanismus sollte erwähnt und in Zukunft erforscht werden.
 
 
 Diesen Abschnitt sauber schreiben mit sauberen Quellen Zitaten und allem.
@@ -297,6 +333,12 @@ Dann diese Woche ein paar erste Simulationen laufen lassen.
 
 \chapter{Methoden}
 //TODO: Kapitel mit der Wipro vergleichen. Ich benötige Literatur & Quellenrechereche. Experiment durchführen. Und Zeit und Projektmanagement (Jokes on me)
+
+//TODO: Can you Fingerprint Bitcoin Transactions ? 
+    -> Just as an interesting side project 
+//TODO: Soll der WF Client auch Markov traffic generieren oder nicht
+
+//TODO: This is why virtually all WF research — including Jansen & Wails in Shadow — uses a dedicated client that only does the target fetches. It's a simplifying assumption that the entire field makes. The research community knows it's optimistic for the attacker, and there are papers specifically studying what happens when you relax it (multi-tab WF, like the Deng et al. IEEE S&P 2023 paper on "Robust Multi-tab Website Fingerprinting Attacks in the Wild").
 
 
 

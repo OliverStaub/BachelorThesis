@@ -38,4 +38,5 @@
 ## Apr 6 6h
 - Erste Beschreibung Tornettools in der Arbeit
 
-
+## Apr 8 6h
+- Struktur Versuchsaufbau verstehen wo wird traffic generiert wo werden pcaps aufgezeichnet, papers dazu lesen.

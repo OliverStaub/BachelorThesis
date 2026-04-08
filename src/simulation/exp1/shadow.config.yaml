@@ -11,6 +11,36 @@ network:
       path: /home/projectadmin/tornettools/exp1/conf/atlas_v201801.shadow_v2.gml.xz
       compression: xz
 hosts:
+  wfserver1:
+    network_node_id: 1340
+    bandwidth_up: 100000000 kilobit
+    bandwidth_down: 100000000 kilobit
+    processes:
+    - path: /usr/bin/python3
+      args: -m http.server 80 --directory /home/projectadmin/wf-pages
+      start_time: 300
+      expected_final_state: running
+  wfclient1:
+    network_node_id: 1937
+    bandwidth_up: 1000000 kilobit
+    bandwidth_down: 1000000 kilobit
+    pcap_enabled: true
+    pcap_capture_size: 65535
+    processes:
+    - path: ~/.local/bin/tor
+      args: --defaults-torrc torrc-defaults -f torrc
+      environment:
+        OPENBLAS_NUM_THREADS: '1'
+      start_time: 240
+      expected_final_state: running
+    - path: ~/.local/bin/oniontrace
+      args: Mode=log TorControlPort=9051 LogLevel=info Events=BW,CIRC
+      start_time: 241
+      expected_final_state: running
+    - path: /usr/bin/python3
+      args: /home/projectadmin/wf-fetch.py --pages-file /home/projectadmin/wf-pages.txt --socks-port 9050 --visits 10 --delay 5
+      start_time: 600
+      expected_final_state: running
   4uthority1:
     network_node_id: 1410
     ip_addr: 100.0.0.1
