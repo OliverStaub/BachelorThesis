@@ -197,6 +197,44 @@ Falls eine Anwendung mehrere Streams gleichzeitig versucht Tor diese alle über 
 So kann unter anderem die Chance minimiert werden über einen bösartigen Knoten geleitet zu werden.
 Im Beispiel des Tor Browsers werden jeweils alle Streams einer Top-Level Domain über einen Circuit geleitet. \cite[S. 2]{jansen2023data}
 
+Der Tor Datenverkehr wird dann in 514 Byte grosse Pakete verpackt, welche auch Tor Zellen genannt werden.
+Dadurch dass die Pakete immer genau gleich gross sind soll die Überwachung vom Internetverkehr weiter erschwert werden.
+Die Anzahl der Zellen und deren Richtung kann von einem Angreifer jedoch immernoch ausgelesen werden.
+In einer Website Fingerprinting Attacke wird genau dies ausgenützt. \cite[S. 2]{jansen2023data}
+
+
+\chapter{Website Fingerprinting}
+
+In einem \gls{wf} Angriff kann der Angreifer die Metadaten des Internetverkehrs vom Opfer auslesen.
+Dabei wird der Datenverkehr zwischen dem Client und dem Eingangsknoten überwacht.
+Der Angriff kann dabei sowohl vom Betreiber vom Eingangsknosten\cite[S. 2]{jansen2023data} oder auch von einem passiven Beobachter durchgeführt werden.\cite[S. 3]{wang2016realistically}
+
+Der Angreifer hat eine vordefinierte Liste an Websiten die er kontrollieren möchte.
+Er klassifiziert nun den überwachten Datenverkehr ob eine der definierten Websiten aufgerufen wird oder nicht.
+Der \gls{wf} Angriff gilt als Erfolgreich wenn ein Aufruf korrekt erkannt wurde, aber auch wenn ein Nicht-Aufruf korrekt erkannt worden ist.
+
+Der Angreifer eine Menge an überwachten Webseiten (\textit{monitored pages}), deren Zugriffe er erkennen möchte.
+Alle übrigen Webseiten gelten als nicht-überwacht (\textit{non-monitored}).
+Der Klassifikator entscheidet für jede beobachtete Zellsequenz, ob sie einer überwachten Seite zuzuordnen ist (positiv) oder nicht (negativ).
+
+Dabei ergeben sich vier mögliche Ausgänge:
+\begin{itemize}
+    \item \textbf{True Positive (TP):} Eine überwachte Seite wird korrekt als solche erkannt.
+    \item \textbf{True Negative (TN):} Eine nicht-überwachte Seite wird korrekt als
+          nicht-überwacht eingestuft.
+    \item \textbf{False Positive (FP):} Eine nicht-überwachte Seite wird fälschlicherweise
+          als überwacht klassifiziert.
+    \item \textbf{False Negative (FN):} Eine überwachte Seite wird nicht erkannt.
+\end{itemize} \cite[S. 3]{jansen2023data}.
+
+Die \textit{True Positive Rate} (TPR) gibt den Anteil korrekt erkannter Zugriffe auf überwachte Seiten an, während die \textit{False Positive Rate} (FPR) den Anteil fälschlicherweise als überwacht eingestufter Zugriffe misst:
+\begin{equation}
+    \text{TPR} = \frac{\text{TP}}{\text{TP} + \text{FN}}, \qquad
+    \text{FPR} = \frac{\text{FP}}{\text{FP} + \text{TN}}
+\end{equation} \cite[S. 3]{jansen2023data}
+
+Eine niedrige FPR ist besonders entscheidend, da die \textit{Base Rate} --- also die Wahrscheinlichkeit, dass ein Nutzer tatsächlich eine überwachte Seite besucht --- in der Praxis sehr gering ist.
+Bei hoher FPR würden die meisten positiven Klassifikationen Fehlalarme sein, selbst wenn die TPR hoch ist (\textit{Base Rate Fallacy}) \cite[S. 3]{wang2016realistically}.
 
 
 
