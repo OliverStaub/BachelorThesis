@@ -178,9 +178,22 @@ Die Daten werden mittels Onion Routing verschlüsselt, so dass kein Teilnehmer i
 Tor verspricht Privatsphäre beim Browsen und soll vor Verfolgung, Zensur und Überwachung schützen.
 Das Tor Projekt stellt einen eigenen Tor Browser zur Verfügung welcher zusätzlich die genutzte Hardware verschleiert um die anonymität weiter zu erhöhen. \cite{torprojectTorProjektPrivatsphre}
 
-
 \gls{tor} ist die am meistgenutzte Anonymisierungstechnologie im Internet.
 Schätzungen gehen von bis zu 8 Millionen täglichen Nutzer aus. \cite[p. 1]{mani2018understanding}
+
+Tor nutzt Tor Zellen. Jede Zelle ist 514 Bytes gross. 
+Dies Zelle wird dann auf TLS und TCP Zellen aufgeteilt.
+TLS ist die Verschlüsselung...
+Wie funktioniert diese Verschlüsselung mit welchen Eigenschaften? Damit Fingerprinting weiterhin möglich ist sind ja gewisse Eigenschaften erforderlich
+Die Paketgrösse vom Inhalt bleibt gleich. Hier sollte ich eine Grafik einfügen und diesen Vorgang genau erklären
+
+\section{Website Fingerprinting}
+\gls{wf} Angriffe versuchen die \gls{tor} Anonymität zu brechen.
+Der Angreifer zeichnet dabei den Internetverkehr des Tor Nutzers auf.
+Mit \gls{ml} werden Muster in dem Datenverkehr gesucht und erkannt.
+Dabei wird die Hauptsächlich die Anzahl und Richtung der Pakete analyisiert, teilweise auch die Timestamps.
+
+
 
 //TODO: Es gibt Bestrebungen Tor Traffic nicht als Tor traffic sichtbar zu machen wie obfs4 und snowflake. 
 //TODO: Und dann gibt es Bestrebungen den Traffic besser zu anonymisieren und gegen WF abzusichern. In diesem Paper geht es hauptsächlich um das.
@@ -228,6 +241,22 @@ Shadow macht eine hybride Implementation zwischen Simulation und Emulation.
 Er fängt gewisse Syscalls wie Netzwerk oder Zeitkritische ab.
 Damit kann er die Netzwerkschicht simulieren und die Simulation von der Echtzeit entkoppeln.
 Gleichzeitig werden die restlichen Syscalls nativ und unverändert ausgeführt, bspw. Dateizugriffeﬁn.
+
+In einem Paper von Jansen und Wails wurden WF Angriffei im Shadow Simulator simuliert.
+Ihr Classifier welcher vollständig in Shadow trainiert worden ist, hat in der Live Anwendung über 80\% der Daten richtig klassifiziert. \cite{jansen2023data}
+Classifier im Live Tor Netzwerk zu trainieren ist deutlich unvorhersehrbarer da man die Bedingungen nicht genau kennt.
+Läuft gerade eine Dos Attacke, oder ist ein Relay überlastet kann das die Datenverkehrsmuster verändern. 
+Dies erschwert die Reproduzierbarkeit und die Kausalität der Resultate.
+In einer reproduzierbaren Shadow Umgebung existieren diese Unsicherheiten nicht. \cite[S. 1]{jansen2023data}
+
+
+
+
+Shadow can classify traffic collected
+on the live Tor network with greater than 86% accuracy, and that a
+classifier trained on the live Tor network can classify traffic collected
+in Shadow with at least 88% accuracy. Overall, we find that Shadow
+is a viable tool for evaluating WF attacks
 \cite{jansen2011shadow}
 
 \subsection{Tornettools}
@@ -244,6 +273,9 @@ So kann der Arbeitsablauf der Simulation verbessert und beschleunigt werden.
 
 Als Grundlage der Simulation werden öffentlich verfügbare Daten abgerufen.
 //TODO: Ausarbeiten von wo genau die Tor Netzwerkdaten kommen und wie diese beschafft werden. (evt. auch im Sourcecode überprüfen.)
+
+Eine gute Datengrundlage ist wichtig für die Simulation.
+In früheren Versuchen wurden teilweise Live Daten aus dem Tor Netzwerk ausgewertet was in falschen und ungenauen Aussagen enden kann.
 
 \subsubsection{Staging}
 
