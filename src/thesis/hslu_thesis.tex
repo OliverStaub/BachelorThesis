@@ -173,6 +173,38 @@ Content may also refer to special expressions such as that has to be explained i
 //TODO: Beschreiben dass in unserer Simulation / Attacke nicht der Tor Browser genutzt wird sondern ein simpler web call.
 
 \chapter{Stand der Technik}
+
+
+\chapter{Tor}
+//TODO: Tor Client auch als CLI Tool verfügbar
+
+Das Tor Projekt stellt den Tor Browser zur Verfügung.
+Dieser ist ein Fork von Firefox und wurde für die Nutzung mit Tor optimiert.
+Der Tor Browser greift auf den eigentlichen Tor Client zu und leitet den gesamten Internetverkehr des Browsers über einen SOCKS5 Proxy in das Tor Netzwerk weiter.
+Der Tor Client leitet den Datenverkehr über langlebige kryptographische Tunnels, Circuits genannt, weiter.\cite[S. 2]{jansen2023data}
+
+Jeder Circuit enthält 3 Tor Knoten. Den Eingangsknoten, Mittelknoten und den Ausgangsknoten.
+Der Eingangsknoten kennt den Client und den Mittelknoten nicht aber den Ausgangsnoten und das Ziel.
+Der Mittelknoten kennt den Eingangs und Ausgangsknoten nicht aber den Client oder das Ziel.
+Und der Ausgangsknoten letztendlich kennt lediglich den Mittelknoten und das Ziel, nicht aber den Client.
+Somit wird die Anonymisierung des Internetverkehrs erzeugt.
+
+Ein Tor Circuit lebt für etwa 10 Minuten und ist relativ Teuer in der Erstellung (Diffie Hellmann Key Exchange.)
+
+Ein Tor Stream ist eine TCP Verbindung welche über einen Tor Circuit geleited wird.
+
+Falls eine Anwendung mehrere Streams gleichzeitig versucht Tor diese alle über einen Circuit zu leiten.
+So kann unter anderem die Chance minimiert werden über einen bösartigen Knoten geleitet zu werden.
+Im Beispiel des Tor Browsers werden jeweils alle Streams einer Top-Level Domain über einen Circuit geleitet. \cite[S. 2]{jansen2023data}
+
+
+
+
+///Erstens verhindert Tor, dass Webseiten und andere Dienste deinen Standort erfahren, den sie nutzen können, um Datenbanken über deine Gewohnheiten und Interessen aufzubauen. Mit Tor verraten dich deine Internetverbindungen nicht standardmäßig - jetzt kannst du für jede Verbindung wählen, wie viele Informationen du preisgeben willst.
+///Zweitens verhindert Tor, dass Leute, die deinen Datenverkehr lokal beobachten (wie dein Internetdienstanbieter oder jemand, der Zugang zu deinem WLAN oder Router hat), herausfinden, welche Informationen du abrufst und woher du sie abrufst. Es hindert sie auch daran, zu entscheiden, was du lernen und veröffentlichen darfst - wenn du zu jedem Teil des Tor-Netzwerks gelangen kannst, kannst du jede Seite im Internet erreichen.
+///Drittens leitet Tor deine Verbindung durch mehr als ein Tor-Relay, so dass kein einzelnes Relay erfahren kann, was du vorhast. Da diese Relays von verschiedenen Personen oder Organisationen betrieben werden, bietet die Verteilung des Vertrauens mehr Sicherheit als der alte Ein-Sprung-Proxy-Ansatz. - direktes zitat vom Tor Project Website.
+
+
 \gls{tor} Ist eine Technologie um Anonymität im Internet zu erlangen. 
 Die Daten werden mittels Onion Routing verschlüsselt, so dass kein Teilnehmer im Netzwerk die Herkunft und das Ziel des Datenverkehrs kennen kann. \cite{jansen2011shadow}
 Tor verspricht Privatsphäre beim Browsen und soll vor Verfolgung, Zensur und Überwachung schützen.
@@ -192,8 +224,6 @@ Die Paketgrösse vom Inhalt bleibt gleich. Hier sollte ich eine Grafik einfügen
 Der Angreifer zeichnet dabei den Internetverkehr des Tor Nutzers auf.
 Mit \gls{ml} werden Muster in dem Datenverkehr gesucht und erkannt.
 Dabei wird die Hauptsächlich die Anzahl und Richtung der Pakete analyisiert, teilweise auch die Timestamps.
-
-
 
 //TODO: Es gibt Bestrebungen Tor Traffic nicht als Tor traffic sichtbar zu machen wie obfs4 und snowflake. 
 //TODO: Und dann gibt es Bestrebungen den Traffic besser zu anonymisieren und gegen WF abzusichern. In diesem Paper geht es hauptsächlich um das.
@@ -243,20 +273,20 @@ Damit kann er die Netzwerkschicht simulieren und die Simulation von der Echtzeit
 Gleichzeitig werden die restlichen Syscalls nativ und unverändert ausgeführt, bspw. Dateizugriffeﬁn.
 
 In einem Paper von Jansen und Wails wurden WF Angriffei im Shadow Simulator simuliert.
-Ihr Classifier welcher vollständig in Shadow trainiert worden ist, hat in der Live Anwendung über 80\% der Daten richtig klassifiziert. \cite{jansen2023data}
+Ihr Classifier welcher vollständig in Shadow trainiert worden ist, hat in der Live Anwendung über 80\% der Daten richtig klassifiziert. \cite[S. 2]{jansen2023data}
 Classifier im Live Tor Netzwerk zu trainieren ist deutlich unvorhersehrbarer da man die Bedingungen nicht genau kennt.
 Läuft gerade eine Dos Attacke, oder ist ein Relay überlastet kann das die Datenverkehrsmuster verändern. 
 Dies erschwert die Reproduzierbarkeit und die Kausalität der Resultate.
-In einer reproduzierbaren Shadow Umgebung existieren diese Unsicherheiten nicht. \cite[S. 1]{jansen2023data}
+In einer reproduzierbaren Shadow Umgebung existieren diese Unsicherheiten nicht. \cite[S. 1-2]{jansen2023data}
+
+In dem Paper von Jansen wird weiter aufgezeigt dass die Erkennungsraten von WF Classifier sehr stark mit der Tor Netzwerk Auslastung schwanken können.
+Classifier welche in einem Zustand der tiefen Netzwerkauslastung trainiert und in einem Zustand der hohen Netzwerkauslastung angewendet werden deutlich schlechtere Ergebnisse liefern.
+WF Classifier sind also sehr anfällig für Veränderungen im Tor Netzwerkaufbau.
+Dieses Problem kann entschärft werden indem man die Classfier im Shadow Netzwerksimulator mit unterschiedlichen Netzwerkauslastungen trainiert.\cite[S. 2]{jansen2023data}
+
+Der Shadow Nezwerksimulator kann also nicht nur für Simulationen verwendet werden sondern auch zum Trainieren von "echten" WF Classifiern.
 
 
-
-
-Shadow can classify traffic collected
-on the live Tor network with greater than 86% accuracy, and that a
-classifier trained on the live Tor network can classify traffic collected
-in Shadow with at least 88% accuracy. Overall, we find that Shadow
-is a viable tool for evaluating WF attacks
 \cite{jansen2011shadow}
 
 \subsection{Tornettools}
