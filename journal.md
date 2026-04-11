@@ -40,3 +40,6 @@
 
 ## Apr 8 6h
 - Struktur Versuchsaufbau verstehen wo wird traffic generiert wo werden pcaps aufgezeichnet, papers dazu lesen.
+
+## Apr 9 9h
+- Einlesen Website Fingerprinting Attacke.
