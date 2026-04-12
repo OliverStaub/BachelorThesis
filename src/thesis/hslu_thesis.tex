@@ -240,7 +240,7 @@ Die \textit{True Positive Rate} (TPR) gibt den Anteil korrekt erkannter Zugriffe
     \text{TPR} = \frac{\text{TP}}{\text{TP} + \text{FN}}, \qquad
     \text{FPR} = \frac{\text{FP}}{\text{FP} + \text{TN}}
 \end{equation} \cite[S. 3]{jansen2023data}
-
+22
 Eine niedrige FPR ist besonders entscheidend, da die \textit{Base Rate}, also die Wahrscheinlichkeit, dass ein Nutzer tatsächlich eine überwachte Seite besucht, in der Praxis sehr gering ist.
 Bei hoher FPR würden die meisten positiven Klassifikationen Fehlalarme sein, selbst wenn die TPR hoch ist (\textit{Base Rate Fallacy}) \cite[S. 3]{wang2016realistically}.
 
@@ -256,6 +256,32 @@ Diese Bibliothek stellt einen Webserver für ZIM Dateien zur Verfügung.
 \footnote{\url{https://github.com/kimbauters/ZIMply}}
 
 
+Jansen und Wails haben gezeigt, dass \texttt{wget2} als Surrogat für den Tor Browser verwendet werden kann.
+Sowohl im Live-Tor-Netzwerk als auch in einer Shadow-Simulation wiesen die erzeugten Tor-Zellsequenzen hinreichende Ähnlichkeit für Website-Fingerprinting-Analysen auf. \cite[S.~6]{jansen2023data}
+
+Darüber hinaus wurde die Simulationstreue von Shadow evaluiert.
+Die Netzwerk-Performance der simulierten Tor-Umgebung stimmte in den Median-Werten weitgehend mit dem Live-Netzwerk überein, wobei Abweichungen vor allem in den Long-Tail-Bereichen auftraten. 
+In einem Cross-Dataset-Experiment erreichte ein ausschliesslich auf Shadow-Daten trainierter Klassifikator eine Accuracy von über 85\,\% auf Live-Tor-Traces, was die Eignung von Shadow für kontrollierte Website-Fingerprinting-Evaluationen bestätigt. \cite[S. 6-8]{jansen2023data}
+
+In den Abschnitten zur Sensitivität und Robustheit untersuchten Jansen und Wails, wie empfindlich WF-Klassifikatoren auf veränderte Netzwerkbedingungen reagieren. 
+Die Zellsequenzen wurden dabei an den Entry Relays der simulierten Tor-Netzwerke aufgezeichnet, was dem realistischen Bedrohungsmodell eines lokalen Angreifers entspricht. \cite[S.~8--10]{jansen2023data}
+
+Es zeigte sich, dass die Closed-World-Accuracy weitgehend stabil blieb, während die False-Positive-Rate im Open-World-Szenario um bis zu 700\,\% anstieg, wenn Trainings- und Testdaten aus unterschiedlich belasteten Netzwerken stammten. 
+Insbesondere zeitbasierte Klassifikatoren wie Tik-Tok und $k$-Fingerprinting erwiesen sich als besonders anfällig gegenüber variierenden Netzwerkbedingungen. 
+Durch ein robustes Trainingsverfahren, bei dem Trainingsdaten aus mehreren Netzwerkkonfigurationen gemischt wurden, konnte die FPR um bis zu 83\,\% gesenkt werden. \cite[S.~8--10]{jansen2023data}
+
+Als Klassifikator wird Deep Fingerprinting (DF) nach Sirinam et al. \cite{sirinam2018deep} verwendet.
+DF basiert auf einem Convolutional Neural Network, das ausschliesslich Zellrichtungen als Eingabe verwendet und somit zeitunabhängig arbeitet.
+Dies ermöglicht eine isolierte Betrachtung des Einflusses von Circuit Padding auf die richtungsbasierten Verkehrsmuster, ohne dass simulationsbedingte Timing-Variationen die Ergebnisse verfälschen.\cite{jansen2011shadow}
+//TODO: Erwähnen und beschreiben wie DF genutzt und validiert wurde in dem paper von Jansen und wails 
+
+
+//TODO: Wie viel Traffic und wie viele Relays werden in meiner Simulation generiert?
+//TODO: Sie untersuchen auch outliers und so in ihren Resultaten und eliminieren diese. Müsste ich das auch machen ?
+
+
+
+
 
 Es gibt öffentlich verfügbare Dateien im ZIM Format welche die vollständige Wikipedia Sammlung beeinhalten.
 
@@ -267,7 +293,8 @@ Deshalb greifen wir auf wget2 zurück
 
 \section{Website Fingerprinting Versuchsaufbau Experiment}
 
-
+Die vorliegende Arbeit beschränkt sich auf ein Closed-World-Szenario mit einer einzelnen Netzwerkkonfiguration.
+Diese Einschränkung ist vertretbar, da Jansen und Wails gezeigt haben, dass die Closed-World-Klassifikationsgenauigkeit bei variierender Netzbelastung nur um 1--3\,\% schwankt \cite[S. 11]{jansen2023data}.
 
 ///Erstens verhindert Tor, dass Webseiten und andere Dienste deinen Standort erfahren, den sie nutzen können, um Datenbanken über deine Gewohnheiten und Interessen aufzubauen. Mit Tor verraten dich deine Internetverbindungen nicht standardmäßig - jetzt kannst du für jede Verbindung wählen, wie viele Informationen du preisgeben willst.
 ///Zweitens verhindert Tor, dass Leute, die deinen Datenverkehr lokal beobachten (wie dein Internetdienstanbieter oder jemand, der Zugang zu deinem WLAN oder Router hat), herausfinden, welche Informationen du abrufst und woher du sie abrufst. Es hindert sie auch daran, zu entscheiden, was du lernen und veröffentlichen darfst - wenn du zu jedem Teil des Tor-Netzwerks gelangen kannst, kannst du jede Seite im Internet erreichen.
@@ -356,7 +383,6 @@ Dieses Problem kann entschärft werden indem man die Classfier im Shadow Netzwer
 Der Shadow Nezwerksimulator kann also nicht nur für Simulationen verwendet werden sondern auch zum Trainieren von "echten" WF Classifiern.
 
 
-\cite{jansen2011shadow}
 
 \subsection{Tornettools}
 Shadow wird mithilfe der Tornettools konfiguriert.
@@ -455,6 +481,8 @@ This is what allows Shadow to run unmodified binaries — like real Tor, TGen, o
     - Es gibt sehr viele Schwächen aber das Ziel ist und war Circuit padding zu analysieren nicht das Auswirkungen von Multitab etc.
     - Beschreiben das wir ein Open World Szenario darstellen wo der Angreifer auch nicht überwachte Seiten aufrufen kann. Das macht es deutlich schwieriger
     - Closed World vs Open World Scenarios
+    - //TODO: Also die Zellsequenzen werden an den Entry Relays (Guard Nodes) aufgezeichnet – das ist konsistent mit dem typischen WF-Bedrohungsmodell, bei dem der Angreifer den Entry Relay kontrolliert oder den Traffic zwischen Client und Entry beobachtet.
+
 
 \end{comment}
 
