@@ -145,7 +145,14 @@
 %----------------------------------------------------------------------------------------
 \mainmatter
 
-% examplary content: write or compose the main document here
+\include{chapters/01_problem_fragestellung_vision}
+\include{chapters/02_stand_der_technik}
+\include{chapters/03_ideen_und_konzepte}
+\include{chapters/04_methoden}
+\include{chapters/05_realisierung}
+\include{chapters/06_validation_und_evaluation}
+\include{chapters/07_ausblick}
+
 \chapter{Main Content}
 This is a template of \gls{hslu} and then. This section usually comprises different chapters and subchapters.
 
@@ -163,133 +170,21 @@ This is a template of \gls{hslu} and then. This section usually comprises differ
 //TODO: Jansen und Wail paper lesen. Setup einer WF Attacke besser verstehen.
     -> Dann eine Grafik und so und einen korrekten Aufbau der Simulation aufbuaen und erklären können.
 
-\subsection{First Subsection}
-Content may also refer to special expressions such as that has to be explained in a separate section. Here we also have \gls{fuzzy logic} enough space and \gls{cww} to discuss the concept of \gls{nn} and so on.
-
-\begin{comment}
-    This is a sample comment.
-\end{comment}
-
 
 //TODO: Beschreiben dass in unserer Simulation / Attacke nicht der Tor Browser genutzt wird sondern ein simpler web call.
 
-\chapter{Stand der Technik}
-
-
-\section{Tor}
-//TODO: Tor Client auch als CLI Tool verfügbar
-
-Das Tor Projekt stellt den Tor Browser zur Verfügung.
-Dieser ist ein Fork von Firefox und wurde für die Nutzung mit Tor optimiert.
-Der Tor Browser greift auf den eigentlichen Tor Client zu und leitet den gesamten Internetverkehr des Browsers über einen SOCKS5 Proxy in das Tor Netzwerk weiter.
-Der Tor Client leitet den Datenverkehr über langlebige kryptographische Tunnels, Circuits genannt, weiter.\cite[S. 2]{jansen2023data}
-
-Jeder Circuit enthält 3 Tor Knoten. Den Eingangsknoten, Mittelknoten und den Ausgangsknoten.
-Der Eingangsknoten kennt den Client und den Mittelknoten nicht aber den Ausgangsnoten und das Ziel.
-Der Mittelknoten kennt den Eingangs und Ausgangsknoten nicht aber den Client oder das Ziel.
-Und der Ausgangsknoten letztendlich kennt lediglich den Mittelknoten und das Ziel, nicht aber den Client.
-Somit wird die Anonymisierung des Internetverkehrs erzeugt.
-
-Ein Tor Circuit lebt für etwa 10 Minuten und ist relativ Teuer in der Erstellung (Diffie Hellmann Key Exchange.)
-
-Ein Tor Stream ist eine TCP Verbindung welche über einen Tor Circuit geleited wird.
-
-Falls eine Anwendung mehrere Streams gleichzeitig versucht Tor diese alle über einen Circuit zu leiten.
-So kann unter anderem die Chance minimiert werden über einen bösartigen Knoten geleitet zu werden.
-Im Beispiel des Tor Browsers werden jeweils alle Streams einer Top-Level Domain über einen Circuit geleitet. \cite[S. 2]{jansen2023data}
-
-Der Tor Datenverkehr wird dann in 514 Byte grosse Pakete verpackt, welche auch Tor Zellen genannt werden.
-Dadurch dass die Pakete immer genau gleich gross sind soll die Überwachung vom Internetverkehr weiter erschwert werden.
-Die Anzahl der Zellen und deren Richtung kann von einem Angreifer jedoch immernoch ausgelesen werden.
-In einer Website Fingerprinting Attacke wird genau dies ausgenützt. \cite[S. 2]{jansen2023data}
-
-\section{Onion Routing}
-//TODO: Onion Routing beschreiben
-
-\section{Website Fingerprinting}
-
-In einem \gls{wf} Angriff kann der Angreifer die Metadaten des Internetverkehrs vom Opfer auslesen.
-Dabei wird der Datenverkehr zwischen dem Client und dem Eingangsknoten überwacht.
-Der Angriff kann dabei sowohl vom Betreiber vom Eingangsknosten\cite[S. 2]{jansen2023data} oder auch von einem passiven Beobachter durchgeführt werden.\cite[S. 3]{wang2016realistically}
-
-Der Angreifer hat eine vordefinierte Liste an Websiten die er kontrollieren möchte.
-Er klassifiziert nun den überwachten Datenverkehr ob eine der definierten Websiten aufgerufen wird oder nicht.
-Der \gls{wf} Angriff gilt als Erfolgreich wenn ein Aufruf korrekt erkannt wurde, aber auch wenn ein Nicht-Aufruf korrekt erkannt worden ist.
-
-Der Angreifer eine Menge an überwachten Webseiten (\textit{monitored pages}), deren Zugriffe er erkennen möchte.
-Alle übrigen Webseiten gelten als nicht-überwacht (\textit{non-monitored}).
-Der Klassifikator entscheidet für jede beobachtete Zellsequenz, ob sie einer überwachten Seite zuzuordnen ist (positiv) oder nicht (negativ).
-
-Der \gls{ml} Klassfikator wird dabei für zwei Aufgaben trainiert.
-Bei der binären Klassifizierung soll der Klassifikator mitteilen ob der Aufruf zu einer überwachten Seite führt oder nicht.
-In einem zweiten Schritt wird eine Multiclass Klassifizierung vorgenommen.
-Es soll erkannt werden um welche Seite es sich handelt falls der erste Schritt in einem positiven Ergebnis mündete. \cite[S. 3]{jansen2023data}
-
-Dabei ergeben sich vier mögliche Ausgänge:
-\begin{itemize}
-    \item \textbf{True Positive (TP):} Eine überwachte Seite wird korrekt als solche erkannt.
-    \item \textbf{True Negative (TN):} Eine nicht-überwachte Seite wird korrekt als
-          nicht-überwacht eingestuft.
-    \item \textbf{False Positive (FP):} Eine nicht-überwachte Seite wird fälschlicherweise
-          als überwacht klassifiziert.
-    \item \textbf{False Negative (FN):} Eine überwachte Seite wird nicht erkannt.
-\end{itemize} \cite[S. 3]{jansen2023data}.
-
-Die \textit{True Positive Rate} (TPR) gibt den Anteil korrekt erkannter Zugriffe auf überwachte Seiten an, während die \textit{False Positive Rate} (FPR) den Anteil fälschlicherweise als überwacht eingestufter Zugriffe misst:
-\begin{equation}
-    \text{TPR} = \frac{\text{TP}}{\text{TP} + \text{FN}}, \qquad
-    \text{FPR} = \frac{\text{FP}}{\text{FP} + \text{TN}}
-\end{equation} \cite[S. 3]{jansen2023data}
-22
-Eine niedrige FPR ist besonders entscheidend, da die \textit{Base Rate}, also die Wahrscheinlichkeit, dass ein Nutzer tatsächlich eine überwachte Seite besucht, in der Praxis sehr gering ist.
-Bei hoher FPR würden die meisten positiven Klassifikationen Fehlalarme sein, selbst wenn die TPR hoch ist (\textit{Base Rate Fallacy}) \cite[S. 3]{wang2016realistically}.
 
 //TODO: Website Fingerprinting angriffe genauer beschreiben mit Risiken etc.
 //TODO: Wie erfolgreich sind Website Fingerprinting Angriffe in der echten Welt ?
 
-\section{Website Fingerprinting Versuchsaufbau Stand der Technik}
 
-Als Voraussetzung wird ein Webserver benötigt welche eine Menge an definierten Websiten bereitstellt.
-In dem Paper von Jansen wurde aufgezeigt dass dies mit der zimply Python Library erreicht werden kann.
-Diese Bibliothek stellt einen Webserver für ZIM Dateien zur Verfügung.
-\cite[S. 4]{jansen2023data} 
-\footnote{\url{https://github.com/kimbauters/ZIMply}}
-
-
-Jansen und Wails haben gezeigt, dass \texttt{wget2} als Surrogat für den Tor Browser verwendet werden kann.
-Sowohl im Live-Tor-Netzwerk als auch in einer Shadow-Simulation wiesen die erzeugten Tor-Zellsequenzen hinreichende Ähnlichkeit für Website-Fingerprinting-Analysen auf. \cite[S.~6]{jansen2023data}
-
-Darüber hinaus wurde die Simulationstreue von Shadow evaluiert.
-Die Netzwerk-Performance der simulierten Tor-Umgebung stimmte in den Median-Werten weitgehend mit dem Live-Netzwerk überein, wobei Abweichungen vor allem in den Long-Tail-Bereichen auftraten. 
-In einem Cross-Dataset-Experiment erreichte ein ausschliesslich auf Shadow-Daten trainierter Klassifikator eine Accuracy von über 85\,\% auf Live-Tor-Traces, was die Eignung von Shadow für kontrollierte Website-Fingerprinting-Evaluationen bestätigt. \cite[S. 6-8]{jansen2023data}
-
-In den Abschnitten zur Sensitivität und Robustheit untersuchten Jansen und Wails, wie empfindlich WF-Klassifikatoren auf veränderte Netzwerkbedingungen reagieren. 
-Die Zellsequenzen wurden dabei an den Entry Relays der simulierten Tor-Netzwerke aufgezeichnet, was dem realistischen Bedrohungsmodell eines lokalen Angreifers entspricht. \cite[S.~8--10]{jansen2023data}
-
-Es zeigte sich, dass die Closed-World-Accuracy weitgehend stabil blieb, während die False-Positive-Rate im Open-World-Szenario um bis zu 700\,\% anstieg, wenn Trainings- und Testdaten aus unterschiedlich belasteten Netzwerken stammten. 
-Insbesondere zeitbasierte Klassifikatoren wie Tik-Tok und $k$-Fingerprinting erwiesen sich als besonders anfällig gegenüber variierenden Netzwerkbedingungen. 
-Durch ein robustes Trainingsverfahren, bei dem Trainingsdaten aus mehreren Netzwerkkonfigurationen gemischt wurden, konnte die FPR um bis zu 83\,\% gesenkt werden. \cite[S.~8--10]{jansen2023data}
-
-Als Klassifikator wird Deep Fingerprinting (DF) nach Sirinam et al. \cite{sirinam2018deep} verwendet.
-DF basiert auf einem Convolutional Neural Network, das ausschliesslich Zellrichtungen als Eingabe verwendet und somit zeitunabhängig arbeitet.
-Dies ermöglicht eine isolierte Betrachtung des Einflusses von Circuit Padding auf die richtungsbasierten Verkehrsmuster, ohne dass simulationsbedingte Timing-Variationen die Ergebnisse verfälschen.\cite{jansen2011shadow}
-//TODO: Erwähnen und beschreiben wie DF genutzt und validiert wurde in dem paper von Jansen und wails 
 
 
 //TODO: Wie viel Traffic und wie viele Relays werden in meiner Simulation generiert?
 //TODO: Sie untersuchen auch outliers und so in ihren Resultaten und eliminieren diese. Müsste ich das auch machen ?
 
 
-
-
-
-Es gibt öffentlich verfügbare Dateien im ZIM Format welche die vollständige Wikipedia Sammlung beeinhalten.
-
-Der Tor Browser selbst kann im Shadow Simulator nicht ausgeführt werden.
-Deshalb greifen wir auf wget2 zurück
-
-\footnote{\url{https://github.com/rockdaboot/wget2}}
-
+//TODO: Beispiel eines TCP Paketes mit einer Tor Zelle aufzeigen. Wie gross ist ein TCP Paket und wie gross ist eine Tor Zelle. Vergleichen.
 
 \section{Website Fingerprinting Versuchsaufbau Experiment}
 
