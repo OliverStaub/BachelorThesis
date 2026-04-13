@@ -9,6 +9,9 @@ Dazu versendet er Tor Cells via TCP.
 Der Tor Browser greift auf den eigentlichen Tor Daemon zu und leitet den gesamten Internetverkehr des Browsers über einen SOCKS5 Proxy in das Tor Netzwerk weiter.
 Der Tor Client leitet den Datenverkehr über langlebige kryptographische Tunnels, Circuits genannt, weiter.\cite[S. 2]{jansen2023data}
 
+groups all first-party streams onto the same circuit. But if you have multiple tabs or are loading different pages, those go on separate circuits. 
+
+
 Erstens verhindert Tor, dass Webseiten und andere Dienste deinen Standort erfahren, den sie nutzen können, um Datenbanken über deine Gewohnheiten und Interessen aufzubauen. Mit Tor verraten dich deine Internetverbindungen nicht standardmäßig - jetzt kannst du für jede Verbindung wählen, wie viele Informationen du preisgeben willst.
 Zweitens verhindert Tor, dass Leute, die deinen Datenverkehr lokal beobachten (wie dein Internetdienstanbieter oder jemand, der Zugang zu deinem WLAN oder Router hat), herausfinden, welche Informationen du abrufst und woher du sie abrufst. Es hindert sie auch daran, zu entscheiden, was du lernen und veröffentlichen darfst - wenn du zu jedem Teil des Tor-Netzwerks gelangen kannst, kannst du jede Seite im Internet erreichen.
 Drittens leitet Tor deine Verbindung durch mehr als ein Tor-Relay, so dass kein einzelnes Relay erfahren kann, was du vorhast. Da diese Relays von verschiedenen Personen oder Organisationen betrieben werden, bietet die Verteilung des Vertrauens mehr Sicherheit als der alte Ein-Sprung-Proxy-Ansatz. - direktes zitat vom Tor Project Website.

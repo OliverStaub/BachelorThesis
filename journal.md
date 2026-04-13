@@ -50,6 +50,8 @@
 ## Apr 12 6h
 - Socks5 wget2 und Simulation Grundlagen einarbeitung
 
-## Apr 13 6h
+## Apr 13 8h
 - Schreiben und Text ordnen
+- Simulation aufbauen, wget2, tieferes Verständnis für den Simulationsaufbaue aufbuaen.
+- Ich werde vermutlich mein Angriffsmodell von einem ISP auf den Tor Entry Node betreiben ändern müssen weil es einfacher ist und es mehr Literatur dazu gibt.s
 

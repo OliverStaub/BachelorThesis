@@ -23,3 +23,16 @@ src/thesis/hslu_thesis.pdf
 explainwf-popets2023/*.*
 explainwf-popets2023/*
 explainwf-popets2023
+
+# ML pipeline artifacts
+src/ml/venv/
+src/ml/datasets/
+src/ml/wflib/datasets/
+src/ml/wflib/checkpoints/
+src/ml/wflib/logs/
+__pycache__/
+*.pyc
+*.npz
+*.pth
+
+Claude.md

@@ -4,3 +4,15 @@
 \todo{Closed World vs Open World}
 \todo{Es wurden nur Wikipedia Seiten simuliuert.}
 \todo{Multitab}
+\todo{Simulation ist schwierig auch die pcaps zu analysieren, es braucht immer eine konvertierung und so weiter. jansen hat einfach cell traces genommen. Wie realistisch ist ein WF Angriff eigentlich wirklich ? Ist schon die Frage.}
+
+\todo{AI Use deklarieren im Code und für Formiulierungen.}
+\todo{Closed World Scenario}
+
+
+You don't need to fix this — it's a known limitation of small-scale simulation. But you should acknowledge it in your thesis. Something like: "At 1% network scale, reduced path diversity may lead to lower intra-page trace variance, potentially overstating classifier accuracy relative to full-scale deployment." The paper itself runs at 25% and still discusses fidelity limitations, so this is expected methodology discussion, not a weakness.}
+
+Mein Threat Model mit dem Tor Entry Node Betreiber validieren und überprüfen ob das überhaupt so Sinn macht.
+Wie sieht das Threat Model in der echten Welt aus ?
+
+The issue isn't that it's impossible — it's that it's harder. When a user opens multiple tabs simultaneously, the traffic from all pages gets mixed together in one stream. A classifier trained on clean single-page traces sees patterns it doesn't recognize because the fingerprints are interleaved and corrupted by each other. The ARES paper shows that traditional classifiers like DF and k-FP drop dramatically in accuracy in multi-tab scenarios — their F1-scores fall from 95%+ down to around 0.5 or lower with 5 tabs.

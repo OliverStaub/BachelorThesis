@@ -38,6 +38,10 @@ Alternativ könnte man die Tor Netzwerk binaries verwenden und direkt informatio
 Dagegen entschieden da es Aufwand ist extra die Tor Binaries anzupassen.
 
 
+
+Wir nutzen keine Tor Cells sondern arbeiten direkt mit Pcap traffic und analysieren die traffic muster gleich dort.
+Das ist realistischer als bei Jansen und Wails mit ihrem isolierten Experiment !
+
 \todo{Simulation mehrmals laufen lassen. This is important for statistical validity — the "Once is Never Enough" methodology from the Jansen et al. 2021 paper}
 \todo{Genauer Aufbau mit den Clients und so bescchreiben. This is why virtually all WF research — including Jansen \& Wails in Shadow — uses a dedicated client that only does the target fetches. It's a simplifying assumption that the entire field makes. The research community knows it's optimistic for the attacker, and there are papers specifically studying what happens when you relax it (multi-tab WF, like the Deng et al. IEEE 2023 paper on "Robust Multi-tab Website Fingerprinting Attacks in the Wild"). For your thesis, I'd recommend sticking with the clean setup — dedicated WF client, one fetch at a time, circuit isolation. There are two reasons. First, it's what the literature does, so your results are directly comparable to prior work. Second, your thesis variable is circuit padding, not traffic multiplexing. You want to isolate the effect of padding on DF accuracy. If you also add client-side background traffic, you've introduced a second variable and can't tell whether accuracy dropped because of padding or because of traffic mixing.}
 \todo{Wie viel Traffic und wie viele Relays werden generiert? Mit was für einem Scale arbeiten wir.}
@@ -46,3 +50,5 @@ Dagegen entschieden da es Aufwand ist extra die Tor Binaries anzupassen.
 
 \todo{Die mutierte wget2 bibliothek von dem jansen & wails paper verwenden}
 \todo{Der Client selbst produziert keinen traffic}
+
+For your thesis at ~1% scale, you'll want to think about whether you can still get enough traces per page. Fewer relays means less path diversity, which could reduce intra-page variance — that's actually something worth discussing in your methodology section.

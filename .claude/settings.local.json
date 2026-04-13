@@ -1,7 +1,32 @@
 {
   "permissions": {
     "allow": [
-      "Bash(chmod:*)"
+      "Bash(chmod:*)",
+      "Bash(wc:*)",
+      "Bash(du -sh /Users/oliverstaub/gitroot/BachelorThesis/explainwf-popets2023/data/*)",
+      "Bash(du:*)",
+      "Bash(grep -E \"\\\\.py$|\\\\.patch$\")",
+      "Bash(xzcat /Users/oliverstaub/gitroot/BachelorThesis/explainwf-popets2023/data/fidelity/tornet-net_0.25-load_2.0/run1/wget2-traces.log.xz)",
+      "Bash(curl -sL https://raw.githubusercontent.com/Xinhao-Deng/Website-Fingerprinting-Library/main/README.md)",
+      "Bash(curl -sL https://raw.githubusercontent.com/Xinhao-Deng/Website-Fingerprinting-Library/master/README.md)",
+      "Bash(curl -sL https://raw.githubusercontent.com/Xinhao-Deng/Website-Fingerprinting-Library/main/exp/closed_world.py)",
+      "Bash(curl:*)",
+      "Bash(python3 -c \"import sys,json; tree=json.load\\(sys.stdin\\); [print\\(item['path']\\) for item in tree.get\\('tree',[]\\)]\")",
+      "Bash(xargs ls:*)",
+      "Bash(python3 -m json.tool)",
+      "Bash(python3 -c ':*)",
+      "Bash(pip3 --version)",
+      "Bash(sort -t: -k2 -n)",
+      "Bash(xz -d -k tornet-net_0.25-load_2.0-a.tar.xz)",
+      "Bash(tar -tf tornet-net_0.25-load_2.0-a.tar)",
+      "Bash(tar -xf tornet-net_0.25-load_2.0-a.tar \"tornet-net_0.25-load_2.0-a/shadow.data.template/hosts/monitor0/newnym.py\" \"tornet-net_0.25-load_2.0-a/shadow.data.template/hosts/zimserver68/zimsrv.py\" --to-stdout)",
+      "Read(//private/tmp/**)",
+      "Bash(xzcat /Users/oliverstaub/gitroot/BachelorThesis/explainwf-popets2023/shadow/sensitivity_robustness/tornet-net_0.25-load_2.0-a.tar.xz)",
+      "Bash(tar -xf - \"tornet-net_0.25-load_2.0-a/shadow.data.template/hosts/monitor0/newnym.py\" \"tornet-net_0.25-load_2.0-a/shadow.data.template/hosts/zimserver68/zimsrv.py\")",
+      "Read(//tmp/tornet-net_0.25-load_2.0-a/shadow.data.template/hosts/monitor0/**)",
+      "Bash(python3:*)",
+      "Bash(ls:*)",
+      "Bash(git rm:*)"
     ]
   }
 }
