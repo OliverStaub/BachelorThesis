@@ -20,3 +20,6 @@ claude.md
 *.xmpi
 src/thesis/hslu_thesis.pdf
 *-eps-converted-to.pdf
+explainwf-popets2023/*.*
+explainwf-popets2023/*
+explainwf-popets2023

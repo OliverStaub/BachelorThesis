@@ -9,12 +9,9 @@ Dazu versendet er Tor Cells via TCP.
 Der Tor Browser greift auf den eigentlichen Tor Daemon zu und leitet den gesamten Internetverkehr des Browsers über einen SOCKS5 Proxy in das Tor Netzwerk weiter.
 Der Tor Client leitet den Datenverkehr über langlebige kryptographische Tunnels, Circuits genannt, weiter.\cite[S. 2]{jansen2023data}
 
-
 Erstens verhindert Tor, dass Webseiten und andere Dienste deinen Standort erfahren, den sie nutzen können, um Datenbanken über deine Gewohnheiten und Interessen aufzubauen. Mit Tor verraten dich deine Internetverbindungen nicht standardmäßig - jetzt kannst du für jede Verbindung wählen, wie viele Informationen du preisgeben willst.
 Zweitens verhindert Tor, dass Leute, die deinen Datenverkehr lokal beobachten (wie dein Internetdienstanbieter oder jemand, der Zugang zu deinem WLAN oder Router hat), herausfinden, welche Informationen du abrufst und woher du sie abrufst. Es hindert sie auch daran, zu entscheiden, was du lernen und veröffentlichen darfst - wenn du zu jedem Teil des Tor-Netzwerks gelangen kannst, kannst du jede Seite im Internet erreichen.
 Drittens leitet Tor deine Verbindung durch mehr als ein Tor-Relay, so dass kein einzelnes Relay erfahren kann, was du vorhast. Da diese Relays von verschiedenen Personen oder Organisationen betrieben werden, bietet die Verteilung des Vertrauens mehr Sicherheit als der alte Ein-Sprung-Proxy-Ansatz. - direktes zitat vom Tor Project Website.
-
-
 
 \gls{tor} Ist eine Technologie um Anonymität im Internet zu erlangen. 
 Die Daten werden mittels Onion Routing verschlüsselt, so dass kein Teilnehmer im Netzwerk die Herkunft und das Ziel des Datenverkehrs kennen kann. \cite{jansen2011shadow}
@@ -44,28 +41,15 @@ Die Anzahl der Zellen und deren Richtung kann von einem Angreifer jedoch immerno
 In einer Website Fingerprinting Attacke wird genau dies ausgenützt. \cite[S. 2]{jansen2023data}
 
 \section{Onion Routing}
-//TODO: Onion Routing beschreiben
-
 
 \section{Angriffe auf Tor }
-//TODO: Es gibt Bestrebungen Tor Traffic nicht als Tor traffic sichtbar zu machen wie obfs4 und snowflake. 
-//TODO: Und dann gibt es Bestrebungen den Traffic besser zu anonymisieren und gegen WF abzusichern. In diesem Paper geht es hauptsächlich um das.
-
-
 
 \section{Website Fingerprinting}
-
-//TODO: https://arxiv.org/html/2510.11804v2
--> Erklärt Webiste Fingerprinting attacken ziemlich gut
 
 \gls{wf} Angriffe versuchen die \gls{tor} Anonymität zu brechen.
 Der Angreifer zeichnet dabei den Internetverkehr des Tor Nutzers auf.
 Mit \gls{ml} werden Muster in dem Datenverkehr gesucht und erkannt.
 Dabei wird die Hauptsächlich die Anzahl und Richtung der Pakete analyisiert, teilweise auch die Timestamps.
-
-
-
-
 
 \section{Website Fingerprinting}
 
@@ -105,9 +89,6 @@ Die \textit{True Positive Rate} (TPR) gibt den Anteil korrekt erkannter Zugriffe
 Eine niedrige FPR ist besonders entscheidend, da die \textit{Base Rate}, also die Wahrscheinlichkeit, dass ein Nutzer tatsächlich eine überwachte Seite besucht, in der Praxis sehr gering ist.
 Bei hoher FPR würden die meisten positiven Klassifikationen Fehlalarme sein, selbst wenn die TPR hoch ist (\textit{Base Rate Fallacy}) \cite[S. 3]{wang2016realistically}.
 
-
-
-
 Darüber hinaus wurde die Simulationstreue von Shadow evaluiert.
 Die Netzwerk-Performance der simulierten Tor-Umgebung stimmte in den Median-Werten weitgehend mit dem Live-Netzwerk überein, wobei Abweichungen vor allem in den Long-Tail-Bereichen auftraten. 
 In einem Cross-Dataset-Experiment erreichte ein ausschliesslich auf Shadow-Daten trainierter Klassifikator eine Accuracy von über 85\,\% auf Live-Tor-Traces, was die Eignung von Shadow für kontrollierte Website-Fingerprinting-Evaluationen bestätigt. \cite[S. 6-8]{jansen2023data}
@@ -122,9 +103,6 @@ Durch ein robustes Trainingsverfahren, bei dem Trainingsdaten aus mehreren Netzw
 Als Klassifikator wird Deep Fingerprinting (DF) nach Sirinam et al. \cite{sirinam2018deep} verwendet.
 DF basiert auf einem Convolutional Neural Network, das ausschliesslich Zellrichtungen als Eingabe verwendet und somit zeitunabhängig arbeitet.
 Dies ermöglicht eine isolierte Betrachtung des Einflusses von Circuit Padding auf die richtungsbasierten Verkehrsmuster, ohne dass simulationsbedingte Timing-Variationen die Ergebnisse verfälschen.\cite{jansen2011shadow}
-//TODO: Erwähnen und beschreiben wie DF genutzt und validiert wurde in dem paper von Jansen und wails 
-
-
 
 
 Es gibt öffentlich verfügbare Dateien im ZIM Format welche die vollständige Wikipedia Sammlung beeinhalten.
@@ -403,7 +381,9 @@ ist im Artefakt-Repository der Autoren öffentlich verfügbar.
 
 \todo{Gute Einführung zu Tor schreiben.}
 \todo{Abgrenzung Snowflake / Website Fingerprinting}
+\todo{Website Fingerprinting Attacke beschreiben https://arxiv.org/html/2510.11804v2}
 \todo{WTF-PAD einführen und beschreiben!}
 \todo{Tgen beschreiben}
 \todo{TCP Paket mit einer Tor Zelle aufzeigen und Vergleichen wie es funktioniert und wo die Unterschiede liegen.}
 \todo{Website Fingerprinting Angriffe in der echten Welt}
+\todo{Erwähnen und beschreiben wie DF genutzt und validiert wurde in dem paper von Jansen und wails }
