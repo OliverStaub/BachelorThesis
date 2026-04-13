@@ -1,12 +1,28 @@
 \chapter{Stand der Technik}
 
 \section{Tor}
-//TODO: Tor Client auch als CLI Tool verfügbar
-
 Das Tor Projekt stellt den Tor Browser zur Verfügung.
 Dieser ist ein Fork von Firefox und wurde für die Nutzung mit Tor optimiert.
-Der Tor Browser greift auf den eigentlichen Tor Client zu und leitet den gesamten Internetverkehr des Browsers über einen SOCKS5 Proxy in das Tor Netzwerk weiter.
+Der Tor Browser greift via SOCKS5 auf den Tor Deamon zu.
+Der Deamon leitet den Internetverkehr dann über das Tor Netzwerk.
+Dazu versendet er Tor Cells via TCP.
+Der Tor Browser greift auf den eigentlichen Tor Daemon zu und leitet den gesamten Internetverkehr des Browsers über einen SOCKS5 Proxy in das Tor Netzwerk weiter.
 Der Tor Client leitet den Datenverkehr über langlebige kryptographische Tunnels, Circuits genannt, weiter.\cite[S. 2]{jansen2023data}
+
+
+Erstens verhindert Tor, dass Webseiten und andere Dienste deinen Standort erfahren, den sie nutzen können, um Datenbanken über deine Gewohnheiten und Interessen aufzubauen. Mit Tor verraten dich deine Internetverbindungen nicht standardmäßig - jetzt kannst du für jede Verbindung wählen, wie viele Informationen du preisgeben willst.
+Zweitens verhindert Tor, dass Leute, die deinen Datenverkehr lokal beobachten (wie dein Internetdienstanbieter oder jemand, der Zugang zu deinem WLAN oder Router hat), herausfinden, welche Informationen du abrufst und woher du sie abrufst. Es hindert sie auch daran, zu entscheiden, was du lernen und veröffentlichen darfst - wenn du zu jedem Teil des Tor-Netzwerks gelangen kannst, kannst du jede Seite im Internet erreichen.
+Drittens leitet Tor deine Verbindung durch mehr als ein Tor-Relay, so dass kein einzelnes Relay erfahren kann, was du vorhast. Da diese Relays von verschiedenen Personen oder Organisationen betrieben werden, bietet die Verteilung des Vertrauens mehr Sicherheit als der alte Ein-Sprung-Proxy-Ansatz. - direktes zitat vom Tor Project Website.
+
+
+
+\gls{tor} Ist eine Technologie um Anonymität im Internet zu erlangen. 
+Die Daten werden mittels Onion Routing verschlüsselt, so dass kein Teilnehmer im Netzwerk die Herkunft und das Ziel des Datenverkehrs kennen kann. \cite{jansen2011shadow}
+Tor verspricht Privatsphäre beim Browsen und soll vor Verfolgung, Zensur und Überwachung schützen.
+Das Tor Projekt stellt einen eigenen Tor Browser zur Verfügung welcher zusätzlich die genutzte Hardware verschleiert um die anonymität weiter zu erhöhen. \cite{torprojectTorProjektPrivatsphre}
+
+\gls{tor} ist die am meistgenutzte Anonymisierungstechnologie im Internet.
+Schätzungen gehen von bis zu 8 Millionen täglichen Nutzer aus. \cite[p. 1]{mani2018understanding}
 
 Jeder Circuit enthält 3 Tor Knoten. Den Eingangsknoten, Mittelknoten und den Ausgangsknoten.
 Der Eingangsknoten kennt den Client und den Mittelknoten nicht aber den Ausgangsnoten und das Ziel.
@@ -29,6 +45,25 @@ In einer Website Fingerprinting Attacke wird genau dies ausgenützt. \cite[S. 2]
 
 \section{Onion Routing}
 //TODO: Onion Routing beschreiben
+
+
+\section{Angriffe auf Tor }
+//TODO: Es gibt Bestrebungen Tor Traffic nicht als Tor traffic sichtbar zu machen wie obfs4 und snowflake. 
+//TODO: Und dann gibt es Bestrebungen den Traffic besser zu anonymisieren und gegen WF abzusichern. In diesem Paper geht es hauptsächlich um das.
+
+
+
+\section{Website Fingerprinting}
+
+//TODO: https://arxiv.org/html/2510.11804v2
+-> Erklärt Webiste Fingerprinting attacken ziemlich gut
+
+\gls{wf} Angriffe versuchen die \gls{tor} Anonymität zu brechen.
+Der Angreifer zeichnet dabei den Internetverkehr des Tor Nutzers auf.
+Mit \gls{ml} werden Muster in dem Datenverkehr gesucht und erkannt.
+Dabei wird die Hauptsächlich die Anzahl und Richtung der Pakete analyisiert, teilweise auch die Timestamps.
+
+
 
 
 
@@ -100,6 +135,134 @@ Deshalb greifen wir auf wget2 zurück
 \footnote{\url{https://github.com/rockdaboot/wget2}}
 
 
+
+\section{Shadow Netzwerk Simulator}
+
+\subsection{Vorteile Simulation}
+Sehr viel Forschung wird innerhalb von Simulator
+
+Derzeit unterstützt Shadow über 150 Funktionen der system call API, allerdings nicht ganz alle.
+Jegliche von \gls{tor} benötigte werden jedoch vollumfänglich unterstützt.
+
+Der Shadow Shim fängt calls ab.
+Shim implementiert gleichnamige Funktionen mit der LD\_PRELOAD Variable.
+Diese bewirkt dass die Funktion zuerst geladen wird und überschattet damit die andere Funktion.
+Diese Netsim Quelle muss offiziell erwähnt werden wenn man shadow benutzt
+\cite{netsim-atc2022}
+
+
+\subsection{Shadow Simulator}
+Der Shadow Netzwerk Simulator wurden von Robert Jansen in einem Paper im Jahr 2011 vorgestellt. \cite{jansen2011shadow}
+
+Mit Shadow können Netzwerke deterministisch simuliert werden
+
+Erklären wie Shadow funktioniert mit Shims und allem.
+
+Shadow executes application code as native Processe while changing / simulating the network calls only.
+
+There are Network Emulators and Network simulators. 
+Emulators run real application code in real time.
+Therefore they cant scale and are also non-deterministic.
+Network Simulatoren auf der anderen Seite skalieren besser führen aber angepasste simulierten Applikationscode aus.
+
+Der Shadow Simulator füllt diese Lücke indem originaler Applikationscode ausgeführt werden kann.
+Gleichzeitig ist er skalierbar da er nicht in Echtzeit läuft.
+Simulationen grosser Netzwerke können durchaus lange Zeit dauern, bis zu mehreren Wochen.
+
+Shadow macht eine hybride Implementation zwischen Simulation und Emulation.
+Er fängt gewisse Syscalls wie Netzwerk oder Zeitkritische ab.
+Damit kann er die Netzwerkschicht simulieren und die Simulation von der Echtzeit entkoppeln.
+Gleichzeitig werden die restlichen Syscalls nativ und unverändert ausgeführt, bspw. Dateizugriffeﬁn.
+
+In einem Paper von Jansen und Wails wurden WF Angriffei im Shadow Simulator simuliert.
+Ihr Classifier welcher vollständig in Shadow trainiert worden ist, hat in der Live Anwendung über 80\% der Daten richtig klassifiziert. \cite[S. 2]{jansen2023data}
+Classifier im Live Tor Netzwerk zu trainieren ist deutlich unvorhersehrbarer da man die Bedingungen nicht genau kennt.
+Läuft gerade eine Dos Attacke, oder ist ein Relay überlastet kann das die Datenverkehrsmuster verändern. 
+Dies erschwert die Reproduzierbarkeit und die Kausalität der Resultate.
+In einer reproduzierbaren Shadow Umgebung existieren diese Unsicherheiten nicht. \cite[S. 1-2]{jansen2023data}
+
+In dem Paper von Jansen wird weiter aufgezeigt dass die Erkennungsraten von WF Classifier sehr stark mit der Tor Netzwerk Auslastung schwanken können.
+Classifier welche in einem Zustand der tiefen Netzwerkauslastung trainiert und in einem Zustand der hohen Netzwerkauslastung angewendet werden deutlich schlechtere Ergebnisse liefern.
+WF Classifier sind also sehr anfällig für Veränderungen im Tor Netzwerkaufbau.
+Dieses Problem kann entschärft werden indem man die Classfier im Shadow Netzwerksimulator mit unterschiedlichen Netzwerkauslastungen trainiert.\cite[S. 2]{jansen2023data}
+
+Der Shadow Nezwerksimulator kann also nicht nur für Simulationen verwendet werden sondern auch zum Trainieren von "echten" WF Classifiern.
+
+
+
+\subsection{Tornettools}
+Shadow wird mithilfe der Tornettools konfiguriert.
+Tornettools hilft uns die Shadow Simulation automatisiert zu konfigurieren.
+Es werden Daten vom geladen und genutzt um eine realistische Simulation aufzubauen.
+\cite{neverenough-sec2021}
+
+Das Tor Netzwerk wird in mehreren Stufen modelliert.
+Ziel ist es die rechenintensive Staging Stufe von der rechenunintensiven Generationsstufe zu trennen. 
+So kann der Arbeitsablauf der Simulation verbessert und beschleunigt werden.
+
+\subsubsection{Daten Download}
+
+Als Grundlage der Simulation werden öffentlich verfügbare Daten abgerufen.
+//TODO: Ausarbeiten von wo genau die Tor Netzwerkdaten kommen und wie diese beschafft werden. (evt. auch im Sourcecode überprüfen.)
+
+Eine gute Datengrundlage ist wichtig für die Simulation.
+In früheren Versuchen wurden teilweise Live Daten aus dem Tor Netzwerk ausgewertet was in falschen und ungenauen Aussagen enden kann.
+
+\subsubsection{Staging}
+
+In der Staging Phase werden die Daten nun verarbeitet.
+Nützliche Attribute werden aus den Files extrahiert. \cite{neverenough-sec2021}
+//TODO: Tiefer im Detail ausarbeiten welche Daten wie verwendet werden.
+
+\subsubsection{Generation}
+
+In der Generationsphase wird nun die Netzwerktopologie erstellt.
+Als Resultat erhalten wir eine Shadow Konfigurationsdatei.
+
+Die Tornettools erlauben es die gewünschte Netzwerkgrösse anzugeben.
+Mit dem Wert 100\% wird die vollständige Netzwerktopologie simuliert, mit 1\% ein hundertstel davon. \cite{neverenough-sec2021}
+
+Es werden etwa 792k gleichzeitige Nutzer simuliert realistisch auf die jeweiligen Länder aufgeteilt.
+Dann wird mittels TGEN realistischen Traffic erzeugt.
+
+\subsubsection{TGEN}
+//Todo: Was ist TGEN und was macht diese Library.
+//Todo: Die Markov Modelle und alles beschreiben aus dem neverenough paper
+
+Die Markov Clients generieren Traffic im simulierten Netzwerk um das Verhalten des Tor Netzwerkes realistischer zu halten.
+Es soll timing gaps etc. geben.
+
+
+
+\subsection{Risiken von Simulationen vs Real World und Alternativen}
+
+Tornettools besser beschreiben was sie können und wie das alles funktionietrt. Von wo kommt der Beweis oder so dass es die Simulation auch wie durchführt.
+Fingerprinting setup aufbauen.
+
+OnionTrace und OnionTraceTool besser beschreiben damit man den Versuchsaufbau nachvollziehen kann.
+
+
+Erklären mit welchen Daten man arbeitet und wie und von wann diese daten kommen.
+Well well well
+
+
+Für das Experiment soll das Tor Netzwerk möglichst realitätsgetreu modelliert werden.
+Die Tor Foundation veröffentlicht regelmässig Daten über die Struktur vom \gls{tor} Netzwerk mit den wichtigsten Nodes und deren IP Adressen (Quelle!)
+Dazu nutzen wir die Erkenntnisse von dem Paper von Jansen indem das erste mal ein \gls{tor} Netzwerk mit 1:1 Skalierung simuliert worden ist. \cite{neverenough-sec2021}
+
+
+
+Chutney und NetMirage als Simulator Alternativen.
+
+Wir nutzen Onion Trace und Tgen ebenfalls um die Simulation korrekt aufzusetzen
+
+Mehr Research machen zum Tor Netzwerk im Allgemeinen und wo die Probleme liegen. Grafiken erstellen.
+
+Mit dem Tornettools lässt sich eine Shadow config generieren die man dann noch anpassen kann wenn man möchte.
+
+"jansen2011shadow"
+Why it matters:
+This is what allows Shadow to run unmodified binaries — like real Tor, TGen, or other applications — inside the simulation. The application doesn't know it's being simulated; it just makes normal syscalls, and the shim transparently redirects them. This is a big advantage over simulators that require you to rewrite applications against a custom API.
 
 
 
@@ -234,3 +397,13 @@ Tests wurde verifiziert, dass beide Tools -- \texttt{wget2} und
 Tor-Browser-Selenium (TBS) -- einen identischen Satz an 
 Ressourcen vom Server abrufen. Die gepatchte \texttt{wget2}-Version 
 ist im Artefakt-Repository der Autoren öffentlich verfügbar.
+
+
+\section{Circuit Padding}
+
+\todo{Gute Einführung zu Tor schreiben.}
+\todo{Abgrenzung Snowflake / Website Fingerprinting}
+\todo{WTF-PAD einführen und beschreiben!}
+\todo{Tgen beschreiben}
+\todo{TCP Paket mit einer Tor Zelle aufzeigen und Vergleichen wie es funktioniert und wo die Unterschiede liegen.}
+\todo{Website Fingerprinting Angriffe in der echten Welt}

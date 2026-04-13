@@ -43,3 +43,13 @@
 
 ## Apr 9 9h
 - Einlesen Website Fingerprinting Attacke.
+
+## Apr 10 7h
+- Schreiben und Text ordnen.
+
+## Apr 12 6h
+- Socks5 wget2 und Simulation Grundlagen einarbeitung
+
+## Apr 13 6h
+- Schreiben und Text ordnen
+
