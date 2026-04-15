@@ -4,13 +4,14 @@ shadowctl.py — Remote control script for Shadow/Tor simulations
 Runs from your laptop, manages simulations on shadowsrv-001 via SSH.
 
 Usage:
+    ./shadowctl.py run <name>                      # full workflow: generate + WF + push + simulate
     ./shadowctl.py download-data [--month 2025-01]
     ./shadowctl.py stage [--month 2025-01]
     ./shadowctl.py generate --scale 0.01 [--month 2025-01] [--name myexp]
     ./shadowctl.py pull-config --name myexp
     ./shadowctl.py push-config --name myexp
     ./shadowctl.py simulate --name myexp [--stop-time 15m]
-    ./shadowctl.py status [--name myexp]
+    ./shadowctl.py status --name myexp [--tail 20]
     ./shadowctl.py pull-results --name myexp [--dest ./results]
     ./shadowctl.py logs --name myexp [--tail 50]
     ./shadowctl.py list
@@ -385,8 +386,12 @@ def cmd_simulate(args):
 
     # Build the simulation wrapper script that runs in background
     nproc = args.nproc or "$(nproc)"
+    # IMPORTANT: no `set -e` here. We want to capture the exit code of
+    # tornettools and always run the cleanup block (write sim.exitcode,
+    # remove sim.pid). With `set -e`, a tornettools failure kills the
+    # shell before cleanup, leaving stale PID files and a misleading
+    # "still running" status.
     wrapper = f"""#!/bin/bash
-set -euo pipefail
 source {REMOTE_TOOLS_VENV}
 export PATH=$PATH:{REMOTE_BASE}/tor/src/core/or:{REMOTE_BASE}/tor/src/app:{REMOTE_BASE}/tor/src/tools:$HOME/.local/bin
 cd {sim_dir}
@@ -395,15 +400,20 @@ echo "=== Simulation started at $(date -u) ===" > sim.log
 echo "PID: $$" >> sim.log
 echo $$ > sim.pid
 
+# Cleanup runs even if we're killed (SIGINT/SIGTERM).
+cleanup() {{
+    RC=${{RC:-1}}
+    echo "=== Simulation finished at $(date -u) with exit code $RC ===" >> sim.log
+    echo $RC > sim.exitcode
+    rm -f sim.pid
+}}
+trap cleanup EXIT INT TERM
+
 # Run tornettools simulate
 tornettools simulate \\
     --args "--parallelism={nproc} --seed={args.sim_seed} --template-directory=shadow.data.template --progress=true" \\
     {sim_dir} >> sim.log 2>&1
-
 RC=$?
-echo "=== Simulation finished at $(date -u) with exit code $RC ===" >> sim.log
-echo $RC > sim.exitcode
-rm -f sim.pid
 
 # Auto-parse if simulation succeeded
 if [ $RC -eq 0 ]; then
@@ -411,6 +421,8 @@ if [ $RC -eq 0 ]; then
     tornettools parse {sim_dir} >> sim.log 2>&1
     echo "=== Parse finished at $(date -u) ===" >> sim.log
 fi
+
+exit $RC
 """
 
     # Write wrapper script to remote
@@ -438,78 +450,54 @@ fi
 
 
 def cmd_status(args):
-    """Check simulation status."""
-    if args.name:
-        names = [args.name]
+    """Show simulation status + the last lines of sim.log."""
+    name = args.name
+    if not name:
+        print_err("Please specify --name")
+        sys.exit(1)
+
+    sim_dir = get_sim_dir(name)
+
+    # Is the wrapper process alive?
+    result = ssh_cmd(
+        f"test -f {sim_dir}/sim.pid && kill -0 $(cat {sim_dir}/sim.pid) 2>/dev/null && echo running || echo not_running",
+        capture=True, check=False
+    )
+    is_running = "running" in result.stdout.strip().split("\n")[0]
+
+    # Exit code (if it finished)
+    result = ssh_cmd(f"cat {sim_dir}/sim.exitcode 2>/dev/null", capture=True, check=False)
+    exitcode = result.stdout.strip() if result.returncode == 0 and result.stdout.strip() else None
+
+    # Start time from sim.log first line
+    result = ssh_cmd(
+        f"head -1 {sim_dir}/sim.log 2>/dev/null",
+        capture=True, check=False
+    )
+    first_line = result.stdout.strip() if result.returncode == 0 else ""
+
+    # Status label
+    if is_running:
+        status = "RUNNING"
+    elif exitcode == "0":
+        status = "COMPLETED"
+    elif exitcode is not None:
+        status = f"FAILED (exit {exitcode})"
     else:
-        # List all experiments
-        result = ssh_cmd(f"ls -d {REMOTE_BASE}/experiments/*/ 2>/dev/null | xargs -I{{}} basename {{}}", capture=True, check=False)
-        names = [n for n in result.stdout.strip().split("\n") if n]
-        if not names:
-            print("No experiments found.")
-            return
+        # No pid, no exit code — check if config exists
+        r = ssh_cmd(f"test -f {sim_dir}/shadow.config.yaml", capture=True, check=False)
+        status = "READY (not started)" if r.returncode == 0 else "UNKNOWN"
 
-    print_header("Simulation Status")
-    fmt = "  {:<30s} {:<12s} {:<20s} {}"
-    print(fmt.format("EXPERIMENT", "STATUS", "RUNTIME", "DETAILS"))
-    print(f"  {'─' * 80}")
+    print_header(f"Simulation status: {name}")
+    print(f"  Status:     {status}")
+    if first_line:
+        print(f"  Started:    {first_line}")
 
-    for name in names:
-        sim_dir = get_sim_dir(name)
-
-        # Check if running
-        result = ssh_cmd(
-            f"test -f {sim_dir}/sim.pid && kill -0 $(cat {sim_dir}/sim.pid) 2>/dev/null && echo running || echo not_running",
-            capture=True, check=False
-        )
-        is_running = "running" in result.stdout.strip().split("\n")[0]
-
-        # Check exit code
-        result = ssh_cmd(f"cat {sim_dir}/sim.exitcode 2>/dev/null", capture=True, check=False)
-        exitcode = result.stdout.strip() if result.returncode == 0 else None
-
-        # Check shadow progress
-        result = ssh_cmd(
-            f"grep -o 'progress.*' {sim_dir}/sim.log 2>/dev/null | tail -1",
-            capture=True, check=False
-        )
-        progress = result.stdout.strip() if result.returncode == 0 else ""
-
-        # Also check shadow.log for progress
-        if not progress:
-            result = ssh_cmd(
-                f"tail -5 {sim_dir}/shadow.log 2>/dev/null | grep -o '[0-9]\\+\\.[0-9]\\+%' | tail -1",
-                capture=True, check=False
-            )
-            progress = result.stdout.strip() if result.returncode == 0 else ""
-
-        # Get runtime from sim.log
-        result = ssh_cmd(
-            f"head -1 {sim_dir}/sim.log 2>/dev/null | grep -o 'at .*' | sed 's/at //' | sed 's/ ===//'",
-            capture=True, check=False
-        )
-        start_time = result.stdout.strip() if result.returncode == 0 else ""
-
-        if is_running:
-            status = "RUNNING"
-            details = progress or "started"
-        elif exitcode == "0":
-            status = "COMPLETED"
-            details = "success"
-        elif exitcode:
-            status = "FAILED"
-            details = f"exit code {exitcode}"
-        else:
-            # Check if config exists but sim never ran
-            result = ssh_cmd(f"test -f {sim_dir}/shadow.config.yaml", capture=True, check=False)
-            if result.returncode == 0:
-                status = "READY"
-                details = "not yet started"
-            else:
-                status = "UNKNOWN"
-                details = ""
-
-        print(fmt.format(name, status, start_time[:20] if start_time else "", details))
+    # Tail sim.log so the user can see what's actually happening
+    tail_n = args.tail
+    print(f"\n  Last {tail_n} lines of sim.log:")
+    print(f"  {'─' * 60}")
+    ssh_cmd(f"tail -n {tail_n} {sim_dir}/sim.log 2>/dev/null | sed 's/^/  /'", stream=True)
 
 
 def cmd_logs(args):
@@ -563,25 +551,30 @@ def cmd_pull_results(args):
     print_step("Pulling sim.log...")
     scp_from_remote(f"{sim_dir}/sim.log", str(local_dir / "sim.log"))
 
-    # Pull any pcap files if they exist
-    result = ssh_cmd(f"find {sim_dir}/shadow.data -name '*.pcap' 2>/dev/null | head -5", capture=True, check=False)
-    pcaps = result.stdout.strip()
+    # Pull pcap files preserving the shadow.data/hosts/<name>/ structure
+    # so pcap_to_npz.py can find them by host name.
+    result = ssh_cmd(
+        f"find {sim_dir}/shadow.data -name '*.pcap' 2>/dev/null",
+        capture=True, check=False,
+    )
+    pcaps = [p.strip() for p in result.stdout.strip().split("\n") if p.strip()]
     if pcaps:
-        pcap_dir = local_dir / "pcaps"
-        pcap_dir.mkdir(exist_ok=True)
-        print_step(f"Found pcap files, pulling to {pcap_dir}...")
-        for pcap_path in pcaps.split("\n"):
-            if pcap_path.strip():
-                fname = Path(pcap_path).name
-                # Preserve the host directory name
-                parts = pcap_path.split("/")
-                host_idx = next((i for i, p in enumerate(parts) if p == "hosts"), None)
-                if host_idx and host_idx + 1 < len(parts):
-                    host_name = parts[host_idx + 1]
-                    dest = pcap_dir / f"{host_name}_{fname}"
-                else:
-                    dest = pcap_dir / fname
-                scp_from_remote(pcap_path, str(dest))
+        print_step(f"Found {len(pcaps)} pcap file(s), pulling...")
+        for pcap_path in pcaps:
+            # Keep the path from "shadow.data/..." onward so the converter
+            # can find files at shadow.data/hosts/<name>/*.pcap.
+            parts = pcap_path.split("/")
+            try:
+                sd_idx = parts.index("shadow.data")
+                rel_path = Path(*parts[sd_idx:])
+            except ValueError:
+                rel_path = Path("pcaps") / Path(pcap_path).name
+            dest = local_dir / rel_path
+            dest.parent.mkdir(parents=True, exist_ok=True)
+            scp_from_remote(pcap_path, str(dest))
+        print_ok(f"Pcaps saved under {local_dir / 'shadow.data' / 'hosts'}/")
+    else:
+        print(f"  (No pcap files found on server — was pcap_enabled set?)")
 
     # Pull compressed analysis files
     for pattern in ["tgen.analysis.json*", "oniontrace.analysis.json*"]:
@@ -592,6 +585,102 @@ def cmd_pull_results(args):
                 scp_from_remote(f, str(local_dir / Path(f).name))
 
     print_ok(f"Results saved to {local_dir}")
+
+
+# ─── Helper used by cmd_run ──────────────────────────────────────────────────
+
+SIM_DIR_LOCAL = Path(__file__).resolve().parent            # src/simulation/
+REPO_ROOT     = SIM_DIR_LOCAL.parent.parent                # repo root
+WF_CONFIG_GEN = SIM_DIR_LOCAL / "generate-wf-config.py"
+DEFAULT_URLS_FILE = SIM_DIR_LOCAL / "generated" / "urls.txt"
+
+
+def _namespace(**kwargs):
+    """Build a lightweight argparse-like namespace for passing to cmd_* functions."""
+    class NS:
+        pass
+    ns = NS()
+    for k, v in kwargs.items():
+        setattr(ns, k, v)
+    return ns
+
+
+def cmd_run(args):
+    """
+    Full workflow: generate base config → add WF nodes → push → simulate → status.
+
+    Uses sensible defaults everywhere; override via flags if needed.
+    """
+    name = args.name
+    # Match the path convention used by pull-config / push-config (CWD/<name>/),
+    # so all three commands read and write the same file.
+    local_exp_dir = LOCAL_WORKSPACE / name
+    local_config = local_exp_dir / "shadow.config.yaml"
+
+    print_header(f"Running full experiment workflow: {name}")
+    print(f"  Scale:            {args.scale}")
+    print(f"  Month:            {args.month}")
+    print(f"  Monitors:         {args.monitors}")
+    print(f"  Pages:            {args.pages}")
+    print(f"  Visits per page:  {args.visits}")
+    print(f"  Visit interval:   {args.visit_interval}s")
+    print(f"  URLs file:        {args.urls}")
+
+    urls_path = Path(args.urls)
+    if not urls_path.exists():
+        print_err(f"URLs file not found: {urls_path}")
+        print("  Run:  bash src/simulation/scripts/setup-wf-server.sh urls <N>")
+        sys.exit(1)
+
+    # ── Step 1: Generate base config (tornettools) ─────────────────────
+    print_step("Step 1/5: Generate base tornettools config")
+    cmd_generate(_namespace(
+        scale=args.scale, month=args.month, name=name, seed=None,
+    ))
+
+    # ── Step 2: Pull config to laptop ──────────────────────────────────
+    print_step("Step 2/5: Pull config to laptop")
+    cmd_pull_config(_namespace(name=name))
+
+    if not local_config.exists():
+        print_err(f"Expected {local_config} after pull-config but it's missing")
+        sys.exit(1)
+
+    # ── Step 3: Add WF monitor/zimserver nodes ─────────────────────────
+    print_step("Step 3/5: Add WF nodes to config")
+    rc = subprocess.call([
+        sys.executable, str(WF_CONFIG_GEN),
+        "--base-config", str(local_config),
+        "--urls",        str(urls_path),
+        "--output",      str(local_config),
+        "--num-monitors",    str(args.monitors),
+        "--num-pages",       str(args.pages),
+        "--visits-per-page", str(args.visits),
+        "--visit-interval",  str(args.visit_interval),
+    ])
+    if rc != 0:
+        print_err("generate-wf-config.py failed")
+        sys.exit(rc)
+
+    # ── Step 4: Push + simulate ────────────────────────────────────────
+    print_step("Step 4/5: Push config to server")
+    cmd_push_config(_namespace(name=name))
+
+    print_step("Step 4/5: Start simulation")
+    cmd_simulate(_namespace(
+        name=name,
+        stop_time=None,
+        nproc=None,
+        sim_seed=1,
+    ))
+
+    # ── Step 5: Initial status ─────────────────────────────────────────
+    print_step("Step 5/5: Initial status")
+    cmd_status(_namespace(name=name, tail=20))
+
+    print(f"\n  Simulation running. Check progress with:")
+    print(f"    ./shadowctl.py status --name {name}")
+    print(f"    ./shadowctl.py logs   --name {name} -f")
 
 
 def cmd_list(args):
@@ -682,7 +771,9 @@ def main():
 
     # status
     p = sub.add_parser("status", help="Check simulation status")
-    p.add_argument("--name", default=None, help="Specific experiment (default: show all)")
+    p.add_argument("--name", required=True, help="Experiment name")
+    p.add_argument("--tail", type=int, default=20,
+                   help="Number of sim.log lines to show (default: 20)")
     p.set_defaults(func=cmd_status)
 
     # logs
@@ -697,6 +788,19 @@ def main():
     p.add_argument("--name", required=True, help="Experiment name")
     p.add_argument("--dest", default=None, help="Local destination directory")
     p.set_defaults(func=cmd_pull_results)
+
+    # run (full workflow)
+    p = sub.add_parser("run", help="Full workflow: generate + WF + push + simulate + status")
+    p.add_argument("name", help="Experiment name (e.g. exp2)")
+    p.add_argument("--scale",          type=float, default=0.01, help="Network scale (default: 0.01)")
+    p.add_argument("--month",          default="2025-01", help="Tor data month (default: 2025-01)")
+    p.add_argument("--monitors",       type=int, default=5,  help="Number of WF monitor nodes (default: 5)")
+    p.add_argument("--pages",          type=int, default=5,  help="Number of pages to fetch (default: 5)")
+    p.add_argument("--visits",         type=int, default=50, help="Visits per page (default: 50)")
+    p.add_argument("--visit-interval", type=int, default=30, help="Seconds per visit window (default: 30)")
+    p.add_argument("--urls", default=str(DEFAULT_URLS_FILE),
+                   help="URL list file (default: src/simulation/generated/urls.txt)")
+    p.set_defaults(func=cmd_run)
 
     # list
     p = sub.add_parser("list", help="List all experiments on server")

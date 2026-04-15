@@ -49,21 +49,31 @@ def read_urls(urls_path):
     return entries
 
 
-def get_used_node_ids(config):
-    used = set()
+def get_existing_node_ids(config):
+    """Collect all network_node_id values already used in the base config.
+
+    Only these IDs are guaranteed to exist in the network graph (atlas_v201801).
+    Picking random integers would often hit IDs that aren't in the graph,
+    causing Shadow to fail with 'network node id N does not exist'.
+    """
+    used = []
     for host_config in config.get("hosts", {}).values():
         nid = host_config.get("network_node_id")
         if nid is not None:
-            used.add(nid)
+            used.append(nid)
     return used
 
 
-def pick_node_id(used_ids, rng, max_id=3000):
-    while True:
-        nid = rng.randint(1, max_id)
-        if nid not in used_ids:
-            used_ids.add(nid)
-            return nid
+def pick_node_id(existing_ids, rng):
+    """Pick a random valid node ID from the base config's existing IDs.
+
+    Shadow allows multiple hosts to share a network_node_id (they're placed
+    at the same topology node). So we reuse existing IDs rather than invent
+    new ones.
+    """
+    if not existing_ids:
+        raise ValueError("Base config has no hosts with network_node_id — can't pick a valid ID")
+    return rng.choice(existing_ids)
 
 
 WGET2_ARGS_TEMPLATE = (
@@ -77,7 +87,11 @@ WGET2_ARGS_TEMPLATE = (
     "{url}"
 )
 
-WGET2_ENV = "LANG=en_US.UTF-8;LC_ALL=en_US.UTF-8;LANGUAGE=en_US.UTF-8"
+WGET2_ENV = {
+    "LANG": "en_US.UTF-8",
+    "LC_ALL": "en_US.UTF-8",
+    "LANGUAGE": "en_US.UTF-8",
+}
 
 
 def build_monitor_processes(pages, num_visits, visit_interval,
@@ -97,7 +111,7 @@ def build_monitor_processes(pages, num_visits, visit_interval,
     procs.append({
         "path": "~/.local/bin/tor",
         "args": "--defaults-torrc torrc-defaults -f torrc",
-        "environment": "OPENBLAS_NUM_THREADS=1",
+        "environment": {"OPENBLAS_NUM_THREADS": "1"},
         "start_time": tor_start_time,
         "expected_final_state": "running",
     })
@@ -147,10 +161,13 @@ def build_zimserver_processes(pages, zimroot):
         procs.append({
             "path": "/usr/bin/python3",
             "args": "-m zimsrv",
-            "environment": (
-                f"ZIMROOT={zimroot};ZIMIP={page['ip']};ZIMPORT={page['port']};"
-                "LANG=en_US.UTF-8;LC_ALL=en_US.UTF-8"
-            ),
+            "environment": {
+                "ZIMROOT": zimroot,
+                "ZIMIP": page["ip"],
+                "ZIMPORT": str(page["port"]),
+                "LANG": "en_US.UTF-8",
+                "LC_ALL": "en_US.UTF-8",
+            },
             "start_time": "3s",
         })
     return procs
@@ -191,7 +208,9 @@ def main():
     if args.num_pages:
         all_pages = all_pages[:args.num_pages]
 
-    used_ids = get_used_node_ids(config)
+    existing_ids = get_existing_node_ids(config)
+    print(f"Base config has {len(existing_ids)} hosts with valid node IDs "
+          f"(will sample from these)", file=sys.stderr)
 
     # Distribute pages across monitors (round-robin)
     monitor_pages = [[] for _ in range(args.num_monitors)]
@@ -204,7 +223,7 @@ def main():
     for i in range(args.num_monitors):
         name = f"monitor{i}"
         pages = monitor_pages[i]
-        node_id = pick_node_id(used_ids, rng)
+        node_id = pick_node_id(existing_ids, rng)
 
         procs, schedule = build_monitor_processes(
             pages, args.visits_per_page, args.visit_interval,
@@ -215,8 +234,11 @@ def main():
             "network_node_id": node_id,
             "bandwidth_down": "100 megabit",
             "bandwidth_up": "100 megabit",
-            "pcap_enabled": True,
-            "pcap_capture_size": 65535,
+            # pcap_enabled lives under host_options in current Shadow releases
+            "host_options": {
+                "pcap_enabled": True,
+                "pcap_capture_size": "65535 B",
+            },
             "processes": procs,
         }
 
@@ -240,7 +262,7 @@ def main():
 
     for ip_idx, (ip, pages) in enumerate(pages_by_ip.items()):
         name = f"zimserver{ip_idx}"
-        node_id = pick_node_id(used_ids, rng)
+        node_id = pick_node_id(existing_ids, rng)
         config["hosts"][name] = {
             "network_node_id": node_id,
             "bandwidth_down": "200 megabit",

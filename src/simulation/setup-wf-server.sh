@@ -11,17 +11,18 @@
 #   2. Install zimply (in the tornettools venv) and copy helper scripts.
 #
 # Usage:
-#   bash src/simulation/scripts/setup-wf-server.sh              # full setup (build + copy)
-#   bash src/simulation/scripts/setup-wf-server.sh build        # only build wget2
-#   bash src/simulation/scripts/setup-wf-server.sh copy         # only copy scripts + install zimply
-#   bash src/simulation/scripts/setup-wf-server.sh urls [N]     # generate urls.txt with N pages (default 100)
+#   bash src/simulation/setup-wf-server.sh              # full setup (build + copy)
+#   bash src/simulation/setup-wf-server.sh build        # only build wget2
+#   bash src/simulation/setup-wf-server.sh copy         # only copy scripts + install zimply
+#   bash src/simulation/setup-wf-server.sh urls [N]     # generate urls.txt with N pages (default 100)
 
 set -euo pipefail
 
 SSH_HOST="projectadmin@shadowsrv-001.prod.projects.ls.eee.intern"
 REMOTE_BASE="/home/projectadmin"
+# SCRIPT_DIR = src/simulation/ ; REPO_ROOT = repo root
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-REPO_ROOT="$(cd "${SCRIPT_DIR}/../../.." && pwd)"
+REPO_ROOT="$(cd "${SCRIPT_DIR}/../.." && pwd)"
 
 PHASE="${1:-all}"
 NUM_PAGES="${2:-100}"
@@ -163,4 +164,5 @@ case "$PHASE" in
 esac
 
 echo ""
-echo "Done. Next: generate WF shadow config with generate-wf-config.py"
+echo "Done. Next: run the full simulation workflow:"
+echo "   python3 src/simulation/shadowctl.py run <name>"
