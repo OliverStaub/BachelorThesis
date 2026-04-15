@@ -52,3 +52,17 @@ Das ist realistischer als bei Jansen und Wails mit ihrem isolierten Experiment !
 \todo{Der Client selbst produziert keinen traffic}
 
 For your thesis at ~1% scale, you'll want to think about whether you can still get enough traces per page. Fewer relays means less path diversity, which could reduce intra-page variance — that's actually something worth discussing in your methodology section.
+
+- wir nutzen wikipedia mit nur simple english artikeln um wegen der dateigrösse
+
+  ┌───────────────────────────────────────────┬────────┬──────────────────────────────────────────┐
+  │                   File                    │  Size  │                  Notes                   │
+  ├───────────────────────────────────────────┼────────┼──────────────────────────────────────────┤
+  │ wikipedia_en_simple_all_nopic_2026-02.zim │ 966 MB │ Simple English, no images — fastest test │
+  ├───────────────────────────────────────────┼────────┼──────────────────────────────────────────┤
+  │ wikipedia_en_simple_all_maxi_2026-02.zim  │ 3.4 GB │ Simple English with images — recommended │
+  ├───────────────────────────────────────────┼────────┼──────────────────────────────────────────┤
+  │ wikipedia_en_all_maxi_2026-02.zim         │ 124 GB │ Full English Wikipedia — huge            │
+  └───────────────────────────────────────────┴────────┴──────────────────────────────────────────
+
+  

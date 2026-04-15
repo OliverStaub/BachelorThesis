@@ -26,7 +26,9 @@
       "Read(//tmp/tornet-net_0.25-load_2.0-a/shadow.data.template/hosts/monitor0/**)",
       "Bash(python3:*)",
       "Bash(ls:*)",
-      "Bash(git rm:*)"
+      "Bash(git rm:*)",
+      "WebFetch(domain:dumps.wikimedia.org)",
+      "WebFetch(domain:raw.githubusercontent.com)"
     ]
   }
 }
