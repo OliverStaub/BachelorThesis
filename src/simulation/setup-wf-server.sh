@@ -89,26 +89,20 @@ phase_build() {
     ok "wget2_noinstall built"
 }
 
-# ─── Phase 2: Install zimply + copy helper scripts ──────────────────────────
+# ─── Phase 2: Install kiwix-tools + libzim + copy helper scripts ────────────
 phase_copy() {
-    step "Installing zimply + libzim in toolsenv..."
-    ssh_cmd "bash -lc 'source ${REMOTE_BASE}/toolsenv/bin/activate && pip install --quiet zimply libzim'"
-    ok "zimply + libzim installed"
+    # libzim is needed locally by generate-urls.py (samples articles from the
+    # ZIM). It lives in the toolsenv venv alongside tornettools.
+    step "Installing libzim in toolsenv (for generate-urls.py)..."
+    ssh_cmd "bash -lc 'source ${REMOTE_BASE}/toolsenv/bin/activate && pip install --quiet libzim'"
+    ok "libzim installed"
 
+    # kiwix-serve replaces the older zimply library, which doesn't handle
+    # modern namespace-free ZIM files (v6+).
     step "Copying helper scripts..."
     scp "${SCRIPT_DIR}/newnym.py"        "${SSH_HOST}:${REMOTE_BASE}/newnym.py"
+    scp "${SCRIPT_DIR}/zimsrv.py"        "${SSH_HOST}:${REMOTE_BASE}/zimsrv.py"
     scp "${SCRIPT_DIR}/generate-urls.py" "${SSH_HOST}:${REMOTE_BASE}/generate-urls.py"
-
-    cat > /tmp/zimsrv.py << 'PYEOF'
-#!/usr/bin/env python3
-import os
-from zimply import ZIMServer
-root, ip, port = os.getenv('ZIMROOT'), os.getenv('ZIMIP'), os.getenv('ZIMPORT')
-ZIMServer(f"{root}/wikipedia_en_all_maxi.zim", index_file=f"{root}/index.idx",
-          template=f"{root}/template.html", ip_address=ip, port=int(port), encoding="utf-8")
-PYEOF
-    scp /tmp/zimsrv.py "${SSH_HOST}:${REMOTE_BASE}/zimsrv.py"
-    rm /tmp/zimsrv.py
     ok "newnym.py, zimsrv.py, generate-urls.py copied"
 
     step "Checking Wikipedia ZIM data..."
@@ -120,7 +114,6 @@ PYEOF
         echo "    mkdir -p ${REMOTE_BASE}/wikidata && cd ${REMOTE_BASE}/wikidata"
         echo "    wget https://dumps.wikimedia.org/other/kiwix/zim/wikipedia/wikipedia_en_simple_all_maxi_2026-02.zim"
         echo "    mv wikipedia_en_simple_all_maxi_2026-02.zim wikipedia_en_all_maxi.zim"
-        echo "    echo '<html><head><title>{title}</title></head><body>{content}</body></html>' > template.html"
         echo ""
         echo "  (If the 2026-02 file is gone, check dumps.wikimedia.org for the current date.)"
         echo ""

@@ -35,4 +35,16 @@ __pycache__/
 *.npz
 *.pth
 
+# Experiment data (pcaps, shadow configs, results — large, per-run)
+src/simulation/exp*/
+src/simulation/exp-*/
+
+# Generated files
+src/simulation/generated/
+experiments.csv
+src/experiments.csv
+
+# Excel temp files
+~$*.xlsx
+
 Claude.md

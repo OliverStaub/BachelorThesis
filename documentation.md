@@ -9,7 +9,8 @@ Part of Oliver Staub's bachelor thesis at HSLU.
 Shadow Simulation                        ML Pipeline
 ┌──────────────────────────┐            ┌─────────────────────────┐
 │ zimserver0               │            │                         │
-│  (Wikipedia via ZIM)     │            │ pcap_to_npz.py          │
+│  (zimsrv.py × N ports,   │            │ pcap_to_npz.py          │
+│   one per page)          │            │                         │
 │                          │            │  reads: schedule.json   │
 │ monitor0..N              │  pcaps     │  reads: monitor pcaps   │
 │  (Tor + wget2, one page  │──────────> │  outputs: dataset.npz   │
@@ -39,12 +40,13 @@ src/
 │   ├── venv/                   # Python environment
 │   └── wflib/                  # WFlib submodule (PyTorch DF classifier)
 ├── simulation/
-│   ├── shadowctl.py            # Remote simulation control (SSH to shadowsrv)
-│   ├── scripts/
-│   │   ├── generate-wf-config.py  # Add WF nodes to shadow config
-│   │   ├── setup-wf-server.sh     # Build wget2, install deps on server
-│   │   └── newnym.py              # Send SIGNAL NEWNYM to Tor
-│   └── exp1/                   # First experiment (base config + results)
+│   ├── shadowctl.py            # Main entry point: simulation control over SSH
+│   ├── generate-wf-config.py   # Add WF monitor+zimserver nodes to a shadow config
+│   ├── setup-wf-server.sh      # Build wget2, install deps, generate urls.txt
+│   ├── generate-urls.py        # (runs on server) sample random articles from ZIM
+│   ├── newnym.py               # (runs on server) SIGNAL NEWNYM to Tor control port
+│   ├── generated/              # URL list(s) generated from the ZIM file
+│   └── exp1/, exp2/, …         # One sub-directory per experiment
 ```
 
 ## Setup
@@ -89,19 +91,19 @@ sudo apt-get update && sudo apt-get install -y git autoconf automake libtool lib
 
 Then `exit` the SSH session.
 
-**Step 2b — build wget2, install zimply, copy helper scripts (automated).**
+**Step 2b — build wget2, install libzim, copy helper scripts (automated).**
 
 ```bash
 # From your laptop:
-bash src/simulation/scripts/setup-wf-server.sh
+bash src/simulation/setup-wf-server.sh
 ```
 
 The script has three phases you can run individually:
 
 ```bash
-bash src/simulation/scripts/setup-wf-server.sh build   # only build wget2
-bash src/simulation/scripts/setup-wf-server.sh copy    # only copy scripts + install zimply
-bash src/simulation/scripts/setup-wf-server.sh urls    # generate urls.txt (needs ZIM, see 2c)
+bash src/simulation/setup-wf-server.sh build   # only build wget2
+bash src/simulation/setup-wf-server.sh copy    # install libzim + copy helper scripts (newnym.py, zimsrv.py, generate-urls.py)
+bash src/simulation/setup-wf-server.sh urls    # generate urls.txt (needs ZIM, see 2c)
 ```
 
 Note: the script downloads the wget2 SOCKS patch directly from the upstream
@@ -129,16 +131,13 @@ mkdir -p ~/wikidata && cd ~/wikidata
 # Simple English Wikipedia with images (~3.4 GB, recommended)
 wget https://dumps.wikimedia.org/other/kiwix/zim/wikipedia/wikipedia_en_simple_all_maxi_2026-02.zim
 
-# Rename so zimsrv.py finds it (it expects exactly wikipedia_en_all_maxi.zim)
+# Rename so the Shadow config finds it at a stable path
 mv wikipedia_en_simple_all_maxi_2026-02.zim wikipedia_en_all_maxi.zim
-
-# Minimal HTML template required by zimply
-echo '<html><head><title>{title}</title></head><body>{content}</body></html>' > template.html
 
 exit
 ```
 
-**Step 2d — Generate your own `urls.txt` (recommended).**
+**Step 2d — Generate `urls.txt`.**
 
 Instead of reusing the paper's hardcoded list (which references articles that
 may not exist in Simple English Wikipedia), sample random articles directly
@@ -146,86 +145,84 @@ from your ZIM file. The setup script does this for you:
 
 ```bash
 # From your laptop — default: 100 pages starting at port 8000
-bash src/simulation/scripts/setup-wf-server.sh urls
+bash src/simulation/setup-wf-server.sh urls
 
 # Pass a number as the second argument for a custom page count:
-bash src/simulation/scripts/setup-wf-server.sh urls 20
-```
-
-This runs `generate-urls.py` on the server (using `libzim` to enumerate
-articles in the ZIM), then pulls the generated file to your laptop at
-`src/simulation/generated/urls.txt`. Every title is guaranteed to exist in the
-ZIM, so no visits will 404.
-
-## Quick Start: Train DF on 2023 Reference Data
-
-No simulation needed — uses existing data from Jansen & Wails 2023:
-
-```bash
-cd src/ml && source venv/bin/activate
-./run_df.sh --explainwf
+bash src/simulation/setup-wf-server.sh urls 20
 ```
 
 ## Running Your Own Simulation
 
-### 1. Generate WF shadow config
+> **Important:** always run `shadowctl.py` (especially `run`, `pull-config`,
+> `push-config`, `pull-results`) from **`src/simulation/`**, not from the repo
+> root. The tool creates and reads per-experiment directories at `<CWD>/<name>/`,
+> so running from the wrong place leads to pull/push path mismatches.
+>
+> ```bash
+> cd src/simulation
+> python3 shadowctl.py run exp2
+> ```
 
-Start from your existing tornettools config (0.01 scale) and add WF nodes:
+### 1. One-shot: `shadowctl.py run exp2`
+
+The simplest way: one command that runs the full pipeline (generate base config
+→ add WF nodes → push → simulate → status) with sensible defaults:
 
 ```bash
-source src/ml/venv/bin/activate
+source src/ml/venv/bin/activate   # or .fish
 
-python3 src/simulation/scripts/generate-wf-config.py \
-    --base-config src/simulation/exp1/shadow.config.yaml \
-    --urls explainwf-popets2023/data/urls.txt \
-    --output src/simulation/exp2/shadow.config.yaml \
-    --num-monitors 5 \
-    --num-pages 20 \
-    --visits-per-page 50 \
-    --visit-interval 30
+# One-time per Tor month (downloads Tor metrics + stages them on the server):
+python3 src/simulation/shadowctl.py download-data --month 2025-01
+python3 src/simulation/shadowctl.py stage        --month 2025-01
+
+# Run a full experiment:
+python3 src/simulation/shadowctl.py run exp2
+
+# Override any defaults you like:
+python3 src/simulation/shadowctl.py run exp2 \
+    --pages 20 --monitors 5 --visits 50 --visit-interval 30
 ```
 
-This creates:
-- `shadow.config.yaml` — Shadow config with 5 monitors + zimserver added
-- `shadow.config.schedule.json` — Visit schedule for pcap segmentation
+Defaults: `--scale 0.01 --monitors 5 --pages 5 --visits 50 --visit-interval 30`,
+and URLs come from `src/simulation/generated/urls.txt`.
 
-**What each monitor does:** Fetches 4 pages (20 pages / 5 monitors), one at a time,
-50 visits each, 30 seconds per visit. wget2 fetches the page with all embedded
-resources (images, CSS) using 30 threads through Tor's SOCKS proxy. NEWNYM resets
-the circuit between visits.
+### What `run` does under the hood
 
-### 2. Push config and run simulation
+| Step | Subcommand called | Effect |
+|------|-------------------|--------|
+| 1 | `generate` | `tornettools generate` on server (creates base Tor network config) |
+| 2 | `pull-config` | SCP config to `src/simulation/<name>/` |
+| 3 | (local) `generate-wf-config.py` | Adds monitor + zimserver hosts to the YAML; writes `schedule.json` |
+| 4 | `push-config` + `simulate` | Uploads the modified config and launches Shadow in the background |
+| 5 | `status` | Shows initial status + last 20 lines of `sim.log` |
+
+You can of course still run each step individually with its own subcommand
+(`generate`, `pull-config`, `push-config`, `simulate`, `status`, `logs`, etc.).
+
+### Check progress
 
 ```bash
-cd src/simulation
-
-# Create experiment directory on server
-python3 shadowctl.py generate --scale 0.01 --name exp2
-# OR just push the config directly:
-python3 shadowctl.py push-config --name exp2
-
-# Start simulation (takes ~2 hours for 20 pages × 50 visits)
-python3 shadowctl.py simulate --name exp2
-
-# Monitor progress
-python3 shadowctl.py status --name exp2
-python3 shadowctl.py logs --name exp2
+python3 src/simulation/shadowctl.py status --name exp2           # snapshot
+python3 src/simulation/shadowctl.py status --name exp2 --tail 50 # more log
+python3 src/simulation/shadowctl.py logs   --name exp2 -f        # stream live
 ```
 
-### 3. Pull results and convert
+### 2. Pull results and convert
+
+Once status shows `COMPLETED`:
 
 ```bash
-python3 shadowctl.py pull-results --name exp2
+python3 src/simulation/shadowctl.py pull-results --name exp2
 
 # Convert pcaps to WFlib format
-cd ../ml && source venv/bin/activate
+cd src/ml && source venv/bin/activate
 python3 pcap_to_npz.py \
     --schedule ../simulation/exp2/shadow.config.schedule.json \
     --shadow-data ../simulation/exp2/results/shadow.data/ \
     --output wflib/datasets/Exp2.npz
 ```
 
-### 4. Train and evaluate DF
+### 3. Train and evaluate DF
 
 ```bash
 cd wflib
@@ -269,3 +266,16 @@ Or use the all-in-one script:
   patterns matching Tor Browser behavior (validated by Jansen & Wails 2023)
 - **DF input:** Direction-only sequences (+1/-1, 5000 packets), no timing
 - **NEWNYM:** Sends `SIGNAL NEWNYM` to Tor control port for circuit isolation between visits
+- **Web server:** `zimsrv.py` — a tiny custom HTTP server (~100 lines)
+  that wraps the `libzim` Python bindings. Runs under the dynamically-linked
+  toolsenv Python so Shadow can `LD_PRELOAD` its shim into the process.
+
+  Earlier attempts that didn't work:
+  - **`zimply`** (Python library) — supports only the pre-v6 ZIM namespace
+    format (`A/ArticleName`); modern Kiwix ZIMs (2022+) store articles at
+    flat paths, so every request 404s.
+  - **`kiwix-serve`** (from kiwix-tools) — handles modern ZIMs correctly,
+    but the prebuilt binary is **statically linked**, which Shadow rejects
+    (it needs to inject its shim via `LD_PRELOAD`, which only works with
+    dynamically-linked ELFs). Building kiwix-serve from source with
+    dynamic linking is possible but adds a large dependency footprint.

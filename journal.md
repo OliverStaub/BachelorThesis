@@ -1,25 +1,25 @@
 # Journal
 
-## February 20: 1d
+## February 20: 8h
 
 - Update The Problem Statement, Research Questions etc.
 - Request labservices VM
 
-## February 21: 1d
+## February 21: 8h
 
 - Update Typst Document structure
 
-## February 27: 1d
+## February 27: 8h
 
 - Switch to latex
 - Kickoff meeting
 - Defining the Proposal
 
-## Mar 1
+## Mar 1 8h
 
 - Aufgabenstellung Ausarbeitung
 
-## Mar 12
+## Mar 12 8h
 
 - Ich habe 3 Wochen WK und habe derzeit nicht viel Zeit für die BAA
 
@@ -55,3 +55,11 @@
 - Simulation aufbauen, wget2, tieferes Verständnis für den Simulationsaufbaue aufbuaen.
 - Ich werde vermutlich mein Angriffsmodell von einem ISP auf den Tor Entry Node betreiben ändern müssen weil es einfacher ist und es mehr Literatur dazu gibt.s
 
+## Apr 14 5h
+- Simulation aufbauen
+
+## Apr 15 9h
+- Simulation aufbauen, Probleme mit zimply und diversen tools
+
+## Apr 16 8h
+- erste erfolgreiche Simulation durchgeführt.

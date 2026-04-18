@@ -144,10 +144,11 @@ def build_monitor_processes(pages, num_visits, visit_interval,
             "start_time": t_fetch,
         })
 
-        # NEWNYM (circuit isolation)
+        # NEWNYM (circuit isolation). newnym.py uses only stdlib, so system
+        # python is fine here.
         procs.append({
             "path": "/usr/bin/python3",
-            "args": "-m newnym",
+            "args": "/home/projectadmin/newnym.py",
             "start_time": t_newnym,
         })
 
@@ -155,20 +156,35 @@ def build_monitor_processes(pages, num_visits, visit_interval,
 
 
 def build_zimserver_processes(pages, zimroot):
-    """One zimsrv process per port on the zimserver."""
+    """One zimsrv.py process per port on the zimserver.
+
+    zimsrv.py is our own tiny HTTP server wrapping libzim. We can't use
+    kiwix-serve because its prebuilt binary is statically linked and Shadow
+    rejects static ELFs (it needs to LD_PRELOAD its shim). We can't use the
+    `zimply` library either because it only supports the old ZIM namespace
+    format ("A/ArticleName"), which modern Kiwix ZIMs (v6+) dropped.
+    libzim handles the current format natively.
+
+    Each process serves the whole ZIM on one port; since we run one per
+    page/port, the URL path (http://ip:PORT/<article>) still identifies the
+    specific page the client is fetching.
+    """
     procs = []
     for page in pages:
         procs.append({
-            "path": "/usr/bin/python3",
-            "args": "-m zimsrv",
+            "path": "/home/projectadmin/toolsenv/bin/python3",
+            "args": "/home/projectadmin/zimsrv.py",
             "environment": {
                 "ZIMROOT": zimroot,
-                "ZIMIP": page["ip"],
+                "ZIMIP":   page["ip"],
                 "ZIMPORT": str(page["port"]),
-                "LANG": "en_US.UTF-8",
-                "LC_ALL": "en_US.UTF-8",
+                "LANG":    "en_US.UTF-8",
+                "LC_ALL":  "en_US.UTF-8",
             },
             "start_time": "3s",
+            # Servers run until Shadow kills them at stop_time. Without this,
+            # Shadow reports "unexpected final state" for every server process.
+            "expected_final_state": "running",
         })
     return procs
 

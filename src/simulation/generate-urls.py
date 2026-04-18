@@ -82,6 +82,10 @@ def sample_articles(zim_path, n, seed=42):
             continue
         if "/" in title:  # skip pages with slashes in titles
             continue
+        # Skip titles with quotes or special chars that break Shadow's
+        # argument parser or YAML serialization.
+        if any(c in title for c in "'\"\\`${}|;"):
+            continue
 
         # Skip common non-article paths (depends on ZIM structure)
         # Newer ZIMs put articles at 'A/<title>' or just '<title>'.

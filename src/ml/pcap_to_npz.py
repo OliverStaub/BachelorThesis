@@ -51,12 +51,22 @@ def read_pcap(pcap_path):
 
     if HAS_DPKT:
         with open(pcap_path, "rb") as f:
-            for ts, buf in dpkt.pcap.Reader(f):
+            reader = dpkt.pcap.Reader(f)
+            linktype = reader.datalink()
+            for ts, buf in reader:
                 try:
-                    eth = dpkt.ethernet.Ethernet(buf)
-                    if not isinstance(eth.data, dpkt.ip.IP):
+                    # Shadow writes raw IP (link type 101), not Ethernet.
+                    # dpkt.pcap.DLT_RAW is 12, but the actual value is 101.
+                    if linktype in (101, dpkt.pcap.DLT_RAW):
+                        ip = dpkt.ip.IP(buf)
+                    elif linktype == dpkt.pcap.DLT_EN10MB:
+                        eth = dpkt.ethernet.Ethernet(buf)
+                        if not isinstance(eth.data, dpkt.ip.IP):
+                            continue
+                        ip = eth.data
+                    else:
                         continue
-                    ip = eth.data
+
                     if not isinstance(ip.data, dpkt.tcp.TCP):
                         continue
                     packets.append({
@@ -115,12 +125,34 @@ def extract_directions(packets, client_ip, start_ts, end_ts, seq_len=5000):
 
 
 def find_pcap(shadow_data_dir, monitor_name):
-    """Find pcap file for a monitor in shadow.data/hosts/<name>/."""
-    host_dir = Path(shadow_data_dir) / "hosts" / monitor_name
-    if not host_dir.exists():
-        return None
-    pcaps = list(host_dir.glob("*.pcap"))
-    return pcaps[0] if pcaps else None
+    """Find pcap file for a monitor.
+
+    Looks in several possible locations, in order:
+      1. <shadow_data>/hosts/<name>/*.pcap   (standard Shadow layout)
+      2. <shadow_data>/../pcaps/<name>_*.pcap (flat layout from old pull-results)
+      3. <shadow_data>/pcaps/<name>_*.pcap   (same, but pcaps/ inside shadow.data)
+    """
+    shadow_data = Path(shadow_data_dir)
+
+    # Layout 1: standard Shadow hosts/ tree
+    # Prefer eth0.pcap (real network traffic) over lo.pcap (loopback, no Tor).
+    host_dir = shadow_data / "hosts" / monitor_name
+    if host_dir.exists():
+        eth0 = host_dir / "eth0.pcap"
+        if eth0.exists():
+            return eth0
+        pcaps = [p for p in host_dir.glob("*.pcap") if p.name != "lo.pcap"]
+        if pcaps:
+            return pcaps[0]
+
+    # Layouts 2 & 3: flat pcaps/ directory
+    for flat in (shadow_data.parent / "pcaps", shadow_data / "pcaps"):
+        if flat.exists():
+            hits = list(flat.glob(f"{monitor_name}_*.pcap"))
+            if hits:
+                return hits[0]
+
+    return None
 
 
 def main():
@@ -216,11 +248,9 @@ def main():
 
     # Save label mapping
     label_path = Path(args.output).with_suffix(".labels.json")
-    label2page = {}
-    for port, label in port_to_label.items():
-        label2page[label] = port
+    label2page = {int(v): int(k) for k, v in port_to_label.items()}
     with open(label_path, "w") as f:
-        json.dump({"port_to_label": port_to_label,
+        json.dump({"port_to_label": {int(k): int(v) for k, v in port_to_label.items()},
                     "label_to_port": label2page,
                     "num_classes": len(unique_ports)}, f, indent=2)
     logging.info(f"Saved {label_path}")

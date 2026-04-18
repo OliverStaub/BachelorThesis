@@ -532,24 +532,23 @@ def cmd_pull_results(args):
 
     local_dir.mkdir(parents=True, exist_ok=True)
 
-    # Pull plot data
-    print_step("Pulling tornet.plot.data/...")
-    scp_from_remote(f"{sim_dir}/tornet.plot.data", str(local_dir / "tornet.plot.data"))
+    # Pull whatever standard outputs exist (skip missing ones gracefully).
+    for remote_name, local_name in [
+        ("shadow.config.yaml", "shadow.config.yaml"),
+        ("sim.log", "sim.log"),
+    ]:
+        result = ssh_cmd(f"test -f {sim_dir}/{remote_name}", capture=True, check=False)
+        if result.returncode == 0:
+            print_step(f"Pulling {remote_name}...")
+            scp_from_remote(f"{sim_dir}/{remote_name}", str(local_dir / local_name))
 
-    # Pull tor metrics json
-    print_step("Pulling tor_metrics*.json...")
-    result = ssh_cmd(f"ls {sim_dir}/tor_metrics_*.json 2>/dev/null", capture=True, check=False)
-    for f in result.stdout.strip().split("\n"):
-        if f:
-            scp_from_remote(f, str(local_dir / Path(f).name))
-
-    # Pull shadow config for reference
-    print_step("Pulling shadow.config.yaml...")
-    scp_from_remote(f"{sim_dir}/shadow.config.yaml", str(local_dir / "shadow.config.yaml"))
-
-    # Pull sim log
-    print_step("Pulling sim.log...")
-    scp_from_remote(f"{sim_dir}/sim.log", str(local_dir / "sim.log"))
+    # tornet.plot.data/ only exists after a successful tornettools parse
+    result = ssh_cmd(f"test -d {sim_dir}/tornet.plot.data", capture=True, check=False)
+    if result.returncode == 0:
+        print_step("Pulling tornet.plot.data/...")
+        scp_from_remote(f"{sim_dir}/tornet.plot.data", str(local_dir / "tornet.plot.data"))
+    else:
+        print("  (tornet.plot.data/ not found — skipping, parse may not have run)")
 
     # Pull pcap files preserving the shadow.data/hosts/<name>/ structure
     # so pcap_to_npz.py can find them by host name.
@@ -624,6 +623,7 @@ def cmd_run(args):
     print(f"  Pages:            {args.pages}")
     print(f"  Visits per page:  {args.visits}")
     print(f"  Visit interval:   {args.visit_interval}s")
+    print(f"  Circuit Padding:  {args.padding or 'Tor default (on)'}")
     print(f"  URLs file:        {args.urls}")
 
     urls_path = Path(args.urls)
@@ -646,6 +646,26 @@ def cmd_run(args):
         print_err(f"Expected {local_config} after pull-config but it's missing")
         sys.exit(1)
 
+    # ── Step 2b: Set Circuit Padding in torrc ──────────────────────────
+    if args.padding is not None:
+        client_torrc = local_exp_dir / "conf" / "tor.client.torrc"
+        if client_torrc.exists():
+            with open(client_torrc, "a") as f:
+                if args.padding == "off":
+                    f.write("\n# WF experiment: padding disabled\nCircuitPadding 0\n")
+                    print_ok("Circuit Padding: OFF (CircuitPadding 0)")
+                elif args.padding == "on":
+                    f.write("\n# WF experiment: padding explicitly enabled\nCircuitPadding 1\n")
+                    print_ok("Circuit Padding: ON (CircuitPadding 1)")
+                elif args.padding == "reduced":
+                    f.write("\n# WF experiment: reduced padding\nCircuitPadding 1\nReducedCircuitPadding 1\n")
+                    print_ok("Circuit Padding: REDUCED (ReducedCircuitPadding 1)")
+        else:
+            print_err(f"tor.client.torrc not found at {client_torrc}")
+            sys.exit(1)
+    else:
+        print("  (Circuit Padding: using Tor default = ON)")
+
     # ── Step 3: Add WF monitor/zimserver nodes ─────────────────────────
     print_step("Step 3/5: Add WF nodes to config")
     rc = subprocess.call([
@@ -666,6 +686,28 @@ def cmd_run(args):
     print_step("Step 4/5: Push config to server")
     cmd_push_config(_namespace(name=name))
 
+    # Provision shadow.data.template/hosts/monitorN/ with torrc files.
+    # tornettools only creates template dirs for the hosts IT generated,
+    # so our WF nodes need their own torrc files or Tor fails to start.
+    print_step("Step 4/5: Provision monitor template dirs")
+    sim_dir = get_sim_dir(name)
+    monitor_names = " ".join(f"monitor{i}" for i in range(args.monitors))
+    provision_cmd = f"""bash -c '
+        cd {sim_dir}/shadow.data.template/hosts
+        for H in {monitor_names}; do
+            mkdir -p "$H"
+            cat > "$H/torrc" <<TORRC_EOF
+# WF monitor torrc (host-specific overrides, if any)
+TORRC_EOF
+            cat > "$H/torrc-defaults" <<TORRC_EOF
+%include ../../../conf/tor.common.torrc
+%include ../../../conf/tor.client.torrc
+TORRC_EOF
+        done
+    '"""
+    ssh_cmd(provision_cmd)
+    print_ok(f"Provisioned template dirs for: {monitor_names}")
+
     print_step("Step 4/5: Start simulation")
     cmd_simulate(_namespace(
         name=name,
@@ -681,6 +723,55 @@ def cmd_run(args):
     print(f"\n  Simulation running. Check progress with:")
     print(f"    ./shadowctl.py status --name {name}")
     print(f"    ./shadowctl.py logs   --name {name} -f")
+
+
+def cmd_stop(args):
+    """Kill a running simulation on the server (whole process tree)."""
+    name = args.name
+    sim_dir = get_sim_dir(name)
+
+    print_header(f"Stopping simulation: {name}")
+
+    result = ssh_cmd(f"test -f {sim_dir}/sim.pid && cat {sim_dir}/sim.pid",
+                     capture=True, check=False)
+    pid = result.stdout.strip() if result.returncode == 0 else ""
+    if not pid:
+        print_ok("No sim.pid file — nothing running for this experiment")
+        return
+
+    print_step(f"Killing process tree rooted at PID {pid}...")
+    # We kill the entire process GROUP — Shadow's cmdline doesn't contain
+    # the experiment name, so we can't target it by pattern. The PGID is
+    # inherited from the wrapper bash, so `kill -- -$PGID` hits everything.
+    ssh_cmd(f"""bash -c '
+        PID={pid}
+        PGID=$(ps -o pgid= -p $PID 2>/dev/null | tr -d " ")
+        if [ -n "$PGID" ]; then
+            kill -9 -- -"$PGID" 2>/dev/null
+        fi
+        # Belt-and-braces: also directly kill the wrapper + tornettools + shadow
+        kill -9 $PID 2>/dev/null
+        for child in $(pgrep -P $PID 2>/dev/null); do
+            kill -9 $child 2>/dev/null
+            for grandchild in $(pgrep -P $child 2>/dev/null); do
+                kill -9 $grandchild 2>/dev/null
+            done
+        done
+        rm -f {sim_dir}/sim.pid
+        sleep 1
+    '""", check=False)
+
+    # Verify nothing is left
+    result = ssh_cmd(
+        "ps -ef | grep -E 'shadow |tornettools|\\.local/bin/tor' | grep projectadmin | grep -v grep | wc -l",
+        capture=True, check=False,
+    )
+    remaining = result.stdout.strip()
+    if remaining == "0":
+        print_ok(f"Simulation '{name}' stopped (no remaining processes)")
+    else:
+        print_err(f"Still {remaining} simulation-related processes running — check manually:")
+        print(f"  ssh {SSH_HOST} 'ps -ef | grep -E \"shadow|tornettools|\\.local/bin/tor\" | grep -v grep'")
 
 
 def cmd_list(args):
@@ -789,17 +880,26 @@ def main():
     p.add_argument("--dest", default=None, help="Local destination directory")
     p.set_defaults(func=cmd_pull_results)
 
+    # stop
+    p = sub.add_parser("stop", help="Kill a running simulation on the server")
+    p.add_argument("--name", required=True, help="Experiment name")
+    p.set_defaults(func=cmd_stop)
+
     # run (full workflow)
     p = sub.add_parser("run", help="Full workflow: generate + WF + push + simulate + status")
     p.add_argument("name", help="Experiment name (e.g. exp2)")
     p.add_argument("--scale",          type=float, default=0.01, help="Network scale (default: 0.01)")
     p.add_argument("--month",          default="2025-01", help="Tor data month (default: 2025-01)")
-    p.add_argument("--monitors",       type=int, default=5,  help="Number of WF monitor nodes (default: 5)")
+    p.add_argument("--monitors",       type=int, default=10, help="Number of WF monitor nodes (default: 10)")
     p.add_argument("--pages",          type=int, default=5,  help="Number of pages to fetch (default: 5)")
     p.add_argument("--visits",         type=int, default=50, help="Visits per page (default: 50)")
     p.add_argument("--visit-interval", type=int, default=30, help="Seconds per visit window (default: 30)")
     p.add_argument("--urls", default=str(DEFAULT_URLS_FILE),
                    help="URL list file (default: src/simulation/generated/urls.txt)")
+    p.add_argument("--padding", choices=["on", "off", "reduced"],
+                   default=None,
+                   help="Circuit padding: on (Tor default), off, or reduced. "
+                        "If omitted, Tor's built-in default is used (on).")
     p.set_defaults(func=cmd_run)
 
     # list

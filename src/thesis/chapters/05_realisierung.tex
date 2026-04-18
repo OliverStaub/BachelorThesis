@@ -65,4 +65,22 @@ For your thesis at ~1% scale, you'll want to think about whether you can still g
   │ wikipedia_en_all_maxi_2026-02.zim         │ 124 GB │ Full English Wikipedia — huge            │
   └───────────────────────────────────────────┴────────┴──────────────────────────────────────────
 
-  
+  - wir machen einen neuen channel pro request. ist das gut ?
+
+  - Run with different Seeds
+  - run with 200 page visits ?
+
+  - how to validate the classifier.
+
+  - Irgendwelche sinnvolle Resultate produzieren am Schluss
+
+
+    ┌───────┬───────────────────────┬───────────────────────────────────────────────────────────┐
+  │  Set  │        Samples        │                          Purpose                          │
+  ├───────┼───────────────────────┼───────────────────────────────────────────────────────────┤
+  │ Train │ 202 (81%)             │ DF learns traffic patterns from these                     │
+  ├───────┼───────────────────────┼───────────────────────────────────────────────────────────┤
+  │ Valid │ 23 (9%)               │ Used during training to pick the best model checkpoint    │
+  ├───────┼───────────────────────┼───────────────────────────────────────────────────────────┤
+  │ Test  │ 25 (25 = 5 per class) │ Held-out evaluation — DF never sees these during training │
+  └───────┴───────────────────────┴───────────────────────────────────────────────────────────┘
