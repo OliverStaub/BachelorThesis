@@ -84,3 +84,17 @@ For your thesis at ~1% scale, you'll want to think about whether you can still g
   ├───────┼───────────────────────┼───────────────────────────────────────────────────────────┤
   │ Test  │ 25 (25 = 5 per class) │ Held-out evaluation — DF never sees these during training │
   └───────┴───────────────────────┴───────────────────────────────────────────────────────────┘
+
+
+
+
+  Es ist sehr einfach weil wir lange pausen zwischen den besuchen haben. in der echten welt deutlich schwieriger weils das splitting schwieriger wird.
+  goldberg 2016 realistically hat das genauer beleuchtet und sagt das führt zu sehr vielen potenziellen problemen
+
+
+
+  Multi-tab browsing. User opens 3 tabs at once. Their packet streams interleave at the TCP layer. Splitting by time doesn't work because two pages are loading simultaneously.
+Background traffic. Spotify streaming in the background. Email client polling. Slack notifications. All of this is mixed into the same Tor circuit (or shares the same TCP connection to the guard, depending on circuit isolation settings).
+No clean visit boundaries. Pages can load asynchronously — AJAX requests fire minutes after the initial load. When does "the visit" end? When the user clicks a link to navigate away? But that just starts a new visit before the old one finished.
+Long-lived persistent connections. Modern HTTP/2 keeps connections open. The TCP stream never really "stops."
+No NEWNYM between visits. Real users don't switch circuits per page; they reuse the same circuit for many visits in a session

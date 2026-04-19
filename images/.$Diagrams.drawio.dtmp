@@ -1,0 +1,157 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/26.2.15 Chrome/134.0.6998.205 Electron/35.2.1 Safari/537.36" version="26.2.15" pages="2">
+  <diagram name="Page-1" id="gUtYHLV5G_G_Fh9yZYu5">
+    <mxGraphModel dx="1454" dy="1001" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="YANz2hVsQKh2Qyaa-IPD-27" value="" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="130" y="690" width="680" height="510" as="geometry" />
+        </mxCell>
+        <mxCell id="YANz2hVsQKh2Qyaa-IPD-28" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="194" y="740" width="440" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="YANz2hVsQKh2Qyaa-IPD-32" value="Shadow Simulation" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="660" y="1160" width="140" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="YANz2hVsQKh2Qyaa-IPD-40" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="YANz2hVsQKh2Qyaa-IPD-33" target="YANz2hVsQKh2Qyaa-IPD-36">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="YANz2hVsQKh2Qyaa-IPD-33" value="Guard / Entry Relays" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="217" y="840" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="YANz2hVsQKh2Qyaa-IPD-34" value="Tor Network" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="204" y="750" width="90" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="YANz2hVsQKh2Qyaa-IPD-80" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="YANz2hVsQKh2Qyaa-IPD-35" target="YANz2hVsQKh2Qyaa-IPD-33">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="160" y="1130" />
+              <mxPoint x="160" y="870" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YANz2hVsQKh2Qyaa-IPD-35" value="TGEN / MARKOV Clients" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="194" y="1100" width="153" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="YANz2hVsQKh2Qyaa-IPD-41" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="YANz2hVsQKh2Qyaa-IPD-36" target="YANz2hVsQKh2Qyaa-IPD-37">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="YANz2hVsQKh2Qyaa-IPD-36" value="Middle Relays" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="361" y="840" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="YANz2hVsQKh2Qyaa-IPD-88" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" source="YANz2hVsQKh2Qyaa-IPD-37" target="YANz2hVsQKh2Qyaa-IPD-69">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="770" y="870" />
+              <mxPoint x="770" y="1040" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YANz2hVsQKh2Qyaa-IPD-89" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" source="YANz2hVsQKh2Qyaa-IPD-37" target="YANz2hVsQKh2Qyaa-IPD-64">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="770" y="870" />
+              <mxPoint x="770" y="980" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YANz2hVsQKh2Qyaa-IPD-37" value="Exit Relays" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="497" y="840" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="YANz2hVsQKh2Qyaa-IPD-38" value="Authorities" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="444" y="755.5" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="YANz2hVsQKh2Qyaa-IPD-39" value="Performance Clients" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="304" y="755.5" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="YANz2hVsQKh2Qyaa-IPD-42" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="194" y="950" width="356" height="120.5" as="geometry" />
+        </mxCell>
+        <mxCell id="YANz2hVsQKh2Qyaa-IPD-70" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="YANz2hVsQKh2Qyaa-IPD-44" target="YANz2hVsQKh2Qyaa-IPD-46">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="YANz2hVsQKh2Qyaa-IPD-71" value="SOCKS5" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="YANz2hVsQKh2Qyaa-IPD-70">
+          <mxGeometry x="-0.0773" y="-1" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YANz2hVsQKh2Qyaa-IPD-44" value="wget2" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="424" y="1000.25" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="YANz2hVsQKh2Qyaa-IPD-79" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;startArrow=none;startFill=0;" edge="1" parent="1" source="YANz2hVsQKh2Qyaa-IPD-46" target="YANz2hVsQKh2Qyaa-IPD-33">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="160" y="1030" />
+              <mxPoint x="160" y="870" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YANz2hVsQKh2Qyaa-IPD-46" value="TOR Client" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="227" y="1000.25" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="YANz2hVsQKh2Qyaa-IPD-54" value="Monitor clients" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="204" y="960" width="90" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="YANz2hVsQKh2Qyaa-IPD-60" value="PCAP Capture" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="399" y="1100" width="150" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="YANz2hVsQKh2Qyaa-IPD-64" value="Zim Server" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="580" y="950" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="YANz2hVsQKh2Qyaa-IPD-69" value="TGEN Server" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="580" y="1010.5" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="YANz2hVsQKh2Qyaa-IPD-98" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;fillColor=#f8cecc;strokeColor=#b85450;" edge="1" parent="1" source="YANz2hVsQKh2Qyaa-IPD-97" target="YANz2hVsQKh2Qyaa-IPD-60">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="210" y="1030" as="sourcePoint" />
+            <Array as="points">
+              <mxPoint x="204" y="1080" />
+              <mxPoint x="474" y="1080" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YANz2hVsQKh2Qyaa-IPD-97" value="" style="whiteSpace=wrap;html=1;aspect=fixed;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="194" y="1020.5" width="19.5" height="19.5" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="Cj_mM9b10mN7WL6Lxnd5" name="Page-2">
+    <mxGraphModel dx="1018" dy="701" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="GO0tZ2nmppwIpZZyPFFE-7" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="GO0tZ2nmppwIpZZyPFFE-2" target="GO0tZ2nmppwIpZZyPFFE-4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="GO0tZ2nmppwIpZZyPFFE-2" value="PCAP File" style="verticalLabelPosition=bottom;html=1;verticalAlign=top;align=center;strokeColor=none;fillColor=#00BEF2;shape=mxgraph.azure.cloud_services_configuration_file;pointerEvents=1;" vertex="1" parent="1">
+          <mxGeometry x="50" y="250" width="47.5" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="GO0tZ2nmppwIpZZyPFFE-12" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="GO0tZ2nmppwIpZZyPFFE-4" target="GO0tZ2nmppwIpZZyPFFE-9">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="GO0tZ2nmppwIpZZyPFFE-4" value="pcap_to_npz.py" style="verticalLabelPosition=bottom;html=1;verticalAlign=top;align=center;strokeColor=none;fillColor=#00BEF2;shape=mxgraph.azure.script_file;pointerEvents=1;" vertex="1" parent="1">
+          <mxGeometry x="190" y="250" width="47.5" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="GO0tZ2nmppwIpZZyPFFE-8" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="GO0tZ2nmppwIpZZyPFFE-5" target="GO0tZ2nmppwIpZZyPFFE-4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="GO0tZ2nmppwIpZZyPFFE-5" value="schedule.json" style="verticalLabelPosition=bottom;html=1;verticalAlign=top;align=center;strokeColor=none;fillColor=#00BEF2;shape=mxgraph.azure.code_file;pointerEvents=1;" vertex="1" parent="1">
+          <mxGeometry x="50" y="170" width="47.5" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="GO0tZ2nmppwIpZZyPFFE-9" value="Final.npz&lt;div&gt;&lt;br&gt;&lt;/div&gt;" style="verticalLabelPosition=bottom;html=1;verticalAlign=top;align=center;strokeColor=none;fillColor=#00BEF2;shape=mxgraph.azure.cloud_services_configuration_file;pointerEvents=1;" vertex="1" parent="1">
+          <mxGeometry x="320" y="250" width="47.5" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="GO0tZ2nmppwIpZZyPFFE-15" value="1 per Page Visit" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="270" y="50" width="90" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="GO0tZ2nmppwIpZZyPFFE-18" value="[+1, +1, -1, -1, -1, -1, +1, -1, -1, -1, -1, +1, +1, -1, -1, ...]" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="390" y="260" width="320" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="GO0tZ2nmppwIpZZyPFFE-19" value="labels.json" style="verticalLabelPosition=bottom;html=1;verticalAlign=top;align=center;strokeColor=none;fillColor=#00BEF2;shape=mxgraph.azure.code_file;pointerEvents=1;" vertex="1" parent="1">
+          <mxGeometry x="320" y="120" width="47.5" height="50" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
