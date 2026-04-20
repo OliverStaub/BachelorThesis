@@ -81,8 +81,15 @@
 ## Apr 18 8h
 
 - Weitere Simulation
+- Zwischenpräsentation vorbereitung
 
 ## Apr 19 8h
 
 - Weitere Simulation durchgeführt
 - Grafiken erstellen zum modellieren
+
+## Apr 20 8h
+
+- Auswertung Simulation
+- Vorbereitung Zwischenpräsentation
+- Reglement lesen zur Zwischenrpäsentation und Bachelorarbeit
