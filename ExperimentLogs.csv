@@ -1,6 +1,8 @@
 Experiment,Network Scale,Relays,Directory Authorities,Nodes Total,Monitors (WF Clients),Pages (classes),Visits per page,Visit Interval (s),Circuit Padding,Tor version,Seed,ZIM file,Sim stop_time (s),Wall-clock time,Total samples,Samples per class,Failed fetches,Failed fetches %,Skipped (too few packets),Mean packets per sample,Train samples,Valid samples,Test samples,Accuracy,Precision,Recall,F1-score,Training epochs,Best epoch,Random baseline,Notes
 exp-baseline,0.010,79,3,298,5,5,100,30,OFF,,1,simple_en_maxi_2026-02,,03:18:00,500,100,22,4.4%,,787,405,45,50,92.0%,93.6%,92.0%,92.1%,30,,20.0%,
 exp-baseline-20,0.010,79,3,303,10,20,150,30,OFF,,1,simple_en_maxi_2026-02,,07:57:00,3000,150,51,1.7%,,635,2430,270,300,92.7%,93.3%,92.7%,92.7%,30,,5.0%,
-exp-padding-20,0.010,79,3,303,10,20,150,30,ON,,1,simple_en_maxi_2026-02,,,,,,,,,,,,,,,,30,,5.0%,
+exp-baseline-80,0.010,79,3,313,20,80,150,30,OFF,,1,simple_en_maxi_2026-02,,,,,,,,,,,,,,,,30,,1.2%,
+exp-padding-20,0.010,79,3,303,10,20,150,30,ON,,1,simple_en_maxi_2026-02,,08:16:00,3000,150,46,1.5%,,638,2430,270,300,83.3%,84.2%,83.3%,82.8%,30,,5.0%,
+exp-reduced-20,0.010,79,3,303,10,20,150,30,Reduced,,1,simple_en_maxi_2026-02,,08:18:00,3000,150,58,1.9%,,611,2430,270,300,86.7%,88.1%,86.7%,86.3%,30,,5.0%,
 exp7,0.010,79,3,298,5,5,50,30,ON (default),,1,simple_en_maxi_2026-02,,,,,,,,,,,,,,,,30,,20.0%,
 exp8,0.010,79,3,298,5,5,50,30,ON (default),,1,simple_en_maxi_2026-02,,02:25:00,250,50,9,3.6%,,803,202,23,25,32.0%,45.6%,32.0%,26.8%,30,,20.0%,

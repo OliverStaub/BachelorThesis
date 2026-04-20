@@ -890,7 +890,7 @@ def main():
     p.add_argument("name", help="Experiment name (e.g. exp2)")
     p.add_argument("--scale",          type=float, default=0.01, help="Network scale (default: 0.01)")
     p.add_argument("--month",          default="2025-01", help="Tor data month (default: 2025-01)")
-    p.add_argument("--monitors",       type=int, default=10, help="Number of WF monitor nodes (default: 10)")
+    p.add_argument("--monitors",       type=int, default=20, help="Number of WF monitor nodes (default: 20)")
     p.add_argument("--pages",          type=int, default=5,  help="Number of pages to fetch (default: 5)")
     p.add_argument("--visits",         type=int, default=50, help="Visits per page (default: 50)")
     p.add_argument("--visit-interval", type=int, default=30, help="Seconds per visit window (default: 30)")

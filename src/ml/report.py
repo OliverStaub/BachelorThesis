@@ -120,18 +120,30 @@ def parse_sim_log(log_path):
 
 
 def read_padding_setting(conf_dir):
-    """Check tor.client.torrc for CircuitPadding setting."""
+    """Check tor.client.torrc for CircuitPadding and ReducedCircuitPadding."""
+    padding_on = None
+    reduced = False
     for name in ["tor.client.torrc", "tor.common.torrc"]:
         path = conf_dir / name
         try:
             with open(path) as f:
                 for line in f:
-                    if line.strip().lower().startswith("circuitpadding"):
-                        val = line.strip().split()[-1]
-                        return "OFF" if val == "0" else "ON"
+                    stripped = line.strip().lower()
+                    if stripped.startswith("circuitpadding "):
+                        val = stripped.split()[-1]
+                        padding_on = (val != "0")
+                    elif stripped.startswith("reducedcircuitpadding "):
+                        val = stripped.split()[-1]
+                        reduced = (val == "1")
         except Exception:
             pass
-    return "ON (default)"
+    if padding_on is None:
+        return "ON (default)"
+    if not padding_on:
+        return "OFF"
+    if reduced:
+        return "Reduced"
+    return "ON"
 
 
 def read_npz_stats(npz_path):
