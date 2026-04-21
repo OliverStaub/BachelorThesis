@@ -35,7 +35,9 @@
       "Bash(gs -dSAFER -dBATCH -dNOPAUSE -sDEVICE=png16m -r300 -dGraphicsAlphaBits=4 -dTextAlphaBits=4 -sOutputFile=projektplan.png projektplan.pdf)",
       "Bash(rm -f projektplan.aux projektplan.log)",
       "Bash(/workspaces/BachelorThesis/src/thesis/figs/build.sh)",
-      "Bash(bash /workspaces/BachelorThesis/src/thesis/figs/buildprojektplan.sh)"
+      "Bash(bash /workspaces/BachelorThesis/src/thesis/figs/buildprojektplan.sh)",
+      "Bash(latexmk -pdf -interaction=nonstopmode projektplan.tex)",
+      "Bash(./buildprojektplan.sh)"
     ]
   }
 }
