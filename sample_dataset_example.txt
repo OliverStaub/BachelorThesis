@@ -1,0 +1,47 @@
+Website Fingerprinting - Dataset Example
+========================================
+
+Each sample is a sequence of packet directions captured
+at the network level while a user visits a website through Tor.
+
+  +1 = outgoing packet (client → Tor guard relay)
+  -1 = incoming packet (Tor guard relay → client)
+   0 = padding (no more packets in this visit)
+
+Full dataset: 12000 samples, 80 website classes, 5000 values per sample
+Split: 81% train, 9% validation, 10% test
+
+──────────────────────────────────────────────────────────────────────
+
+Sample 0:  Website class = 0  (1074 packets: 385 outgoing, 689 incoming)
+First 100 packet directions:
+  +1 -1 -1 +1 +1 -1 +1 -1 -1 -1 +1 +1 +1 -1 -1 +1 -1 -1 +1 -1 +1 -1 -1 -1 +1
+  -1 -1 +1 -1 -1 +1 -1 +1 -1 -1 -1 +1 -1 -1 +1 -1 -1 -1 +1 -1 -1 -1 -1 -1 +1
+  -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 +1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 +1 +1 -1 -1
+  -1 -1 +1 -1 -1 -1 -1 -1 -1 +1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 +1 +1 -1 -1 -1
+  ... (974 more packets, then zeros until position 5000)
+
+Sample 150:  Website class = 40  (532 packets: 172 outgoing, 360 incoming)
+First 100 packet directions:
+  +1 -1 -1 +1 -1 +1 -1 -1 +1 -1 +1 -1 +1 -1 +1 -1 +1 +1 -1 -1 -1 -1 +1 -1 +1
+  -1 +1 -1 -1 +1 -1 -1 -1 -1 -1 -1 +1 +1 -1 -1 -1 -1 -1 -1 -1 -1 +1 +1 +1 +1
+  +1 +1 +1 +1 -1 -1 -1 -1 +1 -1 -1 +1 -1 -1 -1 +1 +1 +1 -1 -1 +1 -1 -1 -1 -1
+  -1 -1 -1 -1 -1 -1 +1 -1 -1 -1 -1 -1 -1 -1 -1 -1 +1 -1 -1 -1 -1 +1 -1 -1 -1
+  ... (432 more packets, then zeros until position 5000)
+
+Sample 300:  Website class = 0  (1005 packets: 360 outgoing, 645 incoming)
+First 100 packet directions:
+  +1 -1 +1 -1 +1 +1 -1 -1 -1 +1 +1 +1 -1 -1 -1 +1 +1 -1 -1 +1 -1 +1 -1 -1 +1
+  -1 -1 -1 +1 -1 +1 -1 -1 -1 -1 -1 +1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 +1 +1 -1
+  -1 -1 -1 -1 -1 +1 -1 -1 -1 -1 -1 -1 -1 -1 -1 +1 +1 -1 -1 -1 -1 +1 -1 -1 +1
+  -1 -1 -1 -1 -1 -1 -1 +1 +1 -1 -1 -1 -1 -1 -1 -1 -1 -1 +1 +1 -1 -1 -1 -1 +1
+  ... (905 more packets, then zeros until position 5000)
+
+──────────────────────────────────────────────────────────────────────
+
+The Deep Fingerprinting (DF) classifier learns to identify
+which website produced a given direction sequence.
+
+Example: the classifier sees only the +1/-1 pattern above
+and predicts "this is website class 12" — without seeing
+the actual content, URL, or any unencrypted data.

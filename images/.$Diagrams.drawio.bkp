@@ -117,11 +117,11 @@
     </mxGraphModel>
   </diagram>
   <diagram id="Cj_mM9b10mN7WL6Lxnd5" name="Page-2">
-    <mxGraphModel dx="1958" dy="779" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="1712" dy="610" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="GO0tZ2nmppwIpZZyPFFE-2" value="monitor0/eth0.pcap" style="verticalLabelPosition=bottom;html=1;verticalAlign=top;align=center;strokeColor=none;fillColor=#00BEF2;shape=mxgraph.azure.cloud_services_configuration_file;pointerEvents=1;" vertex="1" parent="1">
+        <mxCell id="GO0tZ2nmppwIpZZyPFFE-2" value="monitor0.pcap" style="verticalLabelPosition=bottom;html=1;verticalAlign=top;align=center;strokeColor=none;fillColor=#00BEF2;shape=mxgraph.azure.cloud_services_configuration_file;pointerEvents=1;" vertex="1" parent="1">
           <mxGeometry x="80" y="190" width="47.5" height="50" as="geometry" />
         </mxCell>
         <mxCell id="GO0tZ2nmppwIpZZyPFFE-12" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="GO0tZ2nmppwIpZZyPFFE-4" target="GO0tZ2nmppwIpZZyPFFE-9">
@@ -155,10 +155,10 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="GO0tZ2nmppwIpZZyPFFE-23" value="monitor1/eth0.pcap" style="verticalLabelPosition=bottom;html=1;verticalAlign=top;align=center;strokeColor=none;fillColor=#00BEF2;shape=mxgraph.azure.cloud_services_configuration_file;pointerEvents=1;" vertex="1" parent="1">
+        <mxCell id="GO0tZ2nmppwIpZZyPFFE-23" value="monitor1.pcap" style="verticalLabelPosition=bottom;html=1;verticalAlign=top;align=center;strokeColor=none;fillColor=#00BEF2;shape=mxgraph.azure.cloud_services_configuration_file;pointerEvents=1;" vertex="1" parent="1">
           <mxGeometry x="80" y="270" width="47.5" height="50" as="geometry" />
         </mxCell>
-        <mxCell id="GO0tZ2nmppwIpZZyPFFE-24" value="monitor2/eth0.pcap" style="verticalLabelPosition=bottom;html=1;verticalAlign=top;align=center;strokeColor=none;fillColor=#00BEF2;shape=mxgraph.azure.cloud_services_configuration_file;pointerEvents=1;" vertex="1" parent="1">
+        <mxCell id="GO0tZ2nmppwIpZZyPFFE-24" value="monitor2.pcap" style="verticalLabelPosition=bottom;html=1;verticalAlign=top;align=center;strokeColor=none;fillColor=#00BEF2;shape=mxgraph.azure.cloud_services_configuration_file;pointerEvents=1;" vertex="1" parent="1">
           <mxGeometry x="80" y="350" width="47.5" height="50" as="geometry" />
         </mxCell>
         <mxCell id="GO0tZ2nmppwIpZZyPFFE-25" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="GO0tZ2nmppwIpZZyPFFE-23" target="GO0tZ2nmppwIpZZyPFFE-4">
