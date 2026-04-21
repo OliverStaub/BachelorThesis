@@ -1,25 +1,56 @@
+\begin{tikzpicture}
+\node[inner sep=0pt] (chart) {%
 \begin{ganttchart}[
     hgrid, vgrid={*{6}{draw=none}, dotted},
     x unit=1.3mm, y unit chart=6mm,
     time slot format=isodate,
+    title label font=\scriptsize,
     calendar week text={\currentweek},
+    bar label node/.append style={xshift=-3mm},
+    group label node/.append style={xshift=-3mm},
     milestone/.append style={fill=red!70},
     bar/.append style={fill=blue!40},
     group/.append style={fill=black!70},
-  ]{2026-02-16}{2026-06-15}
+    milestone inline label node/.append style={font=\scriptsize, yshift=0.5mm},
+  ]{2026-02-16}{2026-06-20}
   \gantttitlecalendar{month=name, week} \\
+
   \ganttgroup{Bachelorarbeit}{2026-02-16}{2026-06-15} \\
+
+  \ganttbar[bar/.append style={draw=none,fill=none}]{Meilensteine}{2026-02-16}{2026-02-16}
+  \ganttmilestone[inline]{M1}{2026-02-20}
+  \ganttmilestone[inline]{M2}{2026-03-02}
+  \ganttmilestone[inline]{M3}{2026-04-16}
+  \ganttmilestone[inline]{M4}{2026-04-23}
+  \ganttmilestone[inline]{M5}{2026-06-15} \\
+  
   \ganttbar{Literaturrecherche}{2026-02-16}{2026-03-20} \\
-  \ganttbar{Konzept \& Stand der Technik}{2026-03-02}{2026-04-03} \\
+  \ganttbar{Konzept \& Stand der Technik}{2026-02-23}{2026-04-10} \\
   \ganttbar{Shadow-Simulation aufsetzen}{2026-03-16}{2026-04-16} \\
-  \ganttbar{ML-Pipeline (WFlib, pcap$\to$npz)}{2026-04-06}{2026-05-08} \\
-  \ganttbar{Experimente \& Auswertung}{2026-04-20}{2026-05-29} \\
-  \ganttbar{Thesis schreiben}{2026-03-02}{2026-06-12} \\
-  \ganttbar{Review \& Abgabe-Vorbereitung}{2026-06-01}{2026-06-15} \\
-  \ganttmilestone{Semesterstart (16.02.2026)}{2026-02-16} \\
-  \ganttmilestone{Kickoff (20.02.2026)}{2026-02-20} \\
-  \ganttmilestone{Aufgabenstellung signiert (02.03.2026)}{2026-03-02} \\
-  \ganttmilestone{Erste erfolgreiche Simulation (16.04.2026)}{2026-04-16} \\
-  \ganttmilestone{Zwischenpr\"asentation (23.04.2026)}{2026-04-23} \\
-  \ganttmilestone{Abgabe (15.06.2026)}{2026-06-15}
-\end{ganttchart}
+  \ganttbar{ML-Pipeline (wflib, pcap$\to$npz)}{2026-04-01}{2026-04-26} \\
+  \ganttbar{Simulationen durchf\"uhren}{2026-04-16}{2026-05-09} \\
+  \ganttbar{Evaluation Resultate}{2026-05-01}{2026-05-29} \\
+  \ganttbar{Kap. Stand der Technik}{2026-03-02}{2026-04-03} \\
+  \ganttbar{Kap. Methodik}{2026-04-06}{2026-05-01} \\
+  \ganttbar{Kap. Results \& Diskussion}{2026-05-04}{2026-05-29} \\
+  \ganttbar{Intro, Fazit, Abstract}{2026-05-25}{2026-06-05} \\
+  \ganttbar{Puffer \& Durchlesen}{2026-06-01}{2026-06-15}
+
+
+  \ganttvrule{}{2026-02-20}
+  \ganttvrule{}{2026-03-02}
+  \ganttvrule{}{2026-04-16}
+  \ganttvrule{}{2026-04-23}
+  \ganttvrule{}{2026-06-15}
+\end{ganttchart}%
+};
+\node[anchor=north, yshift=-3mm, xshift=-18mm] at (chart.south) {%
+\begin{tabular}{@{}lll@{}}
+\textbf{M1} & 20.02.2026 & Kickoff \\
+\textbf{M2} & 02.03.2026 & Aufgabenstellung signiert \\
+\textbf{M3} & 16.04.2026 & Erste erfolgreiche Simulation \\
+\textbf{M4} & 23.04.2026 & Zwischenpr\"asentation \\
+\textbf{M5} & 15.06.2026 & Abgabe \\
+\end{tabular}%
+};
+\end{tikzpicture}
