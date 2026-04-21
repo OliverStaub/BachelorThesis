@@ -28,7 +28,12 @@
       "Bash(ls:*)",
       "Bash(git rm:*)",
       "WebFetch(domain:dumps.wikimedia.org)",
-      "WebFetch(domain:raw.githubusercontent.com)"
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(pdflatex -interaction=nonstopmode -halt-on-error hslu_thesis.tex)",
+      "Read(//tmp/**)",
+      "Bash(pdflatex -interaction=nonstopmode -halt-on-error projektplan.tex)",
+      "Bash(gs -dSAFER -dBATCH -dNOPAUSE -sDEVICE=png16m -r300 -dGraphicsAlphaBits=4 -dTextAlphaBits=4 -sOutputFile=projektplan.png projektplan.pdf)",
+      "Bash(rm -f projektplan.aux projektplan.log)"
     ]
   }
 }
