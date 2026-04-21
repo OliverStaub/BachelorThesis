@@ -87,14 +87,27 @@ First 100 packet directions:
 
 # Evaluation
 
+- Closed World Szenario, stark eingeschränkt
+
 ---
 
 # Probleme / Herausforderungen
+
+- Sonderzeichen in URL's
+- Veraltete Packages etc.
 
 ---
 
 # Learnings
 
+- Rechenauswändige Simulationen (16h pro Simulation)
+- Speicherplatz
+- Ich habe die Komplexität unterschätzt
+
 ---
 
-# Vielen Dank
+# Nächste Schritte
+
+- Weitere Simulationen, Optimierungen
+- Schreiben
+- Evaluation und Einordnung der Ergebnisse
