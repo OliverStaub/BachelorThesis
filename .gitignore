@@ -47,4 +47,10 @@ src/experiments.csv
 # Excel temp files
 ~$*.xlsx
 
+# Node / Slidev
+node_modules/
+dist/
+.nuxt/
+package-lock.json
+
 Claude.md
