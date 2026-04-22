@@ -52,16 +52,6 @@ Ein passiver Beobachter zwischen Nutzer und Tor-Guard kann anhand von Paket-rich
 → Website-Fingerprinting (WF)
 </div>
 
----
-
-# Projektplan
-
-<img src="/images/projektplan.png" class="w-1/1 mx-auto mt-8" />
-
-<div class="text-xs text-gray-500 mt-0 text-right">
-  Eigene Darstellung
-</div>
-
 
 ---
 
@@ -186,12 +176,6 @@ First 100 packet directions:
   .npz Beispielinhalt
 </div>
 
-<img src="/images/wflib.jpg" class="w-3/4 ml-auto mt-42" />
-
-<div class="text-xs text-gray-500 mt-4 text-right col-span-2">
-  Quelle: https://github.com/FIND-Lab/Website-Fingerprinting-Library
-</div>
-
 ---
 
 # WFLib Training und Evaluation
@@ -206,26 +190,130 @@ First 100 packet directions:
 
 # Erste Resultate
 
+<table class="text-sm mx-auto">
+  <thead class="border-b-2">
+    <tr>
+      <th class="px-4 py-2 text-left">Experiment</th>
+      <th class="px-4 py-2">Seiten</th>
+      <th class="px-4 py-2">Visits</th>
+      <th class="px-4 py-2">Samples</th>
+      <th class="px-4 py-2">Accuracy</th>
+      <th class="px-4 py-2">F1</th>
+      <th class="px-4 py-2 text-gray-500">Baseline</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="px-4 py-2">baseline-5</td>
+      <td class="px-4 py-2 text-center">5</td>
+      <td class="px-4 py-2 text-center">100</td>
+      <td class="px-4 py-2 text-center">500</td>
+      <td class="px-4 py-2 text-center font-bold">92.0%</td>
+      <td class="px-4 py-2 text-center">92.1%</td>
+      <td class="px-4 py-2 text-center text-gray-500">20.0%</td>
+    </tr>
+    <tr>
+      <td class="px-4 py-2">baseline-20</td>
+      <td class="px-4 py-2 text-center">20</td>
+      <td class="px-4 py-2 text-center">150</td>
+      <td class="px-4 py-2 text-center">3000</td>
+      <td class="px-4 py-2 text-center font-bold">92.7%</td>
+      <td class="px-4 py-2 text-center">92.7%</td>
+      <td class="px-4 py-2 text-center text-gray-500">5.0%</td>
+    </tr>
+    <tr>
+      <td class="px-4 py-2">baseline-80</td>
+      <td class="px-4 py-2 text-center">80</td>
+      <td class="px-4 py-2 text-center">150</td>
+      <td class="px-4 py-2 text-center">12000</td>
+      <td class="px-4 py-2 text-center font-bold">82.4%</td>
+      <td class="px-4 py-2 text-center">81.4%</td>
+      <td class="px-4 py-2 text-center text-gray-500">1.2%</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="mt-4 text-sm opacity-80 text-center">
+  DF erreicht Accuracy deutlich über der Baseline.
+</div>
+
+<table class="text-sm mx-auto">
+  <thead class="border-b-2">
+    <tr>
+      <th class="px-4 py-2 text-left">Padding-Modus</th>
+      <th class="px-4 py-2">Accuracy</th>
+      <th class="px-4 py-2">F1</th>
+      <th class="px-4 py-2">Δ Accuracy</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="px-4 py-2 font-semibold">OFF</td>
+      <td class="px-4 py-2 text-center bg-red-100 font-bold">92.7%</td>
+      <td class="px-4 py-2 text-center">92.7%</td>
+      <td class="px-4 py-2 text-center text-gray-400">—</td>
+    </tr>
+    <tr>
+      <td class="px-4 py-2 font-semibold">REDUCED</td>
+      <td class="px-4 py-2 text-center bg-yellow-100 font-bold">86.7%</td>
+      <td class="px-4 py-2 text-center">86.3%</td>
+      <td class="px-4 py-2 text-center">−6.0 pp</td>
+    </tr>
+    <tr>
+      <td class="px-4 py-2 font-semibold">ON</td>
+      <td class="px-4 py-2 text-center bg-green-100 font-bold">83.3%</td>
+      <td class="px-4 py-2 text-center">82.8%</td>
+      <td class="px-4 py-2 text-center">−9.4 pp</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="mt-4 text-sm opacity-80 text-center">
+  Circuit Padding reduziert die Accuracy.
+</div>
+
 ---
 
-# Evaluation
+# Projektplan
 
-- Closed World Szenario, stark eingeschränkt
+<img src="/images/projektplan.png" class="w-1/1 mx-auto mt-8" />
 
----
+<div class="text-xs text-gray-500 mt-0 text-right">
+  Eigene Darstellung
+</div>
 
-# Probleme / Herausforderungen
-
-- Sonderzeichen in URL's
-- Veraltete Packages etc.
 
 ---
 
-# Learnings
+# Learnings & Herausforderungen
 
-- Rechenauswändige Simulationen (16h pro Simulation)
-- Speicherplatz
-- Ich habe die Komplexität unterschätzt
+<div class="grid grid-cols-2 gap-8 mt-6">
+
+<div>
+
+**Technisch**
+
+- Rechenintensive Simulationen (~16h pro Run)
+- Hoher Speicherplatzbedarf (pcaps, Modelle)
+- Veraltete Pakete & Toolchain-Inkompatibilitäten
+- Sonderzeichen in URLs brechen Capture-Pipeline
+
+</div>
+
+<div>
+
+**Konzeptionell**
+
+- Komplexität der Simulationen anfangs unterschätzt
+- Closed-World ≠ Real-World:
+  - Single-Tab Browsing
+  - Nur Wikipedia-Seiten
+  - Keine Paket-Fragmentierung
+- Einordnung der Resultate erfordert Vorsicht
+
+</div>
+
+</div>
 
 ---
 
