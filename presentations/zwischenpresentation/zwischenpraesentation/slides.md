@@ -315,14 +315,6 @@ First 100 packet directions:
 
 </div>
 
----
-
-# Nächste Schritte
-
-- Weitere Simulationen, Optimierungen
-- Schreiben
-- Evaluation und Einordnung der Ergebnisse
-
 
 ---
 layout: cover
