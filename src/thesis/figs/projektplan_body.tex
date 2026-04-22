@@ -24,13 +24,22 @@
   \ganttmilestone[inline]{M4}{2026-04-23}
   \ganttmilestone[inline]{M5}{2026-06-15} \\
   
-  \ganttbar{Literaturrecherche}{2026-02-16}{2026-03-08} \\
-  \ganttbar[bar/.append style={fill=black!20, draw=black!30, pattern=north east lines, pattern color=black!40}]{\textit{Abwesenheit WK}}{2026-03-09}{2026-03-27} \\
-  \ganttbar{Shadow-Simulation aufbauen}{2026-03-28}{2026-04-16} \\
-  \ganttbar{Simulationen durchf\"uhren}{2026-04-17}{2026-05-010} \\
-  \ganttbar{Evaluation Resultate}{2026-04-29}{2026-05-29} \\
-  \ganttbar{Puffer \& Durchlesen}{2026-06-01}{2026-06-15}
+  \ganttbar[bar height=.5,bar top shift = 0]{Literaturrecherche}{2026-02-16}{2026-03-08}
+  \ganttbar[bar/.append style={fill=blue!70, draw=blue!100}, bar height=.5,bar top shift=0.5, inline]{}{2026-02-16}{2026-03-08} \\
+  
+  \ganttbar[bar/.append style={fill=black!20, draw=black!30, pattern=north east lines, pattern color=black!40}, bar height = 1, bar top shift = 0]{\textit{Abwesenheit WK}}{2026-03-09}{2026-03-27} \\
 
+  \ganttbar[bar height=.5,bar top shift = 0]{Shadow-Simulation aufbauen}{2026-03-28}{2026-04-12}
+  \ganttbar[bar/.append style={fill=blue!70, draw=blue!100}, bar height=.5,bar top shift=0.5, inline]{}{2026-03-28}{2026-04-16} \\
+
+  \ganttbar[bar height=.5,bar top shift = 0]{Shadow Simulation}{2026-04-13}{2026-05-10}
+  \ganttbar[bar/.append style={fill=blue!70, draw=blue!100}, bar height=.5,bar top shift=0.5, inline]{}{2026-04-17}{2026-04-23} \\
+
+  \ganttbar[bar height=.5,bar top shift = 0]{schreiben}{2026-04-24}{2026-05-24} \\
+
+  \ganttbar[bar height=.5,bar top shift = 0]{Evaluation Resultate}{2026-05-04}{2026-05-24} \\
+
+  \ganttbar[bar height=.5,bar top shift = 0]{Puffer \& Durchlesen}{2026-05-25}{2026-06-15}
 
   \ganttvrule{}{2026-02-27}
   \ganttvrule{}{2026-03-02}
