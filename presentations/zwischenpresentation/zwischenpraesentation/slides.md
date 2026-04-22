@@ -95,6 +95,8 @@ Wie effektiv schützt Circuit Padding **in einer mit shadow simulierten Tor-Umge
 </div>
 
 ---
+hide: true
+---
 
 # Methodik
 
@@ -271,6 +273,17 @@ First 100 packet directions:
 <div class="mt-4 text-sm opacity-80 text-center">
   Circuit Padding reduziert die Accuracy.
 </div>
+
+---
+
+# Confusion Matrix
+
+<img src="/images/confusion_comparison_20.svg" class="w-1/1 mx-auto mt-8" />
+
+<div class="text-xs text-gray-500 mt-0 text-right">
+  Eigene Darstellung
+</div>
+
 
 ---
 
