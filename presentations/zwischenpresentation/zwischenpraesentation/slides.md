@@ -278,7 +278,7 @@ First 100 packet directions:
 
 # Confusion Matrix
 
-<img src="/images/confusion_comparison_20.svg" class="w-1/1 mx-auto mt-8" />
+<img src="/images/confusion_comparison_20.svg" class="w-1/1 mx-auto mt-20" />
 
 <div class="text-xs text-gray-500 mt-0 text-right">
   Eigene Darstellung

@@ -229,14 +229,40 @@ def main():
     X = np.array(all_sequences, dtype=np.float32)
     y_raw = np.array(all_ports, dtype=np.int64)
 
-    # Remap ports to contiguous labels 0..N-1
-    unique_ports = sorted(set(y_raw))
-    port_to_label = {port: idx for idx, port in enumerate(unique_ports)}
-    y = np.array([port_to_label[p] for p in y_raw], dtype=np.int64)
+    # Check if open-world mode: monitored_ports in schedule.json
+    monitored_ports = meta.get("monitored_ports")
+    is_open_world = meta.get("open_world", False) and monitored_ports
+
+    if is_open_world:
+        # Open-world labeling: monitored ports → class 0..M-1,
+        # all unmonitored ports → class M ("other").
+        monitored_set = set(monitored_ports)
+        m = len(monitored_ports)
+        monitored_port_to_label = {p: i for i, p in enumerate(sorted(monitored_set))}
+
+        y = np.array([
+            monitored_port_to_label[p] if p in monitored_set else m
+            for p in y_raw
+        ], dtype=np.int64)
+
+        n_monitored = int((y < m).sum())
+        n_unmonitored = int((y == m).sum())
+        n_classes = m + 1
+        logging.info(f"Open-world: {m} monitored classes + 1 'other' class")
+        logging.info(f"  Monitored samples: {n_monitored}, Unmonitored: {n_unmonitored}")
+
+        port_to_label = {int(p): int(l) for p, l in monitored_port_to_label.items()}
+        port_to_label["other"] = m
+    else:
+        # Closed-world: remap ports to contiguous labels 0..N-1
+        unique_ports = sorted(set(y_raw))
+        port_to_label = {port: idx for idx, port in enumerate(unique_ports)}
+        y = np.array([port_to_label[p] for p in y_raw], dtype=np.int64)
+        n_classes = len(unique_ports)
 
     logging.info(f"Total samples: {len(X)}")
     logging.info(f"Total skipped: {total_skipped}")
-    logging.info(f"Classes: {len(unique_ports)}")
+    logging.info(f"Classes: {n_classes}")
     counts = np.bincount(y)
     logging.info(f"Samples/class: min={counts.min()}, max={counts.max()}, "
                  f"mean={counts.mean():.1f}")
@@ -248,11 +274,13 @@ def main():
 
     # Save label mapping
     label_path = Path(args.output).with_suffix(".labels.json")
-    label2page = {int(v): int(k) for k, v in port_to_label.items()}
     with open(label_path, "w") as f:
-        json.dump({"port_to_label": {int(k): int(v) for k, v in port_to_label.items()},
-                    "label_to_port": label2page,
-                    "num_classes": len(unique_ports)}, f, indent=2)
+        json.dump({
+            "port_to_label": {str(k): int(v) for k, v in port_to_label.items()},
+            "num_classes": n_classes,
+            "open_world": is_open_world,
+            "monitored_ports": monitored_ports if is_open_world else None,
+        }, f, indent=2)
     logging.info(f"Saved {label_path}")
 
 

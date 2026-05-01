@@ -624,6 +624,13 @@ def cmd_run(args):
     print(f"  Visits per page:  {args.visits}")
     print(f"  Visit interval:   {args.visit_interval}s")
     print(f"  Circuit Padding:  {args.padding or 'Tor default (on)'}")
+    if args.correlation_only:
+        corr_str = f"ONLY (exit pcaps on {args.exit_pcap_relays} relays, no monitor pcaps)"
+    elif args.correlation:
+        corr_str = f"YES (exit pcaps on {args.exit_pcap_relays} relays + monitor pcaps)"
+    else:
+        corr_str = "no"
+    print(f"  Correlation:      {corr_str}")
     print(f"  URLs file:        {args.urls}")
 
     urls_path = Path(args.urls)
@@ -668,7 +675,7 @@ def cmd_run(args):
 
     # ── Step 3: Add WF monitor/zimserver nodes ─────────────────────────
     print_step("Step 3/5: Add WF nodes to config")
-    rc = subprocess.call([
+    wf_cmd = [
         sys.executable, str(WF_CONFIG_GEN),
         "--base-config", str(local_config),
         "--urls",        str(urls_path),
@@ -677,7 +684,22 @@ def cmd_run(args):
         "--num-pages",       str(args.pages),
         "--visits-per-page", str(args.visits),
         "--visit-interval",  str(args.visit_interval),
-    ])
+    ]
+    if args.open_world:
+        wf_cmd += [
+            "--open-world",
+            "--monitored-pages",    str(args.monitored_pages),
+            "--unmonitored-visits", str(args.unmonitored_visits),
+        ]
+    if args.correlation or args.correlation_only:
+        wf_cmd += [
+            "--enable-exit-pcap",
+            "--exit-pcap-relays", str(args.exit_pcap_relays),
+            "--guard-pcap-relays", str(args.guard_pcap_relays),
+        ]
+    if args.correlation_only:
+        wf_cmd += ["--no-monitor-pcap"]
+    rc = subprocess.call(wf_cmd)
     if rc != 0:
         print_err("generate-wf-config.py failed")
         sys.exit(rc)
@@ -900,6 +922,23 @@ def main():
                    default=None,
                    help="Circuit padding: on (Tor default), off, or reduced. "
                         "If omitted, Tor's built-in default is used (on).")
+    # Open-world options
+    p.add_argument("--open-world", action="store_true",
+                   help="Open-world: first --monitored-pages get full visits, "
+                        "rest get --unmonitored-visits")
+    p.add_argument("--monitored-pages", type=int, default=80,
+                   help="Number of monitored pages in open-world (default: 80)")
+    p.add_argument("--unmonitored-visits", type=int, default=10,
+                   help="Visits per unmonitored page in open-world (default: 10)")
+    # Correlation attack options
+    p.add_argument("--correlation", action="store_true",
+                   help="Enable exit relay pcaps (+ monitor pcaps for both WF and correlation)")
+    p.add_argument("--correlation-only", action="store_true",
+                   help="Exit relay pcaps only, NO monitor pcaps (correlation without WF, saves disk)")
+    p.add_argument("--exit-pcap-relays", type=int, default=5,
+                   help="Number of exit relays to capture pcaps on (default: 5)")
+    p.add_argument("--guard-pcap-relays", type=int, default=5,
+                   help="Number of guard relays to capture pcaps on (default: 5)")
     p.set_defaults(func=cmd_run)
 
     # list

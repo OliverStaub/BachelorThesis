@@ -279,3 +279,98 @@ Or use the all-in-one script:
     (it needs to inject its shim via `LD_PRELOAD`, which only works with
     dynamically-linked ELFs). Building kiwix-serve from source with
     dynamic linking is possible but adds a large dependency footprint.
+
+## Traffic Correlation Attack (End-to-End)
+
+In addition to the Website Fingerprinting (WF) attack, the pipeline supports a
+simplified **end-to-end traffic correlation attack**.
+
+### Adversary Model
+
+The adversary controls (or observes) traffic at both ends of a Tor circuit:
+- **Entry side:** encrypted traffic between the client and the guard relay
+  (captured via monitor pcaps, same as the WF attack)
+- **Exit side:** cleartext HTTP traffic between the exit relay and the
+  destination (captured via exit relay pcaps, enabled with `--correlation`)
+
+The adversary's goal: given an entry-side flow and an exit-side flow, determine
+whether they belong to the same Tor circuit.
+
+### Approach: Pcap-based Statistical Correlation
+
+Instead of patching Tor's source code to log circuit IDs (which would require
+the unreleased `tor-gwf` binary or deep Tor internals knowledge), we use a
+simplified pcap-based approach:
+
+1. **Capture pcaps on both sides.** Monitor pcaps (entry) are already captured.
+   The `--correlation` flag additionally enables pcap capture on 5 exit relays.
+2. **Segment by time window.** Each 30-second fetch window has exactly one
+   page load from one monitor (entry side). On the exit side, traffic to the
+   matching zimserver port during the same window corresponds to the same circuit.
+3. **Bin packet timestamps.** Divide each 30-second window into 100ms bins
+   and count packets per bin on both sides.
+4. **Compute correlation.** Pearson, cosine similarity, and cross-correlation
+   between the entry and exit bin vectors. High correlation = same circuit.
+5. **Generate ROC curves.** True pairs (same circuit) vs false pairs (random
+   mismatched entry/exit flows). Report AUC and TPR at low FPR thresholds.
+
+### Why This Works (and Its Limitations)
+
+**Why it works:** Tor relays forward cells with minimal buffering. A burst of
+packets entering the circuit at the guard appears (with some delay) as a burst
+leaving at the exit. This timing correlation survives Tor's encryption because
+Tor does not add significant timing noise — unless Circuit Padding is enabled.
+
+**Limitations (document in thesis):**
+- No true circuit ID ground truth — we match entry/exit flows by timing window
+  + destination port heuristic
+- Our one-page-at-a-time setup means minimal circuit multiplexing at the entry,
+  which makes correlation easier than in a real scenario with concurrent tabs
+- Shadow's deterministic simulated network has lower latency variance than real
+  Tor, which also inflates correlation accuracy
+- Statistical correlation only (Pearson, cosine, cross-correlation) — no learned
+  correlators like DeepCorr (Sun et al. 2018)
+- We only capture pcaps on 5 of 22 exit relays to limit disk/RAM usage; circuits
+  using other exits produce no exit-side data
+
+### Running a Correlation Experiment
+
+```bash
+# Generate URLs if needed
+bash src/simulation/setup-wf-server.sh urls 20
+
+# Run with correlation mode (enables exit relay pcaps)
+cd src/simulation
+python3 shadowctl.py run exp-corr --pages 20 --visits 50 --correlation --padding off
+
+# Wait for completion, pull results
+python3 shadowctl.py status --name exp-corr
+python3 shadowctl.py pull-results --name exp-corr
+
+# Run correlation analysis
+cd ../ml
+python3 correlation.py \
+    --schedule ../simulation/exp-corr/shadow.config.schedule.json \
+    --shadow-data ../simulation/exp-corr/results/shadow.data/ \
+    --output results/correlation/ \
+    -v
+```
+
+Output in `results/correlation/`:
+- `roc_curves.pdf/svg/png` — ROC curves for all three metrics
+- `score_distributions.pdf/svg/png` — histograms of true vs false pair scores
+- `correlation_results.json` — AUC, TPR@FPR=0.01, TPR@FPR=0.001
+- `roc_data.csv` — raw data for custom plotting
+
+### Comparing with Circuit Padding
+
+Run two correlation experiments (same pages/visits, different padding):
+
+```bash
+python3 shadowctl.py run exp-corr-off --pages 20 --visits 50 --correlation --padding off
+python3 shadowctl.py run exp-corr-on  --pages 20 --visits 50 --correlation --padding on
+```
+
+Then compare the ROC curves: padding ON should produce lower AUC (harder to
+correlate) because padding inserts dummy packets that add noise to the timing
+signal.

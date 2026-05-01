@@ -1,47 +1,58 @@
 \chapter{Stand der Technik}
 
 \section{Tor}
-Das Tor Projekt stellt den Tor Browser zur Verfügung.
-Dieser ist ein Fork von Firefox und wurde für die Nutzung mit Tor optimiert.
-Der Tor Browser greift via SOCKS5 auf den Tor Deamon zu.
-Der Deamon leitet den Internetverkehr dann über das Tor Netzwerk.
-Dazu versendet er Tor Cells via TCP.
-Der Tor Browser greift auf den eigentlichen Tor Daemon zu und leitet den gesamten Internetverkehr des Browsers über einen SOCKS5 Proxy in das Tor Netzwerk weiter.
-Der Tor Client leitet den Datenverkehr über langlebige kryptographische Tunnels, Circuits genannt, weiter.\cite[S. 2]{jansen2023data}
 
-groups all first-party streams onto the same circuit. But if you have multiple tabs or are loading different pages, those go on separate circuits. 
+Tor wurde 2004 von Dingledine, Mathewson und Syverson als zweite Generation des Onion-Routing-Designs vorgestellt~\cite[S.~1]{dingledine2004tor}.
+Es handelt sich um ein verteiltes Overlay-Netzwerk mit niedriger Latenz, das TCP-basierte Anwendungen wie Web-Browsing, SSH oder Instant Messaging anonymisiert~\cite[S.~1]{dingledine2004tor}. Gegenüber dem ursprünglichen
+Onion-Routing ergänzt Tor unter anderem Perfect Forward Secrecy, Ende-zu-Ende-Integritätsprüfung, Verzeichnisserver, konfigurierbare Exit-Policies sowie Hidden Services über Rendezvous-Punkte~\cite[S.~1\,f.]{dingledine2004tor}.
 
+Tor verspricht Privatsphäre beim Browsen und soll vor Verfolgung, Zensur und Überwachung schützen~\cite{torprojectTorProjektPrivatsphre}.
+Schätzungen gehen von bis zu acht Millionen täglichen Nutzern aus~\cite[S.~1]{mani2018understanding}, womit Tor die am meistgenutzte Anonymisierungstechnologie im Internet ist.
 
-Erstens verhindert Tor, dass Webseiten und andere Dienste deinen Standort erfahren, den sie nutzen können, um Datenbanken über deine Gewohnheiten und Interessen aufzubauen. Mit Tor verraten dich deine Internetverbindungen nicht standardmäßig - jetzt kannst du für jede Verbindung wählen, wie viele Informationen du preisgeben willst.
-Zweitens verhindert Tor, dass Leute, die deinen Datenverkehr lokal beobachten (wie dein Internetdienstanbieter oder jemand, der Zugang zu deinem WLAN oder Router hat), herausfinden, welche Informationen du abrufst und woher du sie abrufst. Es hindert sie auch daran, zu entscheiden, was du lernen und veröffentlichen darfst - wenn du zu jedem Teil des Tor-Netzwerks gelangen kannst, kannst du jede Seite im Internet erreichen.
-Drittens leitet Tor deine Verbindung durch mehr als ein Tor-Relay, so dass kein einzelnes Relay erfahren kann, was du vorhast. Da diese Relays von verschiedenen Personen oder Organisationen betrieben werden, bietet die Verteilung des Vertrauens mehr Sicherheit als der alte Ein-Sprung-Proxy-Ansatz. - direktes zitat vom Tor Project Website.
+\subsection{Architektur}
 
-\gls{tor} Ist eine Technologie um Anonymität im Internet zu erlangen. 
-Die Daten werden mittels Onion Routing verschlüsselt, so dass kein Teilnehmer im Netzwerk die Herkunft und das Ziel des Datenverkehrs kennen kann. \cite{jansen2011shadow}
-Tor verspricht Privatsphäre beim Browsen und soll vor Verfolgung, Zensur und Überwachung schützen.
-Das Tor Projekt stellt einen eigenen Tor Browser zur Verfügung welcher zusätzlich die genutzte Hardware verschleiert um die anonymität weiter zu erhöhen. \cite{torprojectTorProjektPrivatsphre}
+Das Netzwerk besteht aus \emph{Onion Routern} (OR), die als gewöhnliche User-Space-Prozesse ohne Kernel-Anpassungen laufen.
+Jeder OR unterhält eine TLS-Verbindung zu jedem anderen OR.
+Auf der Clientseite läuft ein lokaler \emph{Onion Proxy} (OP), der das Verzeichnis abruft, Circuits aufbaut und TCP-Verbindungen der Anwendungen über das standardisierte SOCKS-Interface entgegennimmt und über die Circuits multiplext~\cite[S.~4]{dingledine2004tor}.
+Diese Trennung erlaubt es, Tor ohne Modifikation der Anwendungen zu nutzen~\cite[S.~1]{dingledine2004tor}.
 
-\gls{tor} ist die am meistgenutzte Anonymisierungstechnologie im Internet.
-Schätzungen gehen von bis zu 8 Millionen täglichen Nutzer aus. \cite[p. 1]{mani2018understanding}
+\subsection{Zellen}
 
-Jeder Circuit enthält 3 Tor Knoten. Den Eingangsknoten, Mittelknoten und den Ausgangsknoten.
-Der Eingangsknoten kennt den Client und den Mittelknoten nicht aber den Ausgangsnoten und das Ziel.
-Der Mittelknoten kennt den Eingangs und Ausgangsknoten nicht aber den Client oder das Ziel.
-Und der Ausgangsknoten letztendlich kennt lediglich den Mittelknoten und das Ziel, nicht aber den Client.
-Somit wird die Anonymisierung des Internetverkehrs erzeugt.
+Die kleinste Übertragungseinheit ist eine \emph{Zelle} fester Grösse.
+Im ursprünglichen Design von 2004 war eine Zelle 512~Byte gross und bestand aus einem 3-Byte-Header (2~Byte Circuit-ID, 1~Byte Kommando) sowie 509~Byte Payload~\cite[S.~5]{dingledine2004tor}.
+Mit der Einführung der \emph{Link-Protocol-Version~4} wurde die Circuit-ID auf 4~Byte erweitert, sodass aktuelle Tor-Zellen 514~Byte gross sind~\cite[S.~2]{jansen2023data}.
+Unterschieden wird zwischen \emph{Control Cells} (z.\,B.\ \texttt{create}, \texttt{destroy}, \texttt{padding}) und \emph{Relay Cells}, die Ende-zu-Ende-Stream-Daten transportieren~\cite[S.~5]{dingledine2004tor}.
+Die feste Zellgrösse soll Verkehrsmuster auf Paketebene vereinheitlichen; die Anzahl der Zellen sowie ihre Richtung können von einem Beobachter dennoch ausgelesen werden -- ein Umstand, den Website-Fingerprinting-Angriffe gezielt ausnutzen~\cite[S.~2]{jansen2023data}.
 
-Ein Tor Circuit lebt für etwa 10 Minuten und ist relativ Teuer in der Erstellung (Diffie Hellmann Key Exchange.)
+\subsection{Circuits und Streams}
 
-Ein Tor Stream ist eine TCP Verbindung welche über einen Tor Circuit geleited wird.
+Ein \emph{Circuit} ist ein mehrstufiger, kryptographisch geschützter Pfad durch das Netzwerk und enthält in der Regel drei Knoten: Eingangs-, Mittel- und Ausgangsknoten.
+Der Eingangsknoten kennt den Client und den Mittelknoten, nicht aber den Ausgangsknoten oder das Ziel; der Mittelknoten kennt nur seine beiden Nachbarn; der Ausgangsknoten kennt das Ziel, nicht aber den Client.
 
-Falls eine Anwendung mehrere Streams gleichzeitig versucht Tor diese alle über einen Circuit zu leiten.
-So kann unter anderem die Chance minimiert werden über einen bösartigen Knoten geleitet zu werden.
-Im Beispiel des Tor Browsers werden jeweils alle Streams einer Top-Level Domain über einen Circuit geleitet. \cite[S. 2]{jansen2023data}
+Der Client baut den Circuit \emph{telescopierend} auf: Mit dem ersten Hop wird per Diffie-Hellman ein Sitzungsschlüssel ausgehandelt, anschliessend wird der Circuit über bereits etablierte Hops um jeweils einen weiteren OR erweitert~\cite[S.~6]{dingledine2004tor}.
+Die Daten werden vom Client schichtweise mit den Schlüsseln aller Hops verschlüsselt; jeder OR entfernt beim Weiterleiten genau eine Schicht -- analog zu den Schichten einer Zwiebel~\cite[S.~1]{dingledine2004tor}.
+Dadurch kennt jeder OR nur seinen Vorgänger und Nachfolger im Pfad, jedoch weder Quelle noch Ziel der Kommunikation~\cite[S.~1]{dingledine2004tor}.
 
-Der Tor Datenverkehr wird dann in 514 Byte grosse Pakete verpackt, welche auch Tor Zellen genannt werden.
-Dadurch dass die Pakete immer genau gleich gross sind soll die Überwachung vom Internetverkehr weiter erschwert werden.
-Die Anzahl der Zellen und deren Richtung kann von einem Angreifer jedoch immernoch ausgelesen werden.
-In einer Website Fingerprinting Attacke wird genau dies ausgenützt. \cite[S. 2]{jansen2023data}
+Über einen einzelnen Circuit können mehrere TCP-\emph{Streams} parallel geleitet werden, was die Anzahl rechenintensiver Public-Key-Operationen reduziert.
+Um Linkability zu begrenzen, rotiert der OP Circuits periodisch und nutzt für neu eintreffende Streams den jeweils neuesten offenen Circuit~\cite[S.~5]{dingledine2004tor}.
+Im Tor Browser werden zusätzlich alle Streams einer Top-Level-Domain auf denselben Circuit gebündelt~\cite[S.~2]{jansen2023data}.
+
+\subsection{Bedrohungsmodell}
+
+Tor ist explizit \emph{nicht} gegen einen globalen passiven Beobachter ausgelegt.
+Angenommen wird stattdessen ein Angreifer, der einen Teil des Netzverkehrs beobachten, Verkehr modifizieren oder verzögern, eigene Onion Router betreiben sowie einen Teil bestehender Router kompromittieren kann~\cite[S.~4]{dingledine2004tor}.
+Das Designziel ist die Abwehr von \emph{Traffic-Analysis}-Angriffen, nicht aber von \emph{Traffic-Confirmation}-Angriffen, bei denen der Angreifer beide Enden einer Verbindung beobachtet~\cite[S.~4]{dingledine2004tor}.
+
+\subsection{Kein Padding im Originaldesign}
+
+Für die vorliegende Arbeit besonders relevant ist, dass das ursprüngliche Tor-Design weder Mixing noch Padding noch Traffic Shaping vorsieht
+Die Autoren begründen dies mit den Kosten solcher Verfahren und damit, dass zum damaligen Zeitpunkt kein praktikables, nachweislich anonymitätssteigerndes Padding-Schema existierte~\cite[S.~1]{dingledine2004tor}.
+Genau in diese Lücke setzen spätere Arbeiten zum \emph{Circuit Padding} an, das in den folgenden Abschnitten behandelt wird.
+
+\subsection{Tor Browser}
+
+Das Tor-Projekt stellt mit dem Tor Browser eine modifizierte Variante von Firefox bereit, die für die Nutzung mit Tor optimiert ist und zusätzlich Browser-Fingerprinting erschwert~\cite{torprojectTorProjektPrivatsphre}.
+Der Browser greift via SOCKS5 auf den lokalen Tor-Daemon zu, welcher den Internetverkehr in Form von Tor-Zellen über das Tor-Netzwerk weiterleitet~\cite[S.~2]{jansen2023data}.
 
 \section{Onion Routing}
 
@@ -383,6 +394,7 @@ ist im Artefakt-Repository der Autoren öffentlich verfügbar.
 \section{Circuit Padding}
 
 \todo{WFLib einführen}
+\todo{Schaltkreis vs circuit}
 \todo{Wikipedia Zim Server einführen.}
 \todo{Gute Einführung zu Tor schreiben.}
 \todo{Abgrenzung Snowflake / Website Fingerprinting}

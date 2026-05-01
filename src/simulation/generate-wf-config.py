@@ -94,11 +94,12 @@ WGET2_ENV = {
 }
 
 
-def build_monitor_processes(pages, num_visits, visit_interval,
+def build_monitor_processes(pages_with_visits, visit_interval,
                             tor_start_time, first_fetch_time, wget2_path):
     """
     Build process list for a monitor node.
 
+    pages_with_visits: list of (page_dict, num_visits) tuples.
     Pages are fetched ONE AT A TIME in a round-robin pattern:
       fetch page_0, NEWNYM, fetch page_1, NEWNYM, ..., fetch page_N, NEWNYM,
       fetch page_0 (visit 2), NEWNYM, ...
@@ -124,13 +125,14 @@ def build_monitor_processes(pages, num_visits, visit_interval,
         "expected_final_state": "running",
     })
 
-    # Build the sequential fetch schedule
-    # We interleave pages across visits so that the same page isn't always
-    # fetched at the same relative time in the simulation.
+    # Build the sequential fetch schedule.
+    # Each page has its own visit count (monitored = many, unmonitored = few).
+    max_visits = max(v for _, v in pages_with_visits)
     schedule = []
-    for visit in range(num_visits):
-        for page in pages:
-            schedule.append(page)
+    for visit in range(max_visits):
+        for page, page_visits in pages_with_visits:
+            if visit < page_visits:
+                schedule.append(page)
 
     for idx, page in enumerate(schedule):
         t_fetch = first_fetch_time + (idx * visit_interval)
@@ -144,8 +146,7 @@ def build_monitor_processes(pages, num_visits, visit_interval,
             "start_time": t_fetch,
         })
 
-        # NEWNYM (circuit isolation). newnym.py uses only stdlib, so system
-        # python is fine here.
+        # NEWNYM (circuit isolation)
         procs.append({
             "path": "/usr/bin/python3",
             "args": "/home/projectadmin/newnym.py",
@@ -197,11 +198,29 @@ def main():
     parser.add_argument("--num-monitors", type=int, default=5,
                         help="Number of monitor nodes (default: 5)")
     parser.add_argument("--num-pages", type=int, default=None,
-                        help="Number of pages to use (default: all)")
+                        help="Total number of pages to use (default: all from urls.txt)")
     parser.add_argument("--visits-per-page", type=int, default=50,
-                        help="Visits per page per monitor (default: 50)")
+                        help="Visits per monitored page (default: 50)")
+    # Open-world options
+    parser.add_argument("--open-world", action="store_true",
+                        help="Open-world mode: first --monitored-pages get full visits, "
+                             "rest get --unmonitored-visits")
+    parser.add_argument("--monitored-pages", type=int, default=80,
+                        help="Number of monitored pages in open-world (default: 80)")
+    parser.add_argument("--unmonitored-visits", type=int, default=10,
+                        help="Visits per unmonitored page in open-world (default: 10)")
     parser.add_argument("--visit-interval", type=int, default=30,
                         help="Seconds per visit window (default: 30)")
+    # Pcap control
+    parser.add_argument("--no-monitor-pcap", action="store_true",
+                        help="Disable pcap capture on monitor nodes (saves disk)")
+    # Correlation attack options
+    parser.add_argument("--enable-exit-pcap", action="store_true",
+                        help="Enable pcap on guard + exit relays (for correlation attack)")
+    parser.add_argument("--exit-pcap-relays", type=int, default=5,
+                        help="Number of exit relays to enable pcap on (default: 5)")
+    parser.add_argument("--guard-pcap-relays", type=int, default=5,
+                        help="Number of guard relays to enable pcap on (default: 5)")
     parser.add_argument("--zimroot", default="/home/projectadmin/wikidata",
                         help="ZIM data path on server")
     parser.add_argument("--wget2-path", default="/home/projectadmin/wget2_noinstall",
@@ -228,35 +247,55 @@ def main():
     print(f"Base config has {len(existing_ids)} hosts with valid node IDs "
           f"(will sample from these)", file=sys.stderr)
 
-    # Distribute pages across monitors (round-robin)
-    monitor_pages = [[] for _ in range(args.num_monitors)]
-    for i, page in enumerate(all_pages):
-        monitor_pages[i % args.num_monitors].append(page)
+    # Assign visit counts per page.
+    # In open-world: first N pages are "monitored" (many visits),
+    # the rest are "unmonitored" (few visits).
+    if args.open_world:
+        monitored_set = set()
+        pages_with_visits = []
+        for idx, page in enumerate(all_pages):
+            if idx < args.monitored_pages:
+                pages_with_visits.append((page, args.visits_per_page))
+                monitored_set.add(page["port"])
+            else:
+                pages_with_visits.append((page, args.unmonitored_visits))
+        print(f"Open-world: {args.monitored_pages} monitored ({args.visits_per_page} visits), "
+              f"{len(all_pages) - args.monitored_pages} unmonitored ({args.unmonitored_visits} visits)",
+              file=sys.stderr)
+    else:
+        monitored_set = None
+        pages_with_visits = [(page, args.visits_per_page) for page in all_pages]
+
+    # Distribute pages across monitors (round-robin, preserving visit counts)
+    monitor_page_visits = [[] for _ in range(args.num_monitors)]
+    for i, pv in enumerate(pages_with_visits):
+        monitor_page_visits[i % args.num_monitors].append(pv)
 
     # Track all schedules for the pcap converter
     all_schedules = {}
 
     for i in range(args.num_monitors):
         name = f"monitor{i}"
-        pages = monitor_pages[i]
+        pvs = monitor_page_visits[i]
         node_id = pick_node_id(existing_ids, rng)
 
         procs, schedule = build_monitor_processes(
-            pages, args.visits_per_page, args.visit_interval,
+            pvs, args.visit_interval,
             args.tor_start_time, args.first_fetch_time, args.wget2_path,
         )
 
-        config["hosts"][name] = {
+        host_entry = {
             "network_node_id": node_id,
             "bandwidth_down": "100 megabit",
             "bandwidth_up": "100 megabit",
-            # pcap_enabled lives under host_options in current Shadow releases
-            "host_options": {
-                "pcap_enabled": True,
-                "pcap_capture_size": "65535 B",
-            },
             "processes": procs,
         }
+        if not args.no_monitor_pcap:
+            host_entry["host_options"] = {
+                "pcap_enabled": True,
+                "pcap_capture_size": "65535 B",
+            }
+        config["hosts"][name] = host_entry
 
         # Save schedule for pcap_to_npz.py
         all_schedules[name] = [
@@ -266,9 +305,10 @@ def main():
             for idx, page in enumerate(schedule)
         ]
 
-        n_fetches = len(pages) * args.visits_per_page
+        n_fetches = sum(v for _, v in pvs)
         last_fetch = args.first_fetch_time + (n_fetches * args.visit_interval)
-        print(f"  {name}: {len(pages)} pages, {n_fetches} fetches, "
+        n_pages = len(pvs)
+        print(f"  {name}: {n_pages} pages, {n_fetches} fetches, "
               f"last fetch at t={last_fetch}s", file=sys.stderr)
 
     # Add zimserver
@@ -288,8 +328,46 @@ def main():
         }
         print(f"  {name}: {len(pages)} ports on {ip}", file=sys.stderr)
 
+    # Enable pcap on relays (for correlation attack)
+    exit_pcap_relays = []
+    guard_pcap_relays = []
+    if args.enable_exit_pcap:
+        def _enable_pcap_on(hosts, pattern_fn, limit, label):
+            """Enable pcap on relay hosts matching a pattern."""
+            matching = sorted(n for n in hosts if pattern_fn(n) and n.startswith("relay"))
+            enabled = []
+            n_enable = min(limit, len(matching))
+            for name in matching[:n_enable]:
+                host = hosts[name]
+                if "host_options" not in host:
+                    host["host_options"] = {}
+                host["host_options"]["pcap_enabled"] = True
+                host["host_options"]["pcap_capture_size"] = "65535 B"
+                enabled.append(name)
+            if enabled:
+                print(f"  {label} pcap enabled on {n_enable} relays: {', '.join(enabled)}",
+                      file=sys.stderr)
+            return enabled
+
+        # Exit relays: see cleartext traffic to destinations
+        exit_pcap_relays = _enable_pcap_on(
+            config["hosts"],
+            lambda n: "exit" in n.lower(),
+            args.exit_pcap_relays,
+            "Exit",
+        )
+
+        # Guard relays: see encrypted traffic from clients (entry side of
+        # the correlation attack — the adversary's view as a malicious guard)
+        guard_pcap_relays = _enable_pcap_on(
+            config["hosts"],
+            lambda n: "guard" in n.lower() and "exit" not in n.lower(),
+            args.guard_pcap_relays,
+            "Guard",
+        )
+
     # Adjust stop_time
-    max_fetches = max(len(mp) * args.visits_per_page for mp in monitor_pages)
+    max_fetches = max(sum(v for _, v in mpv) for mpv in monitor_page_visits)
     required_time = args.first_fetch_time + (max_fetches * args.visit_interval) + 120
     if required_time > config["general"].get("stop_time", 0):
         config["general"]["stop_time"] = required_time
@@ -308,6 +386,11 @@ def main():
         "first_fetch_time": args.first_fetch_time,
         "num_pages": len(all_pages),
         "visits_per_page": args.visits_per_page,
+        "open_world": args.open_world,
+        "monitored_ports": sorted(monitored_set) if monitored_set else None,
+        "exit_pcap_relays": exit_pcap_relays if exit_pcap_relays else None,
+        "guard_pcap_relays": guard_pcap_relays if guard_pcap_relays else None,
+        "zimserver_ip": all_pages[0]["ip"] if all_pages else None,
         "monitors": all_schedules,
     }
     with open(schedule_path, "w") as f:

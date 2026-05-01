@@ -38,7 +38,8 @@
       "Bash(bash /workspaces/BachelorThesis/src/thesis/figs/buildprojektplan.sh)",
       "Bash(latexmk -pdf -interaction=nonstopmode projektplan.tex)",
       "Bash(./buildprojektplan.sh)",
-      "Bash(ssh:*)"
+      "Bash(ssh:*)",
+      "Bash(sed 's/:$//')"
     ]
   }
 }

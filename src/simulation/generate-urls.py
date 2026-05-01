@@ -26,6 +26,7 @@ Usage on the server:
 
 import argparse
 import random
+import re
 import sys
 from pathlib import Path
 
@@ -80,28 +81,28 @@ def sample_articles(zim_path, n, seed=42):
             continue
         if title in seen_titles:
             continue
-        if "/" in title:  # skip pages with slashes in titles
-            continue
-        # Skip titles with special chars that break Shadow's argument
-        # parser, YAML serialization, or HTTP URL parsing.
-        # : and ? cause HTTP errors (colon = port separator, ? = query string)
-        # () can confuse some parsers too.
-        if any(c in title for c in "'\"\\`${}|;:?!()[]#@&+=%"):
-            continue
 
         # Skip common non-article paths (depends on ZIM structure)
-        # Newer ZIMs put articles at 'A/<title>' or just '<title>'.
-        # Filter obvious non-articles by path.
         if path.startswith(("-/", "I/", "M/", "X/")):
             continue
         # Further filter: mimetype should be html
-        if entry.get_item().mimetype != "text/html":
+        try:
+            if entry.get_item().mimetype != "text/html":
+                continue
+        except Exception:
             continue
 
-        # Replace spaces and unsafe chars in title for URL use
+        # Replace spaces with underscores for URL use
         safe_title = title.replace(" ", "_")
-        # Keep only ASCII-safe characters (HTTP path friendly)
-        if not all(c.isascii() for c in safe_title):
+
+        # WHITELIST approach: only allow characters that are safe in
+        # Shadow's YAML argument parser, HTTP URLs, and shell expansion.
+        # Letters, digits, underscores, hyphens, and periods only.
+        if not re.match(r'^[A-Za-z0-9_\-\.]+$', safe_title):
+            continue
+
+        # Must be at least 3 chars (skip stub-like entries)
+        if len(safe_title) < 3:
             continue
 
         seen_titles.add(title)
