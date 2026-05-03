@@ -114,3 +114,15 @@
 ## Apr 24 8h
 
 - Einführungskapitel Tor schreiben
+
+
+
+## May 1 8h
+
+- Schreiben Stand der Technik
+- Timing Angriff Versuchen aufzubauen ist jedoch sehr aufwendig und die Disk von meinem Server ist zu klein
+
+
+## May 3 8h
+
+- Schreiben Stand der Technik

@@ -40,7 +40,9 @@
       "Bash(./buildprojektplan.sh)",
       "Bash(ssh:*)",
       "Bash(sed 's/:$//')",
-      "Bash(latexmk -pdf -interaction=nonstopmode -halt-on-error hslu_thesis.tex)"
+      "Bash(latexmk -pdf -interaction=nonstopmode -halt-on-error hslu_thesis.tex)",
+      "WebFetch(domain:metrics.torproject.org)",
+      "Bash(xxd)"
     ]
   }
 }

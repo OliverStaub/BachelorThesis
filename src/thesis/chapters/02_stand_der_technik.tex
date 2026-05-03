@@ -2,33 +2,39 @@
 
 \section{Tor}
 
-\gls{tor} ist ein verteiltes Overlay-Netzwerk mit niedriger Latenz, das TCP-basierte Anwendungen wie Web-Browsing, SSH oder Instant Messaging anonymisiert~\cite[S.~1]{dingledine2004tor}.
+\gls{tor} ist ein verteiltes Overlay-Netzwerk mit niedriger Latenz, das TCP-basierte Anwendungen wie Web-Browsing, SSH oder Instant Messaging anonymisiert~\cite[S.~1--3]{dingledine2004tor}.
 Das Netzwerk verspricht seinen Nutzern Schutz vor Verfolgung, Zensur und Überwachung~\cite{torprojectTorProjektPrivatsphre} und wird Schätzungen zufolge täglich von bis zu acht Millionen Personen verwendet~\cite[S.~1]{mani2018understanding}.
-Diese hohe Verbreitung macht \gls{tor} zu einem attraktiven Ziel für Deanonymisierungsangriffe wie \gls{wf} und Traffic-Correlation, deren Grundlagen in den folgenden Abschnitten behandelt werden.
+Diese hohe Verbreitung macht \gls{tor} zu einem attraktiven Ziel für unterschiedliche Klassen von Deanonymisierungsangriffen, etwa Timing-Angriffe, Traffic-Correlation oder \gls{wf}, die jeweils unterschiedliche Beobachtungspositionen und Annahmen voraussetzen.
 
 Das aktuelle \gls{tor}-Design wurde 2004 von Dingledine, Mathewson und Syverson als zweite Generation des Onion-Routings vorgestellt und gegenüber dem Vorgänger um zentrale Eigenschaften wie Perfect Forward Secrecy, Ende-zu-Ende-Integritätsprüfung, Verzeichnisserver und konfigurierbare Exit-Policies erweitert~\cite[S.~1\,f.]{dingledine2004tor}.
-Die für diese Arbeit relevanten Komponenten der \gls{tor}-Architektur sowie das Bedrohungsmodell werden in den folgenden Unterabschnitten beschrieben.
+Die folgenden Unterabschnitte beschreiben die für diese Arbeit relevanten Komponenten der \gls{tor}-Architektur sowie das Bedrohungsmodell, das dem Tor-Design zugrunde liegt. Die spezifischen Bedrohungsmodelle der einzelnen Angriffsklassen werden in den jeweiligen Abschnitten weiter unten behandelt.
 
 \subsection{Architektur}
 
-Das Netzwerk besteht aus Onion Routern, die als gewöhnliche User-Space-Prozesse ohne Kernel-Anpassungen laufen.
-Auf der Clientseite läuft ein lokaler Onion Proxy, der das Verzeichnis abruft, Circuits aufbaut und TCP-Verbindungen der Anwendungen über das standardisierte SOCKS-Interface entgegennimmt und über die Circuits multiplext~\cite[S.~4]{dingledine2004tor}.
-Diese Trennung erlaubt es, Tor ohne Modifikation der Anwendungen zu nutzen~\cite[S.~1--5]{dingledine2004tor}.
+Das Tor-Netzwerk gliedert sich in mehrere Akteur-Klassen.
+Der \textbf{Client} ist der Rechner des Nutzers; auf ihm läuft die Tor-Software, die Anwendungs-Verbindungen entgegennimmt, einen Pfad durch das Netzwerk wählt und die Daten schichtweise verschlüsselt~\cite[S.~4]{dingledine2004tor}.
+Die \textbf{Onion Router} (kurz: Relais) sind freiwillig betriebene Server, welche diese verschlüsselten Daten weiterleiten.
+Pro Verbindung kommen drei Relais zum Einsatz, in den Rollen Eingangs-, Mittel- und Ausgangsknoten~\cite[S.~4]{dingledine2004tor}.
+Damit ein Client überhaupt weiss, welche Relais derzeit verfügbar sind, betreiben wenige vertrauenswürdige Stellen die Rolle der \textbf{Verzeichnisserver} (Directory Authorities).
+Sie sammeln stündlich die Eigenschaften aller Relais (IP, Bandbreite, Flags), stimmen über diese Liste ab und veröffentlichen ein gemeinsames, signiertes Verzeichnisdokument, das ein Client vor dem Aufbau einer Verbindung herunterlädt~\cite[S.~12]{dingledine2004tor}.
+Ergänzend dazu betreibt das Tor-Projekt mit \textbf{Tor Metrics} eine Mess- und Archivinfrastruktur, die zwei unterschiedliche Aufgaben erfüllt.
+Auf der \emph{passiven} Seite veröffentlichen Relais und Verzeichnisserver aggregierte Statistiken über Bandbreite und Client-Verteilung pro Land, und der Dienst \emph{CollecTor} lädt diese Server-Deskriptoren, Extra-Info-Dokumente und Konsensdateien laufend von den Verzeichnisservern und archiviert sie dauerhaft~\cite{tormetricsabout}.
+Auf der \emph{aktiven} Seite betreibt das Tor-Projekt zusätzlich \textbf{OnionPerf}-Messclients, die fortlaufend definierte Dateigrössen über frische Tor-Circuits herunterladen und daraus Latenz- und Durchsatzmetriken (Time-to-First-Byte, Time-to-Last-Byte) bilden~\cite{onionperf}.
+Beide Datenquellen zusammen bilden die Datengrundlage für realistische Shadow-Simulationen~\cite[S.~5]{jansen2023data}\cite{neverenough-sec2021}. Die OnionPerf-Funktionalität wird darin durch eigens generierte Performance-Clients nachgebildet.
+Die genaue Funktionsweise dieser Akteure beschreiben die folgenden Unterabschnitte.
 
 \subsection{Zellen}
 
-Die kleinste Übertragungseinheit ist eine Zelle fester Grösse.
-Im ursprünglichen Design von 2004 war eine Zelle 512~Byte gross und bestand aus einem 3-Byte-Header (2~Byte Circuit-ID, 1~Byte Kommando) sowie 509~Byte Payload~\cite[S.~5]{dingledine2004tor}.
-Mit der Einführung der Link-Protocol-Version~4 wurde die Circuit-ID auf 4~Byte erweitert, sodass aktuelle Tor-Zellen 514~Byte gross sind~\cite[S.~2]{jansen2023data}.
+Die kleinste Übertragungseinheit ist eine \emph{Zelle} fester Grösse, im ursprünglichen Design 512~Byte~\cite[S.~5]{dingledine2004tor}.
 Unterschieden wird zwischen Control Cells (z.\,B.\ \texttt{create}, \texttt{destroy}, \texttt{padding}) und Relay Cells, die Ende-zu-Ende-Stream-Daten transportieren~\cite[S.~5]{dingledine2004tor}.
-Die feste Zellgrösse soll Verkehrsmuster auf Paketebene vereinheitlichen; die Anzahl der Zellen sowie ihre Richtung können von einem Beobachter dennoch ausgelesen werden. Ein Umstand, den Website-Fingerprinting-Angriffe gezielt ausnutzen~\cite[S.~2]{jansen2023data}.
+Die feste Zellgrösse soll Verkehrsmuster auf Paketebene vereinheitlichen; Anzahl und Richtung der Zellen bleiben für einen Beobachter jedoch sichtbar. Genau diesen Umstand nutzen Website-Fingerprinting-Angriffe aus~\cite[S.~2]{jansen2023data}.
 
 \subsection{Circuits und Streams}
 
 Ein Circuit ist ein mehrstufiger, kryptographisch geschützter Pfad durch das Netzwerk und enthält in der Regel drei Knoten: Eingangs-, Mittel- und Ausgangsknoten.
 Der Eingangsknoten kennt den Client und den Mittelknoten, nicht aber den Ausgangsknoten oder das Ziel; der Mittelknoten kennt nur seine beiden Nachbarn; der Ausgangsknoten kennt das Ziel, nicht aber den Client.
 
-Der Client baut den Circuit telescopierend auf: Mit dem ersten Hop wird per Diffie-Hellman ein Sitzungsschlüssel ausgehandelt, anschliessend wird der Circuit über bereits etablierte Hops um jeweils einen weiteren OR erweitert~\cite[S.~6]{dingledine2004tor}.
+Der Client baut den Circuit schrittweise auf: Mit dem ersten Hop wird per Diffie-Hellman ein Sitzungsschlüssel ausgehandelt, anschliessend wird der Circuit über bereits etablierte Hops um jeweils einen weiteren Onion Router erweitert~\cite[S.~6]{dingledine2004tor}.
 Die Daten werden vom Client schichtweise mit den Schlüsseln aller Hops verschlüsselt. Jeder Onion Router entfernt beim Weiterleiten genau eine Schicht, analog zu den Schichten einer Zwiebel~\cite[S.~1]{dingledine2004tor}.
 Dadurch kennt jeder OR nur seinen Vorgänger und Nachfolger im Pfad, jedoch weder Quelle noch Ziel der Kommunikation~\cite[S.~1]{dingledine2004tor}.
 
