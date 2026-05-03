@@ -42,7 +42,17 @@
       "Bash(sed 's/:$//')",
       "Bash(latexmk -pdf -interaction=nonstopmode -halt-on-error hslu_thesis.tex)",
       "WebFetch(domain:metrics.torproject.org)",
-      "Bash(xxd)"
+      "Bash(xxd)",
+      "Bash(apt-get install *)",
+      "Bash(apt list *)",
+      "Bash(pip list *)",
+      "Bash(/workspaces/BachelorThesis/src/ml/venv/bin/pip list *)",
+      "Bash(/workspaces/BachelorThesis/src/ml/venv/bin/python3 -m pip install --quiet pypdf)",
+      "Bash(/workspaces/BachelorThesis/src/ml/venv/bin/python -m pip install --quiet pypdf)",
+      "Read(//opt/homebrew/**)",
+      "Read(//usr/bin/**)",
+      "Read(//root/.local/**)",
+      "Bash(apt-cache search *)"
     ]
   }
 }

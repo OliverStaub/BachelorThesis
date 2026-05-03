@@ -12,11 +12,11 @@ Die folgenden Unterabschnitte beschreiben die für diese Arbeit relevanten Kompo
 \subsection{Architektur}
 
 Das Tor-Netzwerk gliedert sich in mehrere Akteur-Klassen.
-Der \textbf{Client} ist der Rechner des Nutzers. Auf ihm läuft die Tor-Software, die Anwendungs-Verbindungen entgegennimmt, einen Pfad durch das Netzwerk wählt und die Daten schichtweise verschlüsselt~\cite[S.~4]{dingledine2004tor}.
+Der \textbf{Client} ist der Rechner des Nutzers. Auf ihm läuft die Tor-Software, die Anwendungs-Verbindungen entgegennimmt, einen Pfad durch das Netzwerk wählt und die Daten schichtweise verschlüsselt~\cite[S.~4\,f.]{dingledine2004tor}.
 Die \textbf{Onion Router} (kurz: Relais) sind freiwillig betriebene Server, welche diese verschlüsselten Daten weiterleiten.
-Pro Verbindung kommen drei Relais zum Einsatz, in den Rollen Eingangs-, Mittel- und Ausgangsknoten~\cite[S.~4]{dingledine2004tor}.
+Pro Verbindung kommen drei Relais zum Einsatz, in den Rollen Eingangs-, Mittel- und Ausgangsknoten~\cite{torspec_dirspec}.
 Damit ein Client überhaupt weiss, welche Relais derzeit verfügbar sind, betreiben wenige vertrauenswürdige Stellen die Rolle der \textbf{Verzeichnisserver} (Directory Authorities).
-Sie sammeln stündlich die Eigenschaften aller Relais (IP, Bandbreite, Flags), stimmen über diese Liste ab und veröffentlichen ein gemeinsames, signiertes Verzeichnisdokument, das ein Client vor dem Aufbau einer Verbindung herunterlädt~\cite[S.~12]{dingledine2004tor}.
+Sie sammeln stündlich die Eigenschaften aller Relais (IP, Bandbreite, Flags), stimmen über diese Liste ab und veröffentlichen ein gemeinsames, signiertes Verzeichnisdokument, das ein Client vor dem Aufbau einer Verbindung herunterlädt~\cite{torspec_dirspec}.
 Ergänzend dazu betreibt das Tor-Projekt mit \textbf{Tor Metrics} eine Mess- und Archivinfrastruktur, die zwei unterschiedliche Aufgaben erfüllt.
 Auf der \emph{passiven} Seite veröffentlichen Relais und Verzeichnisserver aggregierte Statistiken über Bandbreite und Client-Verteilung pro Land, und der Dienst \emph{CollecTor} lädt diese Server-Deskriptoren, Extra-Info-Dokumente und Konsensdateien laufend von den Verzeichnisservern und archiviert sie dauerhaft~\cite{tormetricsabout}.
 Auf der \emph{aktiven} Seite betreibt das Tor-Projekt zusätzlich \textbf{OnionPerf}-Messclients, die fortlaufend definierte Dateigrössen über frische Tor-Circuits herunterladen und daraus Latenz- und Durchsatzmetriken (Time-to-First-Byte, Time-to-Last-Byte) bilden~\cite{onionperf}.
@@ -34,12 +34,12 @@ Die feste Zellgrösse soll Verkehrsmuster auf Paketebene vereinheitlichen. Anzah
 Ein Circuit ist ein mehrstufiger, kryptographisch geschützter Pfad durch das Netzwerk und enthält in der Regel drei Knoten: Eingangs-, Mittel- und Ausgangsknoten.
 Der Eingangsknoten kennt den Client und den Mittelknoten, nicht aber den Ausgangsknoten oder das Ziel. Der Mittelknoten kennt nur seine beiden Nachbarn. Der Ausgangsknoten kennt das Ziel, nicht aber den Client.
 
-Der Client baut den Circuit schrittweise auf: Mit dem ersten Hop wird per Diffie-Hellman ein Sitzungsschlüssel ausgehandelt, anschliessend wird der Circuit über bereits etablierte Hops um jeweils einen weiteren Onion Router erweitert~\cite[S.~6]{dingledine2004tor}.
+Der Client baut den Circuit schrittweise auf: Mit dem ersten Hop wird per Diffie-Hellman ein Sitzungsschlüssel ausgehandelt, anschliessend wird der Circuit über bereits etablierte Hops um jeweils einen weiteren Onion Router erweitert~\cite[S.~5\,f.]{dingledine2004tor}.
 Wie die Daten anschliessend schichtweise verschlüsselt durch diese Hops geleitet werden, beschreibt der nachfolgende Abschnitt zum Onion Routing.
 
 Über einen einzelnen Circuit können mehrere TCP-Streams parallel geleitet werden, was die Anzahl rechenintensiver Public-Key-Operationen reduziert.
 Um Linkability zu begrenzen, rotiert der OP Circuits periodisch und nutzt für neu eintreffende Streams den jeweils neuesten offenen Circuit~\cite[S.~5]{dingledine2004tor}.
-Im Tor Browser werden zusätzlich alle Streams einer Top-Level-Domain auf denselben Circuit gebündelt~\cite[S.~2]{jansen2023data}.
+Im Tor Browser werden zusätzlich alle Streams derselben First-Party-Domain (der in der Adresszeile angezeigten Domain) auf denselben Circuit gebündelt~\cite[S.~2]{jansen2023data}.
 
 \subsection{Onion Routing}
 
@@ -72,7 +72,7 @@ Genau in diese Lücke setzen spätere Arbeiten zum Circuit Padding an, das in de
 \subsection{Tor Browser}
 
 Das Tor-Projekt stellt mit dem Tor Browser eine modifizierte Variante von Firefox bereit, die für die Nutzung mit Tor optimiert ist und zusätzlich Browser-Fingerprinting erschwert~\cite{torprojectTorProjektPrivatsphre}.
-Der Browser greift via SOCKS5 auf den lokalen Tor-Daemon zu, welcher den Internetverkehr in Form von Tor-Zellen über das Tor-Netzwerk weiterleitet~\cite[S.~2]{jansen2023data}.
+Der Browser greift via SOCKS auf den lokalen Tor-Daemon zu, welcher den Internetverkehr in Form von Tor-Zellen über das Tor-Netzwerk weiterleitet~\cite[S.~2]{jansen2023data}.
 
 \section{Angriffe auf Tor }
 
@@ -87,7 +87,7 @@ Dabei wird die Hauptsächlich die Anzahl und Richtung der Pakete analyisiert, te
 
 In einem \gls{wf} Angriff kann der Angreifer die Metadaten des Internetverkehrs vom Opfer auslesen.
 Dabei wird der Datenverkehr zwischen dem Client und dem Eingangsknoten überwacht.
-Der Angriff kann dabei sowohl vom Betreiber vom Eingangsknosten\cite[S. 2]{jansen2023data} oder auch von einem passiven Beobachter durchgeführt werden.\cite[S. 3]{wang2016realistically}
+Der Angriff kann dabei sowohl vom Betreiber vom Eingangsknosten~\cite[S.~3]{jansen2023data} oder auch von einem passiven Beobachter durchgeführt werden~\cite[S.~1]{wang2016realistically}.
 
 Der Angreifer hat eine vordefinierte Liste an Websiten die er kontrollieren möchte.
 Er klassifiziert nun den überwachten Datenverkehr ob eine der definierten Websiten aufgerufen wird oder nicht.
@@ -100,7 +100,7 @@ Der Klassifikator entscheidet für jede beobachtete Zellsequenz, ob sie einer ü
 Der \gls{ml} Klassfikator wird dabei für zwei Aufgaben trainiert.
 Bei der binären Klassifizierung soll der Klassifikator mitteilen ob der Aufruf zu einer überwachten Seite führt oder nicht.
 In einem zweiten Schritt wird eine Multiclass Klassifizierung vorgenommen.
-Es soll erkannt werden um welche Seite es sich handelt falls der erste Schritt in einem positiven Ergebnis mündete. \cite[S. 3]{jansen2023data}
+Es soll erkannt werden um welche Seite es sich handelt falls der erste Schritt in einem positiven Ergebnis mündete~\cite[S.~3]{jansen2023data}.
 
 Dabei ergeben sich vier mögliche Ausgänge:
 \begin{itemize}
@@ -110,20 +110,19 @@ Dabei ergeben sich vier mögliche Ausgänge:
     \item \textbf{False Positive (FP):} Eine nicht-überwachte Seite wird fälschlicherweise
           als überwacht klassifiziert.
     \item \textbf{False Negative (FN):} Eine überwachte Seite wird nicht erkannt.
-\end{itemize} \cite[S. 3]{jansen2023data}.
+\end{itemize}
 
 Die \textit{True Positive Rate} (TPR) gibt den Anteil korrekt erkannter Zugriffe auf überwachte Seiten an, während die \textit{False Positive Rate} (FPR) den Anteil fälschlicherweise als überwacht eingestufter Zugriffe misst:
 \begin{equation}
     \text{TPR} = \frac{\text{TP}}{\text{TP} + \text{FN}}, \qquad
     \text{FPR} = \frac{\text{FP}}{\text{FP} + \text{TN}}
-\end{equation} \cite[S. 3]{jansen2023data}
-22
+\end{equation}
 Eine niedrige FPR ist besonders entscheidend, da die \textit{Base Rate}, also die Wahrscheinlichkeit, dass ein Nutzer tatsächlich eine überwachte Seite besucht, in der Praxis sehr gering ist.
-Bei hoher FPR würden die meisten positiven Klassifikationen Fehlalarme sein, selbst wenn die TPR hoch ist (\textit{Base Rate Fallacy}) \cite[S. 3]{wang2016realistically}.
+Bei hoher FPR würden die meisten positiven Klassifikationen Fehlalarme sein, selbst wenn die TPR hoch ist (\textit{Base Rate Fallacy})~\cite[S.~3]{wang2016realistically}.
 
 Darüber hinaus wurde die Simulationstreue von Shadow evaluiert.
 Die Netzwerk-Performance der simulierten Tor-Umgebung stimmte in den Median-Werten weitgehend mit dem Live-Netzwerk überein, wobei Abweichungen vor allem in den Long-Tail-Bereichen auftraten. 
-In einem Cross-Dataset-Experiment erreichte ein ausschliesslich auf Shadow-Daten trainierter Klassifikator eine Accuracy von über 85\,\% auf Live-Tor-Traces, was die Eignung von Shadow für kontrollierte Website-Fingerprinting-Evaluationen bestätigt. \cite[S. 6-8]{jansen2023data}
+In einem Cross-Dataset-Experiment erreichte CUMUL als ausschliesslich auf Shadow-Daten trainierter Klassifikator eine Accuracy von 86\,\% auf Live-Tor-Traces, was die Eignung von Shadow für kontrollierte Website-Fingerprinting-Evaluationen bestätigt~\cite[S.~7]{jansen2023data}.
 
 In den Abschnitten zur Sensitivität und Robustheit untersuchten Jansen und Wails, wie empfindlich WF-Klassifikatoren auf veränderte Netzwerkbedingungen reagieren. 
 Die Zellsequenzen wurden dabei an den Entry Relays der simulierten Tor-Netzwerke aufgezeichnet, was dem realistischen Bedrohungsmodell eines lokalen Angreifers entspricht. \cite[S.~8--10]{jansen2023data}
@@ -185,16 +184,16 @@ Damit kann er die Netzwerkschicht simulieren und die Simulation von der Echtzeit
 Gleichzeitig werden die restlichen Syscalls nativ und unverändert ausgeführt, bspw. Dateizugriffeﬁn.
 
 In einem Paper von Jansen und Wails wurden WF Angriffei im Shadow Simulator simuliert.
-Ihr Classifier welcher vollständig in Shadow trainiert worden ist, hat in der Live Anwendung über 80\% der Daten richtig klassifiziert. \cite[S. 2]{jansen2023data}
+Ihr Classifier welcher vollständig in Shadow trainiert worden ist, hat in der Live Anwendung über 80\% der Daten richtig klassifiziert~\cite[S.~1]{jansen2023data}.
 Classifier im Live Tor Netzwerk zu trainieren ist deutlich unvorhersehrbarer da man die Bedingungen nicht genau kennt.
 Läuft gerade eine Dos Attacke, oder ist ein Relay überlastet kann das die Datenverkehrsmuster verändern. 
 Dies erschwert die Reproduzierbarkeit und die Kausalität der Resultate.
-In einer reproduzierbaren Shadow Umgebung existieren diese Unsicherheiten nicht. \cite[S. 1-2]{jansen2023data}
+In einer reproduzierbaren Shadow Umgebung existieren diese Unsicherheiten nicht~\cite[S.~1\,f.]{jansen2023data}.
 
 In dem Paper von Jansen wird weiter aufgezeigt dass die Erkennungsraten von WF Classifier sehr stark mit der Tor Netzwerk Auslastung schwanken können.
 Classifier welche in einem Zustand der tiefen Netzwerkauslastung trainiert und in einem Zustand der hohen Netzwerkauslastung angewendet werden deutlich schlechtere Ergebnisse liefern.
 WF Classifier sind also sehr anfällig für Veränderungen im Tor Netzwerkaufbau.
-Dieses Problem kann entschärft werden indem man die Classfier im Shadow Netzwerksimulator mit unterschiedlichen Netzwerkauslastungen trainiert.\cite[S. 2]{jansen2023data}
+Dieses Problem kann entschärft werden indem man die Classfier im Shadow Netzwerksimulator mit unterschiedlichen Netzwerkauslastungen trainiert~\cite[S.~2]{jansen2023data}.
 
 Der Shadow Nezwerksimulator kann also nicht nur für Simulationen verwendet werden sondern auch zum Trainieren von "echten" WF Classifiern.
 
@@ -295,7 +294,7 @@ Zelle angibt. Die kumulative Sequenz wird anschliessend durch lineare Skalierung
 auf genau 100 Elemente normiert.
 
 \paragraph{$k$-Fingerprinting}
-$k$-Fingerprinting ($k$-FP) von Hayes und Danezis \cite{hayes2016kfingerprinting} 
+$k$-Fingerprinting ($k$-FP) von Hayes und Danezis \cite{hayes2016k}
 kombiniert einen Random-Forest-Klassifikator mit einem 
 $k$-Nearest-Neighbors-Verfahren. Im Multiclass-Setting wird ausschliesslich der 
 Random Forest verwendet, der auf Basis von Summary-Statistiken einer Zellsequenz 
@@ -314,7 +313,7 @@ Arbeiten sowohl CUMUL als auch $k$-FP in der Klassifikationsgenauigkeit
 übertroffen \cite{sirinam2018deep}.
 
 \paragraph{Tik-Tok}
-Tik-Tok (TT) von Rahman et al. \cite{rahman2020tiktok} verwendet dieselbe 
+Tik-Tok (TT) von Rahman et al. \cite{rahman2019tik} verwendet dieselbe
 CNN-Architektur wie DF, erweitert jedoch die Eingabe um Timing-Informationen. 
 Anstelle reiner Zellrichtungen nutzt TT das Produkt aus Richtung und Zeitstempel 
 $\langle t_i \cdot d_i \rangle_{i=1}^{5000}$. Damit verwendet TT strikt mehr 
@@ -329,8 +328,8 @@ zeitunabhängig, wodurch simulationsbedingte Timing-Variationen die Ergebnisse
 nicht verfälschen. Zweitens beeinflusst Circuit Padding primär die 
 Zellrichtungssequenzen durch das Einfügen zusätzlicher Dummy-Zellen, was direkt 
 auf die von DF genutzten Features wirkt. Drittens wurde DF bereits von Jansen und 
-Wails erfolgreich in Shadow validiert und erreichte im Cross-Dataset-Experiment 
-eine Accuracy von 82\,\% auf Live-Tor-Daten \cite[S.~12]{jansen2023data}. Dies 
+Wails erfolgreich in Shadow validiert und erreichte mit robustem Training auf
+gemischten Netzwerklasten eine Accuracy von 82\,\% auf Live-Tor-Daten~\cite[S.~13]{jansen2023data}. Dies 
 gewährleistet die Vergleichbarkeit der vorliegenden Ergebnisse mit der bestehenden 
 Literatur.
 
@@ -341,7 +340,7 @@ Literatur.
 
 In der Website-Fingerprinting-Literatur werden zwei grundlegende 
 Evaluationsszenarien unterschieden: das Closed-World- und das 
-Open-World-Szenario \cite{wang2016realistic, jansen2023data}.
+Open-World-Szenario \cite{wang2016realistically, jansen2023data}.
 
 Im \textbf{Closed-World-Szenario} wird angenommen, dass der Nutzer 
 ausschliesslich Webseiten aus einer dem Angreifer bekannten, 
@@ -351,8 +350,8 @@ Da alle Klassen gleich häufig im Testdatensatz vertreten sind,
 wird die Klassifikationsgenauigkeit (Accuracy) als Performanzmass 
 verwendet. Dieses Szenario eignet sich gut für kontrollierte 
 Experimente, ist jedoch unrealistisch, da es die Existenz 
-unbekannter Webseiten vollständig ausschliesst 
-\cite[S.~21]{wang2016realistic}.
+unbekannter Webseiten vollständig ausschliesst
+\cite[S.~1]{wang2016realistically}.
 
 Im \textbf{Open-World-Szenario} hingegen definiert der Angreifer 
 eine Menge sensitiver Seiten $W_\alpha$, die er erkennen möchte, 
@@ -364,17 +363,17 @@ beobachtete Zellsequenz zu einer sensitiven Seite oder nicht? Da
 die Klassen in diesem Szenario stark unbalanciert sind -- die 
 Anzahl nicht-sensitiver Seiten übersteigt die der sensitiven um 
 ein Vielfaches -- ist Accuracy kein geeignetes Mass. Stattdessen 
-werden die True Positive Rate (TPR) und die False Positive Rate 
-(FPR) herangezogen \cite[S.~3]{jansen2023data}. Eine niedrige FPR 
+werden die True Positive Rate (TPR) und die False Positive Rate
+(FPR) herangezogen. Eine niedrige FPR
 ist dabei besonders wichtig, da bei der geringen Basisrate 
 sensitiver Seitenbesuche selbst eine scheinbar kleine FPR zu einer 
-grossen Anzahl falsch-positiver Alarme führen kann 
-\cite[S.~23]{wang2016realistic}.
+grossen Anzahl falsch-positiver Alarme führen kann
+\cite[S.~3]{wang2016realistically}.
 
 Wang und Goldberg betonen, dass frühere WF-Arbeiten häufig unter 
 vereinfachenden Closed-World-Annahmen evaluiert wurden, was die 
 tatsächliche Bedrohung durch WF-Angriffe nur unzureichend 
-widerspiegelt \cite{wang2016realistic}. Jansen und Wails haben 
+widerspiegelt \cite{wang2016realistically}. Jansen und Wails haben 
 jedoch gezeigt, dass die Closed-World-Accuracy selbst bei 
 variierenden Netzwerkbedingungen stabil bleibt (Schwankungen von 
 nur 1--3\,\%), während TPR und FPR im Open-World-Szenario 
@@ -392,7 +391,7 @@ Open-World-Szenario bleibt zukünftiger Forschung vorbehalten.
 
 
 \paragraph{Anpassung von wget2}
-Da Tor seinen Dienst über einen SOCKS5-Proxy bereitstellt, 
+Da Tor seinen Dienst über einen SOCKS-Proxy bereitstellt,
 Webcrawler wie \texttt{wget2} jedoch standardmässig nur 
 HTTP-Proxies unterstützen, erweiterten Jansen und Wails 
 \texttt{wget2} um einen SOCKS-Client. Erst diese Modifikation 
