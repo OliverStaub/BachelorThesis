@@ -55,6 +55,19 @@ Der Browser greift via SOCKS5 auf den lokalen Tor-Daemon zu, welcher den Interne
 
 \section{Onion Routing}
 
+Das namensgebende Verfahren von \gls{tor} ist das Onion Routing.
+Der Client verschlüsselt eine Nachricht schichtweise mit den Sitzungsschlüsseln aller drei Onion Router des Circuits, sodass jeder Hop genau eine Schicht entfernt und nur seine direkten Nachbarn kennt.
+Abbildung~\ref{fig:onion_routing} veranschaulicht diesen Vorgang: Vom Client zum Ziel reduziert sich die Anzahl der Verschlüsselungsschichten an jedem Hop um eine, bis der Exit-Knoten den Klartext an das Ziel weiterleitet.
+
+\begin{figure}[H]
+\centering
+\resizebox{\textwidth}{!}{%
+\input{figs/onion_routing_body.tex}%
+}
+\caption{Onion Routing in Tor: Eine Nachricht wird vom Client mit den Schlüsseln aller drei Onion Router verschlüsselt. Jeder Hop entfernt genau eine Schicht; der Exit-Knoten leitet die Nachricht im Klartext an das Ziel weiter.}
+\label{fig:onion_routing}
+\end{figure}
+
 \section{Angriffe auf Tor }
 
 \section{Website Fingerprinting}

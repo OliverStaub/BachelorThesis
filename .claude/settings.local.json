@@ -39,7 +39,8 @@
       "Bash(latexmk -pdf -interaction=nonstopmode projektplan.tex)",
       "Bash(./buildprojektplan.sh)",
       "Bash(ssh:*)",
-      "Bash(sed 's/:$//')"
+      "Bash(sed 's/:$//')",
+      "Bash(latexmk -pdf -interaction=nonstopmode -halt-on-error hslu_thesis.tex)"
     ]
   }
 }
