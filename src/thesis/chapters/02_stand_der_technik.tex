@@ -2,12 +2,12 @@
 
 \section{Tor}
 
-Tor wurde 2004 von Dingledine, Mathewson und Syverson als zweite Generation des Onion-Routing-Designs vorgestellt.
-Es handelt sich um ein verteiltes Overlay-Netzwerk mit niedriger Latenz, das TCP-basierte Anwendungen wie Web-Browsing, SSH oder Instant Messaging anonymisiert.
-Gegenüber dem ursprünglichen Onion-Routing ergänzt Tor unter anderem Perfect Forward Secrecy, Ende-zu-Ende-Integritätsprüfung, Verzeichnisserver, konfigurierbare Exit-Policies sowie Hidden Services über Rendezvous-Punkte~\cite[S.~1\,f.]{dingledine2004tor}.
+\gls{tor} ist ein verteiltes Overlay-Netzwerk mit niedriger Latenz, das TCP-basierte Anwendungen wie Web-Browsing, SSH oder Instant Messaging anonymisiert~\cite[S.~1]{dingledine2004tor}.
+Das Netzwerk verspricht seinen Nutzern Schutz vor Verfolgung, Zensur und Überwachung~\cite{torprojectTorProjektPrivatsphre} und wird Schätzungen zufolge täglich von bis zu acht Millionen Personen verwendet~\cite[S.~1]{mani2018understanding}.
+Diese hohe Verbreitung macht \gls{tor} zu einem attraktiven Ziel für Deanonymisierungsangriffe wie \gls{wf} und Traffic-Correlation, deren Grundlagen in den folgenden Abschnitten behandelt werden.
 
-Tor verspricht Privatsphäre beim Browsen und soll vor Verfolgung, Zensur und Überwachung schützen~\cite{torprojectTorProjektPrivatsphre}.
-Schätzungen gehen von bis zu acht Millionen täglichen Nutzern aus~\cite[S.~1]{mani2018understanding}.
+Das aktuelle \gls{tor}-Design wurde 2004 von Dingledine, Mathewson und Syverson als zweite Generation des Onion-Routings vorgestellt und gegenüber dem Vorgänger um zentrale Eigenschaften wie Perfect Forward Secrecy, Ende-zu-Ende-Integritätsprüfung, Verzeichnisserver und konfigurierbare Exit-Policies erweitert~\cite[S.~1\,f.]{dingledine2004tor}.
+Die für diese Arbeit relevanten Komponenten der \gls{tor}-Architektur sowie das Bedrohungsmodell werden in den folgenden Unterabschnitten beschrieben.
 
 \subsection{Architektur}
 
