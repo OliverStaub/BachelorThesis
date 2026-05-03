@@ -12,7 +12,7 @@ Die folgenden Unterabschnitte beschreiben die für diese Arbeit relevanten Kompo
 \subsection{Architektur}
 
 Das Tor-Netzwerk gliedert sich in mehrere Akteur-Klassen.
-Der \textbf{Client} ist der Rechner des Nutzers; auf ihm läuft die Tor-Software, die Anwendungs-Verbindungen entgegennimmt, einen Pfad durch das Netzwerk wählt und die Daten schichtweise verschlüsselt~\cite[S.~4]{dingledine2004tor}.
+Der \textbf{Client} ist der Rechner des Nutzers. Auf ihm läuft die Tor-Software, die Anwendungs-Verbindungen entgegennimmt, einen Pfad durch das Netzwerk wählt und die Daten schichtweise verschlüsselt~\cite[S.~4]{dingledine2004tor}.
 Die \textbf{Onion Router} (kurz: Relais) sind freiwillig betriebene Server, welche diese verschlüsselten Daten weiterleiten.
 Pro Verbindung kommen drei Relais zum Einsatz, in den Rollen Eingangs-, Mittel- und Ausgangsknoten~\cite[S.~4]{dingledine2004tor}.
 Damit ein Client überhaupt weiss, welche Relais derzeit verfügbar sind, betreiben wenige vertrauenswürdige Stellen die Rolle der \textbf{Verzeichnisserver} (Directory Authorities).
@@ -27,20 +27,35 @@ Die genaue Funktionsweise dieser Akteure beschreiben die folgenden Unterabschnit
 
 Die kleinste Übertragungseinheit ist eine \emph{Zelle} fester Grösse, im ursprünglichen Design 512~Byte~\cite[S.~5]{dingledine2004tor}.
 Unterschieden wird zwischen Control Cells (z.\,B.\ \texttt{create}, \texttt{destroy}, \texttt{padding}) und Relay Cells, die Ende-zu-Ende-Stream-Daten transportieren~\cite[S.~5]{dingledine2004tor}.
-Die feste Zellgrösse soll Verkehrsmuster auf Paketebene vereinheitlichen; Anzahl und Richtung der Zellen bleiben für einen Beobachter jedoch sichtbar. Genau diesen Umstand nutzen Website-Fingerprinting-Angriffe aus~\cite[S.~2]{jansen2023data}.
+Die feste Zellgrösse soll Verkehrsmuster auf Paketebene vereinheitlichen. Anzahl und Richtung der Zellen bleiben für einen Beobachter jedoch sichtbar. Genau diesen Umstand nutzen Website-Fingerprinting-Angriffe aus~\cite[S.~2]{jansen2023data}.
 
 \subsection{Circuits und Streams}
 
 Ein Circuit ist ein mehrstufiger, kryptographisch geschützter Pfad durch das Netzwerk und enthält in der Regel drei Knoten: Eingangs-, Mittel- und Ausgangsknoten.
-Der Eingangsknoten kennt den Client und den Mittelknoten, nicht aber den Ausgangsknoten oder das Ziel; der Mittelknoten kennt nur seine beiden Nachbarn; der Ausgangsknoten kennt das Ziel, nicht aber den Client.
+Der Eingangsknoten kennt den Client und den Mittelknoten, nicht aber den Ausgangsknoten oder das Ziel. Der Mittelknoten kennt nur seine beiden Nachbarn. Der Ausgangsknoten kennt das Ziel, nicht aber den Client.
 
 Der Client baut den Circuit schrittweise auf: Mit dem ersten Hop wird per Diffie-Hellman ein Sitzungsschlüssel ausgehandelt, anschliessend wird der Circuit über bereits etablierte Hops um jeweils einen weiteren Onion Router erweitert~\cite[S.~6]{dingledine2004tor}.
-Die Daten werden vom Client schichtweise mit den Schlüsseln aller Hops verschlüsselt. Jeder Onion Router entfernt beim Weiterleiten genau eine Schicht, analog zu den Schichten einer Zwiebel~\cite[S.~1]{dingledine2004tor}.
-Dadurch kennt jeder OR nur seinen Vorgänger und Nachfolger im Pfad, jedoch weder Quelle noch Ziel der Kommunikation~\cite[S.~1]{dingledine2004tor}.
+Wie die Daten anschliessend schichtweise verschlüsselt durch diese Hops geleitet werden, beschreibt der nachfolgende Abschnitt zum Onion Routing.
 
 Über einen einzelnen Circuit können mehrere TCP-Streams parallel geleitet werden, was die Anzahl rechenintensiver Public-Key-Operationen reduziert.
 Um Linkability zu begrenzen, rotiert der OP Circuits periodisch und nutzt für neu eintreffende Streams den jeweils neuesten offenen Circuit~\cite[S.~5]{dingledine2004tor}.
 Im Tor Browser werden zusätzlich alle Streams einer Top-Level-Domain auf denselben Circuit gebündelt~\cite[S.~2]{jansen2023data}.
+
+\subsection{Onion Routing}
+
+Das namensgebende Verfahren von \gls{tor} ist das Onion Routing.
+Der Client verschlüsselt eine Nachricht schichtweise mit den Sitzungsschlüsseln aller drei Onion Router des Circuits, sodass jeder Hop genau eine Schicht entfernt und nur seine direkten Nachbarn kennt~\cite[S.~1]{dingledine2004tor}.
+Dadurch besitzt kein einzelner Onion Router gleichzeitig Kenntnis über Quelle und Ziel der Kommunikation~\cite[S.~1]{dingledine2004tor}.
+Abbildung~\ref{fig:onion_routing} veranschaulicht diesen Vorgang: Vom Client zum Ziel reduziert sich die Anzahl der Verschlüsselungsschichten an jedem Hop um eine, bis der Ausgangsknoten den Klartext an das Ziel weiterleitet.
+
+\begin{figure}[H]
+\centering
+\resizebox{\textwidth}{!}{%
+\input{figs/onion_routing_body.tex}%
+}
+\caption{Onion Routing in Tor: Eine Nachricht wird vom Client mit den Schlüsseln aller drei Onion Router verschlüsselt. Jeder Hop entfernt genau eine Schicht, der Ausgangsknoten leitet die Nachricht im Klartext an das Ziel weiter.}
+\label{fig:onion_routing}
+\end{figure}
 
 \subsection{Bedrohungsmodell}
 
@@ -58,21 +73,6 @@ Genau in diese Lücke setzen spätere Arbeiten zum Circuit Padding an, das in de
 
 Das Tor-Projekt stellt mit dem Tor Browser eine modifizierte Variante von Firefox bereit, die für die Nutzung mit Tor optimiert ist und zusätzlich Browser-Fingerprinting erschwert~\cite{torprojectTorProjektPrivatsphre}.
 Der Browser greift via SOCKS5 auf den lokalen Tor-Daemon zu, welcher den Internetverkehr in Form von Tor-Zellen über das Tor-Netzwerk weiterleitet~\cite[S.~2]{jansen2023data}.
-
-\section{Onion Routing}
-
-Das namensgebende Verfahren von \gls{tor} ist das Onion Routing.
-Der Client verschlüsselt eine Nachricht schichtweise mit den Sitzungsschlüsseln aller drei Onion Router des Circuits, sodass jeder Hop genau eine Schicht entfernt und nur seine direkten Nachbarn kennt.
-Abbildung~\ref{fig:onion_routing} veranschaulicht diesen Vorgang: Vom Client zum Ziel reduziert sich die Anzahl der Verschlüsselungsschichten an jedem Hop um eine, bis der Exit-Knoten den Klartext an das Ziel weiterleitet.
-
-\begin{figure}[H]
-\centering
-\resizebox{\textwidth}{!}{%
-\input{figs/onion_routing_body.tex}%
-}
-\caption{Onion Routing in Tor: Eine Nachricht wird vom Client mit den Schlüsseln aller drei Onion Router verschlüsselt. Jeder Hop entfernt genau eine Schicht; der Exit-Knoten leitet die Nachricht im Klartext an das Ziel weiter.}
-\label{fig:onion_routing}
-\end{figure}
 
 \section{Angriffe auf Tor }
 
@@ -272,7 +272,7 @@ Mit dem Tornettools lässt sich eine Shadow config generieren die man dann noch 
 
 "jansen2011shadow"
 Why it matters:
-This is what allows Shadow to run unmodified binaries — like real Tor, TGen, or other applications — inside the simulation. The application doesn't know it's being simulated; it just makes normal syscalls, and the shim transparently redirects them. This is a big advantage over simulators that require you to rewrite applications against a custom API.
+This is what allows Shadow to run unmodified binaries — like real Tor, TGen, or other applications — inside the simulation. The application doesn't know it's being simulated. It just makes normal syscalls, and the shim transparently redirects them. This is a big advantage over simulators that require you to rewrite applications against a custom API.
 
 
 
@@ -308,7 +308,7 @@ Deep Fingerprinting (DF) von Sirinam et al. \cite{sirinam2018deep} basiert auf
 einem tiefen Convolutional Neural Network (CNN), das aus mehreren gestapelten 
 Blöcken von Convolutional-, Batch-Normalization-, Aktivierungs-, Pooling- und 
 Dropout-Schichten besteht. Als Eingabe dient direkt der Zellrichtungsvektor 
-$\langle d_i \rangle_{i=1}^{5000}$ mit $d_i \in \{-1, 1\}$; kürzere Sequenzen 
+$\langle d_i \rangle_{i=1}^{5000}$ mit $d_i \in \{-1, 1\}$. Kürzere Sequenzen
 werden mit Nullen aufgefüllt. DF arbeitet zeitunabhängig und hat in früheren 
 Arbeiten sowohl CUMUL als auch $k$-FP in der Klassifikationsgenauigkeit 
 übertroffen \cite{sirinam2018deep}.
