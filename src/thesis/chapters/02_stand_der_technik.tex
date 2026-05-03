@@ -11,10 +11,9 @@ Schätzungen gehen von bis zu acht Millionen täglichen Nutzern aus~\cite[S.~1]{
 
 \subsection{Architektur}
 
-Das Netzwerk besteht aus Onion Routern (OR), die als gewöhnliche User-Space-Prozesse ohne Kernel-Anpassungen laufen.
-Jeder Onion Router unterhält eine TLS-Verbindung zu jedem anderen Onion Router.
-Auf der Clientseite läuft ein lokaler Onion Proxy (OP), der das Verzeichnis abruft, Circuits aufbaut und TCP-Verbindungen der Anwendungen über das standardisierte SOCKS-Interface entgegennimmt und über die Circuits multiplext~\cite[S.~4]{dingledine2004tor}.
-Diese Trennung erlaubt es, Tor ohne Modifikation der Anwendungen zu nutzen~\cite[S.~1]{dingledine2004tor}.
+Das Netzwerk besteht aus Onion Routern, die als gewöhnliche User-Space-Prozesse ohne Kernel-Anpassungen laufen.
+Auf der Clientseite läuft ein lokaler Onion Proxy, der das Verzeichnis abruft, Circuits aufbaut und TCP-Verbindungen der Anwendungen über das standardisierte SOCKS-Interface entgegennimmt und über die Circuits multiplext~\cite[S.~4]{dingledine2004tor}.
+Diese Trennung erlaubt es, Tor ohne Modifikation der Anwendungen zu nutzen~\cite[S.~1--5]{dingledine2004tor}.
 
 \subsection{Zellen}
 
@@ -22,7 +21,7 @@ Die kleinste Übertragungseinheit ist eine Zelle fester Grösse.
 Im ursprünglichen Design von 2004 war eine Zelle 512~Byte gross und bestand aus einem 3-Byte-Header (2~Byte Circuit-ID, 1~Byte Kommando) sowie 509~Byte Payload~\cite[S.~5]{dingledine2004tor}.
 Mit der Einführung der Link-Protocol-Version~4 wurde die Circuit-ID auf 4~Byte erweitert, sodass aktuelle Tor-Zellen 514~Byte gross sind~\cite[S.~2]{jansen2023data}.
 Unterschieden wird zwischen Control Cells (z.\,B.\ \texttt{create}, \texttt{destroy}, \texttt{padding}) und Relay Cells, die Ende-zu-Ende-Stream-Daten transportieren~\cite[S.~5]{dingledine2004tor}.
-Die feste Zellgrösse soll Verkehrsmuster auf Paketebene vereinheitlichen; die Anzahl der Zellen sowie ihre Richtung können von einem Beobachter dennoch ausgelesen werden -- ein Umstand, den Website-Fingerprinting-Angriffe gezielt ausnutzen~\cite[S.~2]{jansen2023data}.
+Die feste Zellgrösse soll Verkehrsmuster auf Paketebene vereinheitlichen; die Anzahl der Zellen sowie ihre Richtung können von einem Beobachter dennoch ausgelesen werden. Ein Umstand, den Website-Fingerprinting-Angriffe gezielt ausnutzen~\cite[S.~2]{jansen2023data}.
 
 \subsection{Circuits und Streams}
 
@@ -30,7 +29,7 @@ Ein Circuit ist ein mehrstufiger, kryptographisch geschützter Pfad durch das Ne
 Der Eingangsknoten kennt den Client und den Mittelknoten, nicht aber den Ausgangsknoten oder das Ziel; der Mittelknoten kennt nur seine beiden Nachbarn; der Ausgangsknoten kennt das Ziel, nicht aber den Client.
 
 Der Client baut den Circuit telescopierend auf: Mit dem ersten Hop wird per Diffie-Hellman ein Sitzungsschlüssel ausgehandelt, anschliessend wird der Circuit über bereits etablierte Hops um jeweils einen weiteren OR erweitert~\cite[S.~6]{dingledine2004tor}.
-Die Daten werden vom Client schichtweise mit den Schlüsseln aller Hops verschlüsselt; jeder OR entfernt beim Weiterleiten genau eine Schicht -- analog zu den Schichten einer Zwiebel~\cite[S.~1]{dingledine2004tor}.
+Die Daten werden vom Client schichtweise mit den Schlüsseln aller Hops verschlüsselt. Jeder Onion Router entfernt beim Weiterleiten genau eine Schicht, analog zu den Schichten einer Zwiebel~\cite[S.~1]{dingledine2004tor}.
 Dadurch kennt jeder OR nur seinen Vorgänger und Nachfolger im Pfad, jedoch weder Quelle noch Ziel der Kommunikation~\cite[S.~1]{dingledine2004tor}.
 
 Über einen einzelnen Circuit können mehrere TCP-Streams parallel geleitet werden, was die Anzahl rechenintensiver Public-Key-Operationen reduziert.
