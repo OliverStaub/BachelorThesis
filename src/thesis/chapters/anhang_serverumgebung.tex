@@ -1,0 +1,133 @@
+\chapter{Serverumgebung}
+\label{app:serverumgebung}
+
+Dieser Anhang dokumentiert die für die Experimente in Kapitel~\ref{cha:realisierung} verwendete Serverumgebung in der Form, wie sie zum Zeitpunkt der Inbetriebnahme bereitgestellt und im Verlauf der Arbeit eingerichtet wurde.
+Ziel ist die nachvollziehbare Beschreibung der konkreten Hardware- und Software-Konfiguration, sodass die in Kapitel~\ref{cha:diskussion} dargestellten Resultate auf einer vergleichbaren Maschine reproduziert werden können.
+
+\section{Bereitstellung}
+\label{app:serverumgebung_bereitstellung}
+
+Die virtuelle Maschine wurde von HSLU Lab Services im Rahmen der Bachelorarbeit für den Autor bereitgestellt.
+Die wesentlichen Eckdaten der Bereitstellung sind in Tabelle~\ref{tab:serverumgebung_provisionierung} zusammengefasst.
+
+\begin{table}[H]
+\centering
+\caption{Eckdaten der bereitgestellten virtuellen Maschine.}
+\label{tab:serverumgebung_provisionierung}
+\begin{tabular}{ll}
+\hline
+\textbf{Attribut} & \textbf{Wert} \\
+\hline
+Bereitsteller & HSLU Lab Services \\
+Hostname & \texttt{shadowsrv-001.prod.projects.ls.eee.intern} \\
+Zugriff & \gls{ssh}, ausschliesslich aus dem HSLU-Netzwerk (Campus-WLAN oder VPN) \\
+Ausserbetriebnahme & 1.~August~2026 \\
+\hline
+\end{tabular}
+\end{table}
+
+Beim ersten Login auf der VM wurde das initiale Passwort des Administratorkontos in ein nur dem Autor bekanntes Passwort geändert.
+Die initialen Zugangsdaten werden in dieser Arbeit aus naheliegenden Sicherheitsgründen nicht wiedergegeben.
+
+Die VM teilt sich gemäss Auskunft von Lab Services ein Subnetz mit weiteren projektgebundenen virtuellen Maschinen anderer Studierender.
+Aus diesem Grund wurde der \gls{ssh}-Dienst auf Public-Key-Authentifizierung umgestellt und das Passwort-Login nach dem ersten Login deaktiviert.
+Über die VM hinaus sind keine weiteren Dienste nach aussen exponiert.
+
+\section{Hardware}
+\label{app:serverumgebung_hardware}
+
+Tabelle~\ref{tab:serverumgebung_hardware} zeigt die zugesagten Hardware-Ressourcen.
+Diese Werte gelten für die VM in ihrer Gesamtheit, also inklusive Betriebssystem und Hilfsdienste.
+
+\begin{table}[H]
+\centering
+\caption{Hardware-Ausstattung der virtuellen Maschine.}
+\label{tab:serverumgebung_hardware}
+\begin{tabular}{ll}
+\hline
+\textbf{Komponente} & \textbf{Wert} \\
+\hline
+vCPU & 32~Kerne \\
+Arbeitsspeicher & 128~GB \\
+Root-Dateisystem & 156~GB (LVM, \texttt{ubuntu-vg/ubuntu-lv}) \\
+\texttt{/boot} & 1.7~GB (\texttt{/dev/vda2}) \\
+\texttt{/dev/shm} & 63~GB \\
+\hline
+\end{tabular}
+\end{table}
+
+Listing~\ref{lst:serverumgebung_dfh} zeigt zur Vollständigkeit den unveränderten \texttt{df -h}-Output unmittelbar nach der Inbetriebnahme.
+
+\begin{figure}[H]
+\centering
+\begin{verbatim}
+Filesystem                         Size  Used Avail Use% Mounted on
+tmpfs                               13G  924K   13G   1% /run
+/dev/mapper/ubuntu--vg-ubuntu--lv  156G   33G  117G  22% /
+tmpfs                               63G   27M   63G   1% /dev/shm
+tmpfs                              5.0M     0  5.0M   0% /run/lock
+tmpfs                               63G     0   63G   0% /run/qemu
+/dev/vda2                          1.7G  199M  1.4G  13% /boot
+tmpfs                               13G   12K   13G   1% /run/user/1001
+\end{verbatim}
+\caption{Auszug aus \texttt{df -h} der VM nach Inbetriebnahme.}
+\label{lst:serverumgebung_dfh}
+\end{figure}
+
+Die Belegung des Root-Dateisystems mit zunächst 33~GB beinhaltet das Basis-Ubuntu-System sowie die in Abschnitt~\ref{app:serverumgebung_software} aufgelisteten Software-Komponenten.
+Während eines Simulationslaufes wächst die Belegung in erster Linie durch die Pcap-Aufzeichnungen.
+Bei voller Aufzeichnung aller Eingangs- und Ausgangsknoten wären die 117~GB freier Speicher schnell erschöpft, weshalb die in Abschnitt~\ref{sec:realisierung_correlation} beschriebene Beschränkung auf fünf Exit-Relais notwendig ist.
+
+\section{Software}
+\label{app:serverumgebung_software}
+
+Auf der VM ist das Betriebssystem Ubuntu in einer aktuellen Long-Term-Support-Variante installiert.
+Tabelle~\ref{tab:serverumgebung_software} listet die für die Experimente relevanten Software-Komponenten und ihre Quellen.
+
+\begin{table}[H]
+\centering
+\caption{Software-Komponenten auf der virtuellen Maschine.}
+\label{tab:serverumgebung_software}
+\begin{tabular}{lll}
+\hline
+\textbf{Komponente} & \textbf{Quelle} & \textbf{Verwendung} \\
+\hline
+Ubuntu Server & Bereitstellung Lab Services & Basisbetriebssystem \\
+Shadow & GitHub \texttt{shadow/shadow} & Netzwerksimulator \\
+Tor & Standardpaket / Tor-Projekt & Tor-Daemon in Shadow \\
+Tornettools & GitHub \texttt{shadow/tornettools} & Generierung der Shadow-Konfiguration \\
+\texttt{wget2} (gepatcht) & GitLab + Patch aus \texttt{explainwf-popets2023} & Webclient mit \gls{socks}-Unterstützung \\
+\texttt{libzim} (Python) & PyPI & Lesen der ZIM-Datei \\
+\texttt{zimsrv.py} & Eigene Entwicklung & Webserver in der Simulation \\
+Python (Toolsenv) & Bereitstellung über \texttt{toolsenv} & Laufzeit für die Hilfsskripte \\
+\hline
+\end{tabular}
+\end{table}
+
+Die einmalige Einrichtung der genannten Komponenten erfolgt über das Skript \texttt{setup-wf-server.sh}, das die Abhängigkeiten installiert, \texttt{wget2} mit dem \gls{socks}-Patch baut und die Hilfsskripte (\texttt{newnym.py}, \texttt{zimsrv.py}, \texttt{generate-urls.py}) auf die VM kopiert.
+
+\section{Datenablage und Verzeichnisstruktur}
+\label{app:serverumgebung_struktur}
+
+Innerhalb des Heimverzeichnisses des Administratorkontos wird die in Tabelle~\ref{tab:serverumgebung_struktur} dargestellte Verzeichnisstruktur verwendet.
+Die genauen Pfade sind in den Hilfsskripten als Konstanten hinterlegt und können bei Bedarf angepasst werden.
+
+\begin{table}[H]
+\centering
+\caption{Verzeichnisstruktur auf der VM.}
+\label{tab:serverumgebung_struktur}
+\begin{tabular}{ll}
+\hline
+\textbf{Pfad} & \textbf{Inhalt} \\
+\hline
+\texttt{\textasciitilde/tornettools} & Installation und Arbeitsverzeichnis von Tornettools \\
+\texttt{\textasciitilde/toolsenv} & Python-Virtualenv für Tornettools, libzim und Hilfsskripte \\
+\texttt{\textasciitilde/wikidata} & ZIM-Datei der Simple-English-Wikipedia \\
+\texttt{\textasciitilde/wget2\_noinstall} & Mit \gls{socks}-Patch gebautes \texttt{wget2} \\
+\texttt{\textasciitilde/exp-*} & Pro Experiment ein Unterverzeichnis mit \texttt{shadow.config.yaml}, \texttt{schedule.json}, Logs und Pcaps \\
+\hline
+\end{tabular}
+\end{table}
+
+Beim Pull der Resultate auf die Arbeitsstation des Autors wird pro Experiment dasselbe Unterverzeichnisschema gespiegelt, sodass lokal und auf der VM dieselbe Struktur vorliegt.
+Damit ist die manuelle Nachverfolgung von Resultaten zu ihren ursprünglichen Konfigurationen ohne zusätzliche Werkzeuge möglich.
