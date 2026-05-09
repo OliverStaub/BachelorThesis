@@ -16,7 +16,7 @@ Die wesentlichen Eckdaten der Bereitstellung sind in Tabelle~\ref{tab:serverumge
 \label{tab:serverumgebung_provisionierung}
 \begin{tabular}{ll}
 \hline
-\textbf{Attribut} & \textbf{Wert} \\
+Attribut & Wert \\
 \hline
 Bereitsteller & HSLU Lab Services \\
 Hostname & \texttt{shadowsrv-001.prod.projects.ls.eee.intern} \\
@@ -45,34 +45,14 @@ Diese Werte gelten für die VM in ihrer Gesamtheit, also inklusive Betriebssyste
 \label{tab:serverumgebung_hardware}
 \begin{tabular}{ll}
 \hline
-\textbf{Komponente} & \textbf{Wert} \\
+Komponente & Wert \\
 \hline
 vCPU & 32~Kerne \\
 Arbeitsspeicher & 128~GB \\
-Root-Dateisystem & 156~GB (LVM, \texttt{ubuntu-vg/ubuntu-lv}) \\
-\texttt{/boot} & 1.7~GB (\texttt{/dev/vda2}) \\
-\texttt{/dev/shm} & 63~GB \\
+Speicher & 156~GB (LVM, \texttt{ubuntu-vg/ubuntu-lv}) \\
 \hline
 \end{tabular}
 \end{table}
-
-Listing~\ref{lst:serverumgebung_dfh} zeigt zur Vollständigkeit den unveränderten \texttt{df -h}-Output unmittelbar nach der Inbetriebnahme.
-
-\begin{figure}[H]
-\centering
-\begin{verbatim}
-Filesystem                         Size  Used Avail Use% Mounted on
-tmpfs                               13G  924K   13G   1% /run
-/dev/mapper/ubuntu--vg-ubuntu--lv  156G   33G  117G  22% /
-tmpfs                               63G   27M   63G   1% /dev/shm
-tmpfs                              5.0M     0  5.0M   0% /run/lock
-tmpfs                               63G     0   63G   0% /run/qemu
-/dev/vda2                          1.7G  199M  1.4G  13% /boot
-tmpfs                               13G   12K   13G   1% /run/user/1001
-\end{verbatim}
-\caption{Auszug aus \texttt{df -h} der VM nach Inbetriebnahme.}
-\label{lst:serverumgebung_dfh}
-\end{figure}
 
 Die Belegung des Root-Dateisystems mit zunächst 33~GB beinhaltet das Basis-Ubuntu-System sowie die in Abschnitt~\ref{app:serverumgebung_software} aufgelisteten Software-Komponenten.
 Während eines Simulationslaufes wächst die Belegung in erster Linie durch die Pcap-Aufzeichnungen.
@@ -90,7 +70,7 @@ Tabelle~\ref{tab:serverumgebung_software} listet die für die Experimente releva
 \label{tab:serverumgebung_software}
 \begin{tabular}{lll}
 \hline
-\textbf{Komponente} & \textbf{Quelle} & \textbf{Verwendung} \\
+Komponente & Quelle & Verwendung \\
 \hline
 Ubuntu Server & Bereitstellung Lab Services & Basisbetriebssystem \\
 Shadow & GitHub \texttt{shadow/shadow} & Netzwerksimulator \\
@@ -118,7 +98,7 @@ Die genauen Pfade sind in den Hilfsskripten als Konstanten hinterlegt und könne
 \label{tab:serverumgebung_struktur}
 \begin{tabular}{ll}
 \hline
-\textbf{Pfad} & \textbf{Inhalt} \\
+Pfad & Inhalt \\
 \hline
 \texttt{\textasciitilde/tornettools} & Installation und Arbeitsverzeichnis von Tornettools \\
 \texttt{\textasciitilde/toolsenv} & Python-Virtualenv für Tornettools, libzim und Hilfsskripte \\

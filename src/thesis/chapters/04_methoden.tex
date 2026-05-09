@@ -1,7 +1,194 @@
 \chapter{Methoden}
 \label{cha:methoden}
 
-//TODO: Kapitel mit der Wipro vergleichen. Ich benötige Literatur \& Quellenrechereche. Experiment durchführen. Und Zeit und Projektmanagement (Jokes on me)
+In diesem Kapitel wird beschrieben, mit welchen wissenschaftlichen Methoden die in Kapitel~\ref{cha:stand_der_technik} aufgeworfenen Fragen bearbeitet werden.
+Zwei Methoden werden eingesetzt.
+Die Literaturrecherche dient dazu, den aktuellen Stand der Forschung zu Tor, Website-Fingerprinting und Circuit Padding aufzuarbeiten und daraus die Forschungslücke abzuleiten.
+Das anschliessende Laborexperiment im Shadow-Simulator dient dazu, die aus dieser Literatur abgeleiteten Hypothesen quantitativ zu überprüfen.
+Die konkrete Umsetzung dieses Versuchsaufbaus wird in Kapitel~\ref{cha:realisierung} beschrieben.
+Das vorliegende Kapitel beschränkt sich auf die methodische Begründung der Vorgehensweise.
+
+\section{TODO: WF vs Timing Angriff}
+
+In der Zwischenpräsentation wurde bemängelt es sei zu wenige praxisorientiert. hier eingehen auf die Untershciede, den Ablauf, Begründungen und wie ich hierhin gekommen bin.
+
+Timing Attacken auch in der Stand der Technik
+
+\section{Methodische Einordnung der Arbeit}
+\label{sec:methodische_einordnung}
+
+Die vorliegende Bachelorarbeit ist eine Mischform aus einer konstruktiven und einer empirischen Arbeit~\cite[S.~71\,f.]{book}.
+Konstruktiv ist die Arbeit, weil eine eigene Werkzeugkette aus Shadow-Steuerung, Konfigurationsgenerierung, Webserver, Datenkonvertierung und Klassifikator-Anbindung neu aufgebaut wird, um den untersuchten Effekt überhaupt messen zu können.
+Empirisch ist die Arbeit, weil mit dieser Werkzeugkette ein kontrolliertes Laborexperiment durchgeführt wird, dessen Ergebnisse die formulierten Hypothesen entweder bestätigen oder widerlegen.
+
+Die Arbeit verwendet ein deduktives Vorgehen.
+Aus der Literatur, insbesondere aus den Arbeiten von Jansen und Wails~\cite{jansen2023data}, Sirinam et al.~\cite{sirinam2018deep} und Kadianakis et al.~\cite{kadianakis2021tor}, werden Hypothesen über den Einfluss von Circuit Padding auf die Klassifikationsgenauigkeit von \gls{df} abgeleitet.
+Diese Hypothesen werden anschliessend an Messdaten überprüft.
+Die Messung selbst erfolgt quantitativ über etablierte Klassifikationsmetriken (Accuracy, Precision, Recall, F1-Wert) sowie für den Vergleichsversuch zur Traffic-Korrelation über \gls{roc}- und \gls{auc}-Kennzahlen.
+
+\section{Literaturrecherche}
+\label{sec:literaturrecherche}
+
+Die Literaturrecherche folgt dem in Balzert beschriebenen fünfstufigen Vorgehen aus den Schritten Was suche ich, wo suche ich, wie suche ich, was verwende ich, wie beschaffe ich~\cite[S.~215\,ff.]{book}.
+Die einzelnen Stufen werden im Folgenden zusammengefasst.
+
+\subsection{Such\-strategie und Abgrenzung des Themenfelds}
+\label{sec:literaturrecherche_strategie}
+
+Ausgangspunkt der Recherche ist das in Kapitel~1 formulierte Forschungsthema rund um den Einfluss von Circuit Padding auf Website-Fingerprinting in Shadow.
+Aus dem Themenfeld werden vier inhaltliche Suchrichtungen abgeleitet, die sich in Schlagwortlisten überführen lassen: das Tor-Netzwerk und sein Bedrohungsmodell, Website-Fingerprinting-Klassifikatoren, Circuit Padding als Verteidigung sowie der Shadow-Netzwerksimulator und die zugehörige Werkzeugkette tornettools.
+Pro Suchrichtung werden deutsche und englische Schlagwörter, Synonyme und verwandte Begriffe gesammelt.
+Beispiele sind onion routing, traffic analysis, deep fingerprinting, padding machine, network simulation und cell direction sequence.
+
+\subsection{Genutzte Quellen, Datenbanken und Suchmaschinen}
+\label{sec:literaturrecherche_quellen}
+
+Die Recherche stützt sich primär auf wissenschaftliche Datenbanken und nicht auf allgemeine Websuchmaschinen.
+Folgende Quellen werden eingesetzt:
+
+\begin{itemize}
+    \item Google Scholar als übergreifende Suchmaschine, die zusätzlich die Vorwärts-Zitationen eines Artikels über die Funktion Cited by erschliesst.
+    \item swisscovery als Bibliothekskatalog der HSLU für Lehrbücher, insbesondere für die methodologische Grundlage~\cite{book}.
+    \item Primärquellen wie das offizielle Tor-Spezifikationsdokument~\cite{torspec_dirspec}, der Tor-Metrics-Datendienst~\cite{tormetricsabout} und das OnionPerf-Projekt~\cite{onionperf}.
+\end{itemize}
+
+Innerhalb der Datenbanken werden die Suchanfragen mit den gängigen booleschen Operatoren (\texttt{AND}, \texttt{OR}, \texttt{NOT}) sowie mit Phrasensuche und Feldfiltern (Titel, Abstract, Erscheinungsjahr) verfeinert.
+Bei zu hoher Trefferzahl wird nach Erscheinungsjahr eingeschränkt oder ein zusätzlicher fachspezifischer Begriff hinzugefügt.
+Bei zu geringer Trefferzahl werden Schlagwörter durch Synonyme ersetzt oder über das Schneeballsystem erweitert.
+
+\subsection{Schneeball- und Vorwärtssuche}
+\label{sec:literaturrecherche_schneeball}
+
+Aus den Suchergebnissen wird eine kleine Menge von Schlüsselpublikationen identifiziert, die in der Folge als Ausgangspunkt für eine systematische Schneeballsuche dienen~\cite[S.~225]{book}.
+Im rückwärtsgerichteten Schneeballverfahren werden die Literaturverzeichnisse dieser Schlüsselpublikationen, allen voran das Artefaktpapier von Jansen und Wails~\cite{jansen2023data}, vollständig durchgegangen und thematisch passende Quellen weiterverfolgt.
+Mehrfach zitierte Werke werden als grundlegend eingestuft, dazu zählen unter anderem das ursprüngliche Tor-Designpapier~\cite{dingledine2004tor}, die Open-World-Analyse von Wang und Goldberg~\cite{wang2016realistically} und die DF-Originalveröffentlichung~\cite{sirinam2018deep}.
+Im vorwärtsgerichteten Verfahren wird über die Cited by-Funktion von Google Scholar geprüft, in welchen jüngeren Arbeiten die identifizierten Schlüsselpublikationen aufgegriffen oder weiterentwickelt wurden.
+Diese Vorgehensweise ergänzt die Schneeballsuche um neuere Publikationen, die in den älteren Quellen naturgemäss nicht enthalten sein können.
+
+\subsection{Bewertung der Quellen}
+\label{sec:literaturrecherche_bewertung}
+
+Jede Quelle wird vor der Verwendung auf Zitierfähigkeit und Zitierwürdigkeit geprüft~\cite[S.~166\,ff.]{book}.
+Zitierfähig sind Quellen, die veröffentlicht, nachvollziehbar und überprüfbar sind.
+Zitierwürdig sind in dieser Arbeit ausschliesslich peer-reviewte Konferenzbeiträge, Zeitschriftenartikel, technische Berichte etablierter Institutionen sowie offizielle Spezifikations- und Projektdokumente des Tor-Projekts.
+Populärwissenschaftliche Quellen wie Tageszeitungen oder Blogartikel werden nicht als Beleg für inhaltliche Aussagen verwendet.
+Eine eng begrenzte Ausnahme bilden Pressemitteilungen des Tor-Projekts und einzelne Hersteller-Dokumente, die als Primärquelle für Software-Verhalten oder als Beleg für tagesaktuelle Ereignisse herangezogen werden.
+
+Internetquellen werden zusätzlich zur Zitierwürdigkeitsprüfung mit dem Zugriffsdatum und einer lokalen Kopie versehen, sofern sie keine langfristig stabile Adresse wie eine \gls{doi} besitzen.
+Damit ist sichergestellt, dass auch dann, wenn die Originalressource später verändert oder entfernt wird, der zitierte Inhalt überprüfbar bleibt~\cite[S.~168\,f.]{book}.
+
+Bei Konflikten zwischen Quellen wird, wo möglich, auf die Primärquelle zurückgegriffen.
+Sekundäre Wiedergaben werden nur dann verwendet, wenn die Primärquelle nicht zugänglich ist, was in dieser Arbeit nicht vorkommt.
+
+\subsection{Literaturverwaltung}
+\label{sec:literaturrecherche_verwaltung}
+
+Sämtliche während der Recherche ermittelten Quellen werden in einem zentralen BibTeX-Verzeichnis (\texttt{src/thesis/references.bib}) gepflegt.
+Pro Quelle werden Autor, Titel, Erscheinungsjahr, Verlag oder Konferenz, \gls{doi} oder URL und das Zugriffsdatum erfasst.
+Die zugehörigen Volltexte werden parallel im Verzeichnis \texttt{sources/} unter dem jeweiligen Bibkey abgelegt.
+Diese strikte Eins-zu-eins-Zuordnung von Bibkey und Volltext erleichtert eine spätere stichprobenartige Überprüfung der Zitate gegen das Original.
+Im Text wird nach IEEE-Zitierstil mit Seitenangabe nach deutscher Konvention zitiert (\verb|\cite[S.~X]{key}|).
+
+\section{Experimentelles Vorgehen}
+\label{sec:experimentelles_vorgehen}
+
+Die zentrale empirische Methode dieser Arbeit ist das kontrollierte Laborexperiment.
+Dieser Abschnitt beschreibt das experimentelle Design auf methodischer Ebene.
+Die konkrete technische Umsetzung folgt in Kapitel~\ref{cha:realisierung}.
+
+\subsection{Wahl des Experimenttyps}
+\label{sec:experiment_typ}
+
+Nach Balzert lassen sich empirische Arbeiten in experimentelle und nicht-experimentelle Arbeiten unterscheiden, wobei das Experiment durch die kontrollierte Variation einer oder mehrerer unabhängiger Variablen unter konstant gehaltenen Rahmenbedingungen charakterisiert ist~\cite[S.~74\,ff.]{book}.
+Innerhalb der Experimente wird zwischen Feldexperimenten in der natürlichen Umgebung und Laborexperimenten in einer kontrollierten Umgebung unterschieden.
+Für die Untersuchung des Einflusses von Circuit Padding wird in dieser Arbeit ein Laborexperiment gewählt, das vollständig innerhalb des Shadow-Netzwerksimulators stattfindet.
+
+Diese Wahl ist methodisch begründet.
+Ein Feldexperiment im produktiven Tor-Netzwerk wäre nicht reproduzierbar, da Lastspitzen, Routing-Änderungen und konkurrierender Verkehr die Messung verändern, ohne dass diese Effekte vom Padding-Effekt unterschieden werden könnten~\cite[S.~1\,f.]{jansen2023data}.
+Zusätzlich wäre eine zentrale Variation der Padding-Konfiguration im Live-Netzwerk nicht möglich, ohne den Betrieb fremder Tor-Nutzerinnen und -Nutzer zu beeinflussen, was ethisch nicht vertretbar wäre.
+Die Shadow-Simulation erfüllt dagegen alle drei zentralen Anforderungen an ein Laborexperiment: kontrollierte Bedingungen, Reproduzierbarkeit und Wiederholbarkeit~\cite[S.~5\,f.]{netsim-atc2022}.
+
+\subsection{Forschungsfragen und Hypothesen}
+\label{sec:experiment_hypothesen}
+
+Aus der Aufgabenstellung übernehmen.
+
+\subsection{Variablen und Messgrössen}
+\label{sec:experiment_variablen}
+
+Das Experiment unterscheidet zwischen unabhängigen und abhängigen Variablen, wie es für ein kontrolliertes Laborexperiment gefordert ist~\cite[S.~74]{book}.
+
+\paragraph{Unabhängige Variablen}
+Drei Variablen werden gezielt variiert.
+Erstens der Padding-Modus mit den drei Ausprägungen OFF, ON und Reduced, die in Tabelle~\ref{tab:padding_modi} (Kapitel~\ref{cha:realisierung}) erläutert sind.
+Zweitens die Anzahl der Klassen mit den Ausprägungen 20, 80 und 280 (letzteres als Open-World mit 80 überwachten Seiten).
+Drittens das Welt-Szenario mit den Ausprägungen Closed-World und Open-World.
+
+\paragraph{Abhängige Variablen}
+Gemessen werden Accuracy, Precision, Recall und F1-Wert auf einer zurückgehaltenen Testmenge.
+Für den Vergleichsversuch zur Traffic-Korrelation werden zusätzlich \gls{roc}-Kurven sowie die \gls{auc} ausgewiesen, ergänzt um die True-Positive-Raten an den Schwellen $\textrm{FPR}=10^{-2}$ und $\textrm{FPR}=10^{-3}$.
+
+\paragraph{Konstant gehaltene Rahmenbedingungen}
+Alle übrigen Parameter bleiben über die Experimente einer Vergleichsgruppe konstant.
+Dazu zählen die Skalierung des simulierten Netzwerks (1\,\%), der Simulator-Seed, der Seed der Trainings- und Testaufteilung, die Hyperparameter des Klassifikators sowie die Auswahl der Wikipedia-URLs.
+Damit lässt sich eine beobachtete Differenz in den abhängigen Variablen kausal auf die Variation der unabhängigen Variable Padding-Modus zurückführen und nicht auf Sekundäreffekte.
+
+\subsection{Versuchsplan}
+\label{sec:experiment_plan}
+
+Der Versuchsplan besteht aus sieben Hauptläufen, die in Tabelle~\ref{tab:versuchsplan} zusammengefasst sind.
+Pro Closed-World-Konfiguration werden alle drei Padding-Modi durchlaufen, sodass ein direkter Vergleich der Klassifikationsgenauigkeit innerhalb derselben Klassenanzahl möglich ist.
+Das Open-World-Experiment wird einmalig mit deaktiviertem Padding gemessen, da der Open-World-Fall vor allem zur Einordnung der Closed-World-Resultate dient.
+
+\begin{table}[H]
+\centering
+\caption{Versuchsplan der Hauptexperimente.}
+\label{tab:versuchsplan}
+\begin{tabular}{llll}
+\hline
+Lauf & Klassen & Padding & Szenario \\
+\hline
+exp-baseline-20 & 20 & OFF & Closed-World \\
+exp-padding-20 & 20 & ON & Closed-World \\
+exp-reduced-20 & 20 & Reduced & Closed-World \\
+exp-baseline-80 & 80 & OFF & Closed-World \\
+exp-padding-80 & 80 & ON & Closed-World \\
+exp-reduced-80 & 80 & Reduced & Closed-World \\
+exp-openworld & 80 überwacht (280 gesamt) & OFF & Open-World \\
+\hline
+\end{tabular}
+\end{table}
+
+Ergänzend wird für eine Teilmenge der Konfigurationen ein Traffic-Correlation-Experiment durchgeführt (Schalter \texttt{-{}-correlation}), bei dem zusätzlich an ausgewählten Exit-Relais aufgezeichnet wird.
+Dieses Experiment dient als unabhängiger Vergleichswert, weil Traffic-Korrelation einer anderen Angreiferklasse entspricht und kein vortrainiertes Modell benötigt.
+
+\subsection{Validität, Reliabilität und Objektivität}
+\label{sec:experiment_guete}
+
+Die wissenschaftliche Güte des Experiments wird an den Kriterien Validität, Reliabilität und Objektivität gemessen~\cite[S.~21\,ff.]{book}.
+
+\paragraph{Validität}
+Die interne Validität ist hoch, weil im Shadow-Simulator alle Rahmenbedingungen ausser dem Padding-Modus konstant gehalten werden und damit eine kausale Interpretation der gemessenen Differenzen zulässig ist.
+Die externe Validität, also die Übertragbarkeit der Resultate auf das Live-Tor-Netzwerk, wird gestützt durch die Cross-Dataset-Untersuchung von Jansen und Wails, in der ein in Shadow trainierter Klassifikator auf Live-Daten eine Genauigkeit von rund 86\,\% erreichte~\cite[S.~7]{jansen2023data}.
+Die Übertragbarkeit ist damit nicht vollständig, aber empirisch begründet.
+
+\paragraph{Reliabilität}
+Die Reliabilität ergibt sich aus der deterministischen Ausführung von Shadow bei festem Seed.
+Wiederholte Läufe mit identischer Konfiguration erzeugen byte-identische Pcaps und damit identische Trainings- und Testergebnisse.
+Diese Reproduzierbarkeit wird durch den vollständigen Versionsstand aller Eingaben (Tor-Konsensdaten eines festgehaltenen Monats, ZIM-Datei, URL-Liste, Skripte) abgesichert.
+
+\paragraph{Objektivität}
+Die Auswertung erfolgt automatisiert durch das Skript \texttt{report.py}, das die Klassifikationsmetriken aus den von WFlib erzeugten Ergebnis-JSONs in eine zentrale Tabelle (\texttt{ExperimentLogs.csv}) überführt.
+Eine subjektive Interpretation der Rohdaten findet nicht statt.
+Die in Kapitel~\ref{cha:diskussion} dargestellten Diagramme werden ebenfalls automatisiert aus dieser Tabelle erzeugt, sodass der Weg von der Rohmessung bis zur grafischen Darstellung jederzeit reproduzierbar ist.
+
+\subsection{Grenzen der gewählten Methode}
+\label{sec:experiment_grenzen}
+
+Die Methode hat zwei strukturelle Grenzen, die hier ehrlich benannt werden.
+Erstens reduziert die Skalierung des Netzwerks auf 1\,\% die Pfaddiversität gegenüber dem Live-Netzwerk, was die Verkehrsmuster einer Klasse homogener und damit leichter klassifizierbar macht~\cite[S.~11]{jansen2023data}.
+Zweitens wird der Tor Browser durch ein gepatchtes \texttt{wget2} ersetzt, das zwar denselben Satz an Ressourcen abruft, jedoch JavaScript und Browser-spezifische Verkehrsmuster nicht reproduziert~\cite[S.~5]{jansen2023data}.
+Beide Einschränkungen werden bei der Interpretation der Resultate in Kapitel~\ref{cha:diskussion} berücksichtigt.
 
 \section{Projektplan}
 \label{sec:projektplan}
@@ -16,5 +203,3 @@ Abbildung~\ref{fig:projektplan} zeigt den zeitlichen Verlauf der Arbeit von Seme
 \caption{Projektplan der Bachelorarbeit mit Arbeitsphasen (blau) und fixen Meilensteinen (rot).}
 \label{fig:projektplan}
 \end{figure}
-
-

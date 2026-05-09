@@ -116,7 +116,6 @@
 - Einführungskapitel Tor schreiben
 
 
-
 ## May 1 8h
 
 - Schreiben Stand der Technik
@@ -126,3 +125,11 @@
 ## May 3 8h
 
 - Schreiben Stand der Technik
+
+## May 5 3h
+
+- Schreiben Realisierungskapitel
+
+## May 6 8h
+
+- Schreiben Realisierung und Methoden

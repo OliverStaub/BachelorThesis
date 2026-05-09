@@ -8,26 +8,31 @@ Das Netzwerk verspricht seinen Nutzern Schutz vor Verfolgung, Zensur und Überwa
 Diese hohe Verbreitung macht \gls{tor} zu einem attraktiven Ziel für unterschiedliche Klassen von Deanonymisierungsangriffen, etwa Timing-Angriffe, Traffic-Correlation oder \gls{wf}, die jeweils unterschiedliche Beobachtungspositionen und Annahmen voraussetzen.
 
 Das aktuelle \gls{tor}-Design wurde 2004 von Dingledine, Mathewson und Syverson als zweite Generation des Onion-Routings vorgestellt und gegenüber dem Vorgänger um zentrale Eigenschaften wie Perfect Forward Secrecy, Ende-zu-Ende-Integritätsprüfung, Verzeichnisserver und konfigurierbare Exit-Policies erweitert~\cite[S.~1\,f.]{dingledine2004tor}.
+
 Die folgenden Unterabschnitte beschreiben die für diese Arbeit relevanten Komponenten der \gls{tor}-Architektur sowie das Bedrohungsmodell, das dem Tor-Design zugrunde liegt. Die spezifischen Bedrohungsmodelle der einzelnen Angriffsklassen werden in den jeweiligen Abschnitten weiter unten behandelt.
 
 \subsection{Architektur}
 
 Das Tor-Netzwerk gliedert sich in mehrere Akteur-Klassen.
-Der \textbf{Client} ist der Rechner des Nutzers. Auf ihm läuft die Tor-Software, die Anwendungs-Verbindungen entgegennimmt, einen Pfad durch das Netzwerk wählt und die Daten schichtweise verschlüsselt~\cite[S.~4\,f.]{dingledine2004tor}.
-Die \textbf{Onion Router} (kurz: Relais) sind freiwillig betriebene Server, welche diese verschlüsselten Daten weiterleiten.
+Der Client ist der Rechner des Nutzers. Auf ihm läuft die Tor-Software, die Anwendungs-Verbindungen entgegennimmt, einen Pfad durch das Netzwerk wählt und die Daten schichtweise verschlüsselt~\cite[S.~4\,f.]{dingledine2004tor}.
+
+Die Onion Router (kurz: Relais) sind freiwillig betriebene Server, welche diese verschlüsselten Daten weiterleiten.
 Pro Verbindung kommen drei Relais zum Einsatz, in den Rollen Eingangs-, Mittel- und Ausgangsknoten~\cite{torspec_dirspec}.
-Damit ein Client überhaupt weiss, welche Relais derzeit verfügbar sind, betreiben wenige vertrauenswürdige Stellen die Rolle der \textbf{Verzeichnisserver} (Directory Authorities).
+Damit ein Client überhaupt weiss, welche Relais derzeit verfügbar sind, betreiben wenige vertrauenswürdige Stellen die Rolle der Verzeichnisserver (Directory Authorities).
 Sie sammeln stündlich die Eigenschaften aller Relais (IP, Bandbreite, Flags), stimmen über diese Liste ab und veröffentlichen ein gemeinsames, signiertes Verzeichnisdokument, das ein Client vor dem Aufbau einer Verbindung herunterlädt~\cite{torspec_dirspec}.
-Ergänzend dazu betreibt das Tor-Projekt mit \textbf{Tor Metrics} eine Mess- und Archivinfrastruktur, die zwei unterschiedliche Aufgaben erfüllt.
-Auf der \emph{passiven} Seite veröffentlichen Relais und Verzeichnisserver aggregierte Statistiken über Bandbreite und Client-Verteilung pro Land, und der Dienst \emph{CollecTor} lädt diese Server-Deskriptoren, Extra-Info-Dokumente und Konsensdateien laufend von den Verzeichnisservern und archiviert sie dauerhaft~\cite{tormetricsabout}.
-Auf der \emph{aktiven} Seite betreibt das Tor-Projekt zusätzlich \textbf{OnionPerf}-Messclients, die fortlaufend definierte Dateigrössen über frische Tor-Circuits herunterladen und daraus Latenz- und Durchsatzmetriken (Time-to-First-Byte, Time-to-Last-Byte) bilden~\cite{onionperf}.
+
+Ergänzend dazu betreibt das Tor-Projekt mit Tor Metrics eine Mess- und Archivinfrastruktur, die zwei unterschiedliche Aufgaben erfüllt.
+Auf der passiven Seite veröffentlichen Relais und Verzeichnisserver aggregierte Statistiken über Bandbreite und Client-Verteilung pro Land, und der Dienst CollecTor lädt diese Server-Deskriptoren, Extra-Info-Dokumente und Konsensdateien laufend von den Verzeichnisservern und archiviert sie dauerhaft~\cite{tormetricsabout}.
+Auf der aktiven Seite betreibt das Tor-Projekt zusätzlich OnionPerf-Messclients, die fortlaufend definierte Dateigrössen über frische Tor-Circuits herunterladen und daraus Latenz- und Durchsatzmetriken (Time-to-First-Byte, Time-to-Last-Byte) bilden~\cite{onionperf}.
+
 Beide Datenquellen zusammen bilden die Datengrundlage für realistische Shadow-Simulationen~\cite[S.~5]{jansen2023data}\cite{neverenough-sec2021}. Die OnionPerf-Funktionalität wird darin durch eigens generierte Performance-Clients nachgebildet.
 Die genaue Funktionsweise dieser Akteure beschreiben die folgenden Unterabschnitte.
 
 \subsection{Zellen}
 
-Die kleinste Übertragungseinheit ist eine \emph{Zelle} fester Grösse, im ursprünglichen Design 512~Byte~\cite[S.~5]{dingledine2004tor}.
-Unterschieden wird zwischen Control Cells (z.\,B.\ \texttt{create}, \texttt{destroy}, \texttt{padding}) und Relay Cells, die Ende-zu-Ende-Stream-Daten transportieren~\cite[S.~5]{dingledine2004tor}.
+Die kleinste Übertragungseinheit ist eine Zelle fester Grösse, im ursprünglichen Design 512~Byte~\cite[S.~5]{dingledine2004tor}.
+Unterschieden wird zwischen Control Cells (z.\,B.\ create, destroy, padding) und Relay Cells, die Ende-zu-Ende-Stream-Daten transportieren~\cite[S.~5]{dingledine2004tor}.
+
 Die feste Zellgrösse soll Verkehrsmuster auf Paketebene vereinheitlichen. Anzahl und Richtung der Zellen bleiben für einen Beobachter jedoch sichtbar. Genau diesen Umstand nutzen Website-Fingerprinting-Angriffe aus~\cite[S.~2]{jansen2023data}.
 
 \subsection{Circuits und Streams}
@@ -94,8 +99,8 @@ Der Angreifer hat eine vordefinierte Liste an Websiten die er kontrollieren möc
 Er klassifiziert nun den überwachten Datenverkehr ob eine der definierten Websiten aufgerufen wird oder nicht.
 Der \gls{wf} Angriff gilt als Erfolgreich wenn ein Aufruf korrekt erkannt wurde, aber auch wenn ein Nicht-Aufruf korrekt erkannt worden ist.
 
-Der Angreifer eine Menge an überwachten Webseiten (\textit{monitored pages}), deren Zugriffe er erkennen möchte.
-Alle übrigen Webseiten gelten als nicht-überwacht (\textit{non-monitored}).
+Der Angreifer eine Menge an überwachten Webseiten (monitored pages), deren Zugriffe er erkennen möchte.
+Alle übrigen Webseiten gelten als nicht-überwacht (non-monitored).
 Der Klassifikator entscheidet für jede beobachtete Zellsequenz, ob sie einer überwachten Seite zuzuordnen ist (positiv) oder nicht (negativ).
 
 Der \gls{ml} Klassfikator wird dabei für zwei Aufgaben trainiert.
@@ -105,31 +110,31 @@ Es soll erkannt werden um welche Seite es sich handelt falls der erste Schritt i
 
 Dabei ergeben sich vier mögliche Ausgänge:
 \begin{itemize}
-    \item \textbf{True Positive (TP):} Eine überwachte Seite wird korrekt als solche erkannt.
-    \item \textbf{True Negative (TN):} Eine nicht-überwachte Seite wird korrekt als
+    \item True Positive (TP): Eine überwachte Seite wird korrekt als solche erkannt.
+    \item True Negative (TN): Eine nicht-überwachte Seite wird korrekt als
           nicht-überwacht eingestuft.
-    \item \textbf{False Positive (FP):} Eine nicht-überwachte Seite wird fälschlicherweise
+    \item False Positive (FP): Eine nicht-überwachte Seite wird fälschlicherweise
           als überwacht klassifiziert.
-    \item \textbf{False Negative (FN):} Eine überwachte Seite wird nicht erkannt.
+    \item False Negative (FN): Eine überwachte Seite wird nicht erkannt.
 \end{itemize}
 
-Die \textit{True Positive Rate} (TPR) gibt den Anteil korrekt erkannter Zugriffe auf überwachte Seiten an, während die \textit{False Positive Rate} (FPR) den Anteil fälschlicherweise als überwacht eingestufter Zugriffe misst:
+Die True Positive Rate (TPR) gibt den Anteil korrekt erkannter Zugriffe auf überwachte Seiten an, während die False Positive Rate (FPR) den Anteil fälschlicherweise als überwacht eingestufter Zugriffe misst:
 \begin{equation}
     \text{TPR} = \frac{\text{TP}}{\text{TP} + \text{FN}}, \qquad
     \text{FPR} = \frac{\text{FP}}{\text{FP} + \text{TN}}
 \end{equation}
-Eine niedrige FPR ist besonders entscheidend, da die \textit{Base Rate}, also die Wahrscheinlichkeit, dass ein Nutzer tatsächlich eine überwachte Seite besucht, in der Praxis sehr gering ist.
-Bei hoher FPR würden die meisten positiven Klassifikationen Fehlalarme sein, selbst wenn die TPR hoch ist (\textit{Base Rate Fallacy})~\cite[S.~3]{wang2016realistically}.
+Eine niedrige FPR ist besonders entscheidend, da die Base Rate, also die Wahrscheinlichkeit, dass ein Nutzer tatsächlich eine überwachte Seite besucht, in der Praxis sehr gering ist.
+Bei hoher FPR würden die meisten positiven Klassifikationen Fehlalarme sein, selbst wenn die TPR hoch ist (Base Rate Fallacy)~\cite[S.~3]{wang2016realistically}.
 
 Darüber hinaus wurde die Simulationstreue von Shadow evaluiert.
-Die Netzwerk-Performance der simulierten Tor-Umgebung stimmte in den Median-Werten weitgehend mit dem Live-Netzwerk überein, wobei Abweichungen vor allem in den Long-Tail-Bereichen auftraten. 
+Die Netzwerk-Performance der simulierten Tor-Umgebung stimmte in den Median-Werten weitgehend mit dem Live-Netzwerk überein, wobei Abweichungen vor allem in den Long-Tail-Bereichen auftraten.
 In einem Cross-Dataset-Experiment erreichte CUMUL als ausschliesslich auf Shadow-Daten trainierter Klassifikator eine Accuracy von 86\,\% auf Live-Tor-Traces, was die Eignung von Shadow für kontrollierte Website-Fingerprinting-Evaluationen bestätigt~\cite[S.~7]{jansen2023data}.
 
-In den Abschnitten zur Sensitivität und Robustheit untersuchten Jansen und Wails, wie empfindlich WF-Klassifikatoren auf veränderte Netzwerkbedingungen reagieren. 
+In den Abschnitten zur Sensitivität und Robustheit untersuchten Jansen und Wails, wie empfindlich WF-Klassifikatoren auf veränderte Netzwerkbedingungen reagieren.
 Die Zellsequenzen wurden dabei an den Entry Relays der simulierten Tor-Netzwerke aufgezeichnet, was dem realistischen Bedrohungsmodell eines lokalen Angreifers entspricht. \cite[S.~8--10]{jansen2023data}
 
-Es zeigte sich, dass die Closed-World-Accuracy weitgehend stabil blieb, während die False-Positive-Rate im Open-World-Szenario um bis zu 700\,\% anstieg, wenn Trainings- und Testdaten aus unterschiedlich belasteten Netzwerken stammten. 
-Insbesondere zeitbasierte Klassifikatoren wie Tik-Tok und $k$-Fingerprinting erwiesen sich als besonders anfällig gegenüber variierenden Netzwerkbedingungen. 
+Es zeigte sich, dass die Closed-World-Accuracy weitgehend stabil blieb, während die False-Positive-Rate im Open-World-Szenario um bis zu 700\,\% anstieg, wenn Trainings- und Testdaten aus unterschiedlich belasteten Netzwerken stammten.
+Insbesondere zeitbasierte Klassifikatoren wie Tik-Tok und $k$-Fingerprinting erwiesen sich als besonders anfällig gegenüber variierenden Netzwerkbedingungen.
 Durch ein robustes Trainingsverfahren, bei dem Trainingsdaten aus mehreren Netzwerkkonfigurationen gemischt wurden, konnte die FPR um bis zu 83\,\% gesenkt werden. \cite[S.~8--10]{jansen2023data}
 
 Als Klassifikator wird Deep Fingerprinting (DF) nach Sirinam et al. \cite{sirinam2018deep} verwendet.
@@ -148,191 +153,91 @@ Deshalb greifen wir auf wget2 zurück
 
 \section{Shadow Netzwerk Simulator}
 
-\subsection{Vorteile Simulation}
-Sehr viel Forschung wird innerhalb von Simulator
-
-Derzeit unterstützt Shadow über 150 Funktionen der system call API, allerdings nicht ganz alle.
-Jegliche von \gls{tor} benötigte werden jedoch vollumfänglich unterstützt.
-
-Der Shadow Shim fängt calls ab.
-Shim implementiert gleichnamige Funktionen mit der LD\_PRELOAD Variable.
-Diese bewirkt dass die Funktion zuerst geladen wird und überschattet damit die andere Funktion.
-Diese Netsim Quelle muss offiziell erwähnt werden wenn man shadow benutzt
-\cite{netsim-atc2022}
-
-
 \subsection{Shadow Simulator}
-Der Shadow Netzwerk Simulator wurden von Robert Jansen in einem Paper im Jahr 2011 vorgestellt. \cite{jansen2011shadow}
 
-Mit Shadow können Netzwerke deterministisch simuliert werden
+Shadow ist ein diskreter Ereignissimulator, der unmodifizierte Netzwerkanwendungen wie den realen \gls{tor} Daemon, den Verkehrsgenerator TGen oder das in der vorliegenden Arbeit eingesetzte wget2 innerhalb der Simulation ausführt~\cite[S.~1]{jansen2011shadow}.
+Über einen Syscall-Shim fängt Shadow netzwerk- und zeitbezogene Aufrufe ab und beantwortet sie aus dem simulierten Netzwerk heraus, während alle übrigen Syscalls nativ ausgeführt werden~\cite[S.~1\,f.]{jansen2011shadow}.
+Da die Simulationszeit explizit verwaltet und von der Wanduhrzeit entkoppelt ist, skaliert Shadow unabhängig von der Hardware-Geschwindigkeit, wobei die Laufzeit grosser Modelle je nach Versuch von wenigen Stunden bis zu mehreren Wochen reichen kann~\cite[S.~7]{neverenough-sec2021}.
 
-Erklären wie Shadow funktioniert mit Shims und allem.
-
-Shadow executes application code as native Processe while changing / simulating the network calls only.
-
-There are Network Emulators and Network simulators. 
-Emulators run real application code in real time.
-Therefore they cant scale and are also non-deterministic.
-Network Simulatoren auf der anderen Seite skalieren besser führen aber angepasste simulierten Applikationscode aus.
-
-Der Shadow Simulator füllt diese Lücke indem originaler Applikationscode ausgeführt werden kann.
-Gleichzeitig ist er skalierbar da er nicht in Echtzeit läuft.
-Simulationen grosser Netzwerke können durchaus lange Zeit dauern, bis zu mehreren Wochen.
-
-Shadow macht eine hybride Implementation zwischen Simulation und Emulation.
-Er fängt gewisse Syscalls wie Netzwerk oder Zeitkritische ab.
-Damit kann er die Netzwerkschicht simulieren und die Simulation von der Echtzeit entkoppeln.
-Gleichzeitig werden die restlichen Syscalls nativ und unverändert ausgeführt, bspw. Dateizugriffeﬁn.
-
-In einem Paper von Jansen und Wails wurden WF Angriffei im Shadow Simulator simuliert.
-Ihr Classifier welcher vollständig in Shadow trainiert worden ist, hat in der Live Anwendung über 80\% der Daten richtig klassifiziert~\cite[S.~1]{jansen2023data}.
-Classifier im Live Tor Netzwerk zu trainieren ist deutlich unvorhersehrbarer da man die Bedingungen nicht genau kennt.
-Läuft gerade eine Dos Attacke, oder ist ein Relay überlastet kann das die Datenverkehrsmuster verändern. 
-Dies erschwert die Reproduzierbarkeit und die Kausalität der Resultate.
-In einer reproduzierbaren Shadow Umgebung existieren diese Unsicherheiten nicht~\cite[S.~1\,f.]{jansen2023data}.
-
-In dem Paper von Jansen wird weiter aufgezeigt dass die Erkennungsraten von WF Classifier sehr stark mit der Tor Netzwerk Auslastung schwanken können.
-Classifier welche in einem Zustand der tiefen Netzwerkauslastung trainiert und in einem Zustand der hohen Netzwerkauslastung angewendet werden deutlich schlechtere Ergebnisse liefern.
-WF Classifier sind also sehr anfällig für Veränderungen im Tor Netzwerkaufbau.
-Dieses Problem kann entschärft werden indem man die Classfier im Shadow Netzwerksimulator mit unterschiedlichen Netzwerkauslastungen trainiert~\cite[S.~2]{jansen2023data}.
-
-Der Shadow Nezwerksimulator kann also nicht nur für Simulationen verwendet werden sondern auch zum Trainieren von "echten" WF Classifiern.
+Jansen und Wails zeigen, dass ein vollständig in Shadow trainierter \gls{wf} Klassifikator auf Live Tor Daten über 80\,\% der Aufrufe korrekt klassifiziert~\cite[S.~1]{jansen2023data}.
+Im Live Tor Netzwerk verändern unkontrollierte Faktoren wie laufende Denial-of-Service-Attacken oder überlastete Relais die Verkehrsmuster und erschweren so die Reproduzierbarkeit, was in der deterministischen Shadow Umgebung nicht auftritt~\cite[S.~1\,f.]{jansen2023data}.
+Shadow eignet sich damit nicht nur für isolierte Vergleichsstudien, sondern auch für das Training produktiv einsetzbarer \gls{wf} Klassifikatoren.
 
 
 
 \subsection{Tornettools}
-Shadow wird mithilfe der Tornettools konfiguriert.
-Tornettools hilft uns die Shadow Simulation automatisiert zu konfigurieren.
-Es werden Daten vom geladen und genutzt um eine realistische Simulation aufzubauen.
-\cite{neverenough-sec2021}
 
-Das Tor Netzwerk wird in mehreren Stufen modelliert.
-Ziel ist es die rechenintensive Staging Stufe von der rechenunintensiven Generationsstufe zu trennen. 
-So kann der Arbeitsablauf der Simulation verbessert und beschleunigt werden.
+Tornettools ist der Modellierungs- und Generierungsbaustein, der Shadow für realistische Tor Experimente konfiguriert.
+Das Toolkit wurde 2021 von Jansen, Tracey und Goldberg veröffentlicht~\cite[S.~5]{neverenough-sec2021}.
 
-\subsubsection{Daten Download}
+Die Modellierung läuft in zwei Phasen ab.
+Die rechenintensive \emph{Staging} Phase verarbeitet einmalig grosse Rohdatenmengen, die rechengünstige \emph{Generation} Phase erzeugt daraus beliebig viele konkrete Netzwerkkonfigurationen.
+Diese Trennung erlaubt es, Staging Resultate vorab zu berechnen und zwischen Forschungsgruppen wiederzuverwenden, ohne die zugrunde liegenden Rohdaten erneut auswerten zu müssen~\cite[S.~3]{neverenough-sec2021}.
 
-Als Grundlage der Simulation werden öffentlich verfügbare Daten abgerufen.
-//TODO: Ausarbeiten von wo genau die Tor Netzwerkdaten kommen und wie diese beschafft werden. (evt. auch im Sourcecode überprüfen.)
+\subsubsection{Datenquellen}
 
-Eine gute Datengrundlage ist wichtig für die Simulation.
-In früheren Versuchen wurden teilweise Live Daten aus dem Tor Netzwerk ausgewertet was in falschen und ungenauen Aussagen enden kann.
+Tornettools stützt sich auf drei öffentlich verfügbare Datenquellen:
+
+\begin{itemize}
+    \item Tor Konsens und Server Deskriptoren: Aus dem CollecTor Archiv des Tor Metrics Projekts. Sie beschreiben pro Relais Bandbreite, Flags und Konsens-Gewichtung und sind seit 2007 lückenlos verfügbar~\cite{tormetricsabout}.
+    \item Tor Nutzerstatistiken: Pro Land, ebenfalls vom Tor Metrics Projekt~\cite{tormetricsabout}. Sie steuern, in welchen Ländern die simulierten Clients platziert werden.
+    \item PrivCount Verkehrsmessungen: Aus der Studie von Mani et al.~\cite[S.~5\,f.]{mani2018understanding}. Auf Tor Exit Relais wurden Nutzerzahlen, Circuit-Aufkommen sowie Inter-Arrival-Zeiten von Streams und Paketen unter Schutz der Differential Privacy gemessen.
+\end{itemize}
+
+Eine reproduzierbare Datengrundlage ist deshalb wichtig, weil Klassifikationsergebnisse stark mit Netzwerkauslastung und Konsenszustand schwanken~\cite[S.~10]{jansen2023data}, womit der isolierte Nachweis des Padding-Effekts ohne kontrollierte Eingangsdaten kaum möglich wäre.
 
 \subsubsection{Staging}
 
-In der Staging Phase werden die Daten nun verarbeitet.
-Nützliche Attribute werden aus den Files extrahiert. \cite{neverenough-sec2021}
-//TODO: Tiefer im Detail ausarbeiten welche Daten wie verwendet werden.
+In der Staging Phase werden die Konsensdateien des gewählten Zeitfensters ausgewertet.
+Für jedes Relais wird festgehalten, wie häufig es im Beobachtungszeitraum aktiv war, wie oft es als Guard oder Exit ausgewählt wurde, welche Bandbreite es bereitgestellt hat und welche typische Konsens-Gewichtung daraus resultiert~\cite[S.~3]{neverenough-sec2021}.
+Auf Netzwerkebene werden zusätzlich Median-Werte für Anzahl und Gewichtung pro Position (Guard, Middle, Exit) gebildet, und aus den Tor Nutzerstatistiken wird eine Verteilung über die Herkunftsländer abgeleitet.
+
+Resultat der Staging Phase ist eine Sammlung von JSON Dateien, die die rechenintensive Auswertung der Rohdaten festhalten ~\cite[S.~5]{neverenough-sec2021}.
 
 \subsubsection{Generation}
 
-In der Generationsphase wird nun die Netzwerktopologie erstellt.
-Als Resultat erhalten wir eine Shadow Konfigurationsdatei.
+Die Generation Phase erzeugt aus den Staging Dateien eine konkrete Shadow Konfiguration und wird durch drei Parameter gesteuert: die Netzwerkskala $s$ als Anteil der modellierten Relais und Nutzer relativ zum vollen Tor Netzwerk, einen Lastfaktor zur Skalierung der Verkehrslast sowie eine Prozessskala, die mehrere Nutzer in einem TGen Prozess bündelt und so RAM und CPU einspart~\cite[S.~4]{neverenough-sec2021}.
+In der vorliegenden Arbeit wird $s = 0{,}01$ verwendet, was rund 79 Relais ergibt.
 
-Die Tornettools erlauben es die gewünschte Netzwerkgrösse anzugeben.
-Mit dem Wert 100\% wird die vollständige Netzwerktopologie simuliert, mit 1\% ein hundertstel davon. \cite{neverenough-sec2021}
+Für jede Position (Guard, Middle, Exit) werden die Relais nach Konsens-Gewichtung sortiert, in gleich grosse Buckets aufgeteilt und aus jedem Bucket das Relais mit dem mittleren Gewicht übernommen, sodass die Gewichtsverteilung des realen Netzwerks erhalten bleibt~\cite[S.~3\,f.]{neverenough-sec2021}.
+Jedes ausgewählte Relais wird anhand seines Ländercodes einer Stadt im Internet Modell zugeordnet und mit den in der Staging Phase ermittelten Bandbreitenwerten konfiguriert, die TGen Client Hosts werden entsprechend der Länderverteilung der Tor Nutzer platziert~\cite[S.~5]{neverenough-sec2021}.
+Resultat ist eine Shadow Konfigurationsdatei (\texttt{shadow.config.yaml}) sowie pro Host eine zugehörige Tor Konfiguration, die in der vorliegenden Arbeit nachträglich für die Aktivierung von Circuit Padding und das Einbinden der Fingerprinting-Monitore angepasst wird.
 
-Es werden etwa 792k gleichzeitige Nutzer simuliert realistisch auf die jeweiligen Länder aufgeteilt.
-Dann wird mittels TGEN realistischen Traffic erzeugt.
+\subsubsection{TGen}
 
-\subsubsection{TGEN}
-//Todo: Was ist TGEN und was macht diese Library.
-//Todo: Die Markov Modelle und alles beschreiben aus dem neverenough paper
+TGen (Traffic Generator) ist der Verkehrsgenerator, der innerhalb jedes simulierten Tor Client Prozesses die Anwendungsschicht modelliert und Verbindungen über das lokale Tor \gls{socks} Interface aufbaut, sodass der erzeugte Verkehr denselben Stack wie der eines Realnutzers durchläuft.
+Tornettools koppelt drei Markov Modelle, die festlegen, wann ein neuer Circuit aufgebaut, wann auf einem bestehenden Circuit ein neuer \gls{tcp}-Stream gestartet und mit welchen Inter-Arrival-Zeiten und Richtungen Pakete gesendet werden~\cite[S.~5]{neverenough-sec2021}.
+Die Parameter dieser Modelle wurden in der PrivCount Studie an Live Tor Exit Relais gemessen~\cite[S.~5\,f.]{mani2018understanding}, womit die erzeugte Last in Volumen und zeitlicher Struktur realen Mustern entspricht.
 
-Die Markov Clients generieren Traffic im simulierten Netzwerk um das Verhalten des Tor Netzwerkes realistischer zu halten.
-Es soll timing gaps etc. geben.
+Jeder TGen Client erhält einen eigenen, deterministisch aus einem Master-Seed abgeleiteten Seed, sodass sich die simulierten Nutzer voneinander unterscheiden, die Simulation insgesamt aber reproduzierbar bleibt~\cite[S.~4]{neverenough-sec2021}.
 
+\subsubsection{Validierung der Modellierung}
 
+Jansen et al.\ verglichen ihre Simulationen bei verschiedenen Netzwerkskalen mit Live Tor Metrics, wobei Median-Werte von Circuit Build Time, Round-Trip-Time und Time-to-Last-Byte weitgehend mit den realen Messwerten übereinstimmten und die berechneten 95\,\% Konfidenzintervalle bei eins-zu-eins Skalierung die Tor-Metrics-Verteilungen nahezu vollständig einschlossen~\cite[S.~6\,f.]{neverenough-sec2021}.
+Eine spätere Cross-Dataset-Validierung zeigte zudem, dass ein ausschliesslich auf Shadow Daten trainierter CUMUL Klassifikator auf Live Tor Traces eine Accuracy von 86\,\% erreichte, was die Eignung der Modellierung speziell für \gls{wf} Studien bestätigt~\cite[S.~7]{jansen2023data}.
 
-\subsection{Risiken von Simulationen vs Real World und Alternativen}
+\subsection{Alternative Experimentierumgebungen}
 
-Tornettools besser beschreiben was sie können und wie das alles funktionietrt. Von wo kommt der Beweis oder so dass es die Simulation auch wie durchführt.
-Fingerprinting setup aufbauen.
+Ein erklärtes Ziel der vorliegenden Arbeit ist es, eine lokal reproduzierbare Versuchsumgebung aufzubauen, in der Padding-Modi kontrolliert variiert und Verkehrsspuren vollständig aufgezeichnet werden können.
+Eine ursprünglich angedachte Variante war ein selbst gebautes Mini-Tor-Netzwerk auf Basis von Docker Containern, was sich aber als zu aufwendig erwies, um die für \gls{wf} Studien nötige Realitätstreue zu erreichen.
+Messungen im Live Tor Netzwerk wurden ebenfalls verworfen, da das nötige Know-how fehlt, die Bedingungen nicht kontrollierbar sind und Resultate kaum reproduzierbar wären.
 
-OnionTrace und OnionTraceTool besser beschreiben damit man den Versuchsaufbau nachvollziehen kann.
-
-
-Erklären mit welchen Daten man arbeitet und wie und von wann diese daten kommen.
-Well well well
-
-
-Für das Experiment soll das Tor Netzwerk möglichst realitätsgetreu modelliert werden.
-Die Tor Foundation veröffentlicht regelmässig Daten über die Struktur vom \gls{tor} Netzwerk mit den wichtigsten Nodes und deren IP Adressen (Quelle!)
-Dazu nutzen wir die Erkenntnisse von dem Paper von Jansen indem das erste mal ein \gls{tor} Netzwerk mit 1:1 Skalierung simuliert worden ist. \cite{neverenough-sec2021}
-
-
-
-Chutney und NetMirage als Simulator Alternativen.
-
-Wir nutzen Onion Trace und Tgen ebenfalls um die Simulation korrekt aufzusetzen
-
-Mehr Research machen zum Tor Netzwerk im Allgemeinen und wo die Probleme liegen. Grafiken erstellen.
-
-Mit dem Tornettools lässt sich eine Shadow config generieren die man dann noch anpassen kann wenn man möchte.
-
-"jansen2011shadow"
-Why it matters:
-This is what allows Shadow to run unmodified binaries — like real Tor, TGen, or other applications — inside the simulation. The application doesn't know it's being simulated. It just makes normal syscalls, and the shim transparently redirects them. This is a big advantage over simulators that require you to rewrite applications against a custom API.
-
-
+Als Alternativen stehen Chutney\footnote{\url{https://gitlab.torproject.org/tpo/core/chutney}} sowie der Emulationsansatz von ExperimenTor und NetMirage~\cite[S.~2]{neverenough-sec2021} zur Verfügung.
+Chutney ist ein Test-Harness des Tor Projekts und eignet sich für funktionale Integrationstests, modelliert jedoch weder eine realistische Topologie noch Hintergrundverkehr.
+ExperimenTor und NetMirage führen Tor Prozesse unmodifiziert in Linux Containern aus und verzögern den Verkehr über netem, sind aber durch die Echtzeit-Bindung in der maximalen Netzwerkgrösse begrenzt.
+Shadow gemeinsam mit Tornettools verbindet realistische Topologie, Markov-gestützten Hintergrundverkehr und eine deterministische, lokal lauffähige Umgebung und erfüllt damit als einzige Plattform alle Anforderungen dieser Arbeit~\cite[S.~6]{neverenough-sec2021}.
 
 \subsection{Website-Fingerprinting-Klassifikatoren}
 
-In der WF-Literatur haben sich verschiedene Klassifikatoren etabliert, die sich 
-entlang zweier Dimensionen unterscheiden lassen: klassische 
-Machine-Learning-Verfahren gegenüber neuronalen Netzen sowie zeitbasierte 
-gegenüber zeitunabhängigen Ansätzen. Im Folgenden werden vier repräsentative 
-Klassifikatoren vorgestellt, die von Jansen und Wails in ihrer Evaluierung 
-verwendet wurden \cite[S.~9\,f.]{jansen2023data}.
+In der WF-Literatur haben sich vier Klassifikatoren als Vergleichsbasis etabliert, die sich entlang zweier Dimensionen unterscheiden: klassische Machine-Learning-Verfahren gegenüber neuronalen Netzen sowie zeitbasierte gegenüber zeitunabhängigen Ansätzen~\cite[S.~9\,f.]{jansen2023data}.
+CUMUL~\cite{panchenko2016website} verwendet eine Support Vector Machine über kumulierten Zellrichtungssequenzen und arbeitet zeitunabhängig.
+$k$-Fingerprinting~\cite{hayes2016k} kombiniert einen Random Forest mit $k$-Nearest-Neighbors auf Basis von Summary-Statistiken der Zellsequenz, wobei Timing-Features (Inter-Arrival-Zeiten) genutzt werden.
+Deep Fingerprinting~\cite{sirinam2018deep} ist ein zeitunabhängiges Convolutional Neural Network, das direkt auf Zellrichtungssequenzen arbeitet und in früheren Vergleichen sowohl CUMUL als auch $k$-FP übertroffen hat.
+Tik-Tok~\cite{rahman2019tik} verwendet die DF-Architektur, ergänzt die Eingabe aber um Zeitstempel und reagiert dadurch empfindlicher auf variierende Netzwerkbedingungen~\cite[S.~10]{jansen2023data}.
 
-\paragraph{CUMUL}
-CUMUL von Panchenko et al. \cite{panchenko2016website} ist ein klassischer, 
-zeitunabhängiger Ansatz. Der Klassifikator verwendet eine Support Vector Machine 
-(SVM) mit Radial-Basis-Funktions-Kernel. Als Eingabe dient eine kumulativ 
-aufsummierte Zellrichtungssequenz $\langle c_i \rangle$ mit 
-$c_i = \sum_{j=0}^{i} d_j$, wobei $d_j \in \{-1, 1\}$ die Richtung der $j$-ten 
-Zelle angibt. Die kumulative Sequenz wird anschliessend durch lineare Skalierung 
-auf genau 100 Elemente normiert.
-
-\paragraph{$k$-Fingerprinting}
-$k$-Fingerprinting ($k$-FP) von Hayes und Danezis \cite{hayes2016k}
-kombiniert einen Random-Forest-Klassifikator mit einem 
-$k$-Nearest-Neighbors-Verfahren. Im Multiclass-Setting wird ausschliesslich der 
-Random Forest verwendet, der auf Basis von Summary-Statistiken einer Zellsequenz 
-klassifiziert -- darunter Minimum, Maximum, Mittelwert und Standardabweichung der 
-Zell-Interarrival-Zeiten. Da $k$-FP Timing-Informationen als Features nutzt, 
-zählt er zu den zeitbasierten Klassifikatoren.
-
-\paragraph{Deep Fingerprinting}
-Deep Fingerprinting (DF) von Sirinam et al. \cite{sirinam2018deep} basiert auf 
-einem tiefen Convolutional Neural Network (CNN), das aus mehreren gestapelten 
-Blöcken von Convolutional-, Batch-Normalization-, Aktivierungs-, Pooling- und 
-Dropout-Schichten besteht. Als Eingabe dient direkt der Zellrichtungsvektor 
-$\langle d_i \rangle_{i=1}^{5000}$ mit $d_i \in \{-1, 1\}$. Kürzere Sequenzen
-werden mit Nullen aufgefüllt. DF arbeitet zeitunabhängig und hat in früheren 
-Arbeiten sowohl CUMUL als auch $k$-FP in der Klassifikationsgenauigkeit 
-übertroffen \cite{sirinam2018deep}.
-
-\paragraph{Tik-Tok}
-Tik-Tok (TT) von Rahman et al. \cite{rahman2019tik} verwendet dieselbe
-CNN-Architektur wie DF, erweitert jedoch die Eingabe um Timing-Informationen. 
-Anstelle reiner Zellrichtungen nutzt TT das Produkt aus Richtung und Zeitstempel 
-$\langle t_i \cdot d_i \rangle_{i=1}^{5000}$. Damit verwendet TT strikt mehr 
-Information als DF. Allerdings haben Jansen und Wails gezeigt, dass zeitbasierte 
-Klassifikatoren wie TT empfindlicher auf variierende Netzwerkbedingungen reagieren 
-\cite[S.~10]{jansen2023data}.
-
-\paragraph{Wahl des Klassifikators}
-In der vorliegenden Arbeit wird Deep Fingerprinting als Klassifikator verwendet. 
-Diese Wahl ist durch mehrere Faktoren motiviert: Erstens arbeitet DF 
-zeitunabhängig, wodurch simulationsbedingte Timing-Variationen die Ergebnisse 
-nicht verfälschen. Zweitens beeinflusst Circuit Padding primär die 
-Zellrichtungssequenzen durch das Einfügen zusätzlicher Dummy-Zellen, was direkt 
-auf die von DF genutzten Features wirkt. Drittens wurde DF bereits von Jansen und 
-Wails erfolgreich in Shadow validiert und erreichte mit robustem Training auf
-gemischten Netzwerklasten eine Accuracy von 82\,\% auf Live-Tor-Daten~\cite[S.~13]{jansen2023data}. Dies 
-gewährleistet die Vergleichbarkeit der vorliegenden Ergebnisse mit der bestehenden 
-Literatur.
+In der vorliegenden Arbeit wird Deep Fingerprinting verwendet.
+DF arbeitet zeitunabhängig, wodurch simulationsbedingte Timing-Variationen die Ergebnisse nicht verfälschen, und Circuit Padding wirkt durch das Einfügen zusätzlicher Dummy-Zellen direkt auf die von DF genutzten Richtungsfeatures.
+Zudem wurde DF von Jansen und Wails in Shadow validiert und erreichte mit robustem Training auf Live Tor Daten eine Accuracy von 82\,\%, was die Vergleichbarkeit mit bestehender Literatur sicherstellt~\cite[S.~13]{jansen2023data}.
 
 
 
@@ -343,7 +248,7 @@ In der Website-Fingerprinting-Literatur werden zwei grundlegende
 Evaluationsszenarien unterschieden: das Closed-World- und das 
 Open-World-Szenario \cite{wang2016realistically, jansen2023data}.
 
-Im \textbf{Closed-World-Szenario} wird angenommen, dass der Nutzer 
+Im Closed-World-Szenario wird angenommen, dass der Nutzer 
 ausschliesslich Webseiten aus einer dem Angreifer bekannten, 
 endlichen Menge $W_\alpha$ besucht. Der Klassifikator muss 
 lediglich entscheiden, welche der bekannten Seiten besucht wurde. 
@@ -354,7 +259,7 @@ Experimente, ist jedoch unrealistisch, da es die Existenz
 unbekannter Webseiten vollständig ausschliesst
 \cite[S.~1]{wang2016realistically}.
 
-Im \textbf{Open-World-Szenario} hingegen definiert der Angreifer 
+Im Open-World-Szenario hingegen definiert der Angreifer 
 eine Menge sensitiver Seiten $W_\alpha$, die er erkennen möchte, 
 während der Nutzer beliebige weitere Seiten besuchen kann -- 
 sowohl dem Angreifer bekannte, nicht-sensitive Seiten $W_\beta$ als 
@@ -392,21 +297,11 @@ Open-World-Szenario bleibt zukünftiger Forschung vorbehalten.
 
 
 \paragraph{Anpassung von wget2}
-Da Tor seinen Dienst über einen SOCKS-Proxy bereitstellt,
-Webcrawler wie \texttt{wget2} jedoch standardmässig nur 
-HTTP-Proxies unterstützen, erweiterten Jansen und Wails 
-\texttt{wget2} um einen SOCKS-Client. Erst diese Modifikation 
-ermöglichte es, \texttt{wget2}-Anfragen über den lokalen 
-Tor-Prozess zu leiten und somit Zellsequenzen am Entry Relay 
-aufzuzeichnen \cite[S.~5]{jansen2023data}. Darüber hinaus wurde 
-\texttt{wget2} so konfiguriert, dass es alle eingebetteten 
-Ressourcen einer Seite parallel herunterlädt 
-(\texttt{-{}-page-requisites}, \texttt{-{}-max-threads=30}) und 
-denselben User-Agent wie der Tor Browser verwendet. Durch lokale 
-Tests wurde verifiziert, dass beide Tools -- \texttt{wget2} und 
-Tor-Browser-Selenium (TBS) -- einen identischen Satz an 
-Ressourcen vom Server abrufen. Die gepatchte \texttt{wget2}-Version 
-ist im Artefakt-Repository der Autoren öffentlich verfügbar.
+Da Tor seinen Dienst über einen SOCKS-Proxy bereitstellt, Webcrawler wie wget2 jedoch standardmässig nur HTTP-Proxies unterstützen, erweiterten Jansen und Wails wget2 um einen SOCKS-Client.
+Erst diese Modifikation ermöglichte es, wget2-Anfragen über den lokalen Tor-Prozess zu leiten und somit Zellsequenzen am Entry Relay aufzuzeichnen.
+Darüber hinaus wurde wget2 so konfiguriert, dass es alle eingebetteten Ressourcen einer Seite parallel herunterlädt und denselben User-Agent wie der Tor Browser verwendet.
+Durch lokale Tests wurde verifiziert, dass beide Tools wget2 und der Tor Browser einen identischen Satz an Ressourcen vom Server abrufen \cite[S.~3-5]{jansen2023data}.
+Die gepatchte wget2-Version ist im Artefakt-Repository der Autoren öffentlich verfügbar.
 
 
 \section{Circuit Padding}

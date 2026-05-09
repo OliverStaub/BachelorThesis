@@ -52,19 +52,19 @@ Eine deutlich kleinere Skalierung ist deshalb nicht primär eine inhaltliche Ent
 Die in dieser Arbeit verwendete Werkzeugkette setzt sich aus mehreren Komponenten zusammen, die jeweils eine eng umgrenzte Aufgabe erfüllen:
 
 \begin{itemize}
-    \item \textbf{Shadow}~\cite{jansen2011shadow,netsim-atc2022} simuliert das \gls{tor}-Netzwerk deterministisch auf Syscall-Ebene.
-    \item \textbf{Tornettools}~\cite{neverenough-sec2021} erzeugt aus den öffentlichen Tor-Metrik-Daten eine repräsentative Shadow-Konfiguration.
-    \item \textbf{\texttt{shadowctl.py}} steuert den Lebenszyklus eines Experiments (Generierung, Push, Start, Statusabfrage, Stop, Pull der Resultate).
-    \item \textbf{\texttt{generate-wf-config.py}} erweitert die Shadow-Konfiguration um die für das \gls{wf}-Experiment notwendigen Hosts (Monitore, Webserver) und schreibt die Besuchsplanung in \texttt{schedule.json}.
-    \item \textbf{\texttt{zimsrv.py}} stellt im Inneren der Simulation die Wikipedia-Inhalte bereit.
-    \item \textbf{\texttt{wget2}} (mit dem \gls{socks}-Patch von Jansen und Wails~\cite[S.~5]{jansen2023data}) lädt im Inneren der Simulation die Webseiten über \gls{tor} herunter.
-    \item \textbf{\texttt{pcap\_to\_npz.py}} extrahiert aus den aufgezeichneten Pcaps die Zellrichtungssequenzen pro Besuch.
-    \item \textbf{WFlib} bietet als Python-Bibliothek\footnote{\url{https://github.com/Xinhao-Deng/Website-Fingerprinting-Library}} eine Implementierung des \gls{df}-Klassifikators in PyTorch und steuert Training, Validierung und Test.
+    \item Shadow~\cite{jansen2011shadow,netsim-atc2022} simuliert das \gls{tor}-Netzwerk deterministisch auf Syscall-Ebene.
+    \item Tornettools~\cite{neverenough-sec2021} erzeugt aus den öffentlichen Tor-Metrik-Daten eine repräsentative Shadow-Konfiguration.
+    \item \texttt{shadowctl.py} steuert den Lebenszyklus eines Experiments (Generierung, Push, Start, Statusabfrage, Stop, Pull der Resultate).
+    \item \texttt{generate-wf-config.py} erweitert die Shadow-Konfiguration um die für das \gls{wf}-Experiment notwendigen Hosts (Monitore, Webserver) und schreibt die Besuchsplanung in \texttt{schedule.json}.
+    \item \texttt{zimsrv.py} stellt im Inneren der Simulation die Wikipedia-Inhalte bereit.
+    \item \texttt{wget2} (mit dem \gls{socks}-Patch von Jansen und Wails~\cite[S.~5]{jansen2023data}) lädt im Inneren der Simulation die Webseiten über \gls{tor} herunter.
+    \item \texttt{pcap\_to\_npz.py} extrahiert aus den aufgezeichneten Pcaps die Zellrichtungssequenzen pro Besuch.
+    \item WFlib bietet als Python-Bibliothek\footnote{\url{https://github.com/Xinhao-Deng/Website-Fingerprinting-Library}} eine Implementierung des \gls{df}-Klassifikators in PyTorch und steuert Training, Validierung und Test.
 \end{itemize}
 
 Die Aufteilung in mehrere kleine, voneinander unabhängige Skripte erlaubt es, einzelne Phasen der Pipeline gezielt erneut auszuführen, ohne den vorgelagerten und sehr zeitintensiven Simulationslauf zu wiederholen.
 
-Ergänzend zu diesen versuchsspezifischen Werkzeugen wurde während der gesamten Entwicklungs- und Schreibphase \textbf{Claude Code} (Anthropic) als KI-gestütztes Entwicklungswerkzeug eingesetzt.
+Ergänzend zu diesen versuchsspezifischen Werkzeugen wurde während der gesamten Entwicklungs- und Schreibphase Claude Code (Anthropic) als KI-gestütztes Entwicklungswerkzeug eingesetzt.
 Claude Code wird im Folgenden bewusst nicht als Bestandteil des Versuchsaufbaus, sondern als Hilfsmittel der Umsetzung verstanden.
 Die genaue Form der Nutzung sowie die zugehörige Erklärung sind in Abschnitt~\ref{sec:realisierung_ki_werkzeuge} und in Anhang~\ref{app:ki_werkzeuge} dokumentiert.
 
@@ -80,11 +80,6 @@ Viertens wurde das Skript in der eigentlichen Pipeline (Shadow-Simulation, Konve
 
 Die fachlichen Entscheidungen, die in diesen Skripten umgesetzt wurden, stammen vollumfänglich vom Autor.
 Dies umfasst insbesondere die Architektur der Pipeline (Trennung in Steuerung, Konfigurationsgenerierung, Simulation, Konvertierung, Training und Auswertung), die Wahl der Beobachtungspunkte für die Pcap-Aufzeichnung, die Verwendung des Zielports zur Klassen-Labelung, die Wahl der drei Padding-Modi und sämtliche Hyperparameter des Klassifikator-Trainings.
-
-Auch der Prosatext der Arbeit selbst wurde stellenweise mit KI-Werkzeugen überarbeitet, im Wesentlichen zur sprachlichen Politur und zur Vereinheitlichung des Stils.
-Inhaltliche Aussagen, Zitate und Quellenverweise stammen vom Autor und wurden nach jedem Überarbeitungsschritt gegen die Originalquellen geprüft.
-Eine vollständige tabellarische Aufstellung aller eingesetzten KI-Werkzeuge, der jeweils verwendeten Modellversionen und der konkreten Verwendungszwecke findet sich in Anhang~\ref{app:ki_werkzeuge}.
-
 \section{Aufbau der Tor-Simulation}
 \label{sec:realisierung_simulation}
 
@@ -126,7 +121,7 @@ Eine Begrenzung in der Aussagekraft ergibt sich daraus dennoch, da bei kleineren
 Dieser Effekt wird in Kapitel~\ref{cha:diskussion} bei der Bewertung der Resultate aufgegriffen.
 
 Tornettools kann nicht nur die Konfiguration generieren, sondern auch den vollständigen Lauf einer Simulation und deren Auswertung übernehmen.
-Diese Mehrstufigkeit (\textit{stage} und \textit{generate}) wird in der vorliegenden Arbeit lediglich für die Generierung verwendet, da der eigentliche Versuch eigene, von Tornettools nicht vorgesehene Hosts (Monitore, Webserver) benötigt.
+Diese Mehrstufigkeit (stage und generate) wird in der vorliegenden Arbeit lediglich für die Generierung verwendet, da der eigentliche Versuch eigene, von Tornettools nicht vorgesehene Hosts (Monitore, Webserver) benötigt.
 
 \subsection{Erweiterung der Konfiguration für das Fingerprinting}
 \label{sec:realisierung_generate_wf_config}
@@ -163,7 +158,7 @@ Tabelle~\ref{tab:padding_modi} listet die drei in dieser Arbeit verwendeten Konf
 \label{tab:padding_modi}
 \begin{tabular}{lll}
 \hline
-\textbf{Modus} & \textbf{torrc-Eintrag} & \textbf{Bedeutung} \\
+Modus & torrc-Eintrag & Bedeutung \\
 \hline
 OFF & \texttt{CircuitPadding 0} & Kein Padding \\
 ON & \texttt{CircuitPadding 1} & Standard-Padding aktiv \\
@@ -195,7 +190,7 @@ Tabelle~\ref{tab:zim_varianten} fasst die zur Verfügung stehenden Varianten zus
 \label{tab:zim_varianten}
 \begin{tabular}{lll}
 \hline
-\textbf{Datei} & \textbf{Grösse} & \textbf{Bemerkung} \\
+Datei & Grösse & Bemerkung \\
 \hline
 \texttt{wikipedia\_en\_simple\_all\_nopic} & 966~MB & Simple English ohne Bilder \\
 \texttt{wikipedia\_en\_simple\_all\_maxi} & 3.4~GB & Simple English mit Bildern (verwendet) \\
@@ -399,7 +394,7 @@ Tabelle~\ref{tab:datasplit_beispiel} zeigt die Aufteilung exemplarisch für ein 
 \label{tab:datasplit_beispiel}
 \begin{tabular}{lll}
 \hline
-\textbf{Teilmenge} & \textbf{Anzahl Beispiele} & \textbf{Zweck} \\
+Teilmenge & Anzahl Beispiele & Zweck \\
 \hline
 Training & 202 (81\,\%) & \gls{df} lernt aus diesen Beispielen die Verkehrsmuster. \\
 Validierung & 23 (9\,\%) & Auswahl des besten Modell-Checkpoints während des Trainings. \\
@@ -428,7 +423,7 @@ Die Hyperparameter folgen der Standardkonfiguration von WFlib für \gls{df} und 
 \label{tab:hyperparameter}
 \begin{tabular}{ll}
 \hline
-\textbf{Parameter} & \textbf{Wert} \\
+Parameter & Wert \\
 \hline
 Eingangsmerkmal & DIR (Richtung, $\pm 1$) \\
 Sequenzlänge & 5000 \\

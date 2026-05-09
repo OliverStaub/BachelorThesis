@@ -15,10 +15,10 @@ Tabelle~\ref{tab:ki_werkzeuge} listet die verwendeten KI-Werkzeuge, die jeweils 
 \label{tab:ki_werkzeuge}
 \begin{tabular}{p{3.6cm}p{3.4cm}p{6.5cm}}
 \hline
-\textbf{Werkzeug} & \textbf{Modell(e)} & \textbf{Verwendung} \\
+Werkzeug & Modell(e) & Verwendung \\
 \hline
-Claude Code (Anthropic) & Opus 4.5, Opus 4.6, Opus 4.7 & Hauptsächlich genutztes Werkzeug. Iterative Entwicklung sämtlicher in dieser Arbeit selbst geschriebenen Python- und Shell-Skripte (Simulationssteuerung, Konfigurationsgenerierung, ZIM-Webserver, Pcap-Konvertierung, Klassifikator-Pipeline, Korrelationsanalyse, Berichts- und Plot-Skripte). \\
-KI-gestützte Textüberarbeitung & verschiedene & Sprachliche Politur, Vereinheitlichung des Stils, Korrektur von Formulierungen und Tippfehlern an Teilen des Prosatexts der Arbeit. \\
+Claude Code & Opus 4.5, Opus 4.6, Opus 4.7 & Hauptsächlich genutztes Werkzeug. Iterative Entwicklung sämtlicher in dieser Arbeit selbst geschriebenen Python- und Shell-Skripte. \\
+Claude Desktop & Opus 4.5, Opus 4.6, Opus 4.7 & Sprachliche Politur, Vereinheitlichung des Stils, Korrektur von Formulierungen und Tippfehlern an Teilen des Prosatexts der Arbeit. \\
 \hline
 \end{tabular}
 \end{table}
@@ -28,24 +28,13 @@ KI-gestützte Textüberarbeitung & verschiedene & Sprachliche Politur, Vereinhei
 
 \paragraph{Code}
 Die Skripte wurden nicht in einem einzigen Schritt von einer KI generiert, sondern in einem iterativen Dialog entwickelt.
-Der Autor formulierte die fachliche Anforderung (Eingabe, Ausgabe, Bibliotheken, Constraints), Claude Code generierte daraufhin einen Implementierungsentwurf, der Autor las, prüfte und korrigierte den Entwurf, und das Skript wurde anschliessend in der Pipeline ausgeführt und gegen die erwarteten Resultate validiert.
-Bei wiederholten Fehlern wurde der Dialog so lange weitergeführt, bis das Skript die fachliche Anforderung erfüllte.
-Die endgültige Version aller Skripte wurde vom Autor zeilenweise gelesen und in die in Kapitel~\ref{cha:realisierung} dokumentierte Pipeline integriert.
+Der Autor formulierte die fachliche Anforderung (Eingabe, Ausgabe, Bibliotheken, Constraints), Claude Code generierte daraufhin einen Implementierungsentwurf, der Autor las, prüfte und korrigierte den Entwurf, führte das Skript aus und validierte es gegen die erwarteten Resultate.
+Als hilfreich hat sich die Planungsfunktion erwiesen bei welchem die KI eine Plan erstellt bevor sie Code schreibt. So können Fehler und Abweichungen früh korrigiert werden.
 
 \paragraph{Text}
 Teile des Prosatexts wurden mit KI-Werkzeugen sprachlich überarbeitet.
 Dabei ging es um die Glättung von Formulierungen, die Vereinheitlichung von Schreibstil und Terminologie sowie um die Identifikation von Tippfehlern und unklaren Stellen.
 Inhaltliche Aussagen, Argumentationsketten, Zitate und Quellenverweise stammen vollumfänglich vom Autor und wurden nach jedem Überarbeitungsschritt gegen die Originalquellen geprüft.
-
-\paragraph{Was nicht durch KI erfolgte}
-Folgende Bestandteile der Arbeit wurden ausdrücklich nicht durch KI erzeugt oder verfasst, sondern sind Eigenleistung des Autors:
-\begin{itemize}
-    \item Die Forschungsfrage, das Untersuchungsdesign und die Hypothesen.
-    \item Die Architektur des Versuchsaufbaus (Trennung in Steuerung, Konfigurationsgenerierung, Simulation, Konvertierung, Training, Auswertung).
-    \item Sämtliche fachlichen Entscheidungen, insbesondere die Wahl von Shadow als Simulator, die Verwendung von richtungsbasierten Merkmalen, die Wahl der drei Padding-Modi (OFF, ON, Reduced), die Beobachtungspunkte für die Pcap-Aufzeichnung sowie die Hyperparameter des Klassifikators.
-    \item Die Auswahl, Lektüre und kritische Einordnung der zitierten Literatur.
-    \item Die Interpretation und Diskussion der Resultate in Kapitel~\ref{cha:diskussion}.
-\end{itemize}
 
 \section{Verantwortung des Autors}
 \label{app:ki_werkzeuge_verantwortung}
