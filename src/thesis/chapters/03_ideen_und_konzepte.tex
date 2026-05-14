@@ -1,1 +1,106 @@
 \chapter{Ideen und Konzepte}
+\label{cha:ideen_und_konzepte}
+
+Dieses Kapitel begründet, wie die in Kapitel~\ref{cha:stand_der_technik} beschriebenen Bausteine Tor, Website-Fingerprinting, Circuit Padding und Shadow zu einem Versuchsaufbau zusammengeführt werden.
+Die technische Umsetzung folgt in Kapitel~\ref{cha:realisierung}.
+
+\section{Bewertung des Stands der Forschung}
+\label{sec:konzepte_bewertung}
+
+Padding und Website-Fingerprinting wurden in der Literatur einzeln untersucht, aber nicht im selben deterministischen Aufbau systematisch gekoppelt.
+Jansen und Wails messen \gls{df} in Shadow, variieren aber den Padding-Modus nicht~\cite[S.~7]{jansen2023data}.
+Kadianakis et al.\ entwickeln das Padding-Schema, evaluieren es jedoch nicht gegen einen \gls{df}-Angreifer~\cite{kadianakis2021tor}.
+Die vorliegende Arbeit füllt diese Lücke, indem sie die drei in Tor angebotenen Padding-Konfigurationen unter sonst konstanten Bedingungen gegen \gls{df} misst.
+
+\section{Konzeptioneller Versuchsaufbau}
+\label{sec:konzepte_versuchsaufbau}
+
+Der Versuchsaufbau folgt einem kontrollierten Laborexperiment.
+Unabhängige Variable ist der Padding-Modus (OFF, ON, Reduced), abhängige Variablen sind Accuracy, Precision, Recall und F1-Wert auf der Testmenge.
+Alle übrigen Parameter werden konstant gehalten.
+Die primäre Untersuchung erfolgt im Closed-World, ergänzt um ein einzelnes Open-World-Experiment als Realitätsanker.
+Die formale methodische Einordnung steht in Kapitel~\ref{cha:methoden}.
+
+\section{Wahl des Simulators}
+\label{sec:konzepte_simulator}
+
+Die Umgebung muss vier Anforderungen erfüllen: realistische Verkehrsmuster, frei konfigurierbares Padding, exakte Reproduzierbarkeit und einen klar definierten Aufzeichnungspunkt.
+Chutney und NetMirage sind primär als Tor-Test-Harness konzipiert und modellieren keinen realistischen Hintergrundverkehr~\cite[S.~2]{neverenough-sec2021}.
+Live-Tor-Messungen sind nicht reproduzierbar~\cite[S.~10]{jansen2023data}.
+Shadow erfüllt alle Anforderungen: unmodifizierter Tor-Code und deterministischer Ablauf~\cite[S.~5\,f.]{netsim-atc2022}, und Jansen und Wails belegen mit 86\,\% Cross-Dataset-Accuracy die Eignung für \gls{wf}-Studien~\cite[S.~7]{jansen2023data}.
+
+\section{Wahl des Klassifikators}
+\label{sec:konzepte_klassifikator}
+
+Aus den in Kapitel~\ref{cha:stand_der_technik} verglichenen Klassifikatoren wird \gls{df} gewählt.
+\gls{df} arbeitet zeitunabhängig, weshalb simulationsbedingte Timing-Variationen die Ergebnisse nicht verfälschen.
+Circuit Padding wirkt zudem direkt auf die von \gls{df} genutzten Richtungsfeatures, was den Padding-Effekt besonders sichtbar macht.
+Die Validierung von \gls{df} in Shadow durch Jansen und Wails (82\,\% Accuracy auf Live-Tor) sichert die Vergleichbarkeit mit bestehender Literatur~\cite[S.~13]{jansen2023data}.
+
+\section{Wahl des Szenarios}
+\label{sec:konzepte_szenario}
+
+Die primäre Untersuchung erfolgt im Closed-World, weil der Fokus auf dem isolierten Padding-Effekt liegt und nicht auf der Robustheit gegenüber unbekannten Seiten.
+Die Closed-World-Accuracy ist zudem deutlich stabiler als die Open-World-Kennzahlen~\cite[S.~10\,f.]{jansen2023data}, was beobachtete Effekte klarer dem Padding zuordnen lässt.
+Ergänzend wird ein Open-World-Experiment als Realitätsanker durchgeführt, ohne den Padding-Modus dort systematisch zu variieren.
+
+\section{Wahl der Padding-Konfigurationen}
+\label{sec:konzepte_padding_modi}
+
+Die unabhängige Variable nimmt drei Ausprägungen an: OFF, ON und Reduced.
+Diese Wahl orientiert sich an den von Tor selbst angebotenen Optionen und erlaubt einen direkten Vergleich mit dem von Kadianakis et al.\ vorgeschlagenen Schema~\cite{kadianakis2021tor}.
+Eine eigene Padding-Maschine wird nicht entwickelt, da das Ziel die Evaluation des produktiv eingesetzten Schemas ist und nicht der Entwurf einer neuen Verteidigung.
+
+\section{Methodische Vereinfachung: Pcap statt Cell-Trace}
+\label{sec:konzepte_pcap}
+
+Jansen und Wails verwenden für die Aufzeichnung eine gepatchte Tor-Version, die nicht öffentlich verfügbar ist~\cite[S.~5]{jansen2023data}.
+Statt eines Cell-Traces wird der Verkehr am Monitor als \gls{pcap}-Datei mitgeschnitten und anschliessend in Richtungssequenzen umgewandelt.
+
+Die zeitliche Auflösung ist gröber als ein Cell-Trace, da mehrere Zellen in einem TCP-Segment zusammengefasst sein können.
+Der Padding-Effekt bildet sich im \gls{pcap} dadurch tendenziell konservativer ab, weil Dummy-Zellen im TCP-Batching mit Nutz-Zellen verschmelzen können.
+Beobachtete Genauigkeitsverluste durch Padding sind in dieser Aufzeichnungsweise also eher eine untere Schranke des tatsächlichen Effekts.
+Der Vorteil liegt darin, dass das \gls{pcap} dem Sichtfeld eines passiven Beobachters und damit dem üblichen \gls{wf}-Bedrohungsmodell entspricht~\cite[S.~3]{jansen2023data}.
+
+\section{Port-zu-Klasse-Zuordnung statt Zeitfenster-Heuristik}
+\label{sec:konzepte_port_class}
+
+Pro Webseite wird auf dem Zim-Webserver ein eigener TCP-Port verwendet (8000 für die erste Seite, 8001 für die zweite und so fort).
+Diese Eins-zu-Eins-Zuordnung erlaubt im Konvertierungsschritt die eindeutige Zuordnung von Paketen zu Klassen anhand des Zielports, ohne dass eine fehleranfällige Zeitfenster-Heuristik oder ein Eingriff in den Tor-Code nötig wäre.
+Bei Überlappungen oder Verzögerungen einzelner Besuche bleibt die Zuordnung robust.
+
+\section{Merkmalswahl: nur Richtungen}
+\label{sec:konzepte_features}
+
+Als Eingangsmerkmal werden ausschliesslich die Paketrichtungen verwendet (ausgehend $+1$, eingehend $-1$), keine Zeitstempel.
+Circuit Padding wirkt direkt auf die Richtungsabfolge, weshalb der Effekt im Richtungssignal am deutlichsten sichtbar wird.
+Die Sequenzlänge wird nach Sirinam et al.\ auf 5000~Werte normiert~\cite{sirinam2018deep}.
+
+\section{Circuit-Isolation per NEWNYM}
+\label{sec:konzepte_newnym}
+
+Vor jedem Seitenbesuch wird über das Tor-Control-Interface ein neuer Circuit erzwungen.
+Damit sind die einzelnen Besuche statistisch unabhängig und Verkehr aus früheren Besuchen kontaminiert die Zuordnung nicht.
+Diese strikte Isolation ist eine Vereinfachung gegenüber dem realen Tor-Browser-Verhalten (First-Party-Bundling)~\cite[S.~2]{jansen2023data}, in der \gls{wf}-Literatur jedoch übliche Praxis und für die saubere Zuordnung von Verkehr zu Klasse notwendig.
+
+\section{Round-Robin-Schedule}
+\label{sec:konzepte_roundrobin}
+
+Die Besuche werden klassenübergreifend nach einem Round-Robin-Verfahren verteilt: zuerst jede Seite einmal, dann jede ein zweites Mal und so fort.
+Dadurch sind alle Klassen zeitlich gleichmässig über den Simulationszeitraum verteilt, was systematische Korrelationen zwischen Klasse und Netzwerkzustand (Last, Cache-Effekte) verhindert.
+Zusätzlich bleibt die Klassen-Balance auch bei vorzeitigem Abbruch eines Laufs weitgehend erhalten.
+
+\section{Skalierung der Topologie}
+\label{sec:konzepte_skalierung}
+
+Die Tor-Topologie wird auf 1\,\% des Live-Netzwerks skaliert, was rund 79~Relais ergibt~\cite[S.~3\,f.]{neverenough-sec2021}.
+Eine Vollskalierung übersteigt den Arbeitsspeicher der bereitgestellten VM (128~GB).
+Die Reduktion verringert die Pfaddiversität und macht die Verkehrsmuster für einen \gls{wf}-Klassifikator tendenziell leichter erlernbar~\cite[S.~11]{jansen2023data}, weshalb die gemessenen Accuracy-Werte als optimistische obere Schranke gegenüber dem Live-Netzwerk zu lesen sind.
+Diese Limitation wird in Kapitel~\ref{cha:diskussion} wieder aufgegriffen.
+
+\section{Abgrenzung zu verwandten Arbeiten}
+\label{sec:konzepte_abgrenzung}
+
+Sirinam et al.\ trainieren \gls{df} auf Live-Tor-Daten ohne systematische Padding-Variation und mit Cell-Trace statt \gls{pcap}~\cite{sirinam2018deep}.
+Jansen und Wails fokussieren auf die Übertragbarkeit von Shadow-Klassifikatoren auf Live-Tor mit gepatchtem Tor und kleinerer Klassenanzahl, ohne Padding als unabhängige Variable~\cite{jansen2023data}.
+Die vorliegende Arbeit verwendet weder den nicht-öffentlichen Tor-Patch noch den Cell-Trace, erhöht die Klassenanzahl auf bis zu 80 und variiert den Padding-Modus systematisch.

@@ -84,70 +84,14 @@ Der Browser greift via SOCKS auf den lokalen Tor-Daemon zu, welcher den Internet
 
 \section{Website Fingerprinting}
 
-\gls{wf} Angriffe versuchen die \gls{tor} Anonymität zu brechen.
-Der Angreifer zeichnet dabei den Internetverkehr des Tor Nutzers auf.
-Mit \gls{ml} werden Muster in dem Datenverkehr gesucht und erkannt.
-Dabei wird die Hauptsächlich die Anzahl und Richtung der Pakete analyisiert, teilweise auch die Timestamps.
+\gls{wf} Angriffe versuchen, trotz \gls{tor}-Verschlüsselung herauszufinden, welche Webseite ein Nutzer aufgerufen hat.
+Der Angreifer zeichnet dazu den Datenverkehr zwischen Client und Eingangsknoten auf, entweder als Betreiber des Eingangsknotens~\cite[S.~3]{jansen2023data} oder als passiver lokaler Beobachter~\cite[S.~1]{wang2016realistically}.
+Aus Anzahl und Richtung der Tor-Zellen, optional ergänzt um Zeitstempel, leitet ein \gls{ml}-Klassifikator ein Verkehrsmuster pro Webseite ab.
 
-\section{Website Fingerprinting}
-
-In einem \gls{wf} Angriff kann der Angreifer die Metadaten des Internetverkehrs vom Opfer auslesen.
-Dabei wird der Datenverkehr zwischen dem Client und dem Eingangsknoten überwacht.
-Der Angriff kann dabei sowohl vom Betreiber vom Eingangsknosten~\cite[S.~3]{jansen2023data} oder auch von einem passiven Beobachter durchgeführt werden~\cite[S.~1]{wang2016realistically}.
-
-Der Angreifer hat eine vordefinierte Liste an Websiten die er kontrollieren möchte.
-Er klassifiziert nun den überwachten Datenverkehr ob eine der definierten Websiten aufgerufen wird oder nicht.
-Der \gls{wf} Angriff gilt als Erfolgreich wenn ein Aufruf korrekt erkannt wurde, aber auch wenn ein Nicht-Aufruf korrekt erkannt worden ist.
-
-Der Angreifer eine Menge an überwachten Webseiten (monitored pages), deren Zugriffe er erkennen möchte.
-Alle übrigen Webseiten gelten als nicht-überwacht (non-monitored).
-Der Klassifikator entscheidet für jede beobachtete Zellsequenz, ob sie einer überwachten Seite zuzuordnen ist (positiv) oder nicht (negativ).
-
-Der \gls{ml} Klassfikator wird dabei für zwei Aufgaben trainiert.
-Bei der binären Klassifizierung soll der Klassifikator mitteilen ob der Aufruf zu einer überwachten Seite führt oder nicht.
-In einem zweiten Schritt wird eine Multiclass Klassifizierung vorgenommen.
-Es soll erkannt werden um welche Seite es sich handelt falls der erste Schritt in einem positiven Ergebnis mündete~\cite[S.~3]{jansen2023data}.
-
-Dabei ergeben sich vier mögliche Ausgänge:
-\begin{itemize}
-    \item True Positive (TP): Eine überwachte Seite wird korrekt als solche erkannt.
-    \item True Negative (TN): Eine nicht-überwachte Seite wird korrekt als
-          nicht-überwacht eingestuft.
-    \item False Positive (FP): Eine nicht-überwachte Seite wird fälschlicherweise
-          als überwacht klassifiziert.
-    \item False Negative (FN): Eine überwachte Seite wird nicht erkannt.
-\end{itemize}
-
-Die True Positive Rate (TPR) gibt den Anteil korrekt erkannter Zugriffe auf überwachte Seiten an, während die False Positive Rate (FPR) den Anteil fälschlicherweise als überwacht eingestufter Zugriffe misst:
-\begin{equation}
-    \text{TPR} = \frac{\text{TP}}{\text{TP} + \text{FN}}, \qquad
-    \text{FPR} = \frac{\text{FP}}{\text{FP} + \text{TN}}
-\end{equation}
-Eine niedrige FPR ist besonders entscheidend, da die Base Rate, also die Wahrscheinlichkeit, dass ein Nutzer tatsächlich eine überwachte Seite besucht, in der Praxis sehr gering ist.
-Bei hoher FPR würden die meisten positiven Klassifikationen Fehlalarme sein, selbst wenn die TPR hoch ist (Base Rate Fallacy)~\cite[S.~3]{wang2016realistically}.
-
-Darüber hinaus wurde die Simulationstreue von Shadow evaluiert.
-Die Netzwerk-Performance der simulierten Tor-Umgebung stimmte in den Median-Werten weitgehend mit dem Live-Netzwerk überein, wobei Abweichungen vor allem in den Long-Tail-Bereichen auftraten.
-In einem Cross-Dataset-Experiment erreichte CUMUL als ausschliesslich auf Shadow-Daten trainierter Klassifikator eine Accuracy von 86\,\% auf Live-Tor-Traces, was die Eignung von Shadow für kontrollierte Website-Fingerprinting-Evaluationen bestätigt~\cite[S.~7]{jansen2023data}.
-
-In den Abschnitten zur Sensitivität und Robustheit untersuchten Jansen und Wails, wie empfindlich WF-Klassifikatoren auf veränderte Netzwerkbedingungen reagieren.
-Die Zellsequenzen wurden dabei an den Entry Relays der simulierten Tor-Netzwerke aufgezeichnet, was dem realistischen Bedrohungsmodell eines lokalen Angreifers entspricht. \cite[S.~8--10]{jansen2023data}
-
-Es zeigte sich, dass die Closed-World-Accuracy weitgehend stabil blieb, während die False-Positive-Rate im Open-World-Szenario um bis zu 700\,\% anstieg, wenn Trainings- und Testdaten aus unterschiedlich belasteten Netzwerken stammten.
-Insbesondere zeitbasierte Klassifikatoren wie Tik-Tok und $k$-Fingerprinting erwiesen sich als besonders anfällig gegenüber variierenden Netzwerkbedingungen.
-Durch ein robustes Trainingsverfahren, bei dem Trainingsdaten aus mehreren Netzwerkkonfigurationen gemischt wurden, konnte die FPR um bis zu 83\,\% gesenkt werden. \cite[S.~8--10]{jansen2023data}
-
-Als Klassifikator wird Deep Fingerprinting (DF) nach Sirinam et al. \cite{sirinam2018deep} verwendet.
-DF basiert auf einem Convolutional Neural Network, das ausschliesslich Zellrichtungen als Eingabe verwendet und somit zeitunabhängig arbeitet.
-Dies ermöglicht eine isolierte Betrachtung des Einflusses von Circuit Padding auf die richtungsbasierten Verkehrsmuster, ohne dass simulationsbedingte Timing-Variationen die Ergebnisse verfälschen.\cite{jansen2011shadow}
-
-
-Es gibt öffentlich verfügbare Dateien im ZIM Format welche die vollständige Wikipedia Sammlung beeinhalten.
-
-Der Tor Browser selbst kann im Shadow Simulator nicht ausgeführt werden.
-Deshalb greifen wir auf wget2 zurück
-
-\footnote{\url{https://github.com/rockdaboot/wget2}}
+Der Angreifer definiert eine Menge überwachter Seiten (\emph{monitored pages}), alle übrigen gelten als nicht-überwacht.
+Der Klassifikator wird zweistufig trainiert: Zuerst entscheidet er binär, ob eine beobachtete Zellsequenz zu einer überwachten Seite gehört, anschliessend bestimmt eine Multiclass-Klassifikation die konkrete Seite~\cite[S.~3]{jansen2023data}.
+Pro beobachtete Sequenz ergeben sich die vier üblichen Ausgänge True Positive, True Negative, False Positive und False Negative.
+Welche Metriken daraus gebildet werden und warum eine niedrige False-Positive-Rate für die Beurteilung besonders wichtig ist, wird im Abschnitt~\ref{sec:closed_open_world} (Closed- und Open-World) behandelt.
 
 
 
@@ -235,16 +179,13 @@ $k$-Fingerprinting~\cite{hayes2016k} kombiniert einen Random Forest mit $k$-Near
 Deep Fingerprinting~\cite{sirinam2018deep} ist ein zeitunabhängiges Convolutional Neural Network, das direkt auf Zellrichtungssequenzen arbeitet und in früheren Vergleichen sowohl CUMUL als auch $k$-FP übertroffen hat.
 Tik-Tok~\cite{rahman2019tik} verwendet die DF-Architektur, ergänzt die Eingabe aber um Zeitstempel und reagiert dadurch empfindlicher auf variierende Netzwerkbedingungen~\cite[S.~10]{jansen2023data}.
 
-In der vorliegenden Arbeit wird Deep Fingerprinting verwendet.
-DF arbeitet zeitunabhängig, wodurch simulationsbedingte Timing-Variationen die Ergebnisse nicht verfälschen, und Circuit Padding wirkt durch das Einfügen zusätzlicher Dummy-Zellen direkt auf die von DF genutzten Richtungsfeatures.
-Zudem wurde DF von Jansen und Wails in Shadow validiert und erreichte mit robustem Training auf Live Tor Daten eine Accuracy von 82\,\%, was die Vergleichbarkeit mit bestehender Literatur sicherstellt~\cite[S.~13]{jansen2023data}.
-
 
 
 
 \subsection{Closed-World- und Open-World-Szenarien}
+\label{sec:closed_open_world}
 
-In der Website-Fingerprinting-Literatur werden zwei grundlegende 
+In der Website-Fingerprinting-Literatur werden zwei grundlegende
 Evaluationsszenarien unterschieden: das Closed-World- und das 
 Open-World-Szenario \cite{wang2016realistically, jansen2023data}.
 
@@ -283,24 +224,18 @@ widerspiegelt \cite{wang2016realistically}. Jansen und Wails haben
 jedoch gezeigt, dass die Closed-World-Accuracy selbst bei 
 variierenden Netzwerkbedingungen stabil bleibt (Schwankungen von 
 nur 1--3\,\%), während TPR und FPR im Open-World-Szenario 
-deutlich empfindlicher auf veränderte Bedingungen reagieren 
+deutlich empfindlicher auf veränderte Bedingungen reagieren
 \cite[S.~10\,f.]{jansen2023data}.
 
-Die vorliegende Arbeit verwendet ein Closed-World-Szenario mit 
-einer einzelnen Netzwerkkonfiguration. Diese Wahl ist dadurch 
-motiviert, dass der Fokus der Untersuchung auf dem Einfluss von 
-Circuit Padding auf die Klassifikationsgenauigkeit von Deep 
-Fingerprinting liegt und nicht auf der Robustheit gegenüber 
-variierenden Netzwerkbedingungen. Die Erweiterung auf ein 
-Open-World-Szenario bleibt zukünftiger Forschung vorbehalten.
 
 
+\subsection{Webclient-Anpassung wget2}
+\label{sec:standtechnik_wget2}
 
-\paragraph{Anpassung von wget2}
-Da Tor seinen Dienst über einen SOCKS-Proxy bereitstellt, Webcrawler wie wget2 jedoch standardmässig nur HTTP-Proxies unterstützen, erweiterten Jansen und Wails wget2 um einen SOCKS-Client.
-Erst diese Modifikation ermöglichte es, wget2-Anfragen über den lokalen Tor-Prozess zu leiten und somit Zellsequenzen am Entry Relay aufzuzeichnen.
+Da Tor seinen Dienst über einen \gls{socks}-Proxy bereitstellt, Webcrawler wie wget2 jedoch standardmässig nur HTTP-Proxies unterstützen, erweiterten Jansen und Wails wget2 um einen \gls{socks}-Client.
+Erst diese Modifikation ermöglichte es, wget2-Anfragen über den lokalen Tor-Prozess zu leiten und Zellsequenzen am Entry Relay aufzuzeichnen.
 Darüber hinaus wurde wget2 so konfiguriert, dass es alle eingebetteten Ressourcen einer Seite parallel herunterlädt und denselben User-Agent wie der Tor Browser verwendet.
-Durch lokale Tests wurde verifiziert, dass beide Tools wget2 und der Tor Browser einen identischen Satz an Ressourcen vom Server abrufen \cite[S.~3-5]{jansen2023data}.
+Durch lokale Tests wurde verifiziert, dass wget2 und der Tor Browser einen identischen Satz an Ressourcen vom Server abrufen~\cite[S.~3--5]{jansen2023data}.
 Die gepatchte wget2-Version ist im Artefakt-Repository der Autoren öffentlich verfügbar.
 
 

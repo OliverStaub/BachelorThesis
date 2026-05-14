@@ -1,0 +1,9 @@
+{
+  "latex-workshop.view.pdf.viewer": "tab",
+  "latex-workshop.latex.autoBuild.run": "onFileChange",
+  "latex-workshop.latex.rootFile.doNotPrompt": true,
+  "latex-workshop.latex.rootFile.useSubFile": false,
+  "latex-workshop.latex.rootFile.indicator": "\\documentclass",
+  "latex-workshop.latex.outDir": "%DIR%",
+  "latex-workshop.bind.altKeymap.enabled": true
+}

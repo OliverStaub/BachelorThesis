@@ -4,7 +4,6 @@
 In diesem Kapitel wird beschrieben, wie der in Kapitel~\ref{cha:methoden} skizzierte Versuchsaufbau konkret umgesetzt wurde.
 Der Schwerpunkt liegt auf der Dokumentation der getroffenen Entscheidungen und ihrer Begründung, sodass die Experimente unabhängig nachvollzogen und auch kritisch hinterfragt werden können.
 Die Reihenfolge der Abschnitte orientiert sich an dem Datenfluss der Pipeline: von der Konfiguration der \gls{tor}-Simulation über die Bereitstellung der Webinhalte, die Aufzeichnung des Datenverkehrs und die Aufbereitung der Daten bis hin zum Training und Test des Klassifikators.
-Den Abschluss bildet der ergänzende Aufbau für den Traffic-Correlation-Angriff.
 
 \section{Übersicht des Versuchsaufbaus}
 \label{sec:realisierung_uebersicht}
@@ -49,13 +48,13 @@ Eine deutlich kleinere Skalierung ist deshalb nicht primär eine inhaltliche Ent
 
 \subsection{Werkzeugkette}
 
-Die in dieser Arbeit verwendete Werkzeugkette setzt sich aus mehreren Komponenten zusammen, die jeweils eine eng umgrenzte Aufgabe erfüllen:
+Die in dieser Arbeit verwendete Werkzeugkette setzt sich aus mehreren Komponenten zusammen, die jeweils eine eng definierte Aufgabe erfüllen:
 
 \begin{itemize}
-    \item Shadow~\cite{jansen2011shadow,netsim-atc2022} simuliert das \gls{tor}-Netzwerk deterministisch auf Syscall-Ebene.
+    \item Shadow~\cite{jansen2011shadow,netsim-atc2022} simuliert das \gls{tor}-Netzwerk (Begründung der Wahl: Abschnitt~\ref{sec:konzepte_simulator}).
     \item Tornettools~\cite{neverenough-sec2021} erzeugt aus den öffentlichen Tor-Metrik-Daten eine repräsentative Shadow-Konfiguration.
-    \item \texttt{shadowctl.py} steuert den Lebenszyklus eines Experiments (Generierung, Push, Start, Statusabfrage, Stop, Pull der Resultate).
     \item \texttt{generate-wf-config.py} erweitert die Shadow-Konfiguration um die für das \gls{wf}-Experiment notwendigen Hosts (Monitore, Webserver) und schreibt die Besuchsplanung in \texttt{schedule.json}.
+    \item \texttt{shadowctl.py} steuert den Lebenszyklus eines Experiments (Generierung, Start, Statusabfrage, Pull der Resultate).
     \item \texttt{zimsrv.py} stellt im Inneren der Simulation die Wikipedia-Inhalte bereit.
     \item \texttt{wget2} (mit dem \gls{socks}-Patch von Jansen und Wails~\cite[S.~5]{jansen2023data}) lädt im Inneren der Simulation die Webseiten über \gls{tor} herunter.
     \item \texttt{pcap\_to\_npz.py} extrahiert aus den aufgezeichneten Pcaps die Zellrichtungssequenzen pro Besuch.
@@ -68,88 +67,90 @@ Ergänzend zu diesen versuchsspezifischen Werkzeugen wurde während der gesamten
 Claude Code wird im Folgenden bewusst nicht als Bestandteil des Versuchsaufbaus, sondern als Hilfsmittel der Umsetzung verstanden.
 Die genaue Form der Nutzung sowie die zugehörige Erklärung sind in Abschnitt~\ref{sec:realisierung_ki_werkzeuge} und in Anhang~\ref{app:ki_werkzeuge} dokumentiert.
 
-\subsection{KI-gestützte Entwicklung}
-\label{sec:realisierung_ki_werkzeuge}
-
-Sämtliche im Rahmen dieser Arbeit selbst geschriebenen Python- und Shell-Skripte (\texttt{shadowctl.py}, \texttt{generate-wf-config.py}, \texttt{generate-urls.py}, \texttt{zimsrv.py}, \texttt{newnym.py}, \texttt{setup-wf-server.sh}, \texttt{pcap\_to\_npz.py}, \texttt{explainwf\_to\_npz.py}, \texttt{correlation.py}, \texttt{run\_df.sh}, \texttt{report.py}, \texttt{plot\_results.py}, \texttt{plot\_confusion.py}) wurden iterativ mit Claude Code\footnote{\url{https://www.anthropic.com/claude-code}} entwickelt.
-Claude Code wurde dabei nicht als Black Box benutzt, der ein fertiges Skript abliefert, sondern als interaktiver Programmierpartner.
-Der Arbeitsablauf bestand jeweils aus vier Schritten: Erstens wurde die Anforderung an das Skript vom Autor inhaltlich präzisiert (welche Eingabe, welche Ausgabe, welche Constraints, welche Bibliotheken).
-Zweitens generierte Claude Code einen Entwurf der Implementierung.
-Drittens wurde dieser Entwurf vom Autor gelesen, gegen die Anforderung geprüft und an einzelnen Stellen korrigiert oder umgestellt.
-Viertens wurde das Skript in der eigentlichen Pipeline (Shadow-Simulation, Konvertierung, Training) ausgeführt und das Verhalten gegen die erwarteten Resultate validiert.
-
-Die fachlichen Entscheidungen, die in diesen Skripten umgesetzt wurden, stammen vollumfänglich vom Autor.
-Dies umfasst insbesondere die Architektur der Pipeline (Trennung in Steuerung, Konfigurationsgenerierung, Simulation, Konvertierung, Training und Auswertung), die Wahl der Beobachtungspunkte für die Pcap-Aufzeichnung, die Verwendung des Zielports zur Klassen-Labelung, die Wahl der drei Padding-Modi und sämtliche Hyperparameter des Klassifikator-Trainings.
-\section{Aufbau der Tor-Simulation}
-\label{sec:realisierung_simulation}
-
-\subsection{Wahl des Simulators}
-
-Für die Untersuchung des Einflusses von Circuit Padding wird ein experimentelles Verfahren benötigt, das mehrere Anforderungen gleichzeitig erfüllt: realistische Tor-Verkehrsmuster, exakte Reproduzierbarkeit zwischen den Experimenten, freie Konfigurierbarkeit der Padding-Parameter und ein klar definierter Beobachtungspunkt für die Aufzeichnung des Datenverkehrs.
-Für die Auswahl des Werkzeugs wurden drei Alternativen erwogen.
-
-\paragraph{Live-Tor-Netzwerk}
-Eine Untersuchung im produktiven Tor-Netzwerk hätte zwar maximale Realitätsnähe geboten, ist jedoch aus mehreren Gründen ungeeignet.
-Erstens ist das Verhalten des Live-Netzwerks zu jedem Zeitpunkt von externen Faktoren wie Lastspitzen, ausgefallenen Relais und potenziellen Angriffen abhängig, was die Reproduzierbarkeit erheblich erschwert~\cite[S.~1\,f.]{jansen2023data}.
-Zweitens kann die Padding-Konfiguration der Relais nicht zentral verändert werden, ohne den realen Betrieb zu stören.
-Drittens würde der für ein \gls{wf}-Experiment notwendige Betrieb dedizierter Monitor-Clients ethisch fragwürdige Eingriffe in das Verhalten anderer Nutzer bedeuten, da der Datenverkehr fremder Tor-Nutzer zumindest indirekt beeinflusst werden könnte.
-
-\paragraph{Chutney und NetMirage}
-Chutney und NetMirage sind alternative Werkzeuge zur Erzeugung lokaler Tor-Testnetzwerke.
-Sie sind jedoch primär für Funktions- und Integrationstests gedacht, nicht für Performance- und Verkehrsanalyse-Studien.
-NetMirage wird darüber hinaus seit Jahren nicht mehr aktiv weiterentwickelt.
-In den jüngeren Arbeiten zum Thema \gls{wf} hat sich Shadow als der De-facto-Standard für reproduzierbare Tor-Experimente etabliert~\cite[S.~2]{jansen2023data,neverenough-sec2021}.
-
-\paragraph{Shadow}
-Shadow erfüllt alle oben genannten Anforderungen.
-Es führt unmodifizierten Tor-Anwendungscode als nativen Prozess aus und fängt nur Netzwerk- und Zeit-Syscalls ab~\cite[S.~5--6]{netsim-atc2022}.
-Damit ist die Simulation deterministisch und gleichzeitig nahe am echten Tor-Verhalten.
-Jansen und Wails haben gezeigt, dass ein in Shadow trainierter \gls{wf}-Klassifikator auch auf Live-Tor-Daten eine Genauigkeit von rund 86\,\% erreicht~\cite[S.~7]{jansen2023data}.
-Dies belegt, dass Verkehrsmuster aus Shadow für \gls{wf}-Forschung hinreichend realistisch sind.
-Aus diesen Gründen wird in dieser Arbeit ausschliesslich Shadow verwendet.
-
 \subsection{Generierung der Topologie mit Tornettools}
 
-Die Konfiguration der Shadow-Simulation wird mit Tornettools erzeugt.
-Tornettools lädt die öffentlich verfügbaren Daten der Tor-Metriken (Konsensdokumente, Server-Deskriptoren, OnionPerf-Messungen, Bandbreitenwerte) für einen frei wählbaren Monat herunter.
-Daraus wird in mehreren Stufen eine Shadow-Konfigurationsdatei \texttt{shadow.config.yaml} erstellt, die ein verkleinertes, aber repräsentatives Abbild des Live-Netzwerks beschreibt~\cite{neverenough-sec2021}.
+Die Shadow-Konfiguration wird mit Tornettools aus den Tor-Metriken (Konsensdokumente, Server-Deskriptoren, OnionPerf-Messungen, Bandbreitenwerte) eines frei wählbaren Monats erzeugt~\cite{neverenough-sec2021}.
+In der vorliegenden Arbeit wird durchgehend der Monat Januar 2025 verwendet, der Standardeinstellung des Steuerungsskripts \texttt{shadowctl.py}.
 
-In dieser Arbeit wird die Tor-Netzwerkgrösse standardmässig auf 1\,\% (\texttt{--network\_scale 0.01}) skaliert.
-Konkret entstehen daraus rund 79~Relais, drei Verzeichnisserver und ungefähr 100~Hintergrund-Clients, deren Verkehr von Tornettools über Markov-Modelle aus den Daten von Mani et al.\ generiert wird~\cite[S.~3\,f.]{neverenough-sec2021,mani2018understanding}.
-Diese Skalierung wurde gewählt, weil sie das einzige Setting ist, das im verfügbaren Speicher (vgl.\ Abschnitt~\ref{sec:realisierung_umgebung}) zuverlässig läuft, und weil Jansen und Wails gezeigt haben, dass die Closed-World-Klassifikationsgenauigkeit über verschiedene Skalierungen hinweg nur um wenige Prozentpunkte schwankt~\cite[S.~11]{jansen2023data}.
-Eine Begrenzung in der Aussagekraft ergibt sich daraus dennoch, da bei kleineren Skalierungen die Pfaddiversität geringer ist, was die Varianz innerhalb einer Klasse senkt und die Klassifikation tendenziell erleichtert.
-Dieser Effekt wird in Kapitel~\ref{cha:diskussion} bei der Bewertung der Resultate aufgegriffen.
+Die Tor-Netzwerkgrösse wird auf 1\,\% (\texttt{--network\_scale 0.01}) skaliert, was rund 79~Relais, drei Verzeichnisserver und ungefähr 100~Hintergrund-Clients ergibt~\cite[S.~3\,f.]{neverenough-sec2021,mani2018understanding}.
+Die Begründung der Skalierung und ihre methodischen Konsequenzen sind in Abschnitt~\ref{sec:konzepte_skalierung} dargestellt.
 
-Tornettools kann nicht nur die Konfiguration generieren, sondern auch den vollständigen Lauf einer Simulation und deren Auswertung übernehmen.
-Diese Mehrstufigkeit (stage und generate) wird in der vorliegenden Arbeit lediglich für die Generierung verwendet, da der eigentliche Versuch eigene, von Tornettools nicht vorgesehene Hosts (Monitore, Webserver) benötigt.
 
 \subsection{Erweiterung der Konfiguration für das Fingerprinting}
 \label{sec:realisierung_generate_wf_config}
 
 Die von Tornettools erzeugte Konfiguration enthält ausschliesslich Tor-spezifische Komponenten.
-Für ein \gls{wf}-Experiment werden zusätzlich (i) ein Webserver, der die Zielseiten ausliefert, und (ii) eine Anzahl von Monitor-Knoten benötigt, welche diese Seiten über \gls{tor} besuchen.
+Für ein \gls{wf}-Experiment wird zusätzlich ein Webserver, der die Zielseiten ausliefert, und eine Anzahl von Monitor-Knoten benötigt, welche diese Seiten über \gls{tor} besuchen.
 Beides wird in dieser Arbeit von dem Skript \texttt{generate-wf-config.py} ergänzt.
 
 \paragraph{Hinzufügen der Hosts}
 Das Skript fügt der \texttt{shadow.config.yaml} einen oder mehrere \texttt{zimserverN}-Hosts und eine konfigurierbare Anzahl \texttt{monitorN}-Hosts hinzu.
-Pro besuchter Seite wird ein eigener Port auf dem Webserver verwendet (8000 für die erste Seite, 8001 für die zweite, und so fort).
-Diese Eins-zu-Eins-Zuordnung von Port zu Seite ist eine bewusste Designentscheidung: Sie erlaubt es im späteren Konvertierungsschritt, Pakete ohne Eingriff in den Tor-Code anhand des Zielports einer Seite zuzuordnen, ohne auf eine implizite oder fehleranfällige Zeitfensterheuristik angewiesen zu sein.
+Pro besuchter Seite wird ein eigener Port auf dem Webserver verwendet (8000 für die erste Seite, 8001 für die zweite, und so fort), siehe Abschnitt~\ref{sec:konzepte_port_class} für die Begründung dieser Zuordnung.
 Der Bandbreitenwert für \texttt{zimserverN} ist mit 200~Mbps doppelt so hoch wie der eines einzelnen Monitors gewählt, damit der Webserver bei parallelen Anfragen nicht zum Engpass wird.
+
+Listing~\ref{lst:shadow_monitor} zeigt einen verkürzten Ausschnitt eines Monitor-Hosts aus der generierten \texttt{shadow.config.yaml}.
+
+\begin{lstlisting}[
+    basicstyle=\ttfamily\footnotesize,
+    breaklines=true,
+    frame=single,
+    captionpos=b,
+    label={lst:shadow_monitor},
+    caption={Auszug aus \texttt{shadow.config.yaml} für \texttt{monitor0}: aktivierte Pcap-Aufzeichnung sowie die Prozessabfolge Tor-Daemon, \texttt{wget2}-Aufruf und \texttt{newnym.py} (gekürzt auf zwei aufeinanderfolgende Besuche).}
+]
+monitor0:
+  bandwidth_down: 100 megabit
+  bandwidth_up: 100 megabit
+  host_options:
+    pcap_enabled: true
+    pcap_capture_size: 65535 B
+  processes:
+  - path: ~/.local/bin/tor
+    args: --defaults-torrc torrc-defaults -f torrc
+    start_time: 240
+    expected_final_state: running
+  - path: /home/projectadmin/wget2_noinstall
+    args: --page-requisites --max-threads=30 ...
+          http://129.114.108.192:8000/Eurovision_Song_Contest_2018
+    start_time: 1200
+  - path: /usr/bin/python3
+    args: /home/projectadmin/newnym.py
+    start_time: 1229
+  - path: /home/projectadmin/wget2_noinstall
+    args: --page-requisites --max-threads=30 ...
+          http://129.114.108.192:8010/Ionizing_radiation
+    start_time: 1230
+\end{lstlisting}
 
 \paragraph{Schedule}
 Zusätzlich erzeugt das Skript eine Datei \texttt{schedule.json}, in der für jeden Monitor festgehalten ist, wann (\texttt{start\_time}) er welche Seite besucht.
-Abbildung~\ref{fig:schedulejson} zeigt einen Ausschnitt für einen einzelnen Monitor.
+Listing~\ref{lst:schedulejson} zeigt einen Ausschnitt für einen einzelnen Monitor.
 Diese Datei dient später als Ground Truth für den Konvertierungsschritt: ohne sie liesse sich nicht eindeutig rekonstruieren, welcher Teil eines Pcaps zu welchem Seitenaufruf gehört.
 
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.9\textwidth]{../../images/schedulejson.png}
-\caption{Auszug aus \texttt{schedule.json}: für jeden Monitor werden Startzeit, Zielport und URL der geplanten Besuche festgehalten.}
-\label{fig:schedulejson}
-\end{figure}
+\begin{lstlisting}[
+    basicstyle=\ttfamily\footnotesize,
+    breaklines=true,
+    frame=single,
+    captionpos=b,
+    label={lst:schedulejson},
+    caption={Auszug aus \texttt{schedule.json}: für jeden Monitor werden Startzeit, Zielport und URL der geplanten Besuche festgehalten.}
+]
+"monitor0": [
+    {
+        "start_time": 1200,
+        "port": 8000,
+        "url": "http://129.114.108.192:8000/Eurovision_Song_Contest_2018"
+    },
+    {
+        "start_time": 1230,
+        "port": 8010,
+        "url": "http://129.114.108.192:8010/Ionizing_radiation"
+    }
+]
+\end{lstlisting}
 
 \paragraph{Padding-Konfiguration}
-Die Padding-Parameter werden ebenfalls von \texttt{generate-wf-config.py} in die \texttt{torrc}-Vorlagen der Monitor-Hosts geschrieben.
+Die Padding-Parameter werden ebenfalls von \texttt{generate-wf-config.py} in die torrc-Vorlagen der Monitor-Hosts geschrieben.
 Tabelle~\ref{tab:padding_modi} listet die drei in dieser Arbeit verwendeten Konfigurationen auf.
 
 \begin{table}[H]
@@ -158,17 +159,16 @@ Tabelle~\ref{tab:padding_modi} listet die drei in dieser Arbeit verwendeten Konf
 \label{tab:padding_modi}
 \begin{tabular}{lll}
 \hline
-Modus & torrc-Eintrag & Bedeutung \\
+Modus & torrc-Eintrag \\
 \hline
-OFF & \texttt{CircuitPadding 0} & Kein Padding \\
-ON & \texttt{CircuitPadding 1} & Standard-Padding aktiv \\
-Reduced & \texttt{CircuitPadding 1} \newline \texttt{ReducedCircuitPadding 1} & reduzierte Padding-Maschinen \\
+OFF & \texttt{CircuitPadding 0}  \\
+ON & \texttt{CircuitPadding 1}  \\
+Reduced & \texttt{CircuitPadding 1} \texttt{ReducedCircuitPadding 1} \\
 \hline
 \end{tabular}
 \end{table}
 
-Die Wahl genau dieser drei Modi orientiert sich an den von Tor selbst angebotenen Konfigurationsoptionen und erlaubt einen direkten Vergleich mit dem von Kadianakis et al.\ vorgeschlagenen, in Tor implementierten Padding-Schema~\cite{kadianakis2021tor}.
-Eine eigene, abweichende Padding-Maschine wird in dieser Arbeit bewusst nicht entwickelt, weil das Ziel die Untersuchung des produktiv eingesetzten Schemas ist und nicht der Entwurf einer neuen Verteidigung.
+Die Begründung der Wahl genau dieser drei Modi ist in Abschnitt~\ref{sec:konzepte_padding_modi} dargestellt.
 
 \section{Bereitstellung der Webinhalte}
 \label{sec:realisierung_webserver}
@@ -177,10 +177,6 @@ Eine eigene, abweichende Padding-Maschine wird in dieser Arbeit bewusst nicht en
 
 Als Inhalt für die zu klassifizierenden Webseiten wird die einfache englische Variante (Simple English) der Wikipedia in einer ZIM-Datei verwendet.
 ZIM ist ein offenes, vom Kiwix-Projekt definiertes Containerformat, das eine vollständige Webseiten-Sammlung in einer einzigen Datei zusammenfasst und Offline-Zugriff erlaubt.
-Aus drei Gründen ist Wikipedia für diesen Versuch besonders geeignet.
-Erstens ist die Sammlung gross genug, um beliebig viele unterscheidbare Seiten als Klassen zu definieren.
-Zweitens sind die Inhalte stabil und werden über die Versionen der ZIM-Datei eindeutig referenziert, was die Reproduzierbarkeit verbessert.
-Drittens enthält Wikipedia eine grosse Vielfalt an Seitenstrukturen, sodass die Klassen auch real unterscheidbare Verkehrsmuster erzeugen.
 
 Tabelle~\ref{tab:zim_varianten} fasst die zur Verfügung stehenden Varianten zusammen.
 
@@ -201,7 +197,6 @@ Datei & Grösse & Bemerkung \\
 
 Verwendet wird in dieser Arbeit ausschliesslich \texttt{wikipedia\_en\_simple\_all\_maxi}.
 Diese Variante enthält Bilder und damit deutlich vielfältigere Verkehrsmuster als die bildlose Version, ist aber gleichzeitig klein genug, um vollständig in den Speicher des Servers zu passen.
-Die vollständige englische Wikipedia wäre für die Hardware nicht praktikabel.
 
 \subsection{Webserver: \texttt{zimsrv.py}}
 \label{sec:realisierung_zimsrv}
@@ -210,13 +205,12 @@ Für den Webserver wurden mehrere Varianten geprüft.
 
 \paragraph{ZIMply}
 In der Arbeit von Jansen und Wails wird \texttt{ZIMply} als Webserver für ZIM-Dateien verwendet~\cite[S.~4]{jansen2023data}.
-Die Bibliothek wird seit mehreren Jahren nicht mehr gepflegt und unterstützt das in den aktuellen Kiwix-Dumps verwendete ZIM-Format (Version 6 ohne separaten \texttt{A/}-Namensraum) nicht mehr zuverlässig, was bei eigenen Tests zu Fehlern führte.
+Die Bibliothek wird seit mehreren Jahren nicht mehr gepflegt und unterstützt das in den aktuellen Kiwix-Dumps verwendete ZIM-Format nicht mehr zuverlässig, was bei eigenen Tests zu Fehlern führte.
 
 \paragraph{kiwix-serve}
 \texttt{kiwix-serve} ist die offizielle Referenzimplementierung des Kiwix-Projekts und wäre funktional die ideale Wahl.
 Es wird jedoch als statisch gelinkte Binärdatei ausgeliefert.
-Shadow injiziert seinen Network-Shim per \texttt{LD\_PRELOAD}, was nur bei dynamisch gelinkten Programmen funktioniert.
-Eine statisch gelinkte Binärdatei kann der Shim nicht abfangen, womit sämtliche Netzwerkaufrufe von \texttt{kiwix-serve} ungesteuert ausgeführt würden.
+Eine statisch gelinkte Binärdatei kann der Shim von Shadow nicht abfangen, was den Einsatz erschwert.
 
 \paragraph{\texttt{zimsrv.py}}
 Aus diesen Gründen wurde im Rahmen dieser Arbeit ein eigener, schlanker Webserver \texttt{zimsrv.py} mit etwa 125~Zeilen Python entwickelt.
@@ -228,89 +222,68 @@ Pro Seite (also pro Port) wird ein separater Prozess gestartet, was die spätere
 \subsection{Auswahl der URLs}
 \label{sec:realisierung_urls}
 
-Die Liste der zu besuchenden Seiten wird mit dem Skript \texttt{generate-urls.py} aus der ZIM-Datei stichprobenartig ausgewählt.
-Drei Aspekte sind dabei entscheidend.
+Die Liste der zu besuchenden Seiten wird mit dem Skript \texttt{generate-urls.py} zufällig aus der ZIM-Datei gezogen, wobei Weiterleitungen aufgelöst und nur eigentliche Artikel berücksichtigt werden.
+Zugelassen sind ausserdem nur Titel, die ausschliesslich aus alphanumerischen Zeichen, Unterstrich, Bindestrich und Punkt bestehen.
+Diese Einschränkung ist notwendig, weil Shadows YAML-Parser, die HTTP-URL und die Shell-Expansion auf den Monitor-Hosts unterschiedlich auf Sonderzeichen wie Doppelpunkt, Anführungszeichen oder Klammern reagieren und einzelne Bestandteile der Pipeline andernfalls unbemerkt scheitern.
 
-Erstens werden Weiterleitungen aufgelöst und nur eigentliche Artikel berücksichtigt, wodurch sichergestellt ist, dass jeder Klassen-Eintrag tatsächlich eindeutig auf eine Wikipedia-Seite zeigt.
+Pro Zeile enthält die erzeugte Datei \texttt{urls.txt} die IP des Webservers, den für die Seite verwendeten Port und die vollständige URL (Listing~\ref{lst:urltxt}).
+Die Datei wird von \texttt{generate-wf-config.py} eingelesen und bestimmt, welche Seiten den Monitor-Hosts zugewiesen werden.
 
-Zweitens werden alle Titel über einen Whitelist-Filter geführt:
-%
-\begin{verbatim}
-re.match(r'^[A-Za-z0-9_\-\.]+$', safe_title)
-\end{verbatim}
-%
-Nur Titel, die ausschliesslich aus alphanumerischen Zeichen, Unterstrich, Bindestrich und Punkt bestehen, werden zugelassen.
-Diese strenge Einschränkung ist notwendig, weil der spätere YAML-Parser von Shadow, die HTTP-URL und die Shell-Expansion auf den Monitor-Hosts auf Sonderzeichen wie Doppelpunkt, Anführungszeichen oder Klammern unterschiedlich reagieren und einzelne Bestandteile der Pipeline unbemerkt scheitern liessen.
-
-Drittens wird die Stichprobe deterministisch über einen festen Zufalls-Seed gezogen, sodass alle Padding-Modi auf derselben Seitenmenge ausgewertet werden und Unterschiede in der Klassifikationsgenauigkeit nicht auf eine andere URL-Auswahl zurückgehen können.
-
-Das Format einer Zeile in der erzeugten Datei \texttt{urls.txt} ist je Zeile die IP des Webservers, der für diese Seite verwendete Port und die vollständige URL.
-Abbildung~\ref{fig:urltxt} zeigt einen Auszug.
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.85\textwidth]{../../images/urltxt.png}
-\caption{Beispielhafter Auszug aus \texttt{urls.txt}. Jede Zeile enthält IP, Port und URL einer ausgewählten Wikipedia-Seite.}
-\label{fig:urltxt}
-\end{figure}
-
-Diese Datei wird von \texttt{generate-wf-config.py} eingelesen und bestimmt, welche Seiten den Monitor-Hosts zugewiesen werden.
+\begin{lstlisting}[
+    basicstyle=\ttfamily\footnotesize,
+    breaklines=true,
+    frame=single,
+    captionpos=b,
+    label={lst:urltxt},
+    caption={Beispielhafter Auszug aus \texttt{urls.txt}. Jede Zeile enthält IP, Port und URL einer ausgewählten Wikipedia-Seite.}
+]
+129.114.108.192 8000 http://129.114.108.192:8000/Eurovision_Song_Contest_2018
+129.114.108.192 8001 http://129.114.108.192:8001/Andhra_Pradesh
+129.114.108.192 8002 http://129.114.108.192:8002/Rajon_Rondo
+129.114.108.192 8003 http://129.114.108.192:8003/Hagerman,_Idaho
+129.114.108.192 8004 http://129.114.108.192:8004/Echzell
+\end{lstlisting}
 
 \section{Monitor-Knoten und Verkehrserfassung}
 \label{sec:realisierung_monitore}
 
 \subsection{Webclient: gepatchtes \texttt{wget2}}
 
-Der Tor Browser kann in Shadow nicht ausgeführt werden, weil er zahlreiche Abhängigkeiten zu Komponenten besitzt, die in Shadow nicht oder nur unvollständig unterstützt werden, beispielsweise eine grafische Oberfläche und JavaScript-Engines.
-Jansen und Wails haben gezeigt, dass sich ein gepatchtes \texttt{wget2} als plausibles Surrogat eignet.
-Der Patch ergänzt \texttt{wget2} um einen \gls{socks}-Client, sodass Anfragen über den lokalen \gls{tor}-Prozess geleitet werden können~\cite[S.~5]{jansen2023data}.
-Mit den Optionen \texttt{--page-requisites} und \texttt{--max-threads=30} lädt \texttt{wget2} alle eingebetteten Ressourcen einer Seite parallel herunter und erzeugt damit Verkehrsmuster, die in einem lokalen Vergleich mit Tor-Browser-Selenium den gleichen Satz an Ressourcen abrufen wie der reale Tor Browser.
-
-In dieser Arbeit wird derselbe Patch wie bei Jansen und Wails verwendet.
-Der Patch wird über das Skript \texttt{setup-wf-server.sh} aus dem öffentlichen Artefakt-Repository\footnote{\url{https://github.com/torproject/explainwf-popets2023}} bezogen und auf einen festgehaltenen \texttt{wget2}-Commit angewendet, anschliessend wird die Binärdatei einmalig auf dem Server gebaut.
-Das vermeidet sowohl eine eigene Implementierung als auch eine Abweichung von dem in der Literatur etablierten Verhalten.
-
-Die wichtigsten Aufrufparameter von \texttt{wget2} sind in dieser Arbeit:
-
-\begin{itemize}
-    \item \texttt{--page-requisites --max-threads=30} für realistisches paralleles Laden eingebetteter Ressourcen.
-    \item \texttt{--timeout=30 --tries=1 --no-retry-on-http-error} damit jeder Versuch deterministisch nach 30 Sekunden endet und keine zusätzlichen Wiederholungen das Verkehrsmuster verfälschen.
-    \item \texttt{--no-check-hostname --no-check-certificate} für Self-signed-Zertifikate des simulierten Webservers.
-    \item Ein Tor-Browser-typischer User-Agent, damit der Server die gleichen Inhalte wie für einen echten Browser ausliefert.
-    \item Der \gls{socks}-Proxy \texttt{127.0.0.1:9050} als Tor-Eintrittspunkt.
-\end{itemize}
+Der Tor Browser kann in Shadow nicht ausgeführt werden, da er auf eine grafische Oberfläche und JavaScript-Engines angewiesen ist, die Shadow nicht unterstützt.
+In der vorliegenden Arbeit wird der von Jansen und Wails entwickelte \gls{socks}-Patch für \texttt{wget2} verwendet (vgl.\ Abschnitt~\ref{sec:standtechnik_wget2}).
+Er wird über das Skript \texttt{setup-wf-server.sh} aus dem öffentlichen Artefakt-Repository\footnote{\url{https://github.com/torproject/explainwf-popets2023}} bezogen, auf einen festgehaltenen \texttt{wget2}-Commit angewendet und einmalig auf dem Server gebaut.
 
 \subsection{Besuchsplanung und Round-Robin-Verteilung}
 \label{sec:realisierung_schedule}
 
-Die Verteilung der zu besuchenden Seiten auf die Monitore erfolgt nach einem Round-Robin-Verfahren.
-Bei $n$ Monitoren und $k$ Seiten erhält jeder Monitor eine ungefähr gleich grosse Teilmenge an Seiten zugewiesen.
-Innerhalb eines Monitors werden die Seiten ebenfalls nach einem Round-Robin-Schema besucht: zuerst wird jede zugewiesene Seite einmal besucht, dann jede ein zweites Mal und so fort, bis die geforderte Anzahl an Besuchen pro Seite erreicht ist.
+Die Seiten werden nach einem Round-Robin-Verfahren auf die Monitore verteilt und dort zyklisch besucht: zuerst jede zugewiesene Seite einmal, dann jede ein zweites Mal und so fort, bis die geforderte Anzahl an Besuchen pro Seite erreicht ist.
+Die Begründung dieses Verteilungsschemas ist in Abschnitt~\ref{sec:konzepte_roundrobin} dargestellt.
 
-Das Round-Robin-Schema bringt zwei Vorteile.
-Zum einen ist sichergestellt, dass alle Seiten zeitlich gleichmässig über den Simulationszeitraum verteilt werden.
-Damit gibt es keine systematische Korrelation zwischen Klasse und Netzwerkzustand (etwa Last, Cache-Effekte des Webservers).
-Zum anderen lässt sich die Simulation auch nach einem vorzeitigen Abbruch mit nur wenigen Verlusten pro Klasse auswerten.
-
-Zwischen zwei aufeinanderfolgenden Besuchen liegt ein festes Zeitintervall von 30 Sekunden.
-Dieses Intervall wurde so gewählt, dass auch grössere Wikipedia-Seiten samt eingebetteter Bilder zuverlässig in dem Fenster geladen werden können, ohne dass das Experiment unnötig in die Länge gezogen wird.
-Der erste Besuch beginnt 1200~Sekunden (20~Minuten) nach Simulationsstart.
-Diese vergleichsweise lange Aufwärmphase ist nötig, weil das Tor-Netzwerk zunächst seine Konsensdokumente aushandeln und die Markov-Hintergrundclients ihre Verkehrsmuster aufbauen müssen.
-
-In der Standardkonfiguration werden 50~Besuche pro Seite ausgeführt, was bei $k=20$ Seiten und der späteren Aufteilung 81/9/10 zu rund 40~Trainings-, 4~Validierungs- und 5~Testbeispielen pro Klasse führt.
-Für die grösseren Experimente wurde die Anzahl der Besuche auf 150 erhöht, um auch bei 80~Klassen ausreichend Beispiele pro Klasse zu erhalten.
-Die genauen Werte aller durchgeführten Experimente sind in der Datei \texttt{ExperimentLogs.csv} dokumentiert.
+Zwischen zwei Besuchen liegen 30~Sekunden, ausreichend auch für grössere Wikipedia-Seiten samt eingebetteter Bilder.
+Der erste Besuch beginnt nach einer Aufwärmphase von 1200~Sekunden (20~Minuten), in der das Tor-Netzwerk seinen Konsens aushandelt und die Markov-Hintergrundclients ihre Verkehrsmuster aufbauen.
 
 \subsection{Circuit-Isolation per NEWNYM}
 \label{sec:realisierung_newnym}
 
-Damit jeder Seitenbesuch über einen frischen \gls{tor}-Circuit läuft und somit als isoliertes Sample interpretiert werden kann, wird zwischen zwei Besuchen ein \texttt{SIGNAL NEWNYM} an die Tor-Steuerschnittstelle des Monitors gesendet.
-Das Skript \texttt{newnym.py} öffnet hierzu einen Socket auf den Tor-Control-Port (\texttt{127.0.0.1:9051}) und sendet die Befehle \texttt{AUTHENTICATE} und \texttt{SIGNAL NEWNYM}.
-Tor reagiert daraufhin, indem es bestehende Circuits markiert und für neue Streams einen frischen Circuit aushandelt.
+Damit jeder Seitenbesuch über einen frischen Circuit läuft, plant \texttt{generate-wf-config.py} jeweils eine Sekunde vor einem \texttt{wget2}-Aufruf einen \texttt{newnym.py}-Prozess in der \texttt{shadow.config.yaml} ein (vgl.\ Listing~\ref{lst:shadow_monitor}, Zeitpunkte 1229 und 1230).
+Das Skript öffnet einen Socket zum lokalen Tor-Control-Port und sendet \texttt{SIGNAL NEWNYM}, woraufhin Tor bestehende Circuits markiert und für neue Streams einen frischen Pfad aushandelt (Listing~\ref{lst:newnym}).
 
-Das NEWNYM-Signal wird genau eine Sekunde vor dem nächsten geplanten Besuchsbeginn gesendet, damit Tor die Aushandlung des neuen Circuits abschliessen kann, bevor \texttt{wget2} startet.
-Diese strikte Isolation ist eine Vereinfachung gegenüber dem realen Browser-Verhalten, in dem mehrere Aufrufe derselben First-Party-Domain typischerweise denselben Circuit teilen~\cite[S.~2]{jansen2023data}.
-Sie ist jedoch in der \gls{wf}-Literatur die übliche Vorgehensweise und für die Aussagekraft des Experiments notwendig, weil sonst die Verkehrsmuster mehrerer Seitenaufrufe auf einem Circuit vermischt würden und sich eine eindeutige Zuordnung von Verkehr zu Klasse nicht aufrechterhalten liesse.
+\begin{lstlisting}[
+    basicstyle=\ttfamily\footnotesize,
+    frame=single,
+    captionpos=b,
+    label={lst:newnym},
+    caption={\texttt{newnym.py}: minimaler Tor-Control-Port-Client, der vor jedem Besuch einen frischen Circuit erzwingt.}
+]
+import socket
+
+with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+    s.connect(("127.0.0.1", 9051))
+    s.sendall(b"AUTHENTICATE\r\n"); s.recv(1024)
+    s.sendall(b"SIGNAL NEWNYM\r\n"); s.recv(1024)
+\end{lstlisting}
+
+Die Begründung dieser strikten Circuit-Isolation ist in Abschnitt~\ref{sec:konzepte_newnym} dargestellt.
 
 \subsection{Aufzeichnung des Datenverkehrs}
 
@@ -329,93 +302,93 @@ Die nachgelagerten Auswertungsskripte berücksichtigen diese Eigenheit (vgl.\ Ab
 \subsection{Konvertierung der Pcaps in das WFlib-Format}
 \label{sec:realisierung_pcap_to_npz}
 
-Die Konvertierung der aufgezeichneten Pcaps in das von WFlib erwartete \texttt{.npz}-Format erfolgt durch das Skript \texttt{pcap\_to\_npz.py}.
-Abbildung~\ref{fig:datapipeline} zeigt den Datenfluss schematisch: aus den Monitor-Pcaps und der \texttt{schedule.json} entstehen pro Experiment eine \texttt{.npz}-Datei mit den Zellrichtungssequenzen sowie eine \texttt{labels.json}-Datei mit der Zuordnung von Port zu Klassen-Label.
+Das Skript \texttt{pcap\_to\_npz.py} überführt die Monitor-Pcaps zusammen mit der \texttt{schedule.json} in das von WFlib erwartete \texttt{.npz}-Format.
+Pro Experiment entstehen eine \texttt{.npz}-Datei mit den Richtungssequenzen sowie eine \texttt{labels.json}-Datei mit der Zuordnung von Port zu Klassen-Label (Abbildung~\ref{fig:datapipeline}).
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.85\textwidth]{../../images/DataPipeline.png}
+\begin{tikzpicture}[
+    file/.style={draw, rounded corners=2pt, minimum width=3.2cm, minimum height=0.7cm, font=\ttfamily\small},
+    script/.style={draw, rounded corners=4pt, fill=gray!10, minimum width=2.8cm, minimum height=0.9cm, font=\ttfamily\small},
+    arr/.style={->, thick}
+]
+    \node[file]   (schedule) at (0,    0)    {schedule.json};
+    \node[file]   (mon0)     at (0,   -1)    {monitor0/eth0.pcap};
+    \node[file]   (mon1)     at (0,   -2)    {monitor1/eth0.pcap};
+    \node[file]   (mon2)     at (0,   -3)    {monitor2/eth0.pcap};
+
+    \node[script] (script)   at (5.5, -1.5)  {pcap\_to\_npz.py};
+
+    \node[file]   (labels)   at (10.5,-0.75) {labels.json};
+    \node[file]   (npz)      at (10.5,-2.25) {ExpBaseline20.npz};
+
+    \draw[arr] (schedule.east) -- (script.west);
+    \draw[arr] (mon0.east)     -- (script.west);
+    \draw[arr] (mon1.east)     -- (script.west);
+    \draw[arr] (mon2.east)     -- (script.west);
+
+    \draw[arr] (script.east) -- (labels.west);
+    \draw[arr] (script.east) -- (npz.west);
+\end{tikzpicture}
 \caption{Konvertierungs-Pipeline: \texttt{pcap\_to\_npz.py} liest die Monitor-Pcaps und die \texttt{schedule.json}, schneidet pro Besuch die Paketrichtungen aus und schreibt sie zusammen mit den Klassen-Labels in eine kompakte \texttt{.npz}-Datei.}
 \label{fig:datapipeline}
 \end{figure}
 
-Das Skript löst dabei drei aufeinanderfolgende Teilprobleme.
+Als Pcap-Bibliothek wird \texttt{dpkt} verwendet.
 
-\paragraph{Lesen der Pcaps}
-Als Pcap-Bibliothek wird \texttt{dpkt} verwendet, weil es deutlich schneller als \texttt{scapy} ist und für die Grösse der entstehenden Pcaps (mehrere Gigabyte pro Monitor) entscheidend ist.
-Da Shadow den Linktyp \texttt{101} verwendet, wird der erste Header explizit als IP-Header anstelle eines Ethernet-Headers interpretiert.
-Die Client-IP wird automatisch als die häufigste Quell-IP eines Pcaps bestimmt.
-
-\paragraph{Segmentierung anhand der \texttt{schedule.json}}
-Für jeden Eintrag in der \texttt{schedule.json} (also je einen geplanten Besuch) wird das Zeitintervall $[\texttt{start\_time},\ \texttt{start\_time}+\texttt{visit\_interval}]$ aus dem Pcap geschnitten.
-Pakete mit der Client-IP als Quelle werden als ausgehend ($+1$) und Pakete mit der Client-IP als Ziel als eingehend ($-1$) markiert.
-Daraus ergibt sich pro Besuch eine Sequenz von Paketrichtungen.
-
-\paragraph{Normierung}
-Die so gewonnene Sequenz wird auf eine feste Länge von $5000$~Werten gebracht, kürzere Sequenzen werden mit Nullen aufgefüllt, längere abgeschnitten.
-Diese Länge entspricht der von Sirinam et al.\ vorgeschlagenen Eingabe für \gls{df}~\cite{sirinam2018deep} und wird auch in der WFlib-Referenzimplementierung erwartet.
+Für jeden Eintrag der \texttt{schedule.json} wird das Zeitintervall des Besuchs aus dem Pcap geschnitten, Pakete mit der Client-IP als Quelle gelten als ausgehend ($+1$), Pakete mit der Client-IP als Ziel als eingehend ($-1$).
+Die Sequenz wird auf $5000$~Werte normiert (kürzer aufgefüllt, länger abgeschnitten), wie es Sirinam et al.\ für \gls{df} vorschlagen~\cite{sirinam2018deep} und WFlib erwartet.
 Sequenzen mit weniger als zehn Paketen werden als fehlgeschlagene Besuche verworfen.
-Diese Schwelle erlaubt es, Verbindungsabbrüche oder fehlgeschlagene Tor-Aushandlungen aus dem Datensatz auszuschliessen, ohne legitime, aber kleine Seiten zu verlieren.
+Die Klassen-Labels ergeben sich aus dem Zielport (vgl.\ Abschnitt~\ref{sec:realisierung_generate_wf_config}) und werden zur Reproduzierbarkeit als JSON gespeichert (Listing~\ref{lst:labelsjson}).
 
-Die Klassen-Labels werden aus dem Zielport der Pakete bestimmt, wie in Abschnitt~\ref{sec:realisierung_generate_wf_config} beschrieben.
-Ports werden auf eine fortlaufende Klassennummer von $0$ bis $k-1$ abgebildet, das Mapping wird zur Reproduzierbarkeit als JSON-Datei gespeichert.
-Abbildung~\ref{fig:labelsjson} zeigt das Mapping für ein Experiment mit fünf Klassen.
+Aus den Pcaps werden nur die Paketrichtungen und nicht die Zeitstempel als Merkmale verwendet (Begründung: Abschnitt~\ref{sec:konzepte_features}).
 
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.5\textwidth]{../../images/lablejson.png}
-\caption{Auszug aus der zur \texttt{.npz}-Datei gehörenden \texttt{labels.json}: Zielports werden bidirektional auf Klassennummern abgebildet, dazu wird die Anzahl der Klassen gespeichert.}
-\label{fig:labelsjson}
-\end{figure}
-
-\paragraph{Bewusste Beschränkung auf Richtung}
-\label{par:realisierung_richtung}
-Eine wichtige inhaltliche Entscheidung ist, dass aus den Pcaps nur die Richtung der Pakete und nicht ihre Zeitstempel als Merkmale verwendet werden.
-Diese Entscheidung hat zwei Gründe.
-Zum einen wirkt Circuit Padding direkt auf die Richtungsabfolge, da zusätzliche Dummy-Zellen eingefügt werden, was den Effekt des Padding für ein direktionales Merkmal besonders sichtbar macht.
-Zum anderen sind Timing-Merkmale in einer Simulation tendenziell instabil, weil Shadow eine deterministische, aber idealisierte Modellierung von Latenz und Bandbreite verwendet, die in dieser Form im Live-Tor-Netzwerk nicht zu beobachten ist.
-Jansen und Wails haben gezeigt, dass zeitbasierte \gls{wf}-Klassifikatoren wie Tik-Tok deutlich empfindlicher auf veränderte Netzwerkbedingungen reagieren als richtungsbasierte~\cite[S.~10]{jansen2023data}.
-Damit wäre der Einfluss von Padding nicht mehr klar von dem Einfluss simulationsbedingter Timing-Eigenheiten zu trennen.
+\begin{lstlisting}[
+    basicstyle=\ttfamily\footnotesize,
+    breaklines=true,
+    frame=single,
+    captionpos=b,
+    label={lst:labelsjson},
+    caption={Auszug aus der zur \texttt{.npz}-Datei gehörenden \texttt{labels.json}: Zielports werden auf Klassennummern abgebildet, dazu wird die Anzahl der Klassen gespeichert.}
+]
+{
+    "port_to_label": {
+        "8000": 0,
+        "8001": 1,
+        "8002": 2,
+        "8003": 3,
+        "8004": 4
+    },
+    "label_to_port": {
+        "0": 8000,
+        "1": 8001,
+        "2": 8002,
+        "3": 8003,
+        "4": 8004
+    },
+    "num_classes": 5
+}
+\end{lstlisting}
 
 \subsection{Aufteilung in Trainings-, Validierungs- und Testdatensatz}
 
-Die Aufteilung in Trainings-, Validierungs- und Testmenge erfolgt mit der WFlib-Komponente \texttt{dataset\_split.py}.
-Die verwendete Aufteilung beträgt 81\,\% Training, 9\,\% Validierung und 10\,\% Test.
-Sie ist stratifiziert nach Klasse, sodass jede Seite in jeder Teilmenge mit etwa demselben Anteil vertreten ist.
-Der zugrunde liegende Zufalls-Seed ist fest (\texttt{seed=2024}), damit zwei Läufe mit unterschiedlicher Padding-Konfiguration auf identischen Trainings- und Testindizes verglichen werden.
-Damit sind beobachtete Genauigkeitsunterschiede ausschliesslich auf die Padding-Konfiguration und nicht auf eine zufällig leichter oder schwerer geratene Testmenge zurückzuführen.
-
-Die genauen Stichprobengrössen ergeben sich aus den Konfigurationsparametern.
-Tabelle~\ref{tab:datasplit_beispiel} zeigt die Aufteilung exemplarisch für ein Experiment mit fünf Klassen und 50~Besuchen pro Klasse.
-
-\begin{table}[H]
-\centering
-\caption{Beispiel der Datenaufteilung für 5~Klassen und 50~Besuchen pro Klasse.}
-\label{tab:datasplit_beispiel}
-\begin{tabular}{lll}
-\hline
-Teilmenge & Anzahl Beispiele & Zweck \\
-\hline
-Training & 202 (81\,\%) & \gls{df} lernt aus diesen Beispielen die Verkehrsmuster. \\
-Validierung & 23 (9\,\%) & Auswahl des besten Modell-Checkpoints während des Trainings. \\
-Test & 25 (5 pro Klasse) & Endgültige Bewertung, dem Modell nie gezeigt. \\
-\hline
-\end{tabular}
-\end{table}
+Die WFlib-Komponente \texttt{dataset\_split.py} teilt den Datensatz in 81\,\% Training, 9\,\% Validierung und 10\,\% Test auf.
+Die Aufteilung erfolgt zufällig, durch einen festen Zufalls-Seed wird sie aber reproduzierbar: derselbe Datensatz wird bei jedem Aufruf identisch zerlegt.
+So lassen sich Läufe mit unterschiedlicher Padding-Konfiguration auf exakt denselben Trainings- und Testdaten vergleichen und beobachtete Unterschiede sind ausschliesslich auf das Padding zurückzuführen.
 
 \section{Training und Auswertung des Klassifikators}
 \label{sec:realisierung_training}
 
 \subsection{Wahl des Klassifikators und der Bibliothek}
 
-Als Klassifikator wird \gls{df} nach Sirinam et al.~\cite{sirinam2018deep} verwendet, dessen Eignung für diese Arbeit bereits in Abschnitt~\ref{par:realisierung_richtung} und in der Diskussion in Kapitel~\ref{cha:stand_der_technik} begründet wurde.
+Als Klassifikator wird \gls{df} nach Sirinam et al.~\cite{sirinam2018deep} verwendet.
 Die Implementierung wird von WFlib bereitgestellt, einer in PyTorch realisierten Sammlung von WF-Klassifikatoren von Deng et al.\footnote{\url{https://github.com/Xinhao-Deng/Website-Fingerprinting-Library}}.
-Eine eigene Implementierung wäre zwar möglich, würde aber den Aufwand verdoppeln und gleichzeitig das Risiko subtiler Implementierungsunterschiede gegenüber der Literatur einführen.
 WFlib hat sich in mehreren neueren Veröffentlichungen als Vergleichsplattform etabliert, was auch die Vergleichbarkeit der Ergebnisse erhöht.
 
 \subsection{Hyperparameter}
 
-Die Hyperparameter folgen der Standardkonfiguration von WFlib für \gls{df} und sind in Tabelle~\ref{tab:hyperparameter} zusammengefasst.
+Diese bleiben die Trainingsbedingungen über alle Experimente hinweg identisch und beobachtete Genauigkeitsunterschiede sind ausschliesslich auf die unabhängigen Variablen (Padding-Modus und Klassenanzahl) zurückzuführen, nicht auf abweichende Modelleinstellungen.
+Die Werte sind in Tabelle~\ref{tab:hyperparameter} zusammengefasst.
 
 \begin{table}[H]
 \centering
@@ -436,112 +409,38 @@ Epochen & 30 \\
 \end{tabular}
 \end{table}
 
+Während des Trainings passt der Adamax-Optimierer die Gewichte des neuronalen Netzes Schritt für Schritt so an, dass die Cross-Entropy-Verlustfunktion auf der Trainingsmenge minimiert wird.
 Die Trainingsschleife speichert nach jeder Epoche das Modell, sofern es auf der Validierungsmenge einen besseren F1-Wert erreicht als alle bisherigen Checkpoints.
 Damit ist das endgültig getestete Modell nicht zwangsläufig das letzte, sondern das auf Basis der Validierung beste.
-Diese Vorgehensweise ist Standard in der Literatur zu \gls{df} und reduziert den Einfluss zufälliger Schwankungen am Ende des Trainings.
 
 \subsection{Trainingsablauf}
 
 Der gesamte Ablauf von der Konvertierung bis zur Auswertung wird durch das Skript \texttt{run\_df.sh} gesteuert.
-Abbildung~\ref{fig:trainingpipeline} stellt diese Schritte als Datenfluss dar.
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{../../images/TrainingPipeline.png}
-\caption{Trainings-Pipeline. Aus der zentralen \texttt{.npz}-Datei werden über \texttt{dataset\_split.py} ein Trainings-, ein Validierungs- und ein Testdatensatz im Verhältnis 81/9/10 erzeugt. \texttt{train.py} speichert den Checkpoint mit dem höchsten F1-Wert (\texttt{max\_f1.pth}), \texttt{test.py} wertet diesen auf dem zurückgehaltenen Testdatensatz aus und schreibt die Resultate in eine Ergebnis-JSON.}
-\label{fig:trainingpipeline}
-\end{figure}
-
-Im Einzelnen führt das Skript nacheinander die folgenden Schritte aus:
 
 \begin{enumerate}
-    \item Konvertierung der Pcaps oder, alternativ, Übernahme einer bereits konvertierten \texttt{.npz}-Datei.
+    \item Konvertierung der Pcaps in .npz Datei
     \item Aufteilung in Trainings-, Validierungs- und Testdatensatz.
     \item Training des \gls{df}-Modells über 30~Epochen.
     \item Test auf der zurückgehaltenen Testmenge.
     \item Speichern der Metriken in einer Ergebnis-JSON-Datei.
 \end{enumerate}
 
-Die Ergebnis-JSON enthält die vier wichtigsten Kennzahlen, wie in Abbildung~\ref{fig:resultjson} dargestellt.
+Die Ergebnis-JSON enthält die vier wichtigsten Kennzahlen, wie in Listing~\ref{lst:resultjson} dargestellt.
 Diese werden mit den Metadaten des Experiments (Anzahl Klassen, Padding-Modus, Anzahl Besuche, Anzahl Monitore, Random-Baseline) ergänzt und über das Skript \texttt{report.py} in die zentrale Ergebnistabelle \texttt{ExperimentLogs.csv} geschrieben.
 Diese Tabelle dient als Single Source of Truth für alle in Kapitel~\ref{cha:diskussion} präsentierten Diagramme.
 
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.45\textwidth]{../../images/resultjson.png}
-\caption{Ergebnis-JSON eines Trainingslaufs. Accuracy, Precision, Recall und F1-Wert werden auf der Testmenge ermittelt und dienen als Eingabe für die zentrale Ergebnistabelle.}
-\label{fig:resultjson}
-\end{figure}
-
-\subsection{Visualisierung der Ergebnisse}
-
-Für die in Kapitel~\ref{cha:diskussion} verwendeten Diagramme werden zwei spezialisierte Skripte eingesetzt.
-\texttt{plot\_results.py} liest die zentrale Ergebnistabelle ein und erzeugt unter anderem den Vergleich der Padding-Modi (Abbildung in \texttt{images/results/padding\_comparison.pdf}), den Verlauf der Genauigkeit über die Anzahl Klassen (\texttt{accuracy\_vs\_pages.pdf}) und die durch Padding verursachte Genauigkeitsabsenkung (\texttt{padding\_delta.pdf}).
-\texttt{plot\_confusion.py} liest die Vorhersagen eines trainierten Modells und erzeugt entweder eine einzelne oder eine Side-by-Side-Konfusionsmatrix für zwei Modelle, optional ergänzt durch eine Differenzmatrix.
-Letztere ist insbesondere für die Beurteilung hilfreich, welche Klassen unter Padding stärker verwechselt werden als ohne.
-
-\section{Ergänzung: Traffic-Correlation-Angriff}
-\label{sec:realisierung_correlation}
-
-Über das richtungsbasierte \gls{wf}-Experiment hinaus wird in dieser Arbeit ein Traffic-Correlation-Angriff als Vergleichswert untersucht.
-Anders als \gls{wf} setzt dieser Angriff keinen vortrainierten Klassifikator voraus, sondern beobachtet sowohl den Eintritts- als auch den Austrittsverkehr eines Circuits und korreliert die Paketzeitreihen.
-
-\subsection{Zusätzliche Aufzeichnungen an Eingangs- und Ausgangsknoten}
-
-Mit dem Schalter \texttt{--correlation} wird in \texttt{shadowctl.py} und in \texttt{generate-wf-config.py} ein angepasster Konfigurationspfad aktiviert.
-In dieser Konfiguration werden zusätzlich zu den Monitor-Pcaps auch Pcaps an bis zu fünf Exit-Relais aufgezeichnet.
-Die Begrenzung auf fünf Exits ist eine Hardware-Entscheidung: jedes aufgezeichnete Relais erzeugt mehrere Gigabyte an Pcap pro Stunde Simulationszeit, und der verfügbare Festplattenplatz auf dem Server reicht nicht für die Aufzeichnung aller 79~Relais.
-Die Auswahl der fünf Exits erfolgt deterministisch nach den Bandbreiten-Flags des Konsens, sodass die ausgewählten Knoten in mehreren Läufen reproduzierbar dieselben sind.
-
-In der \texttt{schedule.json} werden zusätzlich die IPs der ausgewählten Exit-Relais sowie die Tor-Control-Authentifizierungsdaten gespeichert, damit die Auswertungsskripte später wissen, welche Pcap-Dateien als Exit-Seite zu interpretieren sind.
-
-\subsection{Korrelationsanalyse}
-
-Die eigentliche Auswertung führt das Skript \texttt{correlation.py} durch.
-Es ist in vier Phasen gegliedert.
-
-\paragraph{Segmentierung}
-Zunächst werden aus den Eingangs-Pcaps der Monitore und den Exit-Pcaps die Paketströme der einzelnen Besuche herausgeschnitten.
-Auf der Eingangsseite erfolgt dies wie in Abschnitt~\ref{sec:realisierung_pcap_to_npz} anhand der \texttt{schedule.json}.
-Auf der Exit-Seite wird zusätzlich nach dem Zielport gefiltert, da dieser eindeutig die besuchte Seite identifiziert.
-
-\paragraph{Bildung wahrer und falscher Paare}
-Aus den segmentierten Strömen werden Paare gebildet.
-Ein wahres Paar besteht aus dem Eingangs- und Exit-Strom desselben Besuchs (also gleicher Zeitpunkt und gleicher Port).
-Ein falsches Paar besteht aus einem Eingangsstrom und einem Exit-Strom, die zu unterschiedlichen Besuchen gehören.
-Pro wahrem Paar werden standardmässig zehn falsche Paare zufällig gezogen, was sowohl rechentechnisch handhabbar bleibt als auch eine ausreichend grosse Negativ-Stichprobe für die spätere \gls{roc}-Analyse erzeugt.
-
-\paragraph{Korrelationsmasse}
-Pro Paar werden die Pakete in 100-Millisekunden-Bins gezählt.
-Die so entstehenden Vektoren werden mit drei verschiedenen Massen verglichen: dem Pearson-Korrelationskoeffizient, der Cosinus-Ähnlichkeit und einer normalisierten Kreuzkorrelation mit Lag-Suche im Bereich $\pm 100$~Bins.
-Die Lag-Suche fängt das Verzögerungsverhalten innerhalb des Tor-Circuits ab, sodass eine zeitliche Verschiebung zwischen Eintritt und Austritt nicht als Unkorreliertheit interpretiert wird.
-
-\paragraph{ROC und AUC}
-Aus den Score-Verteilungen wahrer und falscher Paare wird je Mass eine \gls{roc}-Kurve berechnet, samt zugehöriger \gls{auc}.
-Zusätzlich werden die True-Positive-Raten an den klassischen Schwellen $\textrm{FPR}=10^{-2}$ und $\textrm{FPR}=10^{-3}$ ausgewiesen.
-Diese Werte sind in der Korrelations-Forschung üblich, weil bei niedrigen Basisraten echter Treffer eine kleine FPR die meisten gemeldeten Treffer als Fehlalarme erscheinen lässt~\cite[S.~3]{wang2016realistically}.
-
-\section{Reproduzierbarkeit der Experimente}
-\label{sec:realisierung_reproduzierbarkeit}
-
-Reproduzierbarkeit ist in dieser Arbeit eine bewusste Designanforderung.
-Sie wird auf mehreren Ebenen umgesetzt.
-
-\paragraph{Festgehaltene Eingaben}
-Die Tor-Konsensdaten werden für einen festen Monat heruntergeladen und in einem Verzeichnis abgelegt, sodass spätere Tornettools-Läufe denselben Snapshot verwenden.
-Die ZIM-Datei und die URL-Liste sind ebenfalls festgehalten und werden gemeinsam mit den Skripten versioniert.
-
-\paragraph{Deterministische Ausführung}
-Shadow ist auf Syscall-Ebene deterministisch, wenn ein fester Seed gesetzt wird~\cite[S.~3]{netsim-atc2022}.
-In dieser Arbeit wird der Simulations-Seed durchgehend auf $1$ und der ML-Seed auf $2024$ gesetzt.
-Damit liefern wiederholte Läufe identische Pcaps und identische Train-Test-Aufteilungen.
-
-\paragraph{Vollständige Konfigurationsablage}
-Pro Experiment werden \texttt{shadow.config.yaml}, \texttt{schedule.json}, die \texttt{torrc}-Dateien aller Hosts, die Pcap-Dateien sowie die Ergebnis-JSON von WFlib gemeinsam abgelegt.
-Damit lässt sich auch nachträglich rekonstruieren, mit welchen Padding-Parametern, welcher Skalierung und welcher Seitenmenge ein Resultat erzielt wurde.
-
-\paragraph{Tabellarische Ergebnisablage}
-Sämtliche Resultate werden über \texttt{report.py} in die Datei \texttt{ExperimentLogs.csv} eingetragen.
-Diese Datei enthält neben den Klassifikationsmetriken auch alle relevanten Konfigurationsparameter (Skalierung, Anzahl Relais, Anzahl Monitore, Anzahl Klassen, Anzahl Besuche, Padding-Modus, Tor-Version, Seed) und ist die Grundlage für sämtliche in Kapitel~\ref{cha:diskussion} dargestellten Auswertungen.
-
-Die Kombination dieser Massnahmen bedeutet, dass die in dieser Arbeit angegebenen Ergebnisse sowohl auf der Hardware des Autors als auch auf vergleichbar konfigurierten Servern bei korrekter Wiederherstellung der Eingaben numerisch identisch reproduziert werden sollten.
+\begin{lstlisting}[
+    basicstyle=\ttfamily\footnotesize,
+    breaklines=true,
+    frame=single,
+    captionpos=b,
+    label={lst:resultjson},
+    caption={Ergebnis-JSON eines Trainingslaufs. Accuracy, Precision, Recall und F1-Wert werden auf der Testmenge ermittelt und dienen als Eingabe für die zentrale Ergebnistabelle.}
+]
+{
+    "Accuracy": 0.9267,
+    "Precision": 0.933,
+    "Recall": 0.9267,
+    "F1-score": 0.9274
+}
+\end{lstlisting}

@@ -4,38 +4,12 @@
 \section{Einführung und Abgrenzung}
 \label{sec:eval_einfuehrung}
 
-Dieses Kapitel beantwortet die in der Aufgabenstellung formulierten Forschungsfragen anhand der in Kapitel~\ref{cha:realisierung} beschriebenen Versuchsumsetzung.
-Die HSLU-Vorlage unterscheidet zwischen Validierung und Evaluation \cite[S.~3]{book}.
-Die Validierung beantwortet, ob die entwickelte Lösung sachlich korrekt ist und das Richtige misst.
-Die Evaluation bewertet darauf aufbauend, wie gut die Resultate bestimmte Anforderungen erfüllen, also wie gross der gemessene Effekt von Circuit Padding tatsächlich ist und wie er sich in den Stand der Forschung einordnen lässt.
-Die in Kapitel~\ref{cha:methoden} eingeführten Gütekriterien Validität, Reliabilität und Objektivität bilden den methodischen Bezugsrahmen.
-
-Die zwei aus der Aufgabenstellung übernommenen Forschungsfragen lauten:
-
-\begin{description}
-    \item[F1] Wie verändert sich die Erkennungsrate der \gls{df}-Angriffe mit unterschiedlichen Circuit-Padding-Settings?
-    \item[F2] Welche bekannten Limitationen simulierter und laborbasierter \gls{wf}-Angriffe sind in der Literatur dokumentiert, und wie sind die experimentellen Ergebnisse dieser Arbeit einzuordnen?
-\end{description}
-
-Der Aufbau folgt diesem Leitfaden.
-Abschnitt~\ref{sec:eval_validierung} validiert den Versuchsaufbau und prüft, ob die Pipeline die unabhängige Variable Padding-Modus überhaupt sauber misst.
-Abschnitte~\ref{sec:eval_closedworld} und \ref{sec:eval_openworld} präsentieren die quantitativen Resultate im Closed- und Open-World-Szenario und beantworten damit F1.
-Abschnitt~\ref{sec:eval_literatur} ordnet die Resultate in den Stand der Forschung ein.
-Abschnitt~\ref{sec:eval_limitationen} diskutiert die methodischen Einschränkungen, die zur Beantwortung von F2 gehören.
-Abschnitt~\ref{sec:eval_zwischenfazit} fasst die Antwort auf F1 und F2 zusammen.
+\todo{TODO}
 
 \section{Validierung des Versuchsaufbaus}
 \label{sec:eval_validierung}
 
-Bevor die gemessenen Effekte interpretiert werden, soll geprüft werden, dass die Pipeline überhaupt das Richtige misst.
-
-\subsection{Sanity Checks der Datenerhebung}
-\label{sec:eval_sanity}
-
-Tabelle~\ref{tab:eval_sanity} fasst drei Plausibilitätskennzahlen pro Hauptexperiment zusammen.
-Erstens liegt die erreichte Accuracy in allen Konfigurationen deutlich über der Zufallsbasislinie ($1/k$ bei $k$ Klassen), was bestätigt, dass der Klassifikator ein Signal aus den Direction-Sequenzen lernt und nicht zufällig rät.
-Zweitens bleibt der Anteil fehlgeschlagener Seitenabrufe in einem Band von 1.5 bis 4.5 Prozent, was im erwartbaren Bereich für eine Tor-Simulation auf 1\,Prozent-Skala liegt.
-Drittens streut die mittlere Anzahl Pakete pro Sample zwischen 583 und 803 nur moderat über die Padding-Modi, was darauf hindeutet, dass die Padding-Konfiguration die Datenmenge pro Sample nicht systematisch verzerrt.
+TODO
 
 \begin{table}[H]
     \centering
@@ -57,35 +31,6 @@ Drittens streut die mittlere Anzahl Pakete pro Sample zwischen 583 und 803 nur m
     \end{tabular}
 \end{table}
 
-\subsection{Konstrukt-Validität des Klassifikators}
-\label{sec:eval_konstrukt}
-
-Die in Kapitel~\ref{cha:realisierung} verwendete \gls{df}-Implementierung aus der WFLib erreicht auf den simulierten 20-Klassen-Daten eine Accuracy von 92.7\,Prozent.
-Sirinam et al.\ berichten für ihre Originalarbeit auf realen Tor-Cell-Traces für ein vergleichbares Klassenraster Accuracies oberhalb von 95\,Prozent \cite[S.~6]{sirinam2018deep}.
-Die hier erreichte Grössenordnung ist konsistent mit dem von Sirinam et al.\ beschriebenen Verhalten, womit bestätigt wird, dass die Pipeline einen \gls{df}-Angriff im Sinne der Originalveröffentlichung umsetzt.
-Die geringere Accuracy ist mit der Eingangsdatenform und dem Inhaltsraster zu erklären, was in Abschnitt~\ref{sec:eval_literatur} eingeordnet wird.
-
-\subsection{Interne Validität}
-\label{sec:eval_intern}
-
-Zwischen den Hauptläufen wird ausschliesslich die unabhängige Variable verändert.
-Padding-Modus, Klassenanzahl und Welt-Szenario werden gezielt variiert, alle übrigen Faktoren bleiben konstant.
-Identisch sind über alle Läufe der Topologie-Seed der \texttt{tornettools}-Generierung, der ZIM-Snapshot der Wikipedia-Inhalte, die Tor-Version, die Anzahl Visits pro Seite, das Visit-Intervall und die Hyperparameter des \gls{df}-Trainings.
-Diese Konstanthaltung wird in Kapitel~\ref{cha:realisierung} im Detail beschrieben und ist Voraussetzung dafür, dass beobachtete Genauigkeitsunterschiede dem Padding-Modus zugeordnet werden können und nicht einer abweichenden Stichprobe.
-
-\subsection{Reproduzierbarkeit}
-\label{sec:eval_reproduzierbarkeit}
-
-Die Reproduzierbarkeit stützt sich auf zwei Mechanismen.
-Erstens arbeitet Shadow als deterministischer Diskret-Event-Simulator, sodass eine identische Konfiguration auf derselben Hardware bitidentische \gls{pcap}-Aufzeichnungen liefert \cite[S.~5\,f.]{netsim-atc2022}.
-Zweitens fixiert das WFLib-Trainingsskript den Random-Seed des stratifizierten Splits in Trainings-, Validierungs- und Testmenge, was eine Wiederholbarkeit der Klassifikationsmetriken auf bereits erhobenen Daten sicherstellt.
-Die einzige Quelle nicht reproduzierbaren Verhaltens liegt in der nichtdeterministischen GPU-Reduktion während des Trainings, deren Effekt auf die Endgenauigkeit erfahrungsgemäss unter einem Prozentpunkt liegt und für die Interpretation der hier beobachteten Effekte nicht erheblich ist.
-
-\section{Closed-World-Resultate}
-\label{sec:eval_closedworld}
-
-Dieser Abschnitt beantwortet F1 für das Closed-World-Szenario.
-Tabelle~\ref{tab:eval_closedworld} fasst alle drei Padding-Modi für die zwei Hauptkonfigurationen mit 20 und 80 Klassen zusammen.
 
 \begin{table}[H]
     \centering
@@ -109,10 +54,7 @@ Tabelle~\ref{tab:eval_closedworld} fasst alle drei Padding-Modi für die zwei Ha
 \subsection{Skalierung mit der Klassenanzahl}
 \label{sec:eval_skalierung}
 
-Abbildung~\ref{fig:eval_acc_vs_pages} zeigt die Baseline-Accuracy als Funktion der Klassenanzahl.
-Beim Übergang von 20 auf 80 Klassen sinkt die Baseline von 92.7 auf 82.4\,Prozent.
-Dieser Rückgang ist erwartbar, da mit wachsender Klassenanzahl die Wahrscheinlichkeit struktureller Ähnlichkeiten zwischen Direction-Sequenzen verschiedener Wikipedia-Artikel steigt.
-Im 5-Klassen-Vorversuch erreicht die Baseline 92.0\,Prozent, was nahe am 20-Klassen-Wert liegt und darauf hindeutet, dass \gls{df} bei kleinen Klassensätzen schnell in einen Sättigungsbereich kommt.
+\todo{TODO}
 
 \begin{figure}[H]
     \centering
@@ -124,11 +66,7 @@ Im 5-Klassen-Vorversuch erreicht die Baseline 92.0\,Prozent, was nahe am 20-Klas
 \subsection{Effekt von Circuit Padding}
 \label{sec:eval_padding_effekt}
 
-Abbildung~\ref{fig:eval_padding_comp} stellt die Accuracy für die drei Padding-Modi nebeneinander.
-Bei 20 Klassen reduziert Padding ON die Accuracy um 9.4 Prozentpunkte, bei 80 Klassen nur noch um 3.8 Prozentpunkte.
-Der absolute Padding-Effekt schrumpft also mit wachsender Klassenanzahl.
-Eine plausible Erklärung ist, dass die Baseline bei 80 Klassen näher an der Klassifikator-spezifischen Untergrenze liegt, sodass weniger Spielraum für eine zusätzliche Verschleierung durch Padding bleibt.
-Abbildung~\ref{fig:eval_padding_delta} stellt die Differenzen zur jeweiligen Baseline gesondert dar.
+
 
 \begin{figure}[H]
     \centering
@@ -147,17 +85,7 @@ Abbildung~\ref{fig:eval_padding_delta} stellt die Differenzen zur jeweiligen Bas
 \subsection{Reduced Padding}
 \label{sec:eval_reduced}
 
-Reduced Padding ist als bandbreitenschonendere Variante für Konsumenten-Geräte spezifiziert, die nur einen Teil der Padding-Maschinen aktiviert \cite[S.~4]{kadianakis2021tor}.
-Bei 20 Klassen liegt Reduced mit einem Genauigkeitsverlust von 6.0 Prozentpunkten erwartungsgemäss zwischen OFF und ON.
-Bei 80 Klassen ist die Schutzwirkung von Reduced (4.9 Prozentpunkte) sogar minimal stärker als jene von ON (3.8 Prozentpunkte).
-Diese Differenz von 1.1 Prozentpunkten liegt allerdings im Bereich des messbaren Rauschens einer Einzelmessung und sollte nicht überinterpretiert werden.
-Eine belastbare Aussage über die Rangfolge zwischen Reduced und ON bei vielen Klassen würde Wiederholungsmessungen voraussetzen, die im Rahmen dieser Arbeit nicht durchgeführt wurden.
 
-\subsection{Konfusionsmatrizen}
-\label{sec:eval_confusion}
-
-Abbildung~\ref{fig:eval_confusion_baseline20} zeigt die Konfusionsmatrix der Baseline für 20 Klassen.
-Die Diagonale ist deutlich ausgeprägt, vereinzelte Fehlklassifikationen verteilen sich auf wenige Klassenpaare, die in der \gls{pcap}-Direction-Sequenz vermutlich ähnliche Anfragestrukturen aufweisen.
 
 \begin{figure}[H]
     \centering
@@ -165,11 +93,6 @@ Die Diagonale ist deutlich ausgeprägt, vereinzelte Fehlklassifikationen verteil
     \caption{Konfusionsmatrix der Baseline mit 20 Klassen. Eigene Darstellung.}
     \label{fig:eval_confusion_baseline20}
 \end{figure}
-
-Abbildung~\ref{fig:eval_confusion_comparison20} stellt OFF und ON für 20 Klassen direkt gegenüber.
-Im rechten Teil ist die Diagonale schwächer und die Fehlklassifikationen verteilen sich breiter über alle Klassen.
-Das deutet darauf hin, dass Padding nicht eine einzelne Klasse, sondern allgemeine Direction-Muster verschleiert.
-Eine entsprechende Darstellung für 80 Klassen liegt als \texttt{confusion\_comparison\_80.png} im Repository bereit und zeigt qualitativ dasselbe Verhalten.
 
 \begin{figure}[H]
     \centering
@@ -185,12 +108,9 @@ Eine entsprechende Darstellung für 80 Klassen liegt als \texttt{confusion\_comp
     \label{fig:eval_confusion_baseline80}
 \end{figure}
 
-\subsection{F1-Wert über alle Hauptexperimente}
-\label{sec:eval_f1}
 
-Abbildung~\ref{fig:eval_f1} stellt den F1-Wert für alle Hauptexperimente dar.
-F1 und Accuracy bewegen sich praktisch parallel, was darauf hindeutet, dass die in den Experimenten verwendete stratifizierte Aufteilung in Trainings- und Testmenge keine systematische Klassenunwucht erzeugt.
-Damit ist die Accuracy als primäre Vergleichsmetrik für die folgende Diskussion zulässig.
+
+\todo{TODO}
 
 \begin{figure}[H]
     \centering
@@ -199,20 +119,6 @@ Damit ist die Accuracy als primäre Vergleichsmetrik für die folgende Diskussio
     \label{fig:eval_f1}
 \end{figure}
 
-\section{Open-World-Resultate}
-\label{sec:eval_openworld}
-
-\subsection{Setup}
-\label{sec:eval_openworld_setup}
-
-Das Open-World-Experiment umfasst 80 überwachte Wikipedia-Seiten und 200 zusätzliche unbeobachtete Seiten, die als gemeinsame Klasse Unmonitored zusammengefasst werden.
-Damit ergibt sich ein Klassifikationsproblem mit nominal 81 Ausgabeklassen über 280 verschiedene Quellseiten.
-Die konkrete Versuchsdurchführung ist in Kapitel~\ref{cha:realisierung} beschrieben.
-
-\subsection{Resultate}
-\label{sec:eval_openworld_resultate}
-
-Tabelle~\ref{tab:eval_openworld} fasst die abgeschlossenen Open-World-Läufe zusammen.
 
 \begin{table}[H]
     \centering
@@ -227,129 +133,3 @@ Tabelle~\ref{tab:eval_openworld} fasst die abgeschlossenen Open-World-Läufe zus
         \hline
     \end{tabular}
 \end{table}
-
-Die Accuracy fällt im Open-World-Szenario gegenüber dem Closed-World-Setup mit derselben Anzahl überwachter Seiten deutlich, von 82.4 auf 68.3 Prozent.
-Diese Differenz ist erwartbar, weil \gls{df} im Open-World zusätzlich entscheiden muss, ob ein Trace überhaupt zu einer überwachten Seite gehört, was eine binäre Diskrimination zwischen Monitored und Unmonitored auf Top-Ebene erzwingt.
-Wang und Goldberg zeigen in vergleichbarer Form, dass Closed-World-Resultate die Schwierigkeit eines realen \gls{wf}-Angriffs systematisch unterschätzen \cite[S.~5\,f.]{wang2016realistically}.
-
-\subsection{Unerwarteter Befund}
-\label{sec:eval_openworld_unerwartet}
-
-Bemerkenswert ist, dass die Accuracy mit Padding ON im Open-World-Szenario leicht über der Baseline liegt.
-Dieser Befund läuft der intuitiven Erwartung entgegen, da Padding die Direction-Muster verschleiern und die Klassifikation erschweren sollte.
-Mehrere Erklärungen sind möglich.
-Erstens kann es sich um statistisches Rauschen einer Einzelmessung handeln, da der Unterschied von 2.4 Prozentpunkten zwischen ON und OFF im Bereich der Variation einer einzelnen Trainingsschleife liegt.
-Zweitens ist denkbar, dass die durch Padding eingeführte Glättung die Direction-Sequenz für überwachte Seiten konsistenter macht und so die Verwechslungen mit dem Unmonitored-Topf reduziert, was den Open-World-Klassifikator paradoxerweise stützt.
-Drittens ist die Streuung innerhalb der Unmonitored-Klasse hoch, sodass eine zusätzliche Stabilität in den überwachten Klassen die Open-Set-Diskrimination begünstigen kann.
-Eine endgültige Klärung erfordert Wiederholungsmessungen mit unterschiedlichen Seeds, was im Rahmen dieser Arbeit nicht durchgeführt wurde.
-
-\subsection{Eingeschränkte Datenlage}
-\label{sec:eval_openworld_eingeschraenkt}
-
-Der Lauf exp-openworld-reduced wurde zwar gestartet, das \gls{df}-Modell aber nicht vollständig trainiert.
-Die Open-World-Resultate für Reduced Padding werden daher in dieser Arbeit nicht ausgewiesen.
-Hintergrund sind die in Kapitel~\ref{cha:realisierung} beschriebenen Server-Beschränkungen bei Festplattenplatz und Wandzeit, die für ein Open-World-Experiment mit 280 simulierten Klassen besonders ins Gewicht fallen.
-
-\section{Einordnung in die Literatur}
-\label{sec:eval_literatur}
-
-Dieser Abschnitt liefert den ersten Teil der Antwort auf F2.
-Die Resultate werden mit vier Schlüsselarbeiten in Beziehung gesetzt.
-
-\subsection{Vergleich mit Sirinam et al.\ 2018}
-\label{sec:eval_lit_sirinam}
-
-Die Originalarbeit zu \gls{df} berichtet im Closed-World-Setting Accuracies oberhalb von 95\,Prozent für vergleichbare Klassenraster und auf realen Tor-Cell-Traces \cite[S.~6]{sirinam2018deep}.
-Die hier gemessenen 92.7 und 82.4\,Prozent für 20 beziehungsweise 80 Klassen liegen darunter.
-Zwei Faktoren erklären die Differenz.
-Zum einen verwendet Sirinam et al.\ ausgepackte Tor-Cells als Eingabe, während diese Arbeit Direction-Sequenzen aus \gls{pcap}-Aufzeichnungen am Monitor-Host extrahiert, die zusätzlich \gls{tcp}-Segmentierung und TLS-Records enthalten.
-Zum anderen sind die hier verwendeten Wikipedia-Inhalte aus dem ZIM-Snapshot strukturell homogener als die in der Originalarbeit verwendete Auswahl aus Alexa-Top-Sites, was die Klassentrennung erschwert.
-
-\subsection{Vergleich mit Jansen und Wails 2023}
-\label{sec:eval_lit_jansen}
-
-Jansen und Wails validieren Shadow für \gls{wf} und beobachten Genauigkeitsabweichungen von wenigen Prozentpunkten gegenüber Live-Tor-Daten \cite[S.~12\,ff.]{jansen2023data}.
-Die hier gemessenen Padding-Effekte von $-9.4$ und $-3.8$ Prozentpunkten liegen damit in einer Grössenordnung, in der die Simulations-Fidelity zur Aussage beiträgt.
-Diese Einschränkung wird in Abschnitt~\ref{sec:eval_limitationen} explizit diskutiert.
-
-Über die reine Validierung hinaus unterscheidet sich der hier gewählte Versuchsaufbau methodisch von Jansen und Wails.
-Die Originalarbeit setzt auf einen modifizierten Tor-Build, der Cell-Traces direkt aus dem Tor-Prozess exportiert, und betreibt Shadow auf einer Skala von 25\,Prozent mit einer aufwendigen Datenpipeline.
-Die vorliegende Arbeit kommt mit einem unmodifizierten Tor-Release aus und gewinnt die Direction-Sequenzen rückwirkend aus \gls{pcap}-Aufzeichnungen am Monitor-Host, die per Skript \texttt{pcap\_to\_npz.py} (Verweis auf Kapitel~\ref{cha:realisierung}) in das WFLib-Format überführt werden.
-Diese Vereinfachung ist als eigenständiger methodischer Beitrag der Arbeit zu verstehen.
-Die Pipeline ist auf jedem Stock-Tor-Build ohne Eingriffe in den Quellcode reproduzierbar, was die Übertragbarkeit auf andere Tor-Versionen erleichtert und den Einstieg für Folgearbeiten senkt.
-Die Kehrseite ist, dass \gls{pcap}-basierte Direction-Sequenzen Rahmenbits aus \gls{tcp}-Segmentierung und TLS-Records enthalten, die in den von Sirinam et al.\ verwendeten Cell-Traces nicht vorhanden sind.
-Ein Teil der gegenüber Sirinam beobachteten Genauigkeitsdifferenz ist daher dem unterschiedlichen Datentyp geschuldet, was in Abschnitt~\ref{sec:eval_limitationen} als Detailtreueeinschränkung aufgegriffen wird.
-
-\subsection{Vergleich mit Wang und Goldberg 2016}
-\label{sec:eval_lit_wang}
-
-Wang und Goldberg argumentieren, dass Closed-World-Resultate die Schwierigkeit eines realen \gls{wf}-Angriffs systematisch unterschätzen \cite[S.~5\,f.]{wang2016realistically}.
-Sie führen das auf Multi-Tab-Verhalten, unterschiedliche Browsing-Pausen und Caching-Effekte zurück.
-Die Open-World-Messungen dieser Arbeit relativieren das Bild der Closed-World-Resultate insofern, als die Accuracy von 82.4 auf 68.3 Prozent fällt, sobald die Klassifikation den zusätzlichen Unmonitored-Topf einbeziehen muss.
-Eine direkte Übertragbarkeit auf das Live-Tor-Netz ist aus den von Wang und Goldberg genannten Gründen dennoch nicht gegeben.
-
-\subsection{Vergleich mit Kadianakis et al.\ 2021}
-\label{sec:eval_lit_kadianakis}
-
-Die Originaldokumentation des Circuit-Padding-Frameworks beschreibt das Framework als Plattform für adaptive Padding-Maschinen, die spezifisch gegen \gls{wf}-Angriffe entworfen werden können \cite[S.~3\,ff.]{kadianakis2021tor}.
-Die hier evaluierten Modi OFF, Reduced und ON sind die mit Tor 0.4.x ausgelieferten Defaults und enthalten keine \gls{wf}-spezifische Padding-Maschine.
-Die gemessenen Genauigkeitsverluste sind daher als untere Schranke des Möglichen zu interpretieren.
-Eine spezialisierte Padding-Maschine könnte die Schutzwirkung deutlich erhöhen, was in Kapitel~\ref{cha:ausblick} als Anschlussfrage aufgegriffen wird.
-
-\section{Einschränkungen der Aussagekraft}
-\label{sec:eval_limitationen}
-
-Dieser Abschnitt liefert den zweiten Teil der Antwort auf F2 und benennt die methodischen Grenzen der Arbeit.
-
-\paragraph{Netzwerk-Skala 1\,Prozent.}
-Die Simulation läuft auf 1\,Prozent der Tor-Live-Topologie, was die Pfaddiversität reduziert.
-Bei verminderter Pfaddiversität können Direction-Sequenzen innerhalb einer Klasse konsistenter ausfallen als auf einem grösseren Netz, was die Accuracy gegenüber einem volltreuen Modell überschätzen kann.
-Jansen und Wails laufen aus demselben Grund auf 25\,Prozent und diskutieren die Fidelity-Beschränkung trotzdem ausführlich \cite[S.~14]{jansen2023data}.
-Die hier vorliegende Arbeit übernimmt diese methodische Vorsicht und ordnet alle gemessenen Padding-Effekte als eine plausible Untergrenze, nicht als feste Punktwerte ein.
-
-\paragraph{Wikipedia-only-Inhalte.}
-Alle Seiten stammen aus einem ZIM-Snapshot der Simple English Wikipedia.
-Die Strukturhomogenität dieser Inhalte unterscheidet sich vom realen Web, in dem Werbenetzwerke, eingebettete Medien Dritter und stark variierende Layouts zusätzliche Direction-Variabilität erzeugen.
-Die hier gemessene Accuracy kann je nach Inhaltsmix in einem Realdatensatz höher oder tiefer ausfallen.
-
-\paragraph{Single-Tab und wget2 statt Tor Browser.}
-Die Datenerhebung erfolgt mit \texttt{wget2}, das pro Visit genau eine Seite parallel über mehrere \gls{tcp}-Verbindungen lädt und das Visit-Intervall durch \texttt{NEWNYM} sauber von der nächsten Seite trennt.
-Der Tor Browser zeigt komplexeres Verhalten, etwa parallele Streams aus Hintergrund-Tabs und Verzögerungen aus User-Interaktion.
-Die hier gemessenen Resultate sind daher nicht ohne Weiteres auf ein Tor-Browser-Szenario übertragbar.
-
-\paragraph{Pcap-basierte statt cell-basierte Direction-Sequenzen.}
-Die Eingabe für \gls{df} stammt aus dem Monitor-\gls{pcap} und enthält damit \gls{tcp}-Segmentierung und TLS-Rahmen.
-Die Originalarbeit von Sirinam et al.\ arbeitet mit ausgepackten Tor-Cells, was eine sauberere Eingabe darstellt.
-Diese Vereinfachung ermöglicht die Verwendung eines unmodifizierten Tor-Builds (siehe Abschnitt~\ref{sec:eval_lit_jansen}), kostet aber Detailtreue gegenüber dem ursprünglichen \gls{df}-Eingangsformat.
-Eine Folgearbeit mit gepatchtem Tor und Cell-Trace-Export würde diese Quelle systematischer Abweichung adressieren und ist in Kapitel~\ref{cha:ausblick} als Anschlussfrage formuliert.
-
-\paragraph{Keine Multi-Tab-Szenarien.}
-Im realen Browsing-Verhalten werden mehrere Seiten parallel geladen, was die Direction-Sequenzen ineinander verschachtelt.
-Aktuelle Studien wie das ARES-Framework zeigen, dass \gls{df} in Multi-Tab-Konfigurationen mit fünf gleichzeitig geöffneten Seiten bis auf F1-Werte unter 0.5 zurückfällt.
-Die in dieser Arbeit gemessenen Accuracies gelten ausschliesslich für sequentielles Single-Tab-Browsing.
-
-\paragraph{Einzelne Messung pro Konfiguration.}
-Jede Padding-Konfiguration wird in einem einzelnen Lauf gemessen.
-Konfidenzintervalle werden nicht ausgewiesen, da kein Wiederholungsdurchlauf mit variiertem Seed verfügbar ist.
-Kleine Effekte wie der unerwartete Anstieg im Open-World-Setup mit Padding ON sind daher statistisch nicht abgesichert und werden in Abschnitt~\ref{sec:eval_openworld_unerwartet} entsprechend zurückhaltend interpretiert.
-
-\paragraph{Bedrohungsmodell-Validität.}
-Die Arbeit unterstellt einen passiven Beobachter zwischen Client und Tor-Guard.
-Dieses Modell ist realistisch für \gls{wf}-Angriffe durch \gls{tor}-Entry-Betreiber, ISPs oder lokale Netzwerk-Beobachter \cite[S.~2]{wang2016realistically}.
-Korrelationsangriffe auf der Guard-Exit-Achse adressieren ein anderes Bedrohungsmodell und sind in dieser Arbeit nicht ausgewertet.
-Der zugehörige methodische Versuchsaufbau ist in Kapitel~\ref{cha:realisierung} beschrieben, die Resultate liegen zum Zeitpunkt der Niederschrift noch nicht vor.
-
-\section{Zwischenfazit}
-\label{sec:eval_zwischenfazit}
-
-\paragraph{Antwort auf F1.}
-Circuit Padding reduziert die \gls{df}-Accuracy unter Closed-World-Bedingungen reproduzierbar.
-Bei 20 Klassen beträgt die Reduktion 9.4 Prozentpunkte mit Padding ON und 6.0 Prozentpunkte mit Reduced.
-Bei 80 Klassen schrumpft der Effekt auf 3.8 beziehungsweise 4.9 Prozentpunkte.
-Im Open-World-Szenario mit 80 überwachten Seiten ist der Effekt von Padding statistisch nicht eindeutig, mit einer leicht höheren Accuracy unter ON gegenüber OFF, die im Bereich der Einzelmessungs-Varianz liegt.
-
-\paragraph{Antwort auf F2.}
-Die Resultate sind aufgrund der Simulation auf 1\,Prozent-Skala, der homogenen Wikipedia-Inhalte, der Single-Tab-Annahme und der Verwendung von \gls{pcap}-basierten statt cell-basierten Direction-Sequenzen mit Vorsicht zu interpretieren.
-Die gemessene Accuracy liegt in einer Grössenordnung, die mit den Validierungsbefunden von Jansen und Wails sowie mit der Originalarbeit von Sirinam et al.\ konsistent ist.
-Die Wahl, mit unmodifiziertem Tor-Build und reinen \gls{pcap}-Aufzeichnungen zu arbeiten, vereinfacht die Reproduzierbarkeit der Pipeline auf andere Tor-Versionen, kostet aber Detailtreue gegenüber dem Cell-Trace-Format der Originalveröffentlichung.
-Die offenen Fragen zur Stabilität der Open-World-Resultate, zur Wirkung adaptiver Padding-Maschinen und zur Korrelation auf der Guard-Exit-Achse werden in Kapitel~\ref{cha:ausblick} aufgegriffen.

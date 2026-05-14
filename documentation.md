@@ -33,7 +33,7 @@ samples segmented by the known timing schedule.
 
 ```
 src/
-├── ml/
+├── ml/2023
 │   ├── explainwf_to_npz.py     # Convert 2023 cell traces → WFlib .npz
 │   ├── pcap_to_npz.py          # Convert Shadow pcaps → WFlib .npz
 │   ├── run_df.sh               # End-to-end: convert → split → train → test
