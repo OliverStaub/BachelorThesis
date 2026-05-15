@@ -156,6 +156,23 @@ def build_monitor_processes(pages_with_visits, visit_interval,
     return procs, schedule
 
 
+def build_bridge_processes(start_time):
+    """Build process list for a Tor-bridge host running the Tamaraw PT.
+
+    Only Tor is started as a top-level Shadow process. Tor itself spawns
+    obfs4proxy as a managed pluggable transport via ServerTransportPlugin
+    in tor.bridge.torrc.
+    """
+    return [{
+        "path": "~/.local/bin/tor",
+        "args": "--Address wfbridge0 --Nickname wfbridge0 "
+                "--defaults-torrc torrc-defaults -f torrc",
+        "environment": {"OPENBLAS_NUM_THREADS": "1"},
+        "start_time": start_time,
+        "expected_final_state": "running",
+    }]
+
+
 def build_zimserver_processes(pages, zimroot):
     """One zimsrv.py process per port on the zimserver.
 
@@ -230,6 +247,25 @@ def main():
     parser.add_argument("--first-fetch-time", type=int, default=1200,
                         help="First wget2 fetch time (default: 1200, ~20min bootstrap)")
     parser.add_argument("--seed", type=int, default=42)
+    # WF defense options
+    parser.add_argument("--defense", choices=["none", "tamaraw"], default="none",
+                        help="WF defense applied via pluggable transport bridge "
+                             "(default: none). 'tamaraw' adds a wfbridge0 host "
+                             "running WFDefProxy and is orthogonal to --padding.")
+    parser.add_argument("--tamaraw-rho-client", type=int, default=12,
+                        help="Tamaraw upstream packet interval in ms (default: 12)")
+    parser.add_argument("--tamaraw-rho-server", type=int, default=4,
+                        help="Tamaraw downstream packet interval in ms (default: 4)")
+    parser.add_argument("--tamaraw-nseg", type=int, default=200,
+                        help="Tamaraw trace-length padding segment (default: 200)")
+    parser.add_argument("--tamaraw-bridge-port", type=int, default=34000,
+                        help="Bridge listen port for the tamaraw transport (default: 34000)")
+    parser.add_argument("--tamaraw-bridge-ip", default="100.0.0.50",
+                        help="Fixed IP for the wfbridge0 host (default: 100.0.0.50)")
+    parser.add_argument("--bridge-pcap", action="store_true",
+                        help="Capture eth0.pcap on wfbridge0 (verification only; "
+                             "off by default — grows ~700 MB per sim-hour, not "
+                             "consumed by pcap_to_npz.py)")
     args = parser.parse_args()
 
     rng = random.Random(args.seed)
@@ -310,6 +346,34 @@ def main():
         n_pages = len(pvs)
         print(f"  {name}: {n_pages} pages, {n_fetches} fetches, "
               f"last fetch at t={last_fetch}s", file=sys.stderr)
+
+    # Add WF defense bridge (only when --defense != none).
+    # Single shared bridge — all monitors connect to wfbridge0.
+    if args.defense == "tamaraw":
+        bridge_node_id = pick_node_id(existing_ids, rng)
+        bridge_host = {
+            "network_node_id": bridge_node_id,
+            "ip_addr": args.tamaraw_bridge_ip,
+            "bandwidth_down": "500 megabit",
+            "bandwidth_up": "500 megabit",
+            "processes": build_bridge_processes(args.tor_start_time),
+        }
+        # Bridge pcap is only useful for one-off verification that Tamaraw
+        # is actually shaping the link at constant rate (rho-c/rho-s). It is
+        # NOT consumed by pcap_to_npz.py and grows fast (~700 MB / sim-hour
+        # at rho-s=4ms). Off by default; opt in with --bridge-pcap for
+        # debugging runs.
+        if args.bridge_pcap:
+            bridge_host["host_options"] = {
+                "pcap_enabled": True,
+                "pcap_capture_size": "65535 B",
+            }
+        config["hosts"]["wfbridge0"] = bridge_host
+        print(f"  wfbridge0: tamaraw transport on "
+              f"{args.tamaraw_bridge_ip}:{args.tamaraw_bridge_port} "
+              f"(rho_c={args.tamaraw_rho_client}ms, "
+              f"rho_s={args.tamaraw_rho_server}ms, "
+              f"nseg={args.tamaraw_nseg})", file=sys.stderr)
 
     # Add zimserver
     pages_by_ip = {}
@@ -392,6 +456,14 @@ def main():
         "guard_pcap_relays": guard_pcap_relays if guard_pcap_relays else None,
         "zimserver_ip": all_pages[0]["ip"] if all_pages else None,
         "monitors": all_schedules,
+        "defense": {
+            "mode": args.defense,
+            "rho_client": args.tamaraw_rho_client if args.defense == "tamaraw" else None,
+            "rho_server": args.tamaraw_rho_server if args.defense == "tamaraw" else None,
+            "nseg":       args.tamaraw_nseg       if args.defense == "tamaraw" else None,
+            "bridge_ip":  args.tamaraw_bridge_ip  if args.defense == "tamaraw" else None,
+            "bridge_port": args.tamaraw_bridge_port if args.defense == "tamaraw" else None,
+        },
     }
     with open(schedule_path, "w") as f:
         json.dump(meta, f, indent=2)

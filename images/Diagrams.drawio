@@ -1,4 +1,4 @@
-<mxfile host="Electron" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/26.2.15 Chrome/134.0.6998.205 Electron/35.2.1 Safari/537.36" version="26.2.15" pages="2">
+<mxfile host="Electron" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/26.2.15 Chrome/134.0.6998.205 Electron/35.2.1 Safari/537.36" version="26.2.15" pages="3">
   <diagram name="Page-1" id="gUtYHLV5G_G_Fh9yZYu5">
     <mxGraphModel dx="1454" dy="1004" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
@@ -280,6 +280,158 @@
         </mxCell>
         <mxCell id="F6qF0g6zIGWZ7mnz-v4b-60" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="F6qF0g6zIGWZ7mnz-v4b-23" target="F6qF0g6zIGWZ7mnz-v4b-50">
           <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="TamarawSetupDiagramId" name="Tamaraw Setup">
+    <mxGraphModel dx="1454" dy="1004" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="TAM-outer" value="" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="130" y="690" width="680" height="580" as="geometry" />
+        </mxCell>
+        <mxCell id="TAM-outer-label" value="Shadow Simulation" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="660" y="1235" width="140" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="TAM-tornet" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="194" y="740" width="440" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="TAM-tornet-label" value="Tor Network" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="204" y="750" width="90" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="TAM-perf" value="Performance Clients" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="304" y="755.5" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="TAM-auth" value="3 Authorities" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="444" y="755.5" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="TAM-guard" value="Guard / Entry Relays" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="217" y="840" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="TAM-middle" value="Middle Relays" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="361" y="840" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="TAM-exit" value="Exit Relays" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="497" y="840" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="TAM-e-gm" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="TAM-guard" target="TAM-middle">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="TAM-e-me" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="TAM-middle" target="TAM-exit">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="TAM-bridge" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="194" y="945" width="356" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="TAM-bridge-label" value="WF Bridge (wfbridge0)" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="204" y="950" width="180" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="TAM-bridge-tor" value="Tor&#10;(BridgeRelay)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="220" y="975" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="TAM-bridge-pt" value="obfs4proxy_tamaraw&#10;(ServerTransport)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="380" y="975" width="155" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="TAM-e-pt-bridgetor" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;dashed=1;" edge="1" parent="1" source="TAM-bridge-pt" target="TAM-bridge-tor">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="TAM-e-pt-bridgetor-lbl" value="ExtORPort" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;" vertex="1" connectable="0" parent="TAM-e-pt-bridgetor">
+          <mxGeometry x="0" y="0" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="TAM-e-bridgetor-guard" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;strokeColor=#d79b00;strokeWidth=2;" edge="1" parent="1" source="TAM-bridge-tor" target="TAM-guard">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="TAM-e-bridgetor-guard-lbl" value="Tor cells&#10;(plain)" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;" vertex="1" connectable="0" parent="TAM-e-bridgetor-guard">
+          <mxGeometry x="-0.1" y="0" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="TAM-monitor-box" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="194" y="1065" width="356" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="TAM-monitor-label" value="Monitor clients" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="204" y="1072" width="120" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="TAM-tor-client" value="Tor Client&#10;(ClientTransport: tamaraw)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="220" y="1105" width="155" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="TAM-wget" value="wget2" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="400" y="1105" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="TAM-e-wget-tor" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="TAM-wget" target="TAM-tor-client">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="TAM-e-wget-tor-lbl" value="SOCKS5" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;" vertex="1" connectable="0" parent="TAM-e-wget-tor">
+          <mxGeometry x="-0.1" y="0" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="TAM-e-tor-pt" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.75;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;strokeColor=#d79b00;strokeWidth=2;" edge="1" parent="1" source="TAM-tor-client" target="TAM-bridge-pt">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="340" y="1085" />
+              <mxPoint x="457" y="1085" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="TAM-e-tor-pt-lbl" value="Tamaraw PT&#10;rho-c=12ms, rho-s=4ms, nseg=200" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;fontStyle=1;" vertex="1" connectable="0" parent="TAM-e-tor-pt">
+          <mxGeometry x="0" y="-1" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="TAM-zim" value="Zim Server" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="580" y="945" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="TAM-tgen-server" value="TGEN Server" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="580" y="1010" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="TAM-e-exit-zim" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" source="TAM-exit" target="TAM-zim">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="770" y="870" />
+              <mxPoint x="770" y="975" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="TAM-e-exit-tgen" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" source="TAM-exit" target="TAM-tgen-server">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="770" y="870" />
+              <mxPoint x="770" y="1040" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="TAM-bg-clients" value="TGEN / MARKOV Clients&#10;(no bridge — direct to Guard)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="194" y="1205" width="220" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="TAM-e-bg-guard" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;startArrow=none;startFill=0;" edge="1" parent="1" source="TAM-bg-clients" target="TAM-guard">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="160" y="1230" />
+              <mxPoint x="160" y="870" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="TAM-pcap" value="PCAP Capture" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="450" y="1205" width="150" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="TAM-pcap-src" value="" style="whiteSpace=wrap;html=1;aspect=fixed;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="194" y="1175" width="19.5" height="19.5" as="geometry" />
+        </mxCell>
+        <mxCell id="TAM-e-pcap" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;fillColor=#f8cecc;strokeColor=#b85450;" edge="1" parent="1" source="TAM-pcap-src" target="TAM-pcap">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="204" y="1190" />
+              <mxPoint x="525" y="1190" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="TAM-legend" value="&lt;b&gt;Tamaraw flow:&lt;/b&gt;&#10;wget2 —SOCKS5→ Tor Client —Tamaraw PT (orange)→ obfs4proxy_tamaraw —ExtORPort→ Tor (BridgeRelay) —Tor cells→ Guard" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=9;fillColor=#fffce8;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="140" y="700" width="660" height="30" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>

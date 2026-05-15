@@ -18,6 +18,7 @@ Usage:
 """
 
 import argparse
+import shutil
 import subprocess
 import sys
 import os
@@ -83,6 +84,18 @@ def rsync_from_remote(remote_path, local_path, excludes=None):
         for ex in excludes:
             cmd.extend(["--exclude", ex])
     cmd.extend([f"{SSH_HOST}:{remote_path}/", str(local_path) + "/"])
+    subprocess.run(cmd, check=True)
+
+
+def rsync_to_remote(local_path, remote_path, delete=False):
+    """Rsync from local to remote — copies *contents* of local_path into
+    remote_path. Trailing slashes on both ends are critical, otherwise scp/rsync
+    nests the source directory inside the destination on each call.
+    """
+    cmd = ["rsync", "-az"]
+    if delete:
+        cmd.append("--delete")
+    cmd.extend([str(local_path) + "/", f"{SSH_HOST}:{remote_path}/"])
     subprocess.run(cmd, check=True)
 
 
@@ -323,9 +336,18 @@ def cmd_pull_config(args):
     print_step(f"Downloading shadow.config.yaml → {local_config}")
     scp_from_remote(config_file, str(local_config))
 
-    # Also pull the torrc files for reference
+    # Also pull the torrc files for reference.
+    # CRITICAL: wipe local_conf first. `scp -r server:src dest` NESTS the
+    # source into the destination when dest already exists as a directory
+    # (creates dest/conf/conf/...). On re-runs this leaves a stale outer
+    # conf/ from prior pulls that push-config then ships back to the server,
+    # silently overwriting freshly-patched torrcs (e.g. Step 1b's authority
+    # fingerprint rewrite). Wiping first guarantees scp creates conf/ at the
+    # right level every time.
     conf_dir = f"{sim_dir}/conf"
     local_conf = local_dir / "conf"
+    if local_conf.exists():
+        shutil.rmtree(local_conf)
     print_step(f"Downloading conf/ → {local_conf}")
     scp_from_remote(conf_dir, str(local_conf))
 
@@ -356,10 +378,14 @@ def cmd_push_config(args):
     print_step(f"Uploading {local_config}...")
     scp_to_remote(str(local_config), f"{sim_dir}/shadow.config.yaml")
 
-    # Push conf/ if it exists locally (in case torrc files were edited)
+    # Push conf/ if it exists locally (in case torrc files were edited).
+    # `scp -r src dst` nests `src` inside `dst` when `dst` already exists,
+    # which on repeated pushes piles up conf/conf/conf/. So we wipe the remote
+    # conf/ first; scp then recreates it cleanly at the right level.
     local_conf = local_dir / "conf"
     if local_conf.exists():
         print_step("Uploading conf/ directory...")
+        ssh_cmd(f"rm -rf {sim_dir}/conf", check=False)
         scp_to_remote(str(local_conf), f"{sim_dir}/conf")
 
     print_ok("Config pushed to server")
@@ -624,6 +650,7 @@ def cmd_run(args):
     print(f"  Visits per page:  {args.visits}")
     print(f"  Visit interval:   {args.visit_interval}s")
     print(f"  Circuit Padding:  {args.padding or 'Tor default (on)'}")
+    print(f"  Defense (PT):     {args.defense}")
     if args.correlation_only:
         corr_str = f"ONLY (exit pcaps on {args.exit_pcap_relays} relays, no monitor pcaps)"
     elif args.correlation:
@@ -640,10 +667,78 @@ def cmd_run(args):
         sys.exit(1)
 
     # ── Step 1: Generate base config (tornettools) ─────────────────────
-    print_step("Step 1/5: Generate base tornettools config")
+    # Wipe any prior server-side sim_dir first. tornettools generate
+    # overwrites conf/ but does NOT touch shadow.data.template/hosts/<auth>/keys/.
+    # Re-running over an existing dir leaves stale authority keypairs paired
+    # with fresh fingerprints in tor.common.torrc, and every relay then fails
+    # its TLS handshake with "Unexpected identity in router certificate".
+    print_step("Step 1/5: Wipe remote sim dir + generate base tornettools config")
+    sim_dir = get_sim_dir(name)
+    ssh_cmd(f"rm -rf {sim_dir}", check=False)
     cmd_generate(_namespace(
         scale=args.scale, month=args.month, name=name, seed=None,
     ))
+
+    # ── Step 1b: Fix authority fingerprints in tor.common.torrc ────────
+    # tornettools generate writes DirServer lines whose RSA fingerprints
+    # AND v3ident= tokens both DON'T match the keypairs it pre-stages in
+    # shadow.data.template/hosts/4uthorityN/keys/. Background clients
+    # tolerate this (they pick relays from the consensus, not from torrc),
+    # but a pluggable-transport bridge bootstraps by connecting directly
+    # to an authority's OR port — which fails the TLS handshake with
+    # "Unexpected identity in router certificate" on RSA-fp mismatch,
+    # and would later reject the consensus signature on v3ident mismatch.
+    # Patch BOTH from the on-disk template files.
+    print_step("Step 1b/5: Patch authority fingerprints in tor.common.torrc")
+    torrc_path = f"{sim_dir}/conf/tor.common.torrc"
+    for auth in ("4uthority1", "4uthority2", "4uthority3"):
+        # RSA OR identity — from the `fingerprint` file (nick + 40 hex).
+        fp_path = f"{sim_dir}/shadow.data.template/hosts/{auth}/fingerprint"
+        result = ssh_cmd(f"awk '{{print $2}}' {fp_path}", capture=True)
+        actual_fp = result.stdout.strip()
+        if len(actual_fp) != 40:
+            print_err(f"Bad RSA fingerprint for {auth}: {actual_fp!r}")
+            sys.exit(1)
+
+        # v3 authority identity — first line of `authority_certificate`
+        # is "dir-key-certificate-version 3", and a few lines down there's
+        # "fingerprint <40 hex>" naming the v3 identity key's hash.
+        cert_path = f"{sim_dir}/shadow.data.template/hosts/{auth}/keys/authority_certificate"
+        result = ssh_cmd(
+            f"grep '^fingerprint' {cert_path} | awk '{{print $2}}'",
+            capture=True,
+        )
+        actual_v3 = result.stdout.strip()
+        if len(actual_v3) != 40:
+            print_err(f"Bad v3ident for {auth}: {actual_v3!r}")
+            sys.exit(1)
+
+        # Tor accepts the trailing fp either as 40 unbroken hex or as 10
+        # space-separated 4-char chunks. Use the spaced form (tornettools'
+        # native format) so the rewritten line is visually consistent.
+        spaced = " ".join(actual_fp[i:i+4] for i in range(0, 40, 4))
+
+        # Single awk pass that rewrites BOTH:
+        #   - v3ident=<...> token (field 3) → v3ident=<actual_v3>
+        #   - trailing 10-field RSA fingerprint → spaced actual_fp
+        # Everything in between (orport=..., ip:dirport) is preserved.
+        awk_prog = (
+            f'$1=="DirServer" && $2=="{auth}" {{ '
+            f'  $3="v3ident={actual_v3}"; '
+            f'  for(i=1;i<=NF-10;i++) printf "%s ", $i; '
+            f'  print "{spaced}"; next '
+            f'}} {{ print }}'
+        )
+        cmd = (
+            f"awk '{awk_prog}' {torrc_path} > {torrc_path}.tmp && "
+            f"mv {torrc_path}.tmp {torrc_path}"
+        )
+        ssh_cmd(cmd)
+    # Print the patched lines for visibility.
+    result = ssh_cmd(f"grep '^DirServer' {torrc_path}", capture=True)
+    for line in result.stdout.strip().splitlines():
+        print(f"    {line}")
+    print_ok("Authority RSA fingerprints + v3idents aligned with template keys")
 
     # ── Step 2: Pull config to laptop ──────────────────────────────────
     print_step("Step 2/5: Pull config to laptop")
@@ -653,25 +748,96 @@ def cmd_run(args):
         print_err(f"Expected {local_config} after pull-config but it's missing")
         sys.exit(1)
 
-    # ── Step 2b: Set Circuit Padding in torrc ──────────────────────────
+    # ── Step 2a: Wash tor.client.torrc of any prior WF appends ────────
+    # Older versions of this script appended directly to tor.client.torrc,
+    # which compounded across re-runs and ended up duplicating `UseBridges`
+    # / `CircuitPadding` lines (Tor warns, last-wins). Since perfclients
+    # and markov clients also %include tor.client.torrc, the stale
+    # `UseBridges 1` would crash them with
+    # "Setting UseBridges requires also setting UseEntryGuards".
+    # Strip everything from the first `# WF experiment:` marker onwards.
+    client_torrc = local_exp_dir / "conf" / "tor.client.torrc"
+    if client_torrc.exists():
+        text = client_torrc.read_text()
+        marker = "# WF experiment:"
+        if marker in text:
+            cleaned = text.split(marker, 1)[0].rstrip() + "\n"
+            client_torrc.write_text(cleaned)
+            print_ok(f"Stripped stale WF appends from {client_torrc.relative_to(LOCAL_WORKSPACE)}")
+
+    # ── Step 2b/2c: Write WF settings to a fresh conf/tor.wf.torrc ─────
+    #
+    # We do NOT touch tor.client.torrc — repeated runs would otherwise
+    # accumulate duplicate `CircuitPadding` / `UseBridges` lines, and Tor's
+    # last-value-wins semantics with a `UseEntryGuards 0` baseline would
+    # break --defense tamaraw (UseBridges 1 requires UseEntryGuards 1).
+    # Instead we emit a separate tor.wf.torrc file, %include'd LAST in
+    # every monitor's torrc-defaults so it overrides earlier settings.
+    wf_lines = []
+
     if args.padding is not None:
-        client_torrc = local_exp_dir / "conf" / "tor.client.torrc"
-        if client_torrc.exists():
-            with open(client_torrc, "a") as f:
-                if args.padding == "off":
-                    f.write("\n# WF experiment: padding disabled\nCircuitPadding 0\n")
-                    print_ok("Circuit Padding: OFF (CircuitPadding 0)")
-                elif args.padding == "on":
-                    f.write("\n# WF experiment: padding explicitly enabled\nCircuitPadding 1\n")
-                    print_ok("Circuit Padding: ON (CircuitPadding 1)")
-                elif args.padding == "reduced":
-                    f.write("\n# WF experiment: reduced padding\nCircuitPadding 1\nReducedCircuitPadding 1\n")
-                    print_ok("Circuit Padding: REDUCED (ReducedCircuitPadding 1)")
-        else:
-            print_err(f"tor.client.torrc not found at {client_torrc}")
-            sys.exit(1)
+        if args.padding == "off":
+            wf_lines += ["# WF experiment: padding disabled", "CircuitPadding 0"]
+            print_ok("Circuit Padding: OFF (CircuitPadding 0)")
+        elif args.padding == "on":
+            wf_lines += ["# WF experiment: padding explicitly enabled", "CircuitPadding 1"]
+            print_ok("Circuit Padding: ON (CircuitPadding 1)")
+        elif args.padding == "reduced":
+            wf_lines += ["# WF experiment: reduced padding",
+                         "CircuitPadding 1", "ReducedCircuitPadding 1"]
+            print_ok("Circuit Padding: REDUCED (ReducedCircuitPadding 1)")
     else:
         print("  (Circuit Padding: using Tor default = ON)")
+
+    if args.defense == "tamaraw":
+        cert_path = SIM_DIR_LOCAL / "conf" / "tamaraw_cert.txt"
+        if not cert_path.exists():
+            print_err(f"Tamaraw cert file missing: {cert_path}")
+            print("  Run:  bash src/simulation/setup-wf-server.sh wfdef-cert")
+            sys.exit(1)
+        cert = cert_path.read_text().strip()
+        if not cert or cert.startswith("PLACEHOLDER"):
+            print_err(f"Tamaraw cert at {cert_path} is a placeholder.")
+            print("  Run:  bash src/simulation/setup-wf-server.sh wfdef-cert")
+            sys.exit(1)
+
+        if args.padding is not None:
+            print(f"  WARNING: --padding {args.padding} ignored on the link: "
+                  f"Tamaraw's constant-rate scheduler dominates the on-wire pattern. "
+                  f"CircuitPadding stays configured at the Tor layer.")
+
+        wf_lines += [
+            "",
+            "# WF experiment: Tamaraw via WFDefProxy bridge",
+            # Tor refuses UseBridges 1 without UseEntryGuards 1; overrides
+            # the `UseEntryGuards 0` baseline from tor.client.torrc.
+            "UseEntryGuards 1",
+            "UseBridges 1",
+            "ClientTransportPlugin tamaraw exec /home/projectadmin/obfs4proxy_tamaraw",
+            (f"Bridge tamaraw {args.tamaraw_bridge_ip}:{args.tamaraw_bridge_port} "
+             f"cert={cert} "
+             f"rho-client={args.tamaraw_rho_client} "
+             f"rho-server={args.tamaraw_rho_server} "
+             f"nseg={args.tamaraw_nseg}"),
+        ]
+        print_ok(
+            f"Defense: Tamaraw (bridge {args.tamaraw_bridge_ip}:{args.tamaraw_bridge_port}, "
+            f"rho_c={args.tamaraw_rho_client}ms, rho_s={args.tamaraw_rho_server}ms, "
+            f"nseg={args.tamaraw_nseg})"
+        )
+
+        # Copy the bridge torrc into the experiment's conf/ so push-config
+        # ships it alongside tor.common.torrc / tor.client.torrc.
+        src_bridge_torrc = SIM_DIR_LOCAL / "conf" / "tor.bridge.torrc"
+        dst_bridge_torrc = local_exp_dir / "conf" / "tor.bridge.torrc"
+        shutil.copy(src_bridge_torrc, dst_bridge_torrc)
+        print_ok(f"Copied tor.bridge.torrc into {dst_bridge_torrc.relative_to(LOCAL_WORKSPACE)}")
+
+    # Write the WF torrc (overwrite — always fresh per run).
+    wf_torrc_path = local_exp_dir / "conf" / "tor.wf.torrc"
+    wf_torrc_path.parent.mkdir(parents=True, exist_ok=True)
+    wf_torrc_path.write_text(("\n".join(wf_lines) + "\n") if wf_lines else "")
+    print_ok(f"Wrote {wf_torrc_path.relative_to(LOCAL_WORKSPACE)} ({len(wf_lines)} lines)")
 
     # ── Step 3: Add WF monitor/zimserver nodes ─────────────────────────
     print_step("Step 3/5: Add WF nodes to config")
@@ -699,6 +865,15 @@ def cmd_run(args):
         ]
     if args.correlation_only:
         wf_cmd += ["--no-monitor-pcap"]
+    if args.defense != "none":
+        wf_cmd += [
+            "--defense", args.defense,
+            "--tamaraw-rho-client", str(args.tamaraw_rho_client),
+            "--tamaraw-rho-server", str(args.tamaraw_rho_server),
+            "--tamaraw-nseg",       str(args.tamaraw_nseg),
+            "--tamaraw-bridge-port", str(args.tamaraw_bridge_port),
+            "--tamaraw-bridge-ip",   args.tamaraw_bridge_ip,
+        ]
     rc = subprocess.call(wf_cmd)
     if rc != 0:
         print_err("generate-wf-config.py failed")
@@ -724,11 +899,38 @@ TORRC_EOF
             cat > "$H/torrc-defaults" <<TORRC_EOF
 %include ../../../conf/tor.common.torrc
 %include ../../../conf/tor.client.torrc
+%include ../../../conf/tor.wf.torrc
 TORRC_EOF
         done
     '"""
     ssh_cmd(provision_cmd)
     print_ok(f"Provisioned template dirs for: {monitor_names}")
+
+    if args.defense == "tamaraw":
+        print_step("Step 4/5: Provision wfbridge0 template dir + pt_state")
+        bridge_provision = f"""bash -c '
+            set -e
+            cd {sim_dir}/shadow.data.template/hosts
+            mkdir -p wfbridge0
+            cat > wfbridge0/torrc <<TORRC_EOF
+# WF bridge torrc (host-specific overrides, if any)
+TORRC_EOF
+            cat > wfbridge0/torrc-defaults <<TORRC_EOF
+%include ../../../conf/tor.common.torrc
+%include ../../../conf/tor.bridge.torrc
+TORRC_EOF
+            # Copy pre-generated bridge state (keypair + cert) so the bridge
+            # boots with the cert that monitor torrcs already reference.
+            if [ ! -d /home/projectadmin/tamaraw-state-template/pt_state ]; then
+                echo "ERROR: pre-staged pt_state missing on server." >&2
+                echo "  Run on laptop: bash src/simulation/setup-wf-server.sh wfdef-cert" >&2
+                exit 1
+            fi
+            rm -rf wfbridge0/pt_state
+            cp -r /home/projectadmin/tamaraw-state-template/pt_state wfbridge0/pt_state
+        '"""
+        ssh_cmd(bridge_provision)
+        print_ok("Provisioned wfbridge0 template dir + pt_state")
 
     print_step("Step 4/5: Start simulation")
     cmd_simulate(_namespace(
@@ -922,6 +1124,20 @@ def main():
                    default=None,
                    help="Circuit padding: on (Tor default), off, or reduced. "
                         "If omitted, Tor's built-in default is used (on).")
+    # WF defense (orthogonal to --padding; selects a pluggable-transport bridge).
+    p.add_argument("--defense", choices=["none", "tamaraw"], default="none",
+                   help="Defense applied via PT bridge (default: none). "
+                        "'tamaraw' adds a wfbridge0 host running WFDefProxy.")
+    p.add_argument("--tamaraw-rho-client", type=int, default=12,
+                   help="Tamaraw upstream packet interval in ms (default: 12)")
+    p.add_argument("--tamaraw-rho-server", type=int, default=4,
+                   help="Tamaraw downstream packet interval in ms (default: 4)")
+    p.add_argument("--tamaraw-nseg", type=int, default=200,
+                   help="Tamaraw trace-length padding segment (default: 200)")
+    p.add_argument("--tamaraw-bridge-port", type=int, default=34000,
+                   help="Bridge listen port for tamaraw transport (default: 34000)")
+    p.add_argument("--tamaraw-bridge-ip", default="100.0.0.50",
+                   help="Fixed IP for wfbridge0 (default: 100.0.0.50)")
     # Open-world options
     p.add_argument("--open-world", action="store_true",
                    help="Open-world: first --monitored-pages get full visits, "

@@ -257,6 +257,109 @@ Or use the all-in-one script:
 2. **With padding:** Edit `tor.client.torrc` to enable/configure Circuit Padding → rerun → compare
 3. The hypothesis: Circuit Padding should reduce DF classification accuracy
 
+## WF Defenses
+
+Two defense layers can be combined or used independently:
+
+| Flag | Layer | Mechanism |
+|------|-------|-----------|
+| `--padding {on,off,reduced}` | Core Tor | Tor's built-in Circuit Padding state machines |
+| `--defense tamaraw` | Pluggable transport bridge | WFDefProxy applies constant-rate Tamaraw padding on the monitor↔bridge link |
+
+`--padding` toggles a feature inside the Tor binary itself. `--defense tamaraw`
+adds a separate `wfbridge0` host running [WFDefProxy](https://github.com/websitefingerprinting/wfdef)
+and rewrites every monitor's torrc so its Tor process tunnels through that
+bridge via the `tamaraw` pluggable transport.
+
+### One-time setup for Tamaraw
+
+Build WFDefProxy on the server and materialise the bridge keypair / cert.
+Both steps are idempotent.
+
+```bash
+# Install Go and build obfs4proxy on the server (~5 min, first run only).
+bash src/simulation/setup-wf-server.sh wfdef
+
+# One-time bridge cert generation. Writes src/simulation/conf/tamaraw_cert.txt
+# and stages ~/tamaraw-state-template/pt_state/ on the server for shadowctl
+# to copy into every Tamaraw run.
+bash src/simulation/setup-wf-server.sh wfdef-cert
+```
+
+The cert is the public part of the bridge's persistent keypair. It must be
+known to every monitor's torrc *before* the bridge boots — Shadow starts all
+hosts in parallel, so we can't rely on the bridge generating the cert at
+runtime. The keypair is staged once on the server and re-used for every run.
+
+### Running a Tamaraw experiment
+
+```bash
+cd src/simulation
+
+# Smoke test: 5 pages × 20 visits × 2 monitors, ~30 min wall-clock.
+python3 shadowctl.py run exp-tamaraw-smoke \
+    --pages 5 --visits 20 --monitors 2 --defense tamaraw
+
+# Full closed-world run matching exp-baseline-20, exp-padding-20, exp-reduced-20.
+python3 shadowctl.py run exp-tamaraw-20 \
+    --pages 20 --visits 80 --monitors 20 --defense tamaraw
+```
+
+The same `--pages`, `--visits`, `--monitors`, `--open-world`, `--correlation`
+flags work unchanged. Tamaraw parameters are tunable:
+
+```bash
+python3 shadowctl.py run exp-tamaraw-tuned \
+    --pages 20 --defense tamaraw \
+    --tamaraw-rho-client 12 --tamaraw-rho-server 4 --tamaraw-nseg 200
+```
+
+`--padding` and `--defense` are orthogonal, but if you set both `shadowctl.py`
+warns: Tamaraw's constant-rate scheduler dominates the on-wire packet pattern,
+so CircuitPadding's contribution is largely masked.
+
+### Verifying that Tamaraw is engaged
+
+After pull-results, three quick checks:
+
+1. Bridge bootstrapped:
+   `grep -E "Bootstrapped 100|tamaraw" exp-tamaraw-smoke/results/shadow.data/hosts/wfbridge0/tor.*.stdout`
+2. PT FSM transitions:
+   `grep -E "state.*Start|state.*Padding" exp-tamaraw-smoke/results/shadow.data/hosts/wfbridge0/pt_state/obfs4proxy.log`
+3. Constant-rate signature in monitor pcap — see Traffic-overhead measurement below.
+
+### Traffic-overhead measurement
+
+`src/ml/pcap_overhead.py` reads each monitor's pcap, segments it by the visit
+windows recorded in `schedule.json`, and reports bytes / packets sent in each
+direction per visit. Compare a defended run against a baseline to get the
+defense's overhead percentage.
+
+```bash
+cd src/ml && source venv/bin/activate
+
+# Per-visit summary of a single experiment.
+python3 pcap_overhead.py \
+    --schedule    ../simulation/exp-tamaraw-20/shadow.config.schedule.json \
+    --shadow-data ../simulation/exp-tamaraw-20/results/shadow.data/
+
+# Compare against a baseline (overhead vs. exp-baseline-20).
+python3 pcap_overhead.py \
+    --schedule    ../simulation/exp-tamaraw-20/shadow.config.schedule.json \
+    --shadow-data ../simulation/exp-tamaraw-20/results/shadow.data/ \
+    --baseline-schedule    ../simulation/exp-baseline-20/shadow.config.schedule.json \
+    --baseline-shadow-data ../simulation/exp-baseline-20/results/shadow.data/
+
+# Emit per-visit CSV for plotting.
+python3 pcap_overhead.py \
+    --schedule    ../simulation/exp-tamaraw-20/shadow.config.schedule.json \
+    --shadow-data ../simulation/exp-tamaraw-20/results/shadow.data/ \
+    --csv tamaraw_overhead.csv
+```
+
+The script also works on baseline / Circuit-Padding runs — useful for putting
+all four defense rows in the same overhead table.
+
 ## Technical Notes
 
 - **Adversary model:** ISP-level passive observer (sees encrypted Tor traffic at the client)

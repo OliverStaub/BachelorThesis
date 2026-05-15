@@ -52,7 +52,8 @@
       "Read(//opt/homebrew/**)",
       "Read(//usr/bin/**)",
       "Read(//root/.local/**)",
-      "Bash(apt-cache search *)"
+      "Bash(apt-cache search *)",
+      "Bash(xmllint --noout /Users/oliverstaub/gitroot/BachelorThesis/images/Diagrams.drawio)"
     ]
   }
 }

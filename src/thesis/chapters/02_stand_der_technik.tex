@@ -64,6 +64,7 @@ Abbildung~\ref{fig:onion_routing} veranschaulicht diesen Vorgang: Vom Client zum
 \end{figure}
 
 \subsection{Bedrohungsmodell}
+\label{sec:tor_bedrohungsmodell}
 
 Tor ist explizit nicht gegen einen globalen passiven Beobachter ausgelegt.
 Angenommen wird stattdessen ein Angreifer, der einen Teil des Netzverkehrs beobachten, Verkehr modifizieren oder verzögern, eigene Onion Router betreiben sowie einen Teil bestehender Router kompromittieren kann~\cite[S.~4]{dingledine2004tor}.
@@ -80,9 +81,71 @@ Genau in diese Lücke setzen spätere Arbeiten zum Circuit Padding an, das in de
 Das Tor-Projekt stellt mit dem Tor Browser eine modifizierte Variante von Firefox bereit, die für die Nutzung mit Tor optimiert ist und zusätzlich Browser-Fingerprinting erschwert~\cite{torprojectTorProjektPrivatsphre}.
 Der Browser greift via SOCKS auf den lokalen Tor-Daemon zu, welcher den Internetverkehr in Form von Tor-Zellen über das Tor-Netzwerk weiterleitet~\cite[S.~2]{jansen2023data}.
 
-\section{Angriffe auf Tor }
+\section{Angriffe auf Tor}
+\label{sec:angriffe_auf_tor}
+
+Das in Abschnitt~\ref{sec:tor_bedrohungsmodell} skizzierte Bedrohungsmodell von \gls{tor} schliesst einen globalen passiven Beobachter explizit aus und richtet sich gegen einen Angreifer mit einer Teilsicht auf das Netz~\cite[S.~4]{dingledine2004tor}.
+Innerhalb dieses Modells lassen sich Deanonymisierungsangriffe entlang zweier Achsen einordnen.
+Die erste Achse ist die Beobachtungsposition, also ob der Angreifer den Verkehr an einem Ende, an beiden Enden oder über Seitenkanäle erfasst.
+Die zweite Achse ist die Zielaussage, also ob die besuchte Webseite, die Identität der kommunizierenden Parteien oder der gewählte Pfad rekonstruiert werden soll.
+Der folgende Unterabschnitt ordnet die für diese Arbeit relevanten Angriffsklassen ein, anschliessend wird mit Traffic-Correlation der zentrale verwandte Angriff zu \gls{wf} genauer beschrieben.
+
+\subsection{Angriffsklassen im Überblick}
+
+Bei einem Website-Fingerprinting-Angriff beobachtet der Angreifer ausschliesslich die Verbindung zwischen Client und Eingangsknoten und kennt das Kommunikationsziel nicht.
+Aus dem Muster der verschlüsselten Zellsequenz wird inferiert, welche Webseite aus einer dem Angreifer im Voraus bekannten Menge aufgerufen wurde~\cite[S.~3]{jansen2023data}.
+Diese Angriffsklasse steht im Mittelpunkt der vorliegenden Arbeit und wird in Abschnitt~\ref{sec:website_fingerprinting} ausführlich behandelt.
+
+Bei einem Traffic-Correlation-Angriff beobachtet der Angreifer hingegen beide Enden eines anonymisierten Kommunikationspfads gleichzeitig.
+Aus den beiden Verkehrsspuren werden zueinander gehörende Flow-Paare identifiziert, womit eine direkte Verbindung zwischen Absender und Ziel hergestellt wird~\cite[S.~1962]{nasr2018deepcorr}.
+Da die Aussage nicht über eine bekannte Inhaltsmenge, sondern über eine Identitätszuordnung getroffen wird, lassen sich auf diesem Weg beliebige Ziele deanonymisieren, ohne dass diese im Voraus bekannt sein müssen.
+
+Eine dritte Klasse bilden Seitenkanal- und Latenzangriffe, die mit weniger weitreichenden Beobachtungsmöglichkeiten auskommen.
+Murdoch und Danezis zeigten bereits 2005, dass ein einzelner kompromittierter Tor-Knoten zusammen mit aktiven Latenzproben genügen kann, um die Auslastung anderer Relais zu schätzen und so wahrscheinliche Pfade zu rekonstruieren~\cite[S.~17]{crombe2016correlation}.
+Weitere Vertreter dieser Klasse sind Angriffe auf der Ebene von Autonomous Systems oder Internet Exchange Points, die durch ihre topologische Position eine Korrelation an beiden Enden begünstigen~\cite[S.~1963]{nasr2018deepcorr}, sowie Angriffe auf das Path-Selection- oder Entry-Guard-Verfahren.
+
+Im Rahmen dieser Arbeit wird ausschliesslich \gls{wf} experimentell untersucht.
+Die nachfolgende Beschreibung von Traffic-Correlation dient zwei Zwecken.
+Erstens lassen sich beide Angriffsklassen so methodisch sauber voneinander abgrenzen, was insbesondere bei der Bewertung von Circuit Padding wichtig ist.
+Zweitens wird damit der Stand der Forschung zu einem Angriff dokumentiert, der zwar nicht Gegenstand der eigenen Experimente ist, aber für die Einordnung der Schutzwirkung von Padding entscheidend bleibt.
+
+\subsection{Traffic-Correlation-Angriffe}
+\label{sec:traffic_correlation}
+
+Ein Traffic-Correlation-Angriff, in der Literatur auch Traffic Confirmation oder Ende-zu-Ende-Korrelation genannt, geht von einem Angreifer aus, der gleichzeitig den eingehenden Verkehr am Eingangsknoten und den ausgehenden Verkehr am Ausgangsknoten beobachtet.
+Beide Verkehrsspuren tragen trotz Onion-Verschlüsselung dieselben verkehrsstatistischen Merkmale wie Inter-Paket-Zeiten, Burst-Verläufe und Volumen pro Zeitfenster.
+Aufgabe des Angreifers ist es, aus $M$ ingress- und $N$ egress-Flows die zusammengehörenden Paare $(F_i, F_j)$ zu identifizieren~\cite[S.~1962\,f.]{nasr2018deepcorr}.
+Die benötigte Beobachtungsposition lässt sich durch den Betrieb eigener Guard- und Exit-Relais, durch eine entsprechende Stellung im Internet-Backbone oder durch eine Mischung beider Möglichkeiten erreichen~\cite[S.~1963]{nasr2018deepcorr}.
+
+Klassische Korrelationsverfahren beruhen auf allgemein einsetzbaren statistischen Distanz- oder Ähnlichkeitsmassen.
+Crombé et al.\ verglichen 2016 drei solche Verfahren in einer Shadow-Simulation mit jeweils 1000 gleichzeitig aktiven Clients pro Verkehrstyp~\cite[S.~28\,f.]{crombe2016correlation}.
+Das erste Verfahren ist eine zeitliche Aktivitätsanalyse nach Murdoch et al., bei der pro Sekunde eine binäre Aktivitätsindikatorfunktion gebildet und über die Zeit korreliert wird.
+Das zweite Verfahren ist ein Packet-Counting-Ansatz, der die Anzahl Tor-Zellen pro Zeitfenster zählt und über die euklidische Distanz vergleicht.
+Das dritte Verfahren ist die normalisierte Pearson-Kreuzkorrelation über die Zellzahlen pro Zeitfenster.
+In dieser Auswertung erreichten die drei Verfahren je nach Verkehrstyp und Methode Equal Error Rates im einstelligen Prozentbereich, wobei sich die Kreuzkorrelation als robusteste Methode erwies und auch gegenüber dem realistischeren Blind-Adversary-Modell die besten Ergebnisse lieferte~\cite[S.~43,~48]{crombe2016correlation}.
+
+Bei realistischer Skalierung gelten diese klassischen Verfahren als nur eingeschränkt einsetzbar, da \gls{tor} durch Congestion und Repacketisierung erhebliches Rauschen in die Verkehrsspuren einbringt~\cite[S.~1962]{nasr2018deepcorr}.
+Nasr, Bahramali und Houmansadr stellten 2018 mit DeepCorr ein Verfahren vor, das diese Limitation umgeht, indem die Korrelationsfunktion nicht aus allgemeinen Statistiken gebildet, sondern als \gls{cnn} direkt aus Live-Tor-Daten gelernt wird~\cite[S.~1962]{nasr2018deepcorr}.
+Eingabe des Netzes sind die Inter-Paket-Zeiten und Paketgrössen beider Flow-Segmente, organisiert in einem mehrkanaligen Tensor.
+Zwei Convolution-Schichten extrahieren pro Richtung lokale Korrelationsmuster, anschliessend kombinieren zwei vollverbundene Schichten beide Richtungen zu einer Korrelationswahrscheinlichkeit zwischen Null und Eins~\cite[S.~1965\,f.]{nasr2018deepcorr}.
+Trainiert wurde das System auf rund 25'000 assoziierten und etwa $6{,}2 \cdot 10^8$ nicht-assoziierten Flow-Paaren, die durch das Aufrufen der 50'000 populärsten Alexa-Webseiten über das Live-Tor-Netzwerk erzeugt wurden~\cite[S.~1967]{nasr2018deepcorr}.
+
+In dieser Auswertung erreicht DeepCorr mit nur 300 Paketen pro Flow eine True-Positive-Rate von rund 80\,\% bei einer False-Positive-Rate von $10^{-3}$, während das bis dahin führende Verfahren RAPTOR im identischen Setting eine True-Positive-Rate von etwa 4\,\% erzielt~\cite[S.~1968]{nasr2018deepcorr}.
+Die benötigte Beobachtungsdauer schrumpft damit von mehreren Minuten und mehreren hundert Megabyte pro Flow auf wenige Sekunden und unter ein Megabyte.
+Ein einmal trainiertes Modell bleibt nach Angaben der Autoren rund drei Wochen lang einsatzfähig, bevor sich die Verteilung des Tor-Verkehrs so weit verändert, dass ein Nachtrainieren empfehlenswert wird~\cite[S.~1969]{nasr2018deepcorr}.
+
+Für die vorliegende Arbeit ist Traffic-Correlation aus zwei Gründen relevant.
+Erstens grenzt sich der Angriff methodisch klar von \gls{wf} ab.
+Während \gls{wf} eine im Voraus bekannte Zielmenge benötigt und nur an einem Ende des Pfads operiert, erkennt Traffic-Correlation beliebige Verbindungen, sofern beide Enden beobachtet werden~\cite[S.~1964]{nasr2018deepcorr}.
+Zweitens hat diese Abgrenzung unmittelbare Konsequenzen für die Schutzwirkung von Circuit Padding.
+Padding fügt seinen Schein-Verkehr ausschliesslich auf den Tor-internen Verbindungen ein und adressiert damit primär den realistischen, einseitig beobachtenden Angreifer, wie er bei \gls{wf} angenommen wird.
+Ein Traffic-Correlation-Angreifer verfügt hingegen ohnehin über die egress-seitige, ungepadderte Verkehrsspur, sodass Padding diesen Angriffspfad nur begrenzt entschärfen kann.
+Eine wirksame Verteidigung gegen lernbasierte Verfahren wie DeepCorr setzt deutlich aufwändigere Massnahmen voraus, etwa volles Link-Padding oder Tamaraw-artige Traffic-Shaping-Verfahren mit konstanten Sende-Intervallen (vgl.\ Abschnitt~\ref{sec:wf_defenses_tamaraw})~\cite[S.~228]{cai2014systematic}.
+Solche Verfahren werden im \gls{tor}-Netz aufgrund des erheblichen Bandbreiten- und Latenz-Overheads nicht ausgerollt, was auch die Autoren von DeepCorr explizit als ungelöstes Spannungsfeld zwischen Anonymität, Kosten und Dienstgüte beschreiben~\cite[S.~1972\,f.]{nasr2018deepcorr}.
+Die Beschränkung der vorliegenden Arbeit auf \gls{wf} und Circuit Padding spiegelt damit ein bewusst gewähltes Bedrohungsmodell wider, das den im realen Tor-Betrieb tatsächlich eingesetzten Schutzmechanismus gegen den am häufigsten dokumentierten Angreifertyp evaluiert.
 
 \section{Website Fingerprinting}
+\label{sec:website_fingerprinting}
 
 \gls{wf} Angriffe versuchen, trotz \gls{tor}-Verschlüsselung herauszufinden, welche Webseite ein Nutzer aufgerufen hat.
 Der Angreifer zeichnet dazu den Datenverkehr zwischen Client und Eingangsknoten auf, entweder als Betreiber des Eingangsknotens~\cite[S.~3]{jansen2023data} oder als passiver lokaler Beobachter~\cite[S.~1]{wang2016realistically}.
@@ -239,7 +302,92 @@ Durch lokale Tests wurde verifiziert, dass wget2 und der Tor Browser einen ident
 Die gepatchte wget2-Version ist im Artefakt-Repository der Autoren öffentlich verfügbar.
 
 
-\section{Circuit Padding}
+\section{Website-Fingerprinting-Verteidigungen}
+\label{sec:wf_defenses}
+
+In den vorigen Abschnitten wurde \gls{wf} als Angriffsklasse, der Klassifikator Deep Fingerprinting sowie das Closed- und Open-World-Szenario behandelt.
+Der folgende Abschnitt schliesst diese Vorbetrachtung mit den korrespondierenden Verteidigungen ab.
+Drei Verfahren werden vorgestellt: Tamaraw als Vertreter bandbreitenintensiver Traffic-Shaping-Lösungen, \gls{wtfpad} als ressourcenschonende Vorlage und das in Tor real ausgerollte Circuit Padding, dessen drei Konfigurationen in den Experimenten dieser Arbeit verglichen werden.
+
+\subsection{Trade-off zwischen Sicherheit und Overhead}
+\label{sec:wf_defenses_tradeoff}
+
+Eine \gls{wf}-Verteidigung verändert die für den Klassifikator charakteristischen Merkmale einer Zellsequenz, also Reihenfolge, Volumen und Inter-Paket-Zeiten, so dass unterschiedliche Webseiten weniger unterscheidbar werden~\cite[S.~229\,f.]{cai2014systematic}.
+Zwei Hebel stehen dafür zur Verfügung.
+Erstens das Einfügen zusätzlicher Dummy-Zellen (Padding), was die belegte Bandbreite erhöht.
+Zweitens das Verzögern realer Zellen (Delay), was die Latenz erhöht.
+
+Für Tor, dessen Designziel eine niedrige Latenz für interaktive Anwendungen vorsieht, scheidet der zweite Hebel weitgehend aus~\cite[S.~5]{kadianakis2021tor}.
+Cai et al.\ zeigen zudem für reine Bandbreiten-Verteidigungen eine prinzipielle untere Schranke: Jede Verteidigung, die ein gegebenes Sicherheitsniveau erreicht, muss mindestens eine bestimmte Bandbreitenmenge investieren~\cite[S.~233\,f.]{cai2014systematic}.
+Konkrete Verteidigungen lassen sich anhand dieser Schranke entlang eines Spektrums einordnen, das von hoher Sicherheit bei hohem Overhead bis zu moderater Sicherheit bei geringem Overhead reicht.
+Die folgenden Unterabschnitte behandeln drei etablierte Vertreter, die das in Tor tatsächlich eingesetzte Verfahren motivieren und einordnen.
+
+\subsection{Tamaraw}
+\label{sec:wf_defenses_tamaraw}
+
+Tamaraw wurde 2014 von Cai et al.\ als Weiterentwicklung des Buffered Fixed Length Obfuscator (BuFLO) vorgeschlagen~\cite[S.~235]{cai2014systematic}.
+Pakete werden in einer festen Grösse von 750~Byte versendet, und der Versand erfolgt pro Richtung mit einem konstanten Sende-Intervall, wobei eingehende und ausgehende Richtung asymmetrisch parametrisiert sind ($\rho_{\text{out}} \neq \rho_{\text{in}}$).
+Reale Daten werden bei Bedarf bis zum nächsten Sende-Slot zurückgehalten, leere Slots durch Dummy-Pakete aufgefüllt.
+Zur Beendigung einer Übertragung wartet Tamaraw nicht auf den Ablauf eines Mindestzeitfensters, sondern füllt die Gesamtanzahl gesendeter Pakete pro Richtung auf ein Vielfaches eines Parameters $L$ auf~\cite[S.~235\,f.]{cai2014systematic}.
+Auf diese Weise werden Seiten ähnlicher Grösse in identischen Anonymitäts-Buckets gruppiert.
+
+In der Auswertung von Cai et al.\ erreicht Tamaraw bei einem geschlossenen 800-Seiten-Experiment ein Sicherheitsniveau von $\epsilon = 3{,}4\,\%$ bei rund $199\,\%$ Bandbreiten-Overhead~\cite[S.~228]{cai2014systematic}.
+Damit liegt das Verfahren nahe an der theoretischen unteren Schranke für nicht-uniforme Sicherheit, ist aber durch die systematische Verzögerung realer Zellen für Tors low-latency-Designziel ungeeignet~\cite[S.~5]{kadianakis2021tor}.
+In der vorliegenden Arbeit dient Tamaraw deshalb ausschliesslich als Referenzpunkt für die obere Wirksamkeitsgrenze von Bandbreiten-Verteidigungen und wird nicht selbst experimentell ausgewertet.
+
+\subsection{WTF-PAD}
+\label{sec:wf_defenses_wtfpad}
+
+\gls{wtfpad} wurde 2015 von Juarez, Imani, Perry, Diaz und Wright vorgeschlagen und bildet die methodische Grundlage für die später in Tor deployten Padding-Mechanismen~\cite[S.~1]{juarez2015wtf}.
+Konzeptionell beruht das Verfahren auf dem allgemeineren Ansatz Adaptive Padding von Shmatikov und Wang, der ursprünglich gegen Ende-zu-Ende-Verkehrsanalysen entwickelt wurde~\cite[S.~5]{juarez2015wtf}.
+Der zentrale Unterschied zu Tamaraw besteht darin, dass reale Zellen nicht verzögert werden, sodass kein Latenz-Overhead entsteht~\cite[S.~5]{juarez2015wtf}.
+
+Der Mechanismus ist als endlicher Zustandsautomat realisiert, der pro Endpunkt zwei Hauptzustände kennt, einen Burst-Modus ($B$) und einen Gap-Modus ($G$)~\cite[S.~6]{juarez2015wtf}.
+Sobald eine reale Zelle versendet wird, zieht der Automat einen Inter-Paket-Delay $t$ aus einem Histogramm $H_B$, das aus typischen Burst-Verläufen eines grossen Referenzdatensatzes geschätzt wurde.
+Trifft vor Ablauf von $t$ eine weitere reale Zelle ein, wird sie unmittelbar weitergeleitet und ein neuer Delay-Wert gezogen.
+Läuft $t$ stattdessen ab, sendet der Automat eine Dummy-Zelle und wechselt in den Gap-Modus, in dem ein zweites Histogramm $H_G$ den Versand fingierter Burst-Sequenzen steuert.
+Statistisch unauffällige Lücken zwischen echten Bursts werden so durch Padding aufgefüllt, ohne dass die Anwendungsschicht ausgebremst wird~\cite[S.~5\,f.]{juarez2015wtf}.
+
+In einer geschlossenen Auswertung gegen den seinerzeit stärksten Angreifer reduziert \gls{wtfpad} die Trefferquote von rund $91\,\%$ auf etwa $20\,\%$ bei einem Bandbreiten-Overhead von weniger als $60\,\%$~\cite[S.~1]{juarez2015wtf}.
+Damit liegt das Verfahren deutlich näher am Anforderungsprofil von Tor als die BuFLO-Familie und stellt die direkte Vorlage für das im folgenden Abschnitt beschriebene Circuit-Padding-System dar.
+
+\subsection{Tor Circuit Padding}
+\label{sec:wf_defenses_torpadding}
+
+\subsubsection{Adaptive-Padding-Framework}
+
+Aufbauend auf der Adaptive-Padding-Idee von \gls{wtfpad} beschreiben Kadianakis et al.\ ein generisches Padding-Framework, das seit Tor 0.4.0 fester Bestandteil des Tor-Daemons ist und in der vorliegenden Arbeit experimentell ausgewertet wird~\cite[S.~4\,f.]{kadianakis2021tor}.
+Im Zentrum stehen \emph{Padding-Maschinen}, die als endliche Automaten in C definiert sind und das Senden von Dummy-Zellen in Abhängigkeit von Ereignissen wie eintreffenden Zellen, abgelaufenen Timern oder Zustandsübergängen steuern~\cite[S.~4]{kadianakis2021tor}.
+Jeder Zustand definiert eigene Verteilungen für Inter-Paket-Delays sowie Bedingungen für den Übergang in einen anderen Zustand und kann auf eine bestimmte Zellzahl beschränkt werden.
+
+Bevor eine Padding-Maschine auf einem Circuit aktiv wird, einigen sich Client und Relais über eine spezielle Padding-Negotiation-Zelle, welche Maschinen unterstützt und aktiv sind~\cite[S.~4]{kadianakis2021tor}.
+Diese Aushandlung erlaubt die schrittweise Ausrollung neuer Verteidigungen, ohne ältere Tor-Versionen zu brechen, und stellt einen wesentlichen Unterschied zum Pluggable-Transport-Ansatz des ursprünglichen \gls{wtfpad}-Prototyps dar.
+
+Ein bewusst gewähltes Design-Prinzip lautet, dass das Framework reale Anwendungs-Zellen nicht verzögert.
+Schutz entsteht ausschliesslich über das Einfügen zusätzlicher Dummy-Zellen~\cite[S.~5]{kadianakis2021tor}.
+Diese Einschränkung folgt direkt aus dem low-latency-Designziel von Tor und positioniert das Verfahren am unteren Ende des in Abschnitt~\ref{sec:wf_defenses_tradeoff} skizzierten Trade-off-Spektrums, mit minimaler Latenz-Auswirkung, moderatem Bandbreiten-Overhead und entsprechend begrenzter, aber praktisch ausrollbarer Sicherheitswirkung.
+Stärkere Verfahren wie Tamaraw (Abschnitt~\ref{sec:wf_defenses_tamaraw}) liegen damit ausserhalb des für Tor zulässigen Designraums.
+
+Die zum Zeitpunkt dieser Arbeit standardmässig in Tor ausgerollten Padding-Maschinen zielen primär auf den Schutz von Onion-Service-Schaltkreisen vor Circuit-Fingerprinting-Angreifern.
+Sie maskieren die Zellsequenzen von Introduction- und Rendezvous-Handshakes, indem sie diese den Mustern von Verzeichnisabfragen angleichen~\cite[S.~5\,f.]{kadianakis2021tor}.
+Auch wenn diese Maschinen nicht primär gegen \gls{wf} entwickelt wurden, verändern sie durch das Einstreuen zusätzlicher Zellen die für \gls{wf}-Klassifikatoren sichtbaren Verkehrsmuster.
+Damit lässt sich der Effekt des deployten Padding-Systems auch im \gls{wf}-Szenario experimentell messen, was Gegenstand der vorliegenden Arbeit ist.
+
+\subsubsection{Padding-Modi off, on und reduced}
+
+Die in dieser Arbeit verglichenen Padding-Konfigurationen werden über zwei Optionen in der torrc-Datei der simulierten Tor-Clients gesteuert.
+Diese drei Konfigurationen bilden die unabhängige Variable des experimentellen Vergleichs.
+
+Der Modus \texttt{off} entspricht der Einstellung \texttt{CircuitPadding 0} und deaktiviert sämtliche Padding-Maschinen.
+Er bildet die Baseline ohne Verteidigung ab und entspricht in der Wirkung dem ursprünglichen Tor-Design von Dingledine et al., das explizit auf Padding verzichtete~\cite[S.~1]{dingledine2004tor}.
+
+Der Modus \texttt{on} aktiviert mit \texttt{CircuitPadding 1} die im Tor-Konsens aktuell deployten Standard-Maschinen, also primär die im vorigen Unterabschnitt beschriebenen Onion-Service-Schutzmaschinen.
+
+Der Modus \texttt{reduced} kombiniert \texttt{CircuitPadding 1} mit der zusätzlichen Option \texttt{ReducedCircuitPadding 1}.
+Diese Option ist für mobile oder bandbreitenschwache Clients vorgesehen und reduziert Anzahl und Intensität der aktiven Padding-Maschinen, sodass der Bandbreiten-Overhead sinkt.
+Erwartungsgemäss lägen die Verteidigungseffekte daher zwischen \texttt{off} und \texttt{on}, was im Rahmen der Arbeit für unterschiedliche Datensatzgrössen experimentell überprüft wird.
+
+Die konkrete technische Umsetzung dieser drei Konfigurationen im Shadow-Simulator inklusive der automatisierten Generierung der zugehörigen torrc-Dateien wird im Realisierungskapitel beschrieben.
 
 \todo{WFLib einführen}
 \todo{Schaltkreis vs circuit}
@@ -247,7 +395,6 @@ Die gepatchte wget2-Version ist im Artefakt-Repository der Autoren öffentlich v
 \todo{Gute Einführung zu Tor schreiben.}
 \todo{Abgrenzung Snowflake / Website Fingerprinting}
 \todo{Website Fingerprinting Attacke beschreiben https://arxiv.org/html/2510.11804v2}
-\todo{WTF-PAD einführen und beschreiben!}
 \todo{Tgen beschreiben}
 \todo{TCP Paket mit einer Tor Zelle aufzeigen und Vergleichen wie es funktioniert und wo die Unterschiede liegen.}
 \todo{Website Fingerprinting Angriffe in der echten Welt}
