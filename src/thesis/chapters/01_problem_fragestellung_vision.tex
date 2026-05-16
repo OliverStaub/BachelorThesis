@@ -1,53 +1,53 @@
 \chapter{Problem, Fragestellung, Vision}
 \label{cha:problem_fragestellung_vision}
 
-\section{Ausgangslage}
-
-\gls{tor} ist ein verteiltes Overlay-Netzwerk mit niedriger Latenz, das den eigenen Internetzugang gegenüber lokalen Beobachtern, dem Internet Service Provider und einzelnen Knoten im Netzwerk anonymisieren soll~\cite[S.~1\,f.]{dingledine2004tor}.
-Geschätzt wird das Netzwerk täglich von mehreren Millionen Personen verwendet~\cite[S.~1]{mani2018understanding}, was es zu einem attraktiven Ziel für unterschiedliche Klassen von Deanonymisierungsangriffen macht.
-
-Eine dieser Klassen ist \gls{wf}.
-Dabei zeichnet ein lokaler, passiver Beobachter zwischen Client und Eingangsknoten Verkehrsmuster wie Paketrichtung, Anzahl und Zeitstempel auf und schliesst daraus auf die besuchte Webseite~\cite[S.~1\,f.]{wang2016realistically}.
-Mit \gls{df} hat sich diese Angriffsklasse als praktikabel erwiesen, da ein tiefes \gls{cnn} aus Richtungsfolgen ohne aufwändiges Feature-Engineering hohe Erkennungsraten erzielt~\cite[S.~1929\,f.]{sirinam2018deep}.
-
-Als Gegenmassnahme integrierte das \gls{tor}-Projekt 2019 das sogenannte Circuit Padding.
-Es fügt zwischen Client und Mittelknoten adaptive Dummy-Zellen ein und verändert damit das beobachtbare Verkehrsmuster, ohne nennenswerten Bandbreiten-Overhead zu erzeugen~\cite[S.~180\,f.]{kadianakis2021tor}.
-Inwieweit dieser Mechanismus moderne \gls{df}-Angriffe tatsächlich abschwächt, ist in der Literatur bislang nur punktuell quantifiziert.
-
 \section{Problemstellung}
 
-Bisherige Auswertungen von \gls{wf}-Angriffen wurden überwiegend mit eigens aufgezeichneten Crawl-Datensätzen ohne ausgerolltes Padding durchgeführt oder beruhen auf rein analytischen Annahmen über das Verteidigungsverhalten.
-Eine kontrollierte, vollständig reproduzierbare Messung der Erkennungsrate unter verschiedenen Padding-Stufen, bei gleichzeitig konsistenter Netzwerktopologie und identischen Zielseiten, fehlt für das produktiv ausgerollte Circuit Padding weitgehend.
+Das \gls{tor}-Netzwerk anonymisiert Verbindungen, indem Pakete über mehrere verschlüsselte Relays geleitet werden.
+Trotz dieses Schutzes zeigen \gls{wf}-Angriffe, dass ein passiver Beobachter zwischen Client Eingangsknoten besuchte Webseiten allein anhand der Paketrichtungen und Zeitverläufe zuordnen kann.
+Mit dem Deep-Learning-Verfahren \gls{df} werden in Closed-World-Studien Erkennungsraten von über 95~\% berichtet \cite{sirinam2018deep}.
 
-Mit dem Netzwerksimulator Shadow~\cite[S.~1]{jansen2011shadow} steht ein deterministisches Werkzeug bereit, das \gls{tor}-Netzwerke lokal und reproduzierbar abbildet.
-Jansen und Wails haben gezeigt, dass darin durchgeführte \gls{wf}-Experimente vergleichbare Resultate wie reale Crawls liefern~\cite[S.~559]{jansen2023data}.
-Diese Eigenschaft erlaubt es, die unabhängige Variable Padding-Modus isoliert zu variieren und die Auswirkungen auf die Erkennungsrate sauber zu messen.
+Als Gegenmassnahme integriert das Tor-Projekt seit Version 0.4 ein Circuit-Padding-Framework, das zusätzliche Zellen in den Verkehrsstrom einfügt \cite{kadianakis2021tor}.
+
+Der Netzwerksimulator Shadow ermöglicht es, ein vollständiges, deterministisches \gls{tor}-Netzwerk auf einer einzelnen Maschine zu betreiben \cite{jansen2011shadow}.
+In dieser Umgebung lassen sich Padding-Konfigurationen unter sonst identischen Bedingungen vergleichen.
+
+Die Wirksamkeit dieses produktiv ausgelieferten Schutzes gegen moderne \gls{df}-Angriffe ist bisher nur eingeschränkt untersucht.
+Bestehende Studien stützen sich überwiegend auf Aufzeichnungen aus dem Live-Netzwerk oder auf vereinfachte Cell-Trace-Modelle, wodurch eine kontrollierte Variation einzelner Konfigurationen erschwert wird.
+
+
+Hardwareanforderung einer kleineren Simulation war jetzt nicht ganz klar ?
+
+
+Im Verlauf der Literaturrecherche zu dieser Arbeit rückten zusätzlich stärker eingreifende Schutzverfahren wie Tamaraw in den Fokus, die den Verkehrsstrom in feste Zeit- und Grössenraster zwingen \cite{cai2014systematic}.
 
 \section{Fragestellung}
 
-Aus der Aufgabenstellung (Anhang~\ref{app:aufgabenstellung}) ergeben sich für diese Arbeit zwei Forschungsfragen.
+Die ursprüngliche Aufgabenstellung (Anhang~\ref{app:aufgabenstellung}) zielt auf den Aufbau einer Shadow-Simulation und die Auswertung des Tor-internen Circuit Padding.
+Tamaraw wurde erst während der Erarbeitung dieser Arbeit als naheliegender Vergleichspunkt identifiziert und in Absprache mit dem Auftraggeber als ergänzender, exploratorischer Teil aufgenommen.
+Daraus ergeben sich die folgenden Forschungsfragen.
 
 \begin{enumerate}
-    \item Wie verändert sich die Erkennungsrate von \gls{df}-Angriffen unter unterschiedlichen Konfigurationen des \gls{tor} Circuit Padding (deaktiviert, voll aktiviert, reduziert)?
-    \item Welche bekannten Limitationen simulierter und laborbasierter \gls{wf}-Angriffe sind in der Literatur dokumentiert, und wie sind die experimentellen Ergebnisse dieser Arbeit in diesen Kontext einzuordnen?
+    \item Wie verändert sich die Erkennungsrate eines \gls{df}-Angriffs unter den drei in \gls{tor} produktiv konfigurierbaren Modi des Circuit Padding (deaktiviert, voll aktiviert, reduziert), gemessen in einer Shadow-Simulation auf der \gls{hslu}-Infrastruktur?
+    \item In welchem Verhältnis stehen die in der Simulation gemessenen Effekte zu den in der Literatur dokumentierten Limitationen simulierter und laborbasierter \gls{wf}-Studien?
+    \item Welche zusätzliche Schutzwirkung lässt sich in derselben Simulationsumgebung durch das stärker eingreifende Tamaraw-Verfahren erzielen, und mit welchem Bandbreitenaufschlag ist sie verbunden?
 \end{enumerate}
 
 \section{Vision und erwartete Resultate}
 
-Die Arbeit verfolgt das Ziel, den Einfluss von Circuit Padding auf \gls{df}-Angriffe unter kontrollierten Laborbedingungen empirisch zu quantifizieren und die Ergebnisse in den bestehenden Stand der Forschung einzuordnen.
+Ziel der Arbeit ist es, den Einfluss von Circuit Padding und ergänzend von Tamaraw auf \gls{df}-Angriffe unter kontrollierten Laborbedingungen empirisch zu quantifizieren und die Ergebnisse in den Stand der Forschung einzuordnen.
 Im Einzelnen werden folgende Resultate angestrebt.
 
 \begin{itemize}
-    \item Eine reproduzierbare Shadow-Simulationsumgebung in einer VM der \gls{hslu}-Infrastruktur, die ein verkleinertes \gls{tor}-Netzwerk inklusive Verkehrslast abbildet.
-    \item Ein in dieser Umgebung erhobenes \gls{wf}-Datenset aus \glspl{pcap} der Eingangsknoten, das für verschiedene Padding-Konfigurationen vergleichbar ist.
-    \item Ein mit dem Werkzeug WFlib durchgeführter \gls{df}-Angriff, dessen Erkennungsrate über Padding-Modi, Klassenzahl und Closed- gegenüber Open-World-Szenario hinweg ausgewertet wird.
-    \item Eine Diskussion der gemessenen Effekte vor dem Hintergrund dokumentierter Limitationen simulierter \gls{wf}-Studien.
+    \item Eine reproduzierbare Shadow-Simulationsumgebung in einer Linux-VM der \gls{hslu}-Infrastruktur, die ein verkleinertes \gls{tor}-Netzwerk inklusive Hintergrundlast abbildet.
+    \item Ein in dieser Umgebung erhobenes \gls{wf}-Datenset aus \glspl{pcap} der Eingangsknoten, das für die drei Padding-Konfigurationen vergleichbar ist und sowohl Closed-World- als auch Open-World-Szenarien abdeckt.
+    \item Ein mit der Bibliothek WFlib durchgeführter \gls{df}-Angriff, dessen Erkennungsrate über Padding-Modi, Klassenzahl und Szenario hinweg ausgewertet wird.
+    \item Eine ergänzende, exploratorische Messreihe zum Tamaraw-Verfahren in derselben Umgebung, die Schutzwirkung und Bandbreitenaufschlag gegenüberstellt.
+    \item Eine Einordnung der gemessenen Effekte vor dem Hintergrund dokumentierter Limitationen simulierter \gls{wf}-Studien.
 \end{itemize}
 
-\section{Relevanz und Beteiligte}
-
-Für Nutzerinnen und Nutzer von \gls{tor} ist die Wirksamkeit von Circuit Padding sicherheitsrelevant, da sie unmittelbar bestimmt, wie zuverlässig der eigene Browsing-Verlauf gegenüber lokalen Beobachtern verborgen bleibt.
-Für das \gls{tor}-Projekt sowie für die Forschungsgemeinschaft im Bereich Anonymitätsnetze liefert eine quantitative Messung unter reproduzierbaren Bedingungen eine zusätzliche Datengrundlage zur Beurteilung der aktuell ausgerollten Verteidigung.
-Für die \gls{hslu} entsteht ein erweiterbarer Laboraufbau, der für nachfolgende Arbeiten zu \gls{wf}, Traffic-Correlation und verwandten Fragestellungen weiterverwendet werden kann.
+\section{Aufgabenstellung}
 
 Die vollständige, vom Auftraggeber unterzeichnete Aufgabenstellung findet sich in Anhang~\ref{app:aufgabenstellung}.
+Sie umfasst den Aufbau der Shadow-Simulation und die Auswertung des Circuit Padding.
+Die exploratorische Erweiterung um Tamaraw wurde während der Arbeit in Absprache mit dem Auftraggeber ergänzt.
