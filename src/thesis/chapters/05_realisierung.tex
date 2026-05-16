@@ -5,6 +5,10 @@ In diesem Kapitel wird beschrieben, wie der in Kapitel~\ref{cha:methoden} skizzi
 Der Schwerpunkt liegt auf der Dokumentation der getroffenen Entscheidungen und ihrer Begründung, sodass die Experimente unabhängig nachvollzogen und auch kritisch hinterfragt werden können.
 Die Reihenfolge der Abschnitte orientiert sich an dem Datenfluss der Pipeline: von der Konfiguration der \gls{tor}-Simulation über die Bereitstellung der Webinhalte, die Aufzeichnung des Datenverkehrs und die Aufbereitung der Daten bis hin zum Training und Test des Klassifikators.
 
+Sämtliche Skripte, Konfigurationsvorlagen und Auswertungs-Notebooks der hier beschriebenen Pipeline sind im begleitenden Repository\footnote{\url{https://github.com/OliverStaub/BachelorThesis}} öffentlich verfügbar.
+Im Folgenden werden ausschliesslich diejenigen Bestandteile dokumentiert, die für das Verständnis der Designentscheidungen und ihrer Wirkung auf die Messresultate notwendig sind.
+Implementierungsdetails, die für die Reproduktion durchgeführt, aber für die Argumentation nicht zentral sind, befinden sich im Repository und werden im Text nur dort genannt, wo sie eine Entscheidung tragen.
+
 \section{Übersicht des Versuchsaufbaus}
 \label{sec:realisierung_uebersicht}
 
@@ -48,18 +52,39 @@ Eine deutlich kleinere Skalierung ist deshalb nicht primär eine inhaltliche Ent
 
 \subsection{Werkzeugkette}
 
-Die in dieser Arbeit verwendete Werkzeugkette setzt sich aus mehreren Komponenten zusammen, die jeweils eine eng definierte Aufgabe erfüllen:
+Die Werkzeugkette gliedert sich in extern bezogene Komponenten und eigens für diese Arbeit entwickelte Skripte.
+Als externe Komponenten kommen zum Einsatz:
 
 \begin{itemize}
     \item Shadow~\cite{jansen2011shadow,netsim-atc2022} simuliert das \gls{tor}-Netzwerk (Begründung der Wahl: Abschnitt~\ref{sec:konzepte_simulator}).
     \item Tornettools~\cite{neverenough-sec2021} erzeugt aus den öffentlichen Tor-Metrik-Daten eine repräsentative Shadow-Konfiguration.
-    \item \texttt{generate-wf-config.py} erweitert die Shadow-Konfiguration um die für das \gls{wf}-Experiment notwendigen Hosts (Monitore, Webserver) und schreibt die Besuchsplanung in \texttt{schedule.json}.
-    \item \texttt{shadowctl.py} steuert den Lebenszyklus eines Experiments (Generierung, Start, Statusabfrage, Pull der Resultate).
-    \item \texttt{zimsrv.py} stellt im Inneren der Simulation die Wikipedia-Inhalte bereit.
-    \item \texttt{wget2} (mit dem \gls{socks}-Patch von Jansen und Wails~\cite[S.~5]{jansen2023data}) lädt im Inneren der Simulation die Webseiten über \gls{tor} herunter.
-    \item \texttt{pcap\_to\_npz.py} extrahiert aus den aufgezeichneten Pcaps die Zellrichtungssequenzen pro Besuch.
-    \item WFlib bietet als Python-Bibliothek\footnote{\url{https://github.com/Xinhao-Deng/Website-Fingerprinting-Library}} eine Implementierung des \gls{df}-Klassifikators in PyTorch und steuert Training, Validierung und Test.
+    \item \texttt{wget2} mit dem \gls{socks}-Patch von Jansen und Wails~\cite[S.~5]{jansen2023data} lädt im Inneren der Simulation die Webseiten über \gls{tor} herunter.
+    \item WFlib\footnote{\url{https://github.com/Xinhao-Deng/Website-Fingerprinting-Library}} stellt eine Implementierung des \gls{df}-Klassifikators in PyTorch bereit und steuert Training, Validierung und Test.
 \end{itemize}
+
+Die eigens entwickelten Skripte sind in Tabelle~\ref{tab:werkzeugkette_skripte} mit Aufgabe sowie ihren Ein- und Ausgaben zusammengefasst.
+Designentscheidungen, die einzelne Skripte betreffen, werden in den folgenden Abschnitten dort vertieft, wo sie inhaltlich verankert sind.
+
+\begin{table}[H]
+\centering
+\footnotesize
+\caption{Eigens entwickelte Pipeline-Skripte mit Aufgabe und Datenfluss.}
+\label{tab:werkzeugkette_skripte}
+\begin{tabular}{llll}
+\hline
+Skript & Aufgabe & Eingabe & Ausgabe \\
+\hline
+\texttt{shadowctl.py}          & Lebenszyklus eines Experiments     & CLI-Optionen                          & Logs, Ergebnis-Bundle \\
+\texttt{generate-wf-config.py} & Monitore und Webserver eintragen   & Tornettools-Config, \texttt{urls.txt} & \texttt{shadow.config.yaml}, \texttt{schedule.json} \\
+\texttt{generate-urls.py}      & Zufallsstichprobe aus ZIM          & ZIM-Datei                             & \texttt{urls.txt} \\
+\texttt{zimsrv.py}             & Wikipedia in der Simulation ausliefern & ZIM-Datei                         & HTTP-Antworten \\
+\texttt{newnym.py}             & Frischen Tor-Circuit erzwingen     & Tor-Control-Port                      & NEWNYM-Signal \\
+\texttt{pcap\_to\_npz.py}      & Pcaps in WFlib-Format konvertieren & Monitor-Pcaps, \texttt{schedule.json} & \texttt{.npz}, \texttt{labels.json} \\
+\texttt{run\_df.sh}            & Training und Auswertung steuern    & \texttt{.npz}                         & Modell, Metriken \\
+\texttt{report.py}             & Ergebnis-JSON aggregieren          & Ergebnis-JSON                         & \texttt{ExperimentLogs.csv} \\
+\hline
+\end{tabular}
+\end{table}
 
 Die Aufteilung in mehrere kleine, voneinander unabhängige Skripte erlaubt es, einzelne Phasen der Pipeline gezielt erneut auszuführen, ohne den vorgelagerten und sehr zeitintensiven Simulationslauf zu wiederholen.
 
@@ -70,7 +95,7 @@ Die genaue Form der Nutzung sowie die zugehörige Erklärung sind in Abschnitt~\
 \subsection{Generierung der Topologie mit Tornettools}
 
 Die Shadow-Konfiguration wird mit Tornettools aus den Tor-Metriken (Konsensdokumente, Server-Deskriptoren, OnionPerf-Messungen, Bandbreitenwerte) eines frei wählbaren Monats erzeugt~\cite{neverenough-sec2021}.
-In der vorliegenden Arbeit wird durchgehend der Monat Januar 2025 verwendet, der Standardeinstellung des Steuerungsskripts \texttt{shadowctl.py}.
+In der vorliegenden Arbeit wird durchgehend der Monat Januar 2025 verwendet, die Standardeinstellung der Steuerungsskripte.
 
 Die Tor-Netzwerkgrösse wird auf 1\,\% (\texttt{--network\_scale 0.01}) skaliert, was rund 79~Relais, drei Verzeichnisserver und ungefähr 100~Hintergrund-Clients ergibt~\cite[S.~3\,f.]{neverenough-sec2021,mani2018understanding}.
 Die Begründung der Skalierung und ihre methodischen Konsequenzen sind in Abschnitt~\ref{sec:konzepte_skalierung} dargestellt.
@@ -222,7 +247,7 @@ Pro Seite (also pro Port) wird ein separater Prozess gestartet, was die spätere
 \subsection{Auswahl der URLs}
 \label{sec:realisierung_urls}
 
-Die Liste der zu besuchenden Seiten wird mit dem Skript \texttt{generate-urls.py} zufällig aus der ZIM-Datei gezogen, wobei Weiterleitungen aufgelöst und nur eigentliche Artikel berücksichtigt werden.
+Die Liste der zu besuchenden Seiten wird zufällig aus der ZIM-Datei gezogen\footnote{\texttt{generate-urls.py}}, wobei Weiterleitungen aufgelöst und nur eigentliche Artikel berücksichtigt werden.
 Zugelassen sind ausserdem nur Titel, die ausschliesslich aus alphanumerischen Zeichen, Unterstrich, Bindestrich und Punkt bestehen.
 Diese Einschränkung ist notwendig, weil Shadows YAML-Parser, die HTTP-URL und die Shell-Expansion auf den Monitor-Hosts unterschiedlich auf Sonderzeichen wie Doppelpunkt, Anführungszeichen oder Klammern reagieren und einzelne Bestandteile der Pipeline andernfalls unbemerkt scheitern.
 
@@ -251,7 +276,7 @@ Die Datei wird von \texttt{generate-wf-config.py} eingelesen und bestimmt, welch
 
 Der Tor Browser kann in Shadow nicht ausgeführt werden, da er auf eine grafische Oberfläche und JavaScript-Engines angewiesen ist, die Shadow nicht unterstützt.
 In der vorliegenden Arbeit wird der von Jansen und Wails entwickelte \gls{socks}-Patch für \texttt{wget2} verwendet (vgl.\ Abschnitt~\ref{sec:standtechnik_wget2}).
-Er wird über das Skript \texttt{setup-wf-server.sh} aus dem öffentlichen Artefakt-Repository\footnote{\url{https://github.com/torproject/explainwf-popets2023}} bezogen, auf einen festgehaltenen \texttt{wget2}-Commit angewendet und einmalig auf dem Server gebaut.
+Er wird aus dem öffentlichen Artefakt-Repository\footnote{\url{https://github.com/torproject/explainwf-popets2023}} bezogen, auf einen festgehaltenen \texttt{wget2}-Commit angewendet und einmalig auf dem Server gebaut\footnote{\texttt{setup-wf-server.sh}}.
 
 \subsection{Besuchsplanung und Round-Robin-Verteilung}
 \label{sec:realisierung_schedule}
@@ -339,36 +364,9 @@ Als Pcap-Bibliothek wird \texttt{dpkt} verwendet.
 Für jeden Eintrag der \texttt{schedule.json} wird das Zeitintervall des Besuchs aus dem Pcap geschnitten, Pakete mit der Client-IP als Quelle gelten als ausgehend ($+1$), Pakete mit der Client-IP als Ziel als eingehend ($-1$).
 Die Sequenz wird auf $5000$~Werte normiert (kürzer aufgefüllt, länger abgeschnitten), wie es Sirinam et al.\ für \gls{df} vorschlagen~\cite{sirinam2018deep} und WFlib erwartet.
 Sequenzen mit weniger als zehn Paketen werden als fehlgeschlagene Besuche verworfen.
-Die Klassen-Labels ergeben sich aus dem Zielport (vgl.\ Abschnitt~\ref{sec:realisierung_generate_wf_config}) und werden zur Reproduzierbarkeit als JSON gespeichert (Listing~\ref{lst:labelsjson}).
+Die Klassen-Labels ergeben sich aus dem Zielport (vgl.\ Abschnitt~\ref{sec:realisierung_generate_wf_config}) und werden zusammen mit der Umkehrabbildung und der Anzahl der Klassen als \texttt{labels.json} neben der \texttt{.npz}-Datei abgelegt, damit die Ergebnisse später eindeutig den ursprünglichen Wikipedia-Seiten zugeordnet werden können.
 
 Aus den Pcaps werden nur die Paketrichtungen und nicht die Zeitstempel als Merkmale verwendet (Begründung: Abschnitt~\ref{sec:konzepte_features}).
-
-\begin{lstlisting}[
-    basicstyle=\ttfamily\footnotesize,
-    breaklines=true,
-    frame=single,
-    captionpos=b,
-    label={lst:labelsjson},
-    caption={Auszug aus der zur \texttt{.npz}-Datei gehörenden \texttt{labels.json}: Zielports werden auf Klassennummern abgebildet, dazu wird die Anzahl der Klassen gespeichert.}
-]
-{
-    "port_to_label": {
-        "8000": 0,
-        "8001": 1,
-        "8002": 2,
-        "8003": 3,
-        "8004": 4
-    },
-    "label_to_port": {
-        "0": 8000,
-        "1": 8001,
-        "2": 8002,
-        "3": 8003,
-        "4": 8004
-    },
-    "num_classes": 5
-}
-\end{lstlisting}
 
 \subsection{Aufteilung in Trainings-, Validierungs- und Testdatensatz}
 
@@ -415,7 +413,7 @@ Damit ist das endgültig getestete Modell nicht zwangsläufig das letzte, sonder
 
 \subsection{Trainingsablauf}
 
-Der gesamte Ablauf von der Konvertierung bis zur Auswertung wird durch das Skript \texttt{run\_df.sh} gesteuert.
+Der gesamte Ablauf von der Konvertierung bis zur Auswertung läuft in einer einzigen Shell-Pipeline ab\footnote{\texttt{run\_df.sh}}.
 
 \begin{enumerate}
     \item Konvertierung der Pcaps in .npz Datei
@@ -425,22 +423,6 @@ Der gesamte Ablauf von der Konvertierung bis zur Auswertung wird durch das Skrip
     \item Speichern der Metriken in einer Ergebnis-JSON-Datei.
 \end{enumerate}
 
-Die Ergebnis-JSON enthält die vier wichtigsten Kennzahlen, wie in Listing~\ref{lst:resultjson} dargestellt.
-Diese werden mit den Metadaten des Experiments (Anzahl Klassen, Padding-Modus, Anzahl Besuche, Anzahl Monitore, Random-Baseline) ergänzt und über das Skript \texttt{report.py} in die zentrale Ergebnistabelle \texttt{ExperimentLogs.csv} geschrieben.
+Pro Trainingslauf werden Accuracy, Precision, Recall und F1-Wert auf der Testmenge ermittelt und in einer Ergebnis-JSON abgelegt.
+Diese vier Kennzahlen werden mit den Metadaten des Experiments (Anzahl Klassen, Padding-Modus, Anzahl Besuche, Anzahl Monitore, Random-Baseline) angereichert und in die zentrale Ergebnistabelle \texttt{ExperimentLogs.csv} geschrieben\footnote{\texttt{report.py}}.
 Diese Tabelle dient als Single Source of Truth für alle in Kapitel~\ref{cha:diskussion} präsentierten Diagramme.
-
-\begin{lstlisting}[
-    basicstyle=\ttfamily\footnotesize,
-    breaklines=true,
-    frame=single,
-    captionpos=b,
-    label={lst:resultjson},
-    caption={Ergebnis-JSON eines Trainingslaufs. Accuracy, Precision, Recall und F1-Wert werden auf der Testmenge ermittelt und dienen als Eingabe für die zentrale Ergebnistabelle.}
-]
-{
-    "Accuracy": 0.9267,
-    "Precision": 0.933,
-    "Recall": 0.9267,
-    "F1-score": 0.9274
-}
-\end{lstlisting}
