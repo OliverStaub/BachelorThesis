@@ -135,6 +135,29 @@ TODO
 \end{table}
 
 
+\section{Ressourcen und Performance}
+\label{sec:eval_performance}
+
+Ergänzend zu den klassifikationsbezogenen Resultaten wird der Ressourcenverbrauch des Simulationsservers \texttt{shadowsrv-001} während der Experimente protokolliert.
+Dazu wird das Skript \texttt{perfmon.py} verwendet, das in einem Intervall von fünf Sekunden Werte aus \texttt{/proc/stat}, \texttt{/proc/meminfo}, \texttt{statvfs} und \texttt{/proc/loadavg} ausliest und in eine tagesweise rotierte \texttt{CSV}-Datei schreibt.
+Der hier dargestellte Ausschnitt umfasst rund 70 Minuten und 853 Messpunkte aus dem laufenden Experiment \texttt{exp-tamaraw-80}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{../../images/results/perfmon.pdf}
+    \caption{Auslastung von CPU, Arbeitsspeicher und Disk auf \texttt{shadowsrv-001} während \texttt{exp-tamaraw-80}. Quelle: \texttt{perfmon-logs/perfmon-2026-05-16.csv}.}
+    \label{fig:eval_perfmon}
+\end{figure}
+
+Die CPU-Auslastung liegt durchgehend bei rund 99.9\,\%, was angesichts von 32 Kernen und einem 1-Minuten-Load-Average von 35.8 (Maximum 38.6) eine leicht überzeichnete Ausnutzung der verfügbaren Rechenkapazität bedeutet.
+Der Arbeitsspeicher steigt im Beobachtungsfenster von 44 GB auf 51 GB an und bleibt damit bei rund 40\,\% der verfügbaren 126 GB.
+Die Disk-Auslastung wächst im selben Zeitraum von 73 GB auf 81 GB und liegt bei rund 52\,\% der 156 GB grossen Partition.
+
+Aus diesen Werten lässt sich ableiten, dass die CPU der limitierende Faktor der gewählten Netzwerkgrösse ist, während Arbeitsspeicher und Disk im untersuchten Szenario Reserven bieten.
+Eine ausführlichere Auswertung über mehrere Experimente hinweg, inklusive Aufschlüsselung nach Simulationsphasen wie tornettools-Generierung, Shadow-Lauf und Auswertung, folgt nach Abschluss von \texttt{exp-tamaraw-80}.
+
+\todo{Performance-Werte für die übrigen Experimente nachtragen und Diskussion auf Engpässe (CPU, Disk-IO) erweitern.}
+
 \section{Bandbreiten-Overhead}
 \label{sec:eval_bandwidth}
 

@@ -21,13 +21,6 @@ Pro Verbindung kommen drei Relais zum Einsatz, in den Rollen Eingangs-, Mittel- 
 Damit ein Client überhaupt weiss, welche Relais derzeit verfügbar sind, betreiben wenige vertrauenswürdige Stellen die Rolle der Verzeichnisserver (Directory Authorities).
 Sie sammeln stündlich die Eigenschaften aller Relais (IP, Bandbreite, Flags), stimmen über diese Liste ab und veröffentlichen ein gemeinsames, signiertes Verzeichnisdokument, das ein Client vor dem Aufbau einer Verbindung herunterlädt~\cite{torspec_dirspec}.
 
-Ergänzend dazu betreibt das Tor-Projekt mit Tor Metrics eine Mess- und Archivinfrastruktur, die zwei unterschiedliche Aufgaben erfüllt.
-Auf der passiven Seite veröffentlichen Relais und Verzeichnisserver aggregierte Statistiken über Bandbreite und Client-Verteilung pro Land, und der Dienst CollecTor lädt diese Server-Deskriptoren, Extra-Info-Dokumente und Konsensdateien laufend von den Verzeichnisservern und archiviert sie dauerhaft~\cite{tormetricsabout}.
-Auf der aktiven Seite betreibt das Tor-Projekt zusätzlich OnionPerf-Messclients, die fortlaufend definierte Dateigrössen über frische Tor-Circuits herunterladen und daraus Latenz- und Durchsatzmetriken (Time-to-First-Byte, Time-to-Last-Byte) bilden~\cite{onionperf}.
-
-Beide Datenquellen zusammen bilden die Datengrundlage für realistische Shadow-Simulationen~\cite[S.~5]{jansen2023data}\cite{neverenough-sec2021}. Die OnionPerf-Funktionalität wird darin durch eigens generierte Performance-Clients nachgebildet.
-Die genaue Funktionsweise dieser Akteure beschreiben die folgenden Unterabschnitte.
-
 \subsection{Zellen}
 
 Die kleinste Übertragungseinheit ist eine Zelle fester Grösse, im ursprünglichen Design 512~Byte~\cite[S.~5]{dingledine2004tor}.
@@ -112,37 +105,17 @@ Zweitens wird damit der Stand der Forschung zu einem Angriff dokumentiert, der z
 \subsection{Traffic-Correlation-Angriffe}
 \label{sec:traffic_correlation}
 
-Ein Traffic-Correlation-Angriff, in der Literatur auch Traffic Confirmation oder Ende-zu-Ende-Korrelation genannt, geht von einem Angreifer aus, der gleichzeitig den eingehenden Verkehr am Eingangsknoten und den ausgehenden Verkehr am Ausgangsknoten beobachtet.
+Ein Traffic-Correlation-Angriff geht von einem Angreifer aus, der gleichzeitig den eingehenden Verkehr am Eingangsknoten und den ausgehenden Verkehr am Ausgangsknoten beobachtet.
 Beide Verkehrsspuren tragen trotz Onion-Verschlüsselung dieselben verkehrsstatistischen Merkmale wie Inter-Paket-Zeiten, Burst-Verläufe und Volumen pro Zeitfenster.
-Aufgabe des Angreifers ist es, aus $M$ ingress- und $N$ egress-Flows die zusammengehörenden Paare $(F_i, F_j)$ zu identifizieren~\cite[S.~1962\,f.]{nasr2018deepcorr}.
-Die benötigte Beobachtungsposition lässt sich durch den Betrieb eigener Guard- und Exit-Relais, durch eine entsprechende Stellung im Internet-Backbone oder durch eine Mischung beider Möglichkeiten erreichen~\cite[S.~1963]{nasr2018deepcorr}.
+Aus $M$ ingress- und $N$ egress-Flows werden die zusammengehörenden Paare $(F_i, F_j)$ identifiziert~\cite[S.~1962\,f.]{nasr2018deepcorr}.
+Die nötige Beobachtungsposition lässt sich durch eigene Guard- und Exit-Relais oder durch eine Stellung im Internet-Backbone erreichen~\cite[S.~1963]{nasr2018deepcorr}.
 
-Klassische Korrelationsverfahren beruhen auf allgemein einsetzbaren statistischen Distanz- oder Ähnlichkeitsmassen.
-Crombé et al.\ verglichen 2016 drei solche Verfahren in einer Shadow-Simulation mit jeweils 1000 gleichzeitig aktiven Clients pro Verkehrstyp~\cite[S.~28\,f.]{crombe2016correlation}.
-Das erste Verfahren ist eine zeitliche Aktivitätsanalyse nach Murdoch et al., bei der pro Sekunde eine binäre Aktivitätsindikatorfunktion gebildet und über die Zeit korreliert wird.
-Das zweite Verfahren ist ein Packet-Counting-Ansatz, der die Anzahl Tor-Zellen pro Zeitfenster zählt und über die euklidische Distanz vergleicht.
-Das dritte Verfahren ist die normalisierte Pearson-Kreuzkorrelation über die Zellzahlen pro Zeitfenster.
-In dieser Auswertung erreichten die drei Verfahren je nach Verkehrstyp und Methode Equal Error Rates im einstelligen Prozentbereich, wobei sich die Kreuzkorrelation als robusteste Methode erwies und auch gegenüber dem realistischeren Blind-Adversary-Modell die besten Ergebnisse lieferte~\cite[S.~43,~48]{crombe2016correlation}.
+Klassische Verfahren beruhen auf allgemeinen statistischen Distanzmassen wie Pearson-Kreuzkorrelation, Packet-Counting oder zeitlicher Aktivitätsanalyse und erreichen unter Tor-typischem Rauschen Equal Error Rates im einstelligen Prozentbereich~\cite[S.~43,~48]{crombe2016correlation}.
+Lernbasierte Verfahren wie DeepCorr ersetzen diese statischen Masse durch ein \gls{cnn}, das die Korrelationsfunktion direkt aus Live-Tor-Daten lernt, und erreichen mit nur 300 Paketen pro Flow eine True-Positive-Rate von rund 80\,\% bei einer False-Positive-Rate von $10^{-3}$~\cite[S.~1962,~1968]{nasr2018deepcorr}.
 
-Bei realistischer Skalierung gelten diese klassischen Verfahren als nur eingeschränkt einsetzbar, da \gls{tor} durch Congestion und Repacketisierung erhebliches Rauschen in die Verkehrsspuren einbringt~\cite[S.~1962]{nasr2018deepcorr}.
-Nasr, Bahramali und Houmansadr stellten 2018 mit DeepCorr ein Verfahren vor, das diese Limitation umgeht, indem die Korrelationsfunktion nicht aus allgemeinen Statistiken gebildet, sondern als \gls{cnn} direkt aus Live-Tor-Daten gelernt wird~\cite[S.~1962]{nasr2018deepcorr}.
-Eingabe des Netzes sind die Inter-Paket-Zeiten und Paketgrössen beider Flow-Segmente, organisiert in einem mehrkanaligen Tensor.
-Zwei Convolution-Schichten extrahieren pro Richtung lokale Korrelationsmuster, anschliessend kombinieren zwei vollverbundene Schichten beide Richtungen zu einer Korrelationswahrscheinlichkeit zwischen Null und Eins~\cite[S.~1965\,f.]{nasr2018deepcorr}.
-Trainiert wurde das System auf rund 25'000 assoziierten und etwa $6{,}2 \cdot 10^8$ nicht-assoziierten Flow-Paaren, die durch das Aufrufen der 50'000 populärsten Alexa-Webseiten über das Live-Tor-Netzwerk erzeugt wurden~\cite[S.~1967]{nasr2018deepcorr}.
-
-In dieser Auswertung erreicht DeepCorr mit nur 300 Paketen pro Flow eine True-Positive-Rate von rund 80\,\% bei einer False-Positive-Rate von $10^{-3}$, während das bis dahin führende Verfahren RAPTOR im identischen Setting eine True-Positive-Rate von etwa 4\,\% erzielt~\cite[S.~1968]{nasr2018deepcorr}.
-Die benötigte Beobachtungsdauer schrumpft damit von mehreren Minuten und mehreren hundert Megabyte pro Flow auf wenige Sekunden und unter ein Megabyte.
-Ein einmal trainiertes Modell bleibt nach Angaben der Autoren rund drei Wochen lang einsatzfähig, bevor sich die Verteilung des Tor-Verkehrs so weit verändert, dass ein Nachtrainieren empfehlenswert wird~\cite[S.~1969]{nasr2018deepcorr}.
-
-Für die vorliegende Arbeit ist Traffic-Correlation aus zwei Gründen relevant.
-Erstens grenzt sich der Angriff methodisch klar von \gls{wf} ab.
-Während \gls{wf} eine im Voraus bekannte Zielmenge benötigt und nur an einem Ende des Pfads operiert, erkennt Traffic-Correlation beliebige Verbindungen, sofern beide Enden beobachtet werden~\cite[S.~1964]{nasr2018deepcorr}.
-Zweitens hat diese Abgrenzung unmittelbare Konsequenzen für die Schutzwirkung von Circuit Padding.
-Padding fügt seinen Schein-Verkehr ausschliesslich auf den Tor-internen Verbindungen ein und adressiert damit primär den realistischen, einseitig beobachtenden Angreifer, wie er bei \gls{wf} angenommen wird.
-Ein Traffic-Correlation-Angreifer verfügt hingegen ohnehin über die egress-seitige, ungepadderte Verkehrsspur, sodass Padding diesen Angriffspfad nur begrenzt entschärfen kann.
-Eine wirksame Verteidigung gegen lernbasierte Verfahren wie DeepCorr setzt deutlich aufwändigere Massnahmen voraus, etwa volles Link-Padding oder Tamaraw-artige Traffic-Shaping-Verfahren mit konstanten Sende-Intervallen (vgl.\ Abschnitt~\ref{sec:wf_defenses_tamaraw})~\cite[S.~228]{cai2014systematic}.
-Solche Verfahren werden im \gls{tor}-Netz aufgrund des erheblichen Bandbreiten- und Latenz-Overheads nicht ausgerollt, was auch die Autoren von DeepCorr explizit als ungelöstes Spannungsfeld zwischen Anonymität, Kosten und Dienstgüte beschreiben~\cite[S.~1972\,f.]{nasr2018deepcorr}.
-Die Beschränkung der vorliegenden Arbeit auf \gls{wf} und Circuit Padding spiegelt damit ein bewusst gewähltes Bedrohungsmodell wider, das den im realen Tor-Betrieb tatsächlich eingesetzten Schutzmechanismus gegen den am häufigsten dokumentierten Angreifertyp evaluiert.
+Für die vorliegende Arbeit ist Traffic-Correlation als Abgrenzung zu \gls{wf} relevant: Während \gls{wf} eine im Voraus bekannte Zielmenge benötigt und nur an einem Ende des Pfads operiert, erkennt Traffic-Correlation beliebige Verbindungen, sofern beide Enden beobachtet werden~\cite[S.~1964]{nasr2018deepcorr}.
+Padding fügt Schein-Verkehr nur auf den Tor-internen Verbindungen ein und adressiert damit primär den einseitig beobachtenden \gls{wf}-Angreifer.
+Eine wirksame Verteidigung gegen lernbasierte Korrelation setzt deutlich aufwändigere Massnahmen wie volles Link-Padding oder Tamaraw-artiges Traffic Shaping voraus (vgl.\ Abschnitt~\ref{sec:wf_defenses_tamaraw})~\cite[S.~228]{cai2014systematic}, die im \gls{tor}-Netz aufgrund des Bandbreiten- und Latenz-Overheads nicht ausgerollt werden.
 
 \section{Website Fingerprinting}
 \label{sec:website_fingerprinting}
@@ -174,65 +147,15 @@ Shadow eignet sich damit nicht nur für isolierte Vergleichsstudien, sondern auc
 
 \subsection{Tornettools}
 
-Tornettools ist der Modellierungs- und Generierungsbaustein, der Shadow für realistische Tor Experimente konfiguriert.
-Das Toolkit wurde 2021 von Jansen, Tracey und Goldberg veröffentlicht~\cite[S.~5]{neverenough-sec2021}.
+Tornettools ist der Modellierungsbaustein, der Shadow für realistische Tor-Experimente konfiguriert, und wurde 2021 von Jansen, Tracey und Goldberg veröffentlicht~\cite[S.~5]{neverenough-sec2021}.
+Aus Tor-Konsensdokumenten und Server-Deskriptoren des CollecTor-Archivs~\cite{tormetricsabout} sowie aus PrivCount-Verkehrsmessungen an Live-Tor-Exit-Relais~\cite[S.~5\,f.]{mani2018understanding} erzeugt es in einer zweistufigen Pipeline (rechenintensive Staging-Phase, rechengünstige Generation-Phase) eine skalierbare Shadow-Konfiguration~\cite[S.~3\,f.]{neverenough-sec2021}.
+Den Anwendungs-Verkehr der Hintergrund-Clients modelliert der Generator TGen über drei Markov-Modelle, deren Parameter aus PrivCount stammen und damit Volumen sowie zeitliche Struktur realer Tor-Nutzung nachbilden~\cite[S.~5]{neverenough-sec2021}.
+Die konkrete Werkzeugkette und die in dieser Arbeit gewählten Parameter werden in Abschnitt~\ref{sec:realisierung_umgebung} beschrieben.
 
-Die Modellierung läuft in zwei Phasen ab.
-Die rechenintensive \emph{Staging} Phase verarbeitet einmalig grosse Rohdatenmengen, die rechengünstige \emph{Generation} Phase erzeugt daraus beliebig viele konkrete Netzwerkkonfigurationen.
-Diese Trennung erlaubt es, Staging Resultate vorab zu berechnen und zwischen Forschungsgruppen wiederzuverwenden, ohne die zugrunde liegenden Rohdaten erneut auswerten zu müssen~\cite[S.~3]{neverenough-sec2021}.
+\subsection{Validierung der Modellierung}
 
-\subsubsection{Datenquellen}
-
-Tornettools stützt sich auf drei öffentlich verfügbare Datenquellen:
-
-\begin{itemize}
-    \item Tor Konsens und Server Deskriptoren: Aus dem CollecTor Archiv des Tor Metrics Projekts. Sie beschreiben pro Relais Bandbreite, Flags und Konsens-Gewichtung und sind seit 2007 lückenlos verfügbar~\cite{tormetricsabout}.
-    \item Tor Nutzerstatistiken: Pro Land, ebenfalls vom Tor Metrics Projekt~\cite{tormetricsabout}. Sie steuern, in welchen Ländern die simulierten Clients platziert werden.
-    \item PrivCount Verkehrsmessungen: Aus der Studie von Mani et al.~\cite[S.~5\,f.]{mani2018understanding}. Auf Tor Exit Relais wurden Nutzerzahlen, Circuit-Aufkommen sowie Inter-Arrival-Zeiten von Streams und Paketen unter Schutz der Differential Privacy gemessen.
-\end{itemize}
-
-Eine reproduzierbare Datengrundlage ist deshalb wichtig, weil Klassifikationsergebnisse stark mit Netzwerkauslastung und Konsenszustand schwanken~\cite[S.~10]{jansen2023data}, womit der isolierte Nachweis des Padding-Effekts ohne kontrollierte Eingangsdaten kaum möglich wäre.
-
-\subsubsection{Staging}
-
-In der Staging Phase werden die Konsensdateien des gewählten Zeitfensters ausgewertet.
-Für jedes Relais wird festgehalten, wie häufig es im Beobachtungszeitraum aktiv war, wie oft es als Guard oder Exit ausgewählt wurde, welche Bandbreite es bereitgestellt hat und welche typische Konsens-Gewichtung daraus resultiert~\cite[S.~3]{neverenough-sec2021}.
-Auf Netzwerkebene werden zusätzlich Median-Werte für Anzahl und Gewichtung pro Position (Guard, Middle, Exit) gebildet, und aus den Tor Nutzerstatistiken wird eine Verteilung über die Herkunftsländer abgeleitet.
-
-Resultat der Staging Phase ist eine Sammlung von JSON Dateien, die die rechenintensive Auswertung der Rohdaten festhalten ~\cite[S.~5]{neverenough-sec2021}.
-
-\subsubsection{Generation}
-
-Die Generation Phase erzeugt aus den Staging Dateien eine konkrete Shadow Konfiguration und wird durch drei Parameter gesteuert: die Netzwerkskala $s$ als Anteil der modellierten Relais und Nutzer relativ zum vollen Tor Netzwerk, einen Lastfaktor zur Skalierung der Verkehrslast sowie eine Prozessskala, die mehrere Nutzer in einem TGen Prozess bündelt und so RAM und CPU einspart~\cite[S.~4]{neverenough-sec2021}.
-In der vorliegenden Arbeit wird $s = 0{,}01$ verwendet, was rund 79 Relais ergibt.
-
-Für jede Position (Guard, Middle, Exit) werden die Relais nach Konsens-Gewichtung sortiert, in gleich grosse Buckets aufgeteilt und aus jedem Bucket das Relais mit dem mittleren Gewicht übernommen, sodass die Gewichtsverteilung des realen Netzwerks erhalten bleibt~\cite[S.~3\,f.]{neverenough-sec2021}.
-Jedes ausgewählte Relais wird anhand seines Ländercodes einer Stadt im Internet Modell zugeordnet und mit den in der Staging Phase ermittelten Bandbreitenwerten konfiguriert, die TGen Client Hosts werden entsprechend der Länderverteilung der Tor Nutzer platziert~\cite[S.~5]{neverenough-sec2021}.
-Resultat ist eine Shadow Konfigurationsdatei (\texttt{shadow.config.yaml}) sowie pro Host eine zugehörige Tor Konfiguration, die in der vorliegenden Arbeit nachträglich für die Aktivierung von Circuit Padding und das Einbinden der Fingerprinting-Monitore angepasst wird.
-
-\subsubsection{TGen}
-
-TGen (Traffic Generator) ist der Verkehrsgenerator, der innerhalb jedes simulierten Tor Client Prozesses die Anwendungsschicht modelliert und Verbindungen über das lokale Tor \gls{socks} Interface aufbaut, sodass der erzeugte Verkehr denselben Stack wie der eines Realnutzers durchläuft.
-Tornettools koppelt drei Markov Modelle, die festlegen, wann ein neuer Circuit aufgebaut, wann auf einem bestehenden Circuit ein neuer \gls{tcp}-Stream gestartet und mit welchen Inter-Arrival-Zeiten und Richtungen Pakete gesendet werden~\cite[S.~5]{neverenough-sec2021}.
-Die Parameter dieser Modelle wurden in der PrivCount Studie an Live Tor Exit Relais gemessen~\cite[S.~5\,f.]{mani2018understanding}, womit die erzeugte Last in Volumen und zeitlicher Struktur realen Mustern entspricht.
-
-Jeder TGen Client erhält einen eigenen, deterministisch aus einem Master-Seed abgeleiteten Seed, sodass sich die simulierten Nutzer voneinander unterscheiden, die Simulation insgesamt aber reproduzierbar bleibt~\cite[S.~4]{neverenough-sec2021}.
-
-\subsubsection{Validierung der Modellierung}
-
-Jansen et al.\ verglichen ihre Simulationen bei verschiedenen Netzwerkskalen mit Live Tor Metrics, wobei Median-Werte von Circuit Build Time, Round-Trip-Time und Time-to-Last-Byte weitgehend mit den realen Messwerten übereinstimmten und die berechneten 95\,\% Konfidenzintervalle bei eins-zu-eins Skalierung die Tor-Metrics-Verteilungen nahezu vollständig einschlossen~\cite[S.~6\,f.]{neverenough-sec2021}.
-Eine spätere Cross-Dataset-Validierung zeigte zudem, dass ein ausschliesslich auf Shadow Daten trainierter CUMUL Klassifikator auf Live Tor Traces eine Accuracy von 86\,\% erreichte, was die Eignung der Modellierung speziell für \gls{wf} Studien bestätigt~\cite[S.~7]{jansen2023data}.
-
-\subsection{Alternative Experimentierumgebungen}
-
-Ein erklärtes Ziel der vorliegenden Arbeit ist es, eine lokal reproduzierbare Versuchsumgebung aufzubauen, in der Padding-Modi kontrolliert variiert und Verkehrsspuren vollständig aufgezeichnet werden können.
-Eine ursprünglich angedachte Variante war ein selbst gebautes Mini-Tor-Netzwerk auf Basis von Docker Containern, was sich aber als zu aufwendig erwies, um die für \gls{wf} Studien nötige Realitätstreue zu erreichen.
-Messungen im Live Tor Netzwerk wurden ebenfalls verworfen, da das nötige Know-how fehlt, die Bedingungen nicht kontrollierbar sind und Resultate kaum reproduzierbar wären.
-
-Als Alternativen stehen Chutney\footnote{\url{https://gitlab.torproject.org/tpo/core/chutney}} sowie der Emulationsansatz von ExperimenTor und NetMirage~\cite[S.~2]{neverenough-sec2021} zur Verfügung.
-Chutney ist ein Test-Harness des Tor Projekts und eignet sich für funktionale Integrationstests, modelliert jedoch weder eine realistische Topologie noch Hintergrundverkehr.
-ExperimenTor und NetMirage führen Tor Prozesse unmodifiziert in Linux Containern aus und verzögern den Verkehr über netem, sind aber durch die Echtzeit-Bindung in der maximalen Netzwerkgrösse begrenzt.
-Shadow gemeinsam mit Tornettools verbindet realistische Topologie, Markov-gestützten Hintergrundverkehr und eine deterministische, lokal lauffähige Umgebung und erfüllt damit als einzige Plattform alle Anforderungen dieser Arbeit~\cite[S.~6]{neverenough-sec2021}.
+Jansen et al.\ verglichen ihre Simulationen bei verschiedenen Netzwerkskalen mit Live-Tor-Metrics, wobei Median-Werte von Circuit Build Time, Round-Trip-Time und Time-to-Last-Byte weitgehend mit den realen Messwerten übereinstimmten~\cite[S.~6\,f.]{neverenough-sec2021}.
+Eine spätere Cross-Dataset-Validierung zeigte zudem, dass ein ausschliesslich auf Shadow-Daten trainierter CUMUL-Klassifikator auf Live-Tor-Traces eine Accuracy von 86\,\% erreichte, was die Eignung der Modellierung speziell für \gls{wf}-Studien bestätigt~\cite[S.~7]{jansen2023data}.
 
 \subsection{Website-Fingerprinting-Klassifikatoren}
 

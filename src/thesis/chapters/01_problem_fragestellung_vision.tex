@@ -4,46 +4,39 @@
 \section{Problemstellung}
 
 Das \gls{tor}-Netzwerk anonymisiert Verbindungen, indem Pakete über mehrere verschlüsselte Relays geleitet werden.
-Trotz dieses Schutzes zeigen \gls{wf}-Angriffe, dass ein passiver Beobachter zwischen Client Eingangsknoten besuchte Webseiten allein anhand der Paketrichtungen und Zeitverläufe zuordnen kann.
+Trotz dieses Schutzes zeigen \gls{wf}-Angriffe, dass ein passiver Beobachter zwischen Client und Eingangsknoten besuchte Webseiten anhand der Paketrichtungen und Zeitverläufe zuordnen kann.
 Mit dem Deep-Learning-Verfahren \gls{df} werden in Closed-World-Studien Erkennungsraten von über 95~\% berichtet \cite{sirinam2018deep}.
 
-Als Gegenmassnahme integriert das Tor-Projekt seit Version 0.4 ein Circuit-Padding-Framework, das zusätzliche Zellen in den Verkehrsstrom einfügt \cite{kadianakis2021tor}.
+Als Gegenmassnahme hat das Tor Netzwerk das Circuit-Padding-Framework eingeführt, welches zusätzliche Zellen in den Verkehrsstrom einfügt \cite{kadianakis2021tor}.
 
-Der Netzwerksimulator Shadow ermöglicht es, ein vollständiges, deterministisches \gls{tor}-Netzwerk auf einer einzelnen Maschine zu betreiben \cite{jansen2011shadow}.
+Der Netzwerksimulator Shadow ermöglicht es, ein vollständiges, deterministisches \gls{tor}-Netzwerk zu simulieren. \cite{jansen2011shadow}.
 In dieser Umgebung lassen sich Padding-Konfigurationen unter sonst identischen Bedingungen vergleichen.
 
-Die Wirksamkeit dieses produktiv ausgelieferten Schutzes gegen moderne \gls{df}-Angriffe ist bisher nur eingeschränkt untersucht.
-Bestehende Studien stützen sich überwiegend auf Aufzeichnungen aus dem Live-Netzwerk oder auf vereinfachte Cell-Trace-Modelle, wodurch eine kontrollierte Variation einzelner Konfigurationen erschwert wird.
+Die Wirksamkeit dieses produktiv ausgelieferten Schutzes gegen moderne \gls{df}-Angriffe ist in Shadow bisher nur eingeschränkt nachgewiesen.
+Bestehende Shadow-Simulationen stellen zudem hohe Hardware-Anforderungen und setzen gepatchte Tor-Versionen zur Cell-Trace-Entnahme voraus.
+Die vorliegende Arbeit prüft, ob sich eine vergleichbare Simulation auf moderater Hardware und mit einer unmodifizierten Tor-Version durchführen lässt.
 
-
-Hardwareanforderung einer kleineren Simulation war jetzt nicht ganz klar ?
-
-
-Im Verlauf der Literaturrecherche zu dieser Arbeit rückten zusätzlich stärker eingreifende Schutzverfahren wie Tamaraw in den Fokus, die den Verkehrsstrom in feste Zeit- und Grössenraster zwingen \cite{cai2014systematic}.
+Im Verlauf der Arbeit wurde zusätzlichn noch die neuere und nicht produktive Abwehrmassnahme Tamaraw gegen WF Angriffe getestet. \cite{cai2014systematic}.
 
 \section{Fragestellung}
-
-Die ursprüngliche Aufgabenstellung (Anhang~\ref{app:aufgabenstellung}) zielt auf den Aufbau einer Shadow-Simulation und die Auswertung des Tor-internen Circuit Padding.
-Tamaraw wurde erst während der Erarbeitung dieser Arbeit als naheliegender Vergleichspunkt identifiziert und in Absprache mit dem Auftraggeber als ergänzender, exploratorischer Teil aufgenommen.
 Daraus ergeben sich die folgenden Forschungsfragen.
 
 \begin{enumerate}
-    \item Wie verändert sich die Erkennungsrate eines \gls{df}-Angriffs unter den drei in \gls{tor} produktiv konfigurierbaren Modi des Circuit Padding (deaktiviert, voll aktiviert, reduziert), gemessen in einer Shadow-Simulation auf der \gls{hslu}-Infrastruktur?
-    \item In welchem Verhältnis stehen die in der Simulation gemessenen Effekte zu den in der Literatur dokumentierten Limitationen simulierter und laborbasierter \gls{wf}-Studien?
-    \item Welche zusätzliche Schutzwirkung lässt sich in derselben Simulationsumgebung durch das stärker eingreifende Tamaraw-Verfahren erzielen, und mit welchem Bandbreitenaufschlag ist sie verbunden?
+    \item Wie verändert sich die Erkennungsrate eines \gls{df}-Angriffs mit unterschiedlichen Circuit-Padding-Einstellungen?
+    \item Welche bekannten Limitationen simulierter und laborbasierter \gls{wf}-Angriffe sind in der Literatur dokumentiert, und wie sind die experimentellen Ergebnisse dieser Arbeit einzuordnen?
+    \item Welche zusätzliche Schutzwirkung gegen \gls{df}-Angriffe lässt sich mit dem Tamaraw-Verfahren erzielen?
 \end{enumerate}
 
 \section{Vision und erwartete Resultate}
 
-Ziel der Arbeit ist es, den Einfluss von Circuit Padding und ergänzend von Tamaraw auf \gls{df}-Angriffe unter kontrollierten Laborbedingungen empirisch zu quantifizieren und die Ergebnisse in den Stand der Forschung einzuordnen.
+Ziel der Arbeit ist es, den Einfluss von Circuit Padding auf \gls{df}-Angriffe unter kontrollierten Laborbedingungen empirisch zu quantifizieren und die Ergebnisse in den Stand der Forschung einzuordnen.
 Im Einzelnen werden folgende Resultate angestrebt.
 
 \begin{itemize}
-    \item Eine reproduzierbare Shadow-Simulationsumgebung in einer Linux-VM der \gls{hslu}-Infrastruktur, die ein verkleinertes \gls{tor}-Netzwerk inklusive Hintergrundlast abbildet.
-    \item Ein in dieser Umgebung erhobenes \gls{wf}-Datenset aus \glspl{pcap} der Eingangsknoten, das für die drei Padding-Konfigurationen vergleichbar ist und sowohl Closed-World- als auch Open-World-Szenarien abdeckt.
-    \item Ein mit der Bibliothek WFlib durchgeführter \gls{df}-Angriff, dessen Erkennungsrate über Padding-Modi, Klassenzahl und Szenario hinweg ausgewertet wird.
-    \item Eine ergänzende, exploratorische Messreihe zum Tamaraw-Verfahren in derselben Umgebung, die Schutzwirkung und Bandbreitenaufschlag gegenüberstellt.
-    \item Eine Einordnung der gemessenen Effekte vor dem Hintergrund dokumentierter Limitationen simulierter \gls{wf}-Studien.
+    \item Eine aufgebaute Shadow-Simulationsumgebung in einer VM von labservices.ch.
+    \item Ein in dieser Umgebung erstelltes \gls{wf}-Datenset.
+    \item Ein mit dem Tool WFlib durchgeführter \gls{df}-Angriff.
+    \item Eine ergänzende, exploratorische Messreihe zum Tamaraw-Verfahren in derselben, im Vergleich zu publizierten Setups kleineren Serverumgebung.
 \end{itemize}
 
 \section{Aufgabenstellung}
