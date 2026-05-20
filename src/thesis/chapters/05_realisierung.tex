@@ -328,12 +328,9 @@ Für die ergänzende Messreihe gegen das Tamaraw-Verfahren (Abschnitt~\ref{sec:w
 Die übrigen Bestandteile, also Tor-Netzwerk aus Tornettools, Monitor-Clients, Zim-Server und Pcap-Aufzeichnung, bleiben unverändert.
 Abbildung~\ref{fig:tamarawsetup} zeigt die so erweiterte Topologie.
 
-% TODO: PDF-Export aus images/Diagrams.drawio (Page-3 "Tamaraw Setup")
-% als images/tamaraw-schema.pdf ablegen, dann untenstehenden Platzhalter durch
-% \includegraphics[width=\textwidth]{../../images/tamaraw-schema} ersetzen.
 \begin{figure}[H]
 \centering
-\fbox{\parbox[c][6cm][c]{0.9\textwidth}{\centering\itshape Tamaraw-Schema (Platzhalter): PDF aus \texttt{images/Diagrams.drawio} exportieren und als \texttt{images/tamaraw-schema.pdf} ablegen.}}
+\includegraphics[width=\textwidth]{../../images/tamaraw-schema}
 \caption{Tamaraw-Variante des Versuchsaufbaus. Gegenüber der Baseline-Topologie aus Abbildung~\ref{fig:shadowsetup} kommt der orange dargestellte Bridge-Knoten \texttt{wfbridge0} hinzu. Der monitor-seitige Tor-Daemon verbindet sich nicht direkt zu einem Guard, sondern über den \gls{pt} \texttt{obfs4proxy\_tamaraw} zu diesem Bridge-Knoten, dessen Relay-Prozess die geformten Zellen anschliessend regulär in das simulierte Tor-Netzwerk einspeist.}
 \label{fig:tamarawsetup}
 \end{figure}
