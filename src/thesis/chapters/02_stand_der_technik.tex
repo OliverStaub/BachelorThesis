@@ -256,7 +256,8 @@ Auf diese Weise werden Seiten ähnlicher Grösse in identischen Anonymitäts-Buc
 
 In der Auswertung von Cai et al.\ erreicht Tamaraw bei einem geschlossenen 800-Seiten-Experiment ein Sicherheitsniveau von $\epsilon = 3{,}4\,\%$ bei rund $199\,\%$ Bandbreiten-Overhead~\cite[S.~228]{cai2014systematic}.
 Damit liegt das Verfahren nahe an der theoretischen unteren Schranke für nicht-uniforme Sicherheit, ist aber durch die systematische Verzögerung realer Zellen für Tors low-latency-Designziel ungeeignet~\cite[S.~5]{kadianakis2021tor}.
-In der vorliegenden Arbeit dient Tamaraw deshalb ausschliesslich als Referenzpunkt für die obere Wirksamkeitsgrenze von Bandbreiten-Verteidigungen und wird nicht selbst experimentell ausgewertet.
+In der vorliegenden Arbeit dient Tamaraw als Referenzpunkt für die obere Wirksamkeitsgrenze von Bandbreiten-Verteidigungen und wird in einer ergänzenden, exploratorischen Messreihe gegen das in Tor produktiv ausgerollte Circuit Padding gestellt.
+Da das Verfahren nicht im regulären Tor-Daemon implementiert ist, erfolgt die Einbindung über einen Pluggable-Transport-Bridge-Knoten, dessen Aufbau in Abschnitt~\ref{sec:realisierung_tamaraw} dokumentiert ist.
 
 \subsection{WTF-PAD}
 \label{sec:wf_defenses_wtfpad}

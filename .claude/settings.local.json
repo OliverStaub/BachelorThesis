@@ -62,7 +62,8 @@
       "Bash(venv/bin/python3 -c \"import matplotlib; print\\(matplotlib.__version__\\)\")",
       "Bash(/opt/homebrew/bin/python3.13 -m venv /tmp/perfmon-venv)",
       "Bash(/tmp/perfmon-venv/bin/pip install *)",
-      "Bash(/tmp/perfmon-venv/bin/python *)"
+      "Bash(/tmp/perfmon-venv/bin/python *)",
+      "Bash(ssh-add -l)"
     ]
   }
 }

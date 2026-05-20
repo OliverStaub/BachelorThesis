@@ -1,28 +1,28 @@
-<mxfile host="Electron" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/26.2.15 Chrome/134.0.6998.205 Electron/35.2.1 Safari/537.36" version="26.2.15" pages="2">
+<mxfile host="Electron" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/26.2.15 Chrome/134.0.6998.205 Electron/35.2.1 Safari/537.36" version="26.2.15" pages="3">
   <diagram name="Page-1" id="gUtYHLV5G_G_Fh9yZYu5">
-    <mxGraphModel dx="1454" dy="1001" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="1018" dy="751" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="YANz2hVsQKh2Qyaa-IPD-27" value="" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="130" y="690" width="680" height="510" as="geometry" />
+        <mxCell id="YANz2hVsQKh2Qyaa-IPD-27" value="" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="130" y="770" width="680" height="430" as="geometry" />
         </mxCell>
-        <mxCell id="YANz2hVsQKh2Qyaa-IPD-28" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
-          <mxGeometry x="194" y="740" width="440" height="180" as="geometry" />
+        <mxCell id="YANz2hVsQKh2Qyaa-IPD-28" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="1" vertex="1">
+          <mxGeometry x="194" y="790" width="440" height="130" as="geometry" />
         </mxCell>
-        <mxCell id="YANz2hVsQKh2Qyaa-IPD-32" value="Shadow Simulation" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+        <mxCell id="YANz2hVsQKh2Qyaa-IPD-32" value="Shadow Simulation" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
           <mxGeometry x="660" y="1160" width="140" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="YANz2hVsQKh2Qyaa-IPD-40" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="YANz2hVsQKh2Qyaa-IPD-33" target="YANz2hVsQKh2Qyaa-IPD-36">
+        <mxCell id="YANz2hVsQKh2Qyaa-IPD-40" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="YANz2hVsQKh2Qyaa-IPD-33" target="YANz2hVsQKh2Qyaa-IPD-36" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="YANz2hVsQKh2Qyaa-IPD-33" value="Guard / Entry Relays" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+        <mxCell id="YANz2hVsQKh2Qyaa-IPD-33" value="Guard / Entry Relays" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="217" y="840" width="120" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="YANz2hVsQKh2Qyaa-IPD-34" value="Tor Network" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
-          <mxGeometry x="204" y="750" width="90" height="30" as="geometry" />
+        <mxCell id="YANz2hVsQKh2Qyaa-IPD-34" value="Tor Network" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="204" y="800" width="90" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="YANz2hVsQKh2Qyaa-IPD-80" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="YANz2hVsQKh2Qyaa-IPD-35" target="YANz2hVsQKh2Qyaa-IPD-33">
+        <mxCell id="YANz2hVsQKh2Qyaa-IPD-80" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="YANz2hVsQKh2Qyaa-IPD-35" target="YANz2hVsQKh2Qyaa-IPD-33" edge="1">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
               <mxPoint x="160" y="1130" />
@@ -30,16 +30,16 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="YANz2hVsQKh2Qyaa-IPD-35" value="TGEN / MARKOV Clients" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+        <mxCell id="YANz2hVsQKh2Qyaa-IPD-35" value="TGEN / MARKOV Clients" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" vertex="1">
           <mxGeometry x="194" y="1100" width="153" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="YANz2hVsQKh2Qyaa-IPD-41" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="YANz2hVsQKh2Qyaa-IPD-36" target="YANz2hVsQKh2Qyaa-IPD-37">
+        <mxCell id="YANz2hVsQKh2Qyaa-IPD-41" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="YANz2hVsQKh2Qyaa-IPD-36" target="YANz2hVsQKh2Qyaa-IPD-37" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="YANz2hVsQKh2Qyaa-IPD-36" value="Middle Relays" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+        <mxCell id="YANz2hVsQKh2Qyaa-IPD-36" value="Middle Relays" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="361" y="840" width="120" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="YANz2hVsQKh2Qyaa-IPD-88" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" source="YANz2hVsQKh2Qyaa-IPD-37" target="YANz2hVsQKh2Qyaa-IPD-69">
+        <mxCell id="YANz2hVsQKh2Qyaa-IPD-88" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" parent="1" source="YANz2hVsQKh2Qyaa-IPD-37" target="YANz2hVsQKh2Qyaa-IPD-69" edge="1">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
               <mxPoint x="770" y="870" />
@@ -47,7 +47,7 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="YANz2hVsQKh2Qyaa-IPD-89" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" source="YANz2hVsQKh2Qyaa-IPD-37" target="YANz2hVsQKh2Qyaa-IPD-64">
+        <mxCell id="YANz2hVsQKh2Qyaa-IPD-89" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" parent="1" source="YANz2hVsQKh2Qyaa-IPD-37" target="YANz2hVsQKh2Qyaa-IPD-64" edge="1">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
               <mxPoint x="770" y="870" />
@@ -55,30 +55,24 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="YANz2hVsQKh2Qyaa-IPD-37" value="Exit Relays" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+        <mxCell id="YANz2hVsQKh2Qyaa-IPD-37" value="Exit Relays" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="497" y="840" width="120" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="YANz2hVsQKh2Qyaa-IPD-38" value="3 Authorities" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="444" y="755.5" width="120" height="60" as="geometry" />
-        </mxCell>
-        <mxCell id="YANz2hVsQKh2Qyaa-IPD-39" value="Performance Clients" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="304" y="755.5" width="120" height="60" as="geometry" />
-        </mxCell>
-        <mxCell id="YANz2hVsQKh2Qyaa-IPD-42" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+        <mxCell id="YANz2hVsQKh2Qyaa-IPD-42" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" parent="1" vertex="1">
           <mxGeometry x="194" y="950" width="356" height="120.5" as="geometry" />
         </mxCell>
-        <mxCell id="YANz2hVsQKh2Qyaa-IPD-70" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="YANz2hVsQKh2Qyaa-IPD-44" target="YANz2hVsQKh2Qyaa-IPD-46">
+        <mxCell id="YANz2hVsQKh2Qyaa-IPD-70" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="YANz2hVsQKh2Qyaa-IPD-44" target="YANz2hVsQKh2Qyaa-IPD-46" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="YANz2hVsQKh2Qyaa-IPD-71" value="SOCKS5" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="YANz2hVsQKh2Qyaa-IPD-70">
+        <mxCell id="YANz2hVsQKh2Qyaa-IPD-71" value="SOCKS5" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="YANz2hVsQKh2Qyaa-IPD-70" vertex="1" connectable="0">
           <mxGeometry x="-0.0773" y="-1" relative="1" as="geometry">
             <mxPoint as="offset" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="YANz2hVsQKh2Qyaa-IPD-44" value="wget2" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+        <mxCell id="YANz2hVsQKh2Qyaa-IPD-44" value="wget2" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="424" y="1000.25" width="120" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="YANz2hVsQKh2Qyaa-IPD-79" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;startArrow=none;startFill=0;" edge="1" parent="1" source="YANz2hVsQKh2Qyaa-IPD-46" target="YANz2hVsQKh2Qyaa-IPD-33">
+        <mxCell id="YANz2hVsQKh2Qyaa-IPD-79" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;startArrow=none;startFill=0;" parent="1" source="YANz2hVsQKh2Qyaa-IPD-46" target="YANz2hVsQKh2Qyaa-IPD-33" edge="1">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
               <mxPoint x="160" y="1030" />
@@ -86,22 +80,22 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="YANz2hVsQKh2Qyaa-IPD-46" value="TOR Client" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+        <mxCell id="YANz2hVsQKh2Qyaa-IPD-46" value="TOR Client" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="227" y="1000.25" width="120" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="YANz2hVsQKh2Qyaa-IPD-54" value="Monitor clients" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+        <mxCell id="YANz2hVsQKh2Qyaa-IPD-54" value="Monitor clients" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
           <mxGeometry x="204" y="960" width="90" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="YANz2hVsQKh2Qyaa-IPD-60" value="PCAP Capture" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+        <mxCell id="YANz2hVsQKh2Qyaa-IPD-60" value="PCAP Capture" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" parent="1" vertex="1">
           <mxGeometry x="399" y="1100" width="150" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="YANz2hVsQKh2Qyaa-IPD-64" value="Zim Server" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+        <mxCell id="YANz2hVsQKh2Qyaa-IPD-64" value="Zim Server" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" parent="1" vertex="1">
           <mxGeometry x="580" y="950" width="120" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="YANz2hVsQKh2Qyaa-IPD-69" value="TGEN Server" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+        <mxCell id="YANz2hVsQKh2Qyaa-IPD-69" value="TGEN Server" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" vertex="1">
           <mxGeometry x="580" y="1010.5" width="120" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="YANz2hVsQKh2Qyaa-IPD-98" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;fillColor=#f8cecc;strokeColor=#b85450;" edge="1" parent="1" source="YANz2hVsQKh2Qyaa-IPD-97" target="YANz2hVsQKh2Qyaa-IPD-60">
+        <mxCell id="YANz2hVsQKh2Qyaa-IPD-98" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;fillColor=#f8cecc;strokeColor=#b85450;" parent="1" source="YANz2hVsQKh2Qyaa-IPD-97" target="YANz2hVsQKh2Qyaa-IPD-60" edge="1">
           <mxGeometry relative="1" as="geometry">
             <mxPoint x="210" y="1030" as="sourcePoint" />
             <Array as="points">
@@ -110,14 +104,14 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="YANz2hVsQKh2Qyaa-IPD-97" value="" style="whiteSpace=wrap;html=1;aspect=fixed;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+        <mxCell id="YANz2hVsQKh2Qyaa-IPD-97" value="" style="whiteSpace=wrap;html=1;aspect=fixed;fillColor=#f8cecc;strokeColor=#b85450;" parent="1" vertex="1">
           <mxGeometry x="194" y="1020.5" width="19.5" height="19.5" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
   </diagram>
   <diagram id="Cj_mM9b10mN7WL6Lxnd5" name="Page-2">
-    <mxGraphModel dx="1712" dy="610" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="1899" dy="739" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -128,7 +122,7 @@
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="GO0tZ2nmppwIpZZyPFFE-4" value="pcap_to_npz.py" style="verticalLabelPosition=bottom;html=1;verticalAlign=top;align=center;strokeColor=none;fillColor=#00BEF2;shape=mxgraph.azure.script_file;pointerEvents=1;" vertex="1" parent="1">
-          <mxGeometry x="210" y="110" width="47.5" height="50" as="geometry" />
+          <mxGeometry x="230" y="230" width="47.5" height="50" as="geometry" />
         </mxCell>
         <mxCell id="GO0tZ2nmppwIpZZyPFFE-8" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="GO0tZ2nmppwIpZZyPFFE-5" target="GO0tZ2nmppwIpZZyPFFE-4">
           <mxGeometry relative="1" as="geometry" />
@@ -137,7 +131,7 @@
           <mxGeometry x="80" y="110" width="47.5" height="50" as="geometry" />
         </mxCell>
         <mxCell id="GO0tZ2nmppwIpZZyPFFE-9" value="&lt;div&gt;&amp;nbsp;ExpBaseline20.npz&amp;nbsp;&lt;/div&gt;" style="verticalLabelPosition=bottom;html=1;verticalAlign=top;align=center;strokeColor=none;fillColor=#00BEF2;shape=mxgraph.azure.cloud_services_configuration_file;pointerEvents=1;" vertex="1" parent="1">
-          <mxGeometry x="320" y="110" width="47.5" height="50" as="geometry" />
+          <mxGeometry x="340" y="230" width="47.5" height="50" as="geometry" />
         </mxCell>
         <mxCell id="GO0tZ2nmppwIpZZyPFFE-23" value="monitor1.pcap" style="verticalLabelPosition=bottom;html=1;verticalAlign=top;align=center;strokeColor=none;fillColor=#00BEF2;shape=mxgraph.azure.cloud_services_configuration_file;pointerEvents=1;" vertex="1" parent="1">
           <mxGeometry x="80" y="270" width="47.5" height="50" as="geometry" />
@@ -280,6 +274,140 @@
         </mxCell>
         <mxCell id="F6qF0g6zIGWZ7mnz-v4b-60" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="F6qF0g6zIGWZ7mnz-v4b-23" target="F6qF0g6zIGWZ7mnz-v4b-50">
           <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="TamarawSetupDiagramId" name="Tamaraw Setup">
+    <mxGraphModel dx="1566" dy="1155" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="TAM-outer" value="" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="130" y="630" width="600" height="620" as="geometry" />
+        </mxCell>
+        <mxCell id="TAM-outer-label" value="Shadow Simulation" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="570" y="650" width="140" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="TAM-tornet" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="1" vertex="1">
+          <mxGeometry x="194" y="760" width="440" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="TAM-tornet-label" value="Tor Network" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="200" y="770" width="90" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="TAM-guard" value="Guard / Entry Relays" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="217" y="810" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="TAM-middle" value="Middle Relays" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="361" y="810" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="TAM-exit" value="Exit Relays" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="497" y="810" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="TAM-e-gm" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="TAM-guard" target="TAM-middle" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="TAM-e-me" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="TAM-middle" target="TAM-exit" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="TAM-bridge" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" parent="1" vertex="1">
+          <mxGeometry x="194" y="910" width="216" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="TAM-bridge-label" value="&lt;span style=&quot;font-weight: normal;&quot;&gt;Tamaraw Bridge&lt;/span&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="310" y="920" width="90" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="TAM-bridge-tor" value="Tor Relay" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d79b00;" parent="1" vertex="1">
+          <mxGeometry x="234" y="954.5" width="103" height="41" as="geometry" />
+        </mxCell>
+        <mxCell id="eZEdEBmBwL4kGt83_MKK-2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="TAM-bridge-pt" target="TAM-bridge-tor">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="TAM-bridge-pt" value="obfs4proxy_tamaraw" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d79b00;" parent="1" vertex="1">
+          <mxGeometry x="215.25" y="1015" width="140" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="TAM-e-bridgetor-guard" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;strokeWidth=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;" parent="1" source="TAM-bridge-tor" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="284" y="969" as="sourcePoint" />
+            <mxPoint x="286" y="870" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="286" y="870" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="TAM-monitor-box" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" parent="1" vertex="1">
+          <mxGeometry x="194" y="1100" width="276" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="TAM-monitor-label" value="&lt;span style=&quot;font-weight: normal;&quot;&gt;Monitor clients&lt;/span&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="361" y="1120" width="90" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="es6P3vnAjnfAW5F-RWiN-7" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="TAM-tor-client" target="TAM-bridge-pt">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="TAM-tor-client" value="Tor Client" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#9673a6;" parent="1" vertex="1">
+          <mxGeometry x="233" y="1120" width="104" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="TAM-wget" value="wget2" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#9673a6;" parent="1" vertex="1">
+          <mxGeometry x="228" y="1180" width="116" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="TAM-e-wget-tor" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" parent="1" source="TAM-wget" target="TAM-tor-client" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="TAM-e-wget-tor-lbl" value="SOCKS5" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;" parent="TAM-e-wget-tor" vertex="1" connectable="0">
+          <mxGeometry x="-0.1" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="TAM-zim" value="Zim Server" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" parent="1" vertex="1">
+          <mxGeometry x="510" y="920" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="TAM-tgen-server" value="TGEN Server" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" vertex="1">
+          <mxGeometry x="510" y="990" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="TAM-e-exit-zim" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" parent="1" source="TAM-exit" target="TAM-zim" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="690" y="840" />
+              <mxPoint x="690" y="950" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="TAM-e-exit-tgen" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" parent="1" source="TAM-exit" target="TAM-tgen-server" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="690" y="840" />
+              <mxPoint x="690" y="1020" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="TAM-bg-clients" value="TGEN / MARKOV Clients&#xa;(no bridge — direct to Guard)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" vertex="1">
+          <mxGeometry x="194" y="680" width="220" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="TAM-e-bg-guard" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;startArrow=none;startFill=0;" parent="1" source="TAM-bg-clients" target="TAM-guard" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="160" y="705" />
+              <mxPoint x="160" y="840" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="TAM-pcap" value="PCAP Capture" style="rounded=0;whiteSpace=wrap;html=1;fillColor=light-dark(#f8cfcc, #512d2b);strokeColor=#b85450;" parent="1" vertex="1">
+          <mxGeometry x="510" y="1060" width="120" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="es6P3vnAjnfAW5F-RWiN-6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="TAM-pcap-src" target="TAM-bridge-pt">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="es6P3vnAjnfAW5F-RWiN-8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fillColor=#f8cecc;strokeColor=#b85450;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" source="TAM-pcap-src" target="TAM-pcap">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="285.4999999999998" y="1093" as="sourcePoint" />
+            <mxPoint x="510" y="1097.5" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="285" y="1110" />
+              <mxPoint x="285" y="1085" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="TAM-pcap-src" value="" style="whiteSpace=wrap;html=1;aspect=fixed;fillColor=#f8cecc;strokeColor=#b85450;" parent="1" vertex="1">
+          <mxGeometry x="275.25" y="1100.5" width="19.5" height="19.5" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>

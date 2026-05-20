@@ -321,6 +321,64 @@ Die so aufgezeichneten Pcaps werden im Anschluss an die Simulation per \texttt{s
 Eine Besonderheit der Shadow-Pcaps ist, dass sie den Linktyp \texttt{101} (Raw IP) anstelle des sonst üblichen \texttt{Ethernet} verwenden.
 Die nachgelagerten Auswertungsskripte berücksichtigen diese Eigenheit (vgl.\ Abschnitt~\ref{sec:realisierung_pcap_to_npz}).
 
+\section{Tamaraw-Variante des Versuchsaufbaus}
+\label{sec:realisierung_tamaraw}
+
+Für die ergänzende Messreihe gegen das Tamaraw-Verfahren (Abschnitt~\ref{sec:wf_defenses_tamaraw}) wird der bisher beschriebene Versuchsaufbau um einen zusätzlichen Bridge-Knoten erweitert.
+Die übrigen Bestandteile, also Tor-Netzwerk aus Tornettools, Monitor-Clients, Zim-Server und Pcap-Aufzeichnung, bleiben unverändert.
+Abbildung~\ref{fig:tamarawsetup} zeigt die so erweiterte Topologie.
+
+% TODO: PDF-Export aus images/Diagrams.drawio (Page-3 "Tamaraw Setup")
+% als images/tamaraw-schema.pdf ablegen, dann untenstehenden Platzhalter durch
+% \includegraphics[width=\textwidth]{../../images/tamaraw-schema} ersetzen.
+\begin{figure}[H]
+\centering
+\fbox{\parbox[c][6cm][c]{0.9\textwidth}{\centering\itshape Tamaraw-Schema (Platzhalter): PDF aus \texttt{images/Diagrams.drawio} exportieren und als \texttt{images/tamaraw-schema.pdf} ablegen.}}
+\caption{Tamaraw-Variante des Versuchsaufbaus. Gegenüber der Baseline-Topologie aus Abbildung~\ref{fig:shadowsetup} kommt der orange dargestellte Bridge-Knoten \texttt{wfbridge0} hinzu. Der monitor-seitige Tor-Daemon verbindet sich nicht direkt zu einem Guard, sondern über den \gls{pt} \texttt{obfs4proxy\_tamaraw} zu diesem Bridge-Knoten, dessen Relay-Prozess die geformten Zellen anschliessend regulär in das simulierte Tor-Netzwerk einspeist.}
+\label{fig:tamarawsetup}
+\end{figure}
+
+\subsection{Warum überhaupt ein Bridge-Knoten}
+\label{sec:realisierung_tamaraw_bridge}
+
+Tamaraw ist nicht Bestandteil des regulären Tor-Daemons.
+Im Gegensatz zum produktiv ausgerollten Circuit Padding, das als generisches Padding-Maschinen-Framework direkt im Tor-Quellcode verankert ist~\cite[S.~4]{kadianakis2021tor}, sieht das Tor-Projekt für Tamaraw keine native Implementierung vor.
+Der Grund liegt im Designprofil des Verfahrens: Tamaraw verzögert reale Zellen systematisch und erreicht in der ursprünglichen Auswertung rund 199\,\% Bandbreiten-Overhead bei zusätzlichem Latenz-Overhead~\cite[S.~228,~235\,f.]{cai2014systematic}.
+Beides widerspricht dem expliziten low-latency-Designziel von Tor, das eine Verzögerung realer Anwendungs-Zellen ausschliesst~\cite[S.~5]{kadianakis2021tor}.
+
+Um Tamaraw dennoch in einem Tor-Kontext untersuchen zu können, wird das Verfahren als \gls{pt} ausserhalb des Tor-Daemons implementiert.
+Pluggable Transports sind ein generischer Mechanismus, mit dem Tor seine Verbindungen über ein modulares Hilfsprogramm leitet, das den Datenstrom vor dem Versand und nach dem Empfang transformiert.
+Sie sind in der Tor-Spezifikation als eigene Protokollebene definiert\footnote{\url{https://spec.torproject.org/pt-spec/}} und werden ursprünglich zur Zensurumgehung eingesetzt, etwa über die obfs4-Familie.
+Im Fall der vorliegenden Arbeit transformiert der \gls{pt} keine Bytes zum Zweck der Zensurumgehung, sondern formt den Zellfluss gemäss Tamaraw-Regelwerk.
+
+\subsection{Implementierung: obfs4proxy\_tamaraw}
+\label{sec:realisierung_tamaraw_obfs4}
+
+Als konkrete Tamaraw-Implementierung wird die obfs4-Erweiterung WFDefProxy aus dem öffentlichen Artefakt-Repository\footnote{\url{https://github.com/websitefingerprinting/wfdef}} verwendet, Branch \texttt{v2}~\cite{wfdefproxy}.
+WFDefProxy ist ein in Go geschriebener Fork von \texttt{obfs4proxy} und implementiert mehrere Website-Fingerprinting-Verteidigungen, darunter Tamaraw.
+Das resultierende Binary wird im Verlauf von \texttt{setup-wf-server.sh} aus den Quellen gebaut und unter dem Namen \texttt{obfs4proxy\_tamaraw} im Server-Arbeitsverzeichnis abgelegt.
+
+Die in dieser Arbeit verwendeten Tamaraw-Parameter entsprechen den Voreinstellungen von WFDefProxy.
+Das Inter-Paket-Intervall in Client-zu-Bridge-Richtung beträgt $\rho_{\text{client}} = 12$~ms, in Bridge-zu-Client-Richtung $\rho_{\text{server}} = 4$~ms.
+Die zur Anonymitäts-Bucket-Bildung verwendete Segmentlänge ist $L = 200$ Zellen.
+Damit ergibt sich das in Abschnitt~\ref{sec:wf_defenses_tamaraw} beschriebene asymmetrische Send-Schema mit Padding bis zum jeweils nächsten Vielfachen von $L$.
+
+\subsection{Einbindung in die Shadow-Konfiguration}
+\label{sec:realisierung_tamaraw_shadow}
+
+Die Erweiterung der Shadow-Konfiguration übernimmt \texttt{generate-wf-config.py}, gesteuert über die Kommandozeilen-Option \texttt{--defense tamaraw}.
+Drei Änderungen werden vorgenommen.
+
+Erstens wird ein zusätzlicher Host \texttt{wfbridge0} mit fester IP-Adresse in die \texttt{shadow.config.yaml} eingetragen.
+Auf diesem Host laufen zwei Prozesse: ein regulärer Tor-Daemon, der als Bridge-Relay konfiguriert ist, sowie der \gls{pt}-Server \texttt{obfs4proxy\_tamaraw}, der über die torrc-Direktive \texttt{ServerTransportPlugin tamaraw exec} eingebunden ist.
+Eine feste IP erlaubt es, den Bridge-Eintrag direkt in die Monitor-torrc zu schreiben, ohne auf einen separaten Bridge-Discovery-Mechanismus angewiesen zu sein.
+
+Zweitens wird in der torrc der Monitor-Hosts die Direktive \texttt{ClientTransportPlugin tamaraw exec} ergänzt, und ein \texttt{Bridge}-Eintrag verweist auf \texttt{wfbridge0}.
+Der monitor-seitige Tor-Daemon verwendet damit als ersten Hop nicht direkt einen Guard aus dem simulierten Konsens, sondern den lokal definierten Bridge-Knoten, dessen Verbindung der \gls{pt}-Plugin formt.
+
+Drittens wird das Padding-Maschinen-Framework des Tor-Daemons auf den Monitor-Hosts deaktiviert (\texttt{CircuitPadding 0}), damit kein zweites, sich überlagerndes Verteidigungsverfahren auf denselben Zellfluss wirkt.
+Die Tamaraw-Variante steht so in direkter Vergleichsposition zu den drei Circuit-Padding-Modi aus Tabelle~\ref{tab:padding_modi}.
+
 \section{Aufbereitung der Daten für die Klassifikation}
 \label{sec:realisierung_aufbereitung}
 

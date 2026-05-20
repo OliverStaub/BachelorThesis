@@ -225,11 +225,39 @@ Tabelle~\ref{tab:eval_performance} fasst die wesentlichen Kennzahlen zusammen.
 Über alle drei Läufe hinweg ergibt sich ein konsistentes Bild.
 Die CPU bildet den primären Engpass und bleibt unabhängig von der Klassenanzahl bei rund 99.8\,\%, was sich mit der Beobachtung aus Abschnitt~\ref{sec:eval_skalierung} deckt, dass die Wall-Clock-Laufzeit nahezu linear mit der Anzahl simulierter Seiten skaliert.
 Der Arbeitsspeicher und die Disk wachsen während des Laufs annähernd linear, da sowohl Shadow-Datenstrukturen als auch \gls{pcap}-Aufzeichnungen monoton anwachsen.
-Bei der grösseren Open-World-Konfiguration ist die Disk-Partition mit 156 GB die letztlich limitierende Ressource, was die Notwendigkeit motiviert, Guard-Relay-\glspl{pcap} zu deaktivieren und das Beobachtungsfenster auf Monitore und Exit-Relays zu beschränken.
+Bei der grösseren Open-World-Konfiguration ist die Disk-Partition mit 156 GB die letztlich limitierende Ressource, was die Notwendigkeit motiviert, sämtliche Relay-\glspl{pcap} zu deaktivieren und die Aufzeichnung auf die Monitor-Hosts zu beschränken.
+
+Eine alternative Erfassungsmethode wäre die in der Arbeit von Jansen und Wails verwendete Tor-Instrumentierung, bei der jede Relay-Instanz die verarbeiteten Tor-Zellen direkt mit Richtung und Zeitstempel in ein kompaktes Cell-Trace-Log schreibt~\cite[S.~5]{jansen2023data}.
+Dieser Ansatz vermeidet die Ethernet-, IP-, \gls{tcp}- und TLS-Header, die in einer \gls{pcap}-Aufzeichnung pro Paket anfallen, blendet reine \gls{tcp}-Bestätigungspakete, Retransmissionen und TLS-Handshake-Bytes aus und beschränkt sich von vornherein auf die Zellen der überwachten Schaltkreise.
+Gegenüber dem hier gewählten \gls{pcap}-basierten Vorgehen liesse sich der Speicherbedarf damit um eine bis zwei Grössenordnungen reduzieren und gerade die Open-World-Skala unter Tamaraw-Padding wieder unterhalb der vorhandenen 156 GB betreiben.
+In der vorliegenden Arbeit wird dennoch an den \glspl{pcap} festgehalten, da sie dem in Abschnitt~\ref{sec:realisierung_monitore} beschriebenen Bedrohungsmodell eines lokalen Beobachters entsprechen und ohne Eingriffe in den Tor-Quellcode unterstützt werden.
 
 \section{Bandbreiten-Overhead}
 \label{sec:eval_bandwidth}
 
-\todo{Tamaraw-Bandbreiten-Overhead mit \texttt{pcap\_overhead.py} aus \texttt{exp-tamaraw-20} gegen \texttt{exp-baseline-20} berechnen.
-Mittelwert und Median der Up-, Down- und Gesamtbytes pro Visit angeben, dazu den Paket-Overhead.
-Resultate als kurze Tabelle, optional zusätzlich Boxplot der Per-Visit-Bytes aus dem CSV-Export.}
+Der durch die Verteidigungen verursachte Bandbreiten-Overhead wird aus den Monitor-\glspl{pcap} der Closed-World-80-Läufe mit dem Skript \texttt{pcap\_overhead.py} ermittelt.
+Pro Eintrag der \texttt{schedule.json} werden alle \gls{tcp}-Pakete innerhalb des 30-Sekunden-Visit-Fensters auf der eth0-Schnittstelle des Monitors aufsummiert, getrennt nach Up- (Client $\rightarrow$ Netzwerk) und Down-Richtung.
+Für die Läufe \texttt{exp-baseline-80}, \texttt{exp-padding-80} und \texttt{exp-reduced-80} fliessen je fünf Monitore in die Statistik ein (3000 Besuche pro Lauf), für \texttt{exp-tamaraw-80} aufgrund der etwa zwanzigfach grösseren \gls{pcap}-Dateien lediglich ein Monitor (600 Besuche).
+Da alle Monitore innerhalb eines Laufs identisch parametrisiert sind und denselben Tor-Daemon mit derselben Verteidigung verwenden, reicht diese Stichprobengrösse für eine stabile Schätzung des Mittelwerts pro Besuch aus.
+
+\begin{table}[h]
+    \centering
+    \caption{Mittlerer Datenverkehr pro Besuch auf der Monitor-Schnittstelle und relativer Overhead gegenüber \texttt{exp-baseline-80}. Eigene Messung aus den Monitor-\glspl{pcap} mit \texttt{pcap\_overhead.py}.}
+    \label{tab:eval_bandwidth}
+    \begin{tabular}{lrrrrr}
+        \hline
+        Lauf & Bytes Up & Bytes Down & Bytes Gesamt & Pakete Gesamt & $\Delta$ Bytes \\
+        \hline
+        exp-baseline-80 &      81\,003 &     349\,677 &     430\,680 &       602 & Basis \\
+        exp-padding-80  &      87\,398 &     356\,150 &     443\,549 &       638 & $+3.0\,\%$ \\
+        exp-reduced-80  &      83\,942 &     352\,416 &     436\,359 &       621 & $+1.3\,\%$ \\
+        exp-tamaraw-80  & 3\,662\,162 & 1\,347\,325 & 5\,009\,486 &  11\,256 & $+1063.1\,\%$ \\
+        \hline
+    \end{tabular}
+\end{table}
+
+Volles und Reduced Circuit Padding erhöhen den mittleren Datenverkehr pro Besuch um lediglich 3.0\,\% beziehungsweise 1.3\,\% in Bytes und um 6.0\,\% beziehungsweise 3.2\,\% in Paketen.
+Beide Verfahren liegen damit innerhalb der Streubreite einzelner Besuche und sind gegenüber dem Nutzverkehr im \gls{tor}-Netz praktisch vernachlässigbar.
+Tamaraw-Padding hingegen vervielfacht den Datenverkehr um den Faktor 11.6 in Bytes und 18.7 in Paketen, was den qualitativen Unterschied zwischen einem inhaltsabhängigen Padding-Schema und einem auf konstanter Senderate basierenden Traffic-Shaping sichtbar macht.
+Auffällig ist zusätzlich, dass sich das Up-zu-Down-Verhältnis von etwa 1:4.3 in den ungeschützten Besuchen unter Tamaraw auf rund 2.7:1 umkehrt, da der Monitor unabhängig vom tatsächlichen Datenfluss in jedem Tick eine Dummy-Zelle in Richtung Bridge sendet.
+Die hier gemessenen Overhead-Werte liegen deutlich über den von Cai et al.\ ursprünglich angegebenen rund 199\,\%~\cite[S.~228]{cai2014systematic}, da \glspl{pcap} pro Tor-Zelle zusätzlich \gls{tcp}- und TLS-Framing erfassen und das gesamte 30-Sekunden-Visit-Fenster einschliessen, in dem Tamaraw auch nach Abschluss des Seitenabrufs weiterhin Dummy-Zellen emittiert.

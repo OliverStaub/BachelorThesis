@@ -47,6 +47,9 @@ src/experiments.csv
 # Excel temp files
 ~$*.xlsx
 
+# Assembled submission folder (produced by make-submission.sh)
+submission/
+
 # Node / Slidev
 node_modules/
 dist/
