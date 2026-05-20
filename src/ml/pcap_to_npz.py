@@ -26,6 +26,7 @@ Dependencies:
 import argparse
 import json
 import logging
+import struct
 import sys
 from collections import defaultdict
 from pathlib import Path
@@ -53,7 +54,24 @@ def read_pcap(pcap_path):
         with open(pcap_path, "rb") as f:
             reader = dpkt.pcap.Reader(f)
             linktype = reader.datalink()
-            for ts, buf in reader:
+            try:
+                pcap_iter = iter(reader)
+            except Exception:
+                logging.warning(f"Cannot iterate pcap {pcap_path}")
+                return packets
+            while True:
+                try:
+                    ts, buf = next(pcap_iter)
+                except StopIteration:
+                    break
+                except (dpkt.dpkt.NeedData, struct.error) as e:
+                    # Truncated pcap (e.g., simulation killed mid-write)
+                    logging.warning(f"Truncated pcap {pcap_path}: {e} — "
+                                    f"using {len(packets)} packets read so far")
+                    break
+                except Exception as e:
+                    logging.warning(f"Error reading {pcap_path}: {e}")
+                    break
                 try:
                     # Shadow writes raw IP (link type 101), not Ethernet.
                     # dpkt.pcap.DLT_RAW is 12, but the actual value is 101.
