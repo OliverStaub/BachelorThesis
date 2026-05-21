@@ -102,6 +102,8 @@ Die hier erzielten Werte liegen damit unterhalb der von Sirinam et al.\ ursprün
 Die Aktivierung des produktiv im Tor-Netzwerk eingesetzten Circuit Paddings (ON) senkt die Accuracy bei 20 Klassen von 92.7\,\% auf 83.3\,\%, was einer Reduktion um 9.4~Prozentpunkte entspricht.
 Bei 80 Klassen ist der Effekt deutlich kleiner: Die Accuracy sinkt um 3.8~Prozentpunkte von 82.4\,\% auf 78.6\,\%.
 Eine plausible Interpretation ist, dass das Klassifikationsproblem mit wachsender Klassenanzahl bereits ohne Padding fordernder wird, sodass das zusätzliche Rauschen durch Padding-Zellen relativ weniger ins Gewicht fällt.
+Die Grössenordnung dieser Reduktion ist konsistent mit Sirinam et al., die für die ebenfalls auf Adaptive Padding basierende Verteidigung WTF-PAD einen Rückgang des \gls{df}-Angriffs von 98.3\,\% auf 90.7\,\% berichten~\cite[S.~1938]{sirinam2018deep}.
+Die in derselben Studie evaluierte molding-basierte Verteidigung Walkie-Talkie drückt den Angriff demgegenüber auf 49.7\,\% und gehört damit zu einer anderen Schutzklasse, die in Tor produktiv nicht ausgerollt wird und im Rahmen dieser Arbeit nicht direkt nachgemessen wurde~\cite[S.~1938]{sirinam2018deep}.
 Abbildung~\ref{fig:eval_padding_comp} stellt die drei Padding-Modi für beide Klassengrössen gegenüber.
 
 \begin{figure}[H]
