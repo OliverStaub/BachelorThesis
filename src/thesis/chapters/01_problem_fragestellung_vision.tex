@@ -9,7 +9,7 @@ Mit dem \gls{df} Classifier sollen Erkennungsraten von über 95~\% in einer Clos
 
 Als Gegenmassnahme hat das Tor Netzwerk das Circuit-Padding-Framework eingeführt, welches zusätzliche Zellen in den Verkehrsstrom einfügt\footnote{\url{https://spec.torproject.org/padding-spec/circuit-level-padding.html}}.
 
-Experimente zu Website Fingerprinting lassen sich mit dem 2011 eingeführten Shadow Simulator durchführen. Dieser ermöglicht es, ein vollständiges, deterministisches \gls{tor}-Netzwerk zu simulieren\cite[S.~1]{jansen2011shadow}. In der Forschung erwähnte Shadow Simulationen stellen jedoch hohe Anforderungen an die Hardware und nutzen proprietär gepatchte Tor-Versionen zur Cell-Trace-Entnahme \cite[S.~1, 4, 6]{jansen2023data}.
+Experimente zu Website Fingerprinting lassen sich mit dem 2011 eingeführten Shadow Simulator durchführen. Dieser ermöglicht es, ein vollständiges, deterministisches \gls{tor}-Netzwerk zu simulieren \cite[S.~1]{jansen2011shadow}. In der Forschung erwähnte Shadow Simulationen stellen jedoch hohe Anforderungen an die Hardware und nutzen proprietär gepatchte Tor-Versionen zur Cell-Trace-Entnahme \cite[S.~1, 4, 6]{jansen2023data}.
 
 Die vorliegende Arbeit prüft, ob sich eine Simulation mit moderater Hardware und einer unmodifizierten Tor-Version durchführen lässt. Als Ziel soll der Effekt von Circuit Padding in der aufgebauten Simulationsumgebung beobachtet werden.
 
@@ -17,25 +17,23 @@ Die vorliegende Arbeit prüft, ob sich eine Simulation mit moderater Hardware un
 Daraus ergeben sich die folgenden Forschungsfragen.
 
 \begin{enumerate}
-    \item Wie verändert sich die Erkennungsrate eines \gls{df}-Angriffs mit unterschiedlichen Circuit-Padding-Einstellungen?
+    \item Wie verändert sich die Erkennungsrate eines \gls{wf}-Angriffs mit unterschiedlichen Circuit-Padding-Einstellungen?
     \item Welche bekannten Limitationen simulierter und laborbasierter \gls{wf}-Angriffe sind in der Literatur dokumentiert, und wie sind die experimentellen Ergebnisse dieser Arbeit einzuordnen?
-    \item Welche zusätzliche Schutzwirkung gegen \gls{df}-Angriffe lässt sich mit dem Tamaraw-Verfahren in einer kleineren Serverumgebung erzielen?
+    \item Welche zusätzliche Schutzwirkung gegen \gls{df}-Angriffe lässt sich mit dem neueren Tamaraw-Verfahren erzielen?
 \end{enumerate}
 
 \section{Vision und erwartete Resultate}
 
-Ziel der Arbeit ist es, den Einfluss von Circuit Padding auf \gls{df}-Angriffe unter kontrollierten Laborbedingungen empirisch zu quantifizieren und die Ergebnisse in den Stand der Forschung einzuordnen.
+Ziel der Arbeit ist es, den Einfluss von Circuit Padding auf \gls{wf}-Angriffe unter kontrollierten Laborbedingungen empirisch zu evaluieren und die Ergebnisse in den Stand der Forschung einzuordnen.
 Im Einzelnen werden folgende Resultate angestrebt.
 
 \begin{itemize}
     \item Eine aufgebaute Shadow-Simulationsumgebung in einer VM von labservices.ch.
     \item Ein in dieser Umgebung erstelltes \gls{wf}-Datenset.
     \item Ein mit dem Tool WFlib durchgeführter \gls{df}-Angriff.
-    \item Eine ergänzende, exploratorische Messreihe zum Tamaraw-Verfahren in derselben, im Vergleich zu publizierten Setups kleineren Serverumgebung.
 \end{itemize}
 
 \section{Aufgabenstellung}
 
 Die vollständige, vom Auftraggeber unterzeichnete Aufgabenstellung findet sich in Anhang~\ref{app:aufgabenstellung}.
 Sie umfasst den Aufbau der Shadow-Simulation und die Auswertung des Circuit Padding.
-Die exploratorische Erweiterung um Tamaraw wurde während der Arbeit in Absprache mit dem Auftraggeber ergänzt.
