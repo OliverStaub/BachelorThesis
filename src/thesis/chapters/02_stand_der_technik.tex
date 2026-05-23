@@ -17,9 +17,9 @@ Das Tor-Netzwerk gliedert sich in mehrere Akteur-Klassen.
 Der Client ist der Rechner des Nutzers. Auf ihm läuft die Tor-Software, die Anwendungs-Verbindungen entgegennimmt, einen Pfad durch das Netzwerk wählt und die Daten schichtweise verschlüsselt~\cite[S.~4\,f.]{dingledine2004tor}.
 
 Die Onion Router (kurz: Relais) sind freiwillig betriebene Server, welche diese verschlüsselten Daten weiterleiten.
-Pro Verbindung kommen drei Relais zum Einsatz, in den Rollen Eingangs-, Mittel- und Ausgangsknoten~\cite{torspec_dirspec}.
+Pro Verbindung kommen drei Relais zum Einsatz, in den Rollen Eingangs-, Mittel- und Ausgangsknoten~\cite{torspec_pathspec}.
 Damit ein Client überhaupt weiss, welche Relais derzeit verfügbar sind, betreiben wenige vertrauenswürdige Stellen die Rolle der Verzeichnisserver (Directory Authorities).
-Sie sammeln stündlich die Eigenschaften aller Relais (IP, Bandbreite, Flags), stimmen über diese Liste ab und veröffentlichen ein gemeinsames, signiertes Verzeichnisdokument, das ein Client vor dem Aufbau einer Verbindung herunterlädt~\cite{torspec_dirspec}.
+Sie sammeln in regelmässigen Abständen die Eigenschaften aller Relais (IP, Bandbreite, Flags), stimmen über diese Liste ab und veröffentlichen ein gemeinsames, signiertes Verzeichnisdokument, das ein Client vor dem Aufbau einer Verbindung herunterlädt~\cite{torspec_dirspec}.
 
 \subsection{Zellen}
 
