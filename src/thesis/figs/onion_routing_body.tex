@@ -14,6 +14,8 @@
 ]
 
 \def\dx{32mm}
+% Horizontaler Versatz der Zwiebel-Schichten (positiv = nach rechts)
+\def\ox{6mm}
 
 % Main row of nodes: Client - Guard - Middle - Exit - Ziel
 \node[endpoint] (c0) at (0*\dx, 0) {Client};
@@ -30,22 +32,22 @@
 
 % Encryption layers above each arrow (the shrinking onion)
 % Hop 1 (Client -> Guard): three layers
-\fill[red!30]    (0.5*\dx-4mm, 13mm) rectangle ++(8mm, 6mm);
-\draw            (0.5*\dx-4mm, 13mm) rectangle ++(8mm, 6mm);
-\fill[orange!50] (0.5*\dx-3mm, 14mm) rectangle ++(6mm, 4mm);
-\draw            (0.5*\dx-3mm, 14mm) rectangle ++(6mm, 4mm);
-\fill[yellow!70] (0.5*\dx-2mm, 15mm) rectangle ++(4mm, 2mm);
-\draw            (0.5*\dx-2mm, 15mm) rectangle ++(4mm, 2mm);
+\fill[red!30]    (0.5*\dx+\ox-4mm, 13mm) rectangle ++(8mm, 6mm);
+\draw            (0.5*\dx+\ox-4mm, 13mm) rectangle ++(8mm, 6mm);
+\fill[orange!50] (0.5*\dx+\ox-3mm, 14mm) rectangle ++(6mm, 4mm);
+\draw            (0.5*\dx+\ox-3mm, 14mm) rectangle ++(6mm, 4mm);
+\fill[yellow!70] (0.5*\dx+\ox-2mm, 15mm) rectangle ++(4mm, 2mm);
+\draw            (0.5*\dx+\ox-2mm, 15mm) rectangle ++(4mm, 2mm);
 
 % Hop 2 (Guard -> Middle): two layers
-\fill[orange!50] (1.5*\dx-3mm, 14mm) rectangle ++(6mm, 4mm);
-\draw            (1.5*\dx-3mm, 14mm) rectangle ++(6mm, 4mm);
-\fill[yellow!70] (1.5*\dx-2mm, 15mm) rectangle ++(4mm, 2mm);
-\draw            (1.5*\dx-2mm, 15mm) rectangle ++(4mm, 2mm);
+\fill[orange!50] (1.5*\dx+\ox-3mm, 14mm) rectangle ++(6mm, 4mm);
+\draw            (1.5*\dx+\ox-3mm, 14mm) rectangle ++(6mm, 4mm);
+\fill[yellow!70] (1.5*\dx+\ox-2mm, 15mm) rectangle ++(4mm, 2mm);
+\draw            (1.5*\dx+\ox-2mm, 15mm) rectangle ++(4mm, 2mm);
 
 % Hop 3 (Middle -> Exit): one layer
-\fill[yellow!70] (2.5*\dx-2mm, 15mm) rectangle ++(4mm, 2mm);
-\draw            (2.5*\dx-2mm, 15mm) rectangle ++(4mm, 2mm);
+\fill[yellow!70] (2.5*\dx+\ox-2mm, 15mm) rectangle ++(4mm, 2mm);
+\draw            (2.5*\dx+\ox-2mm, 15mm) rectangle ++(4mm, 2mm);
 
 
 % Annotations under each relay (what each node knows)
