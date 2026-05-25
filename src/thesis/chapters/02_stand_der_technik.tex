@@ -30,28 +30,30 @@ Die feste Zellgrösse soll Verkehrsmuster auf Paketebene vereinheitlichen. Anzah
 
 \subsection{Circuits und Streams}
 
-Ein Circuit ist ein mehrstufiger, kryptografisch geschützter Pfad durch das Netzwerk und enthält in der Regel drei Knoten: Eingangs-, Mittel- und Ausgangsknoten.
+Ein Circuit ist ein kryptografisch geschützter Pfad durch das Netzwerk und enthält in der Regel drei Knoten: Eingangs-, Mittel- und Ausgangsknoten.
 Der Eingangsknoten kennt den Client und den Mittelknoten, nicht aber den Ausgangsknoten oder das Ziel. Der Mittelknoten kennt nur seine beiden Nachbarn. Der Ausgangsknoten kennt das Ziel, nicht aber den Client.
 
 Der Client baut den Circuit schrittweise auf: Mit dem ersten Hop wird per Diffie-Hellman ein Sitzungsschlüssel ausgehandelt, anschliessend wird der Circuit über bereits etablierte Hops um jeweils einen weiteren Onion Router erweitert~\cite[S.~5\,ff.]{dingledine2004tor}.
 
 Über einen einzelnen Circuit können mehrere TCP-Streams parallel geleitet werden, was die Anzahl rechenintensiver Public-Key-Operationen reduziert.
-Um die Privatsphäre zu erhöhen, rotiert der \gls{tor}-Client Circuits periodisch und nutzt für neu eintreffende Streams den jeweils neuesten offenen Circuit~\cite[S.~5]{dingledine2004tor}.
+Um die Privatsphäre zu erhöhen, rotiert der \gls{tor}-Client Circuits periodisch und nutzt für neu eintreffende Streams den jeweils neuesten offenen Circuit~\cite[S.~6\,f.]{dingledine2004tor}.
 Im Tor Browser werden zusätzlich alle Streams derselben First-Party-Domain (der in der Adresszeile angezeigten Domain) auf denselben Circuit gebündelt~\cite[S.~2]{jansen2023data}.
 
 \subsection{Onion Routing}
 
-Das namensgebende Verfahren von \gls{tor} ist das Onion Routing.
+Das namensgebende Verfahren von \gls{tor} (The Onion Router) ist das Onion Routing.
 Der Client verschlüsselt eine Nachricht schichtweise mit den Sitzungsschlüsseln aller drei Onion Router des Circuits, sodass jeder Hop genau eine Schicht entfernt und nur seine direkten Nachbarn kennt~\cite[S.~1]{dingledine2004tor}.
 Dadurch besitzt kein einzelner Onion Router gleichzeitig Kenntnis über Quelle und Ziel der Kommunikation~\cite[S.~1]{dingledine2004tor}.
-Abbildung~\ref{fig:onion_routing} veranschaulicht diesen Vorgang: Vom Client zum Ziel reduziert sich die Anzahl der Verschlüsselungsschichten an jedem Hop um eine, bis der Ausgangsknoten den Klartext an das Ziel weiterleitet.
+
+
+Abbildung~\ref{fig:onion_routing} veranschaulicht diesen Vorgang: Vom Client zum Ziel reduziert sich die Anzahl der Verschlüsselungsschichten an jedem Hop um eine, bis der Ausgangsknoten die ursprüngliche Nachricht ohne Tor-Verschlüsselung an das Ziel weiterleitet.
 
 \begin{figure}[H]
 \centering
 \resizebox{\textwidth}{!}{%
 \input{figs/onion_routing_body.tex}%
 }
-\caption{Onion Routing in Tor: Eine Nachricht wird vom Client mit den Schlüsseln aller drei Onion Router verschlüsselt. Jeder Hop entfernt genau eine Schicht, der Ausgangsknoten leitet die Nachricht im Klartext an das Ziel weiter.}
+\caption{Onion Routing in Tor: Eine Nachricht wird vom Client mit den Schlüsseln aller drei Onion Router verschlüsselt. Jeder Hop entfernt genau eine Schicht, bis der Ausgangsknoten die Nachricht an das Ziel weiterleitet.}
 \label{fig:onion_routing}
 \end{figure}
 
