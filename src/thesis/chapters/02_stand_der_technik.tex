@@ -23,21 +23,20 @@ Sie sammeln in regelmässigen Abständen die Eigenschaften aller Relais (IP, Ban
 
 \subsection{Zellen}
 
-Die kleinste Übertragungseinheit ist eine Zelle fester Grösse, im ursprünglichen Design 512~Byte~\cite[S.~5]{dingledine2004tor}.
-Unterschieden wird zwischen Control Cells (z.\,B.\ create, destroy, padding) und Relay Cells, die Ende-zu-Ende-Stream-Daten transportieren~\cite[S.~5]{dingledine2004tor}.
+Die kleinste Übertragungseinheit ist eine Zelle fester Grösse, im ursprünglichen Design 512~Bytes.
+Unterschieden wird zwischen Control Cells (z.\,B.\ create, destroy, padding) und Relay Cells, die Ende-zu-Ende-Stream-Daten transportieren~\cite[S.~6]{dingledine2004tor}.
 
 Die feste Zellgrösse soll Verkehrsmuster auf Paketebene vereinheitlichen. Anzahl und Richtung der Zellen bleiben für einen Beobachter jedoch sichtbar. Genau diesen Umstand nutzen Website-Fingerprinting-Angriffe aus~\cite[S.~2]{jansen2023data}.
 
 \subsection{Circuits und Streams}
 
-Ein Circuit ist ein mehrstufiger, kryptographisch geschützter Pfad durch das Netzwerk und enthält in der Regel drei Knoten: Eingangs-, Mittel- und Ausgangsknoten.
+Ein Circuit ist ein mehrstufiger, kryptografisch geschützter Pfad durch das Netzwerk und enthält in der Regel drei Knoten: Eingangs-, Mittel- und Ausgangsknoten.
 Der Eingangsknoten kennt den Client und den Mittelknoten, nicht aber den Ausgangsknoten oder das Ziel. Der Mittelknoten kennt nur seine beiden Nachbarn. Der Ausgangsknoten kennt das Ziel, nicht aber den Client.
 
-Der Client baut den Circuit schrittweise auf: Mit dem ersten Hop wird per Diffie-Hellman ein Sitzungsschlüssel ausgehandelt, anschliessend wird der Circuit über bereits etablierte Hops um jeweils einen weiteren Onion Router erweitert~\cite[S.~5\,f.]{dingledine2004tor}.
-Wie die Daten anschliessend schichtweise verschlüsselt durch diese Hops geleitet werden, beschreibt der nachfolgende Abschnitt zum Onion Routing.
+Der Client baut den Circuit schrittweise auf: Mit dem ersten Hop wird per Diffie-Hellman ein Sitzungsschlüssel ausgehandelt, anschliessend wird der Circuit über bereits etablierte Hops um jeweils einen weiteren Onion Router erweitert~\cite[S.~5\,ff.]{dingledine2004tor}.
 
 Über einen einzelnen Circuit können mehrere TCP-Streams parallel geleitet werden, was die Anzahl rechenintensiver Public-Key-Operationen reduziert.
-Um Linkability zu begrenzen, rotiert der OP Circuits periodisch und nutzt für neu eintreffende Streams den jeweils neuesten offenen Circuit~\cite[S.~5]{dingledine2004tor}.
+Um die Privatsphäre zu erhöhen, rotiert der Onion Proxy Circuits periodisch und nutzt für neu eintreffende Streams den jeweils neuesten offenen Circuit~\cite[S.~5]{dingledine2004tor}.
 Im Tor Browser werden zusätzlich alle Streams derselben First-Party-Domain (der in der Adresszeile angezeigten Domain) auf denselben Circuit gebündelt~\cite[S.~2]{jansen2023data}.
 
 \subsection{Onion Routing}
