@@ -36,7 +36,7 @@ Der Eingangsknoten kennt den Client und den Mittelknoten, nicht aber den Ausgang
 Der Client baut den Circuit schrittweise auf: Mit dem ersten Hop wird per Diffie-Hellman ein Sitzungsschlüssel ausgehandelt, anschliessend wird der Circuit über bereits etablierte Hops um jeweils einen weiteren Onion Router erweitert~\cite[S.~5\,ff.]{dingledine2004tor}.
 
 Über einen einzelnen Circuit können mehrere TCP-Streams parallel geleitet werden, was die Anzahl rechenintensiver Public-Key-Operationen reduziert.
-Um die Privatsphäre zu erhöhen, rotiert der Onion Proxy Circuits periodisch und nutzt für neu eintreffende Streams den jeweils neuesten offenen Circuit~\cite[S.~5]{dingledine2004tor}.
+Um die Privatsphäre zu erhöhen, rotiert der \gls{tor}-Client Circuits periodisch und nutzt für neu eintreffende Streams den jeweils neuesten offenen Circuit~\cite[S.~5]{dingledine2004tor}.
 Im Tor Browser werden zusätzlich alle Streams derselben First-Party-Domain (der in der Adresszeile angezeigten Domain) auf denselben Circuit gebündelt~\cite[S.~2]{jansen2023data}.
 
 \subsection{Onion Routing}
