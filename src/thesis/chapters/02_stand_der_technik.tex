@@ -98,6 +98,17 @@ Eine dritte Klasse bilden Seitenkanal- und Latenzangriffe, die mit weniger weitr
 Murdoch und Danezis zeigten bereits 2005, dass ein einzelner kompromittierter Tor-Knoten zusammen mit aktiven Latenzproben genügen kann, um die Auslastung anderer Relais zu schätzen und so wahrscheinliche Pfade zu rekonstruieren~\cite[S.~17]{crombe2016correlation}.
 Weitere Vertreter dieser Klasse sind Angriffe auf der Ebene von Autonomous Systems oder Internet Exchange Points, die durch ihre topologische Position eine Korrelation an beiden Enden begünstigen~\cite[S.~1963]{nasr2018deepcorr}, sowie Angriffe auf das Path-Selection- oder Entry-Guard-Verfahren.
 
+Abbildung~\ref{fig:angriffsklassen} fasst diese Einordnung schematisch zusammen.
+
+\begin{figure}[H]
+\centering
+\resizebox{\textwidth}{!}{%
+\input{figs/angriffsklassen_body.tex}%
+}
+\caption{Einordnung der für diese Arbeit relevanten Angriffsklassen auf \gls{tor} entlang der Achsen Beobachtungsposition und Zielaussage. Der Fokus der vorliegenden Arbeit liegt auf Website-Fingerprinting (blau hervorgehoben). Die Zuordnung ist vereinfachend, einzelne Verfahren wie die \gls{as}-/IXP-Korrelation lassen sich auch als Sonderfall der Traffic-Correlation lesen.}
+\label{fig:angriffsklassen}
+\end{figure}
+
 Im Rahmen dieser Arbeit wird ausschliesslich \gls{wf} experimentell untersucht.
 Die nachfolgende Beschreibung von Traffic-Correlation dient zwei Zwecken.
 Erstens lassen sich beide Angriffsklassen so methodisch sauber voneinander abgrenzen, was insbesondere bei der Bewertung von Circuit Padding wichtig ist.
