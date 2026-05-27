@@ -61,12 +61,12 @@ Abbildung~\ref{fig:onion_routing} veranschaulicht diesen Vorgang: Vom Client zum
 \label{sec:tor_bedrohungsmodell}
 
 Tor ist explizit nicht gegen einen globalen passiven Beobachter ausgelegt.
-Angenommen wird stattdessen ein Angreifer, der einen Teil des Netzverkehrs beobachten, Verkehr modifizieren oder verzögern, eigene Onion Router betreiben sowie einen Teil bestehender Router kompromittieren kann~\cite[S.~4]{dingledine2004tor}.
+Angenommen wird stattdessen ein Angreifer, der einen Teil des Netzverkehrs beobachten, den Verkehr modifizieren oder verzögern, eigene Onion Router betreiben sowie einen Teil bestehender Router kompromittieren kann~\cite[S.~4]{dingledine2004tor}.
 Das Designziel ist die Abwehr von Traffic-Analysis-Angriffen, nicht aber von Traffic-Confirmation-Angriffen, bei denen der Angreifer beide Enden einer Verbindung beobachtet~\cite[S.~4]{dingledine2004tor}.
 
 \subsection{Kein Padding im Originaldesign}
 
-Für die vorliegende Arbeit besonders relevant ist, dass das ursprüngliche Tor-Design weder Mixing noch Padding noch Traffic Shaping vorsieht
+Im ursprünglichen Tor-Design war kein Padding oder Traffic Shaping vorgesehen.
 Die Autoren begründen dies mit den Kosten solcher Verfahren und damit, dass zum damaligen Zeitpunkt kein praktikables, nachweislich anonymitätssteigerndes Padding-Schema existierte~\cite[S.~1]{dingledine2004tor}.
 Genau in diese Lücke setzen spätere Arbeiten zum Circuit Padding an, das in den folgenden Abschnitten behandelt wird.
 
@@ -82,7 +82,7 @@ Das in Abschnitt~\ref{sec:tor_bedrohungsmodell} skizzierte Bedrohungsmodell von 
 Innerhalb dieses Modells lassen sich Deanonymisierungsangriffe entlang zweier Achsen einordnen.
 Die erste Achse ist die Beobachtungsposition, also ob der Angreifer den Verkehr an einem Ende, an beiden Enden oder über Seitenkanäle erfasst.
 Die zweite Achse ist die Zielaussage, also ob die besuchte Webseite, die Identität der kommunizierenden Parteien oder der gewählte Pfad rekonstruiert werden soll.
-Der folgende Unterabschnitt ordnet die für diese Arbeit relevanten Angriffsklassen ein, anschliessend wird mit Traffic-Correlation der zentrale verwandte Angriff zu \gls{wf} genauer beschrieben.
+Der folgende Unterabschnitt ordnet die für diese Arbeit relevanten Angriffsklassen ein, anschliessend wird die relevanten Angriffsklassen Traffic-Correlation und \gls{wf} genauer eingegangen.
 
 \subsection{Angriffsklassen im Überblick}
 
