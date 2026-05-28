@@ -5,11 +5,11 @@
 
 Das \gls{tor}-Netzwerk anonymisiert Verbindungen, indem Pakete über mehrere verschlüsselte Relays geleitet werden.
 Trotz dieses Schutzes zeigen \gls{wf}-Angriffe, dass ein passiver Beobachter zwischen Client und Eingangsknoten besuchte Webseiten allein anhand der Paketrichtungen und Zeitverläufe zuordnen kann.
-Mit dem \gls{df} Classifier sollen Erkennungsraten von über 95~\% in einer Closed-World Umgebung erreicht worden sein. \cite[S.~2]{sirinam2018deep}.
+Mit dem \gls{df} Classifier sollen Erkennungsraten von über 95~\% in einer Closed-World Umgebung erreicht worden sein. \cite{sirinam2018deep}.
 
 Als Gegenmassnahme hat das Tor Netzwerk das Circuit-Padding-Framework eingeführt, welches zusätzliche Zellen in den Verkehrsstrom einfügt\footnote{\url{https://spec.torproject.org/padding-spec/circuit-level-padding.html}}.
 
-Experimente zu Website Fingerprinting lassen sich mit dem 2011 eingeführten Shadow Simulator durchführen. Dieser ermöglicht es, ein vollständiges, deterministisches \gls{tor}-Netzwerk zu simulieren \cite[S.~1]{jansen2011shadow}. In der Forschung erwähnte Shadow Simulationen stellen jedoch hohe Anforderungen an die Hardware und nutzen proprietär gepatchte Tor-Versionen zur Cell-Trace-Entnahme \cite[S.~1, 4, 6]{jansen2023data}.
+Experimente zu Website Fingerprinting lassen sich mit dem 2011 eingeführten Shadow Simulator durchführen. Dieser ermöglicht es, ein vollständiges, deterministisches \gls{tor}-Netzwerk zu simulieren \cite{jansen2011shadow}. In der Forschung erwähnte Shadow Simulationen stellen jedoch hohe Anforderungen an die Hardware und nutzen proprietär gepatchte Tor-Versionen zur Cell-Trace-Entnahme \cite{jansen2023data}.
 
 Die vorliegende Arbeit prüft, ob sich eine Simulation mit moderater Hardware und einer unmodifizierten Tor-Version durchführen lässt. Als Ziel soll der Effekt von Circuit Padding in der aufgebauten Simulationsumgebung beobachtet werden.
 

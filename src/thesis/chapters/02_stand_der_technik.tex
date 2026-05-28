@@ -3,18 +3,18 @@
 
 \section{Tor}
 
-\gls{tor} ist ein verteiltes Overlay-Netzwerk mit niedriger Latenz, das TCP-basierte Anwendungen wie Web-Browsing, SSH oder Instant Messaging anonymisiert~\cite[S.~1--3]{dingledine2004tor}.
-Das Netzwerk verspricht seinen Nutzern Schutz vor Verfolgung, Zensur und Überwachung\footnote{\url{https://www.torproject.org/de/}, abgerufen am 08.04.2026.} und wird täglich von bis zu acht Millionen Personen verwendet~\cite[S.~1]{mani2018understanding}.
+\gls{tor} ist ein verteiltes Overlay-Netzwerk mit niedriger Latenz, das TCP-basierte Anwendungen wie Web-Browsing, SSH oder Instant Messaging anonymisiert~\cite{dingledine2004tor}.
+Das Netzwerk verspricht seinen Nutzern Schutz vor Verfolgung, Zensur und Überwachung\footnote{\url{https://www.torproject.org/de/}, abgerufen am 08.04.2026.} und wird täglich von bis zu acht Millionen Personen verwendet~\cite{mani2018understanding}.
 Diese hohe Verbreitung macht \gls{tor} zu einem attraktiven Ziel für unterschiedliche Klassen von Deanonymisierungsangriffen, wie Timing-Angriffe, Traffic-Correlation oder \gls{wf}, die jeweils unterschiedliche Beobachtungspositionen und Annahmen voraussetzen.
 
-Das aktuelle \gls{tor}-Design wurde 2004 von Dingledine, Mathewson und Syverson als zweite Generation des Onion-Routings vorgestellt und seither stetig weiterentwickelt ~\cite[S.~1\,f.]{dingledine2004tor}.
+Das aktuelle \gls{tor}-Design wurde 2004 von Dingledine, Mathewson und Syverson als zweite Generation des Onion-Routings vorgestellt und seither stetig weiterentwickelt ~\cite{dingledine2004tor}.
 
 Die folgenden Unterabschnitte beschreiben die für diese Arbeit relevanten Komponenten der \gls{tor}-Architektur sowie das Bedrohungsmodell, das dem Tor-Design zugrunde liegt. Die spezifischen Bedrohungsmodelle der einzelnen Angriffsklassen werden in den jeweiligen Abschnitten weiter unten behandelt.
 
 \subsection{Architektur Tor}
 
 Das Tor-Netzwerk gliedert sich in mehrere Akteur-Klassen.
-Der Client ist der Rechner des Nutzers. Auf ihm läuft die Tor-Software, die Anwendungs-Verbindungen entgegennimmt, einen Pfad durch das Netzwerk wählt und die Daten schichtweise verschlüsselt~\cite[S.~4\,f.]{dingledine2004tor}.
+Der Client ist der Rechner des Nutzers. Auf ihm läuft die Tor-Software, die Anwendungs-Verbindungen entgegennimmt, einen Pfad durch das Netzwerk wählt und die Daten schichtweise verschlüsselt~\cite{dingledine2004tor}.
 
 Die Onion Router (kurz: Relais) sind freiwillig betriebene Server, welche diese verschlüsselten Daten weiterleiten.
 Pro Verbindung kommen drei Relais zum Einsatz, in den Rollen Eingangs-, Mittel- und Ausgangsknoten~\cite{torspec_intro}.
@@ -24,26 +24,26 @@ Sie sammeln in regelmässigen Abständen die Eigenschaften aller Relais (IP, Ban
 \subsection{Zellen}
 
 Die kleinste Übertragungseinheit ist eine Zelle fester Grösse, im ursprünglichen Design 512~Bytes.
-Unterschieden wird zwischen Control Cells (z.\,B.\ create, destroy, padding) und Relay Cells, die Ende-zu-Ende-Stream-Daten transportieren~\cite[S.~6]{dingledine2004tor}.
+Unterschieden wird zwischen Control Cells (z.\,B.\ create, destroy, padding) und Relay Cells, die Ende-zu-Ende-Stream-Daten transportieren~\cite{dingledine2004tor}.
 
-Die feste Zellgrösse soll Verkehrsmuster auf Paketebene vereinheitlichen. Anzahl und Richtung der Zellen bleiben für einen Beobachter jedoch sichtbar. Genau diesen Umstand nutzen Website-Fingerprinting-Angriffe aus~\cite[S.~2]{jansen2023data}.
+Die feste Zellgrösse soll Verkehrsmuster auf Paketebene vereinheitlichen. Anzahl und Richtung der Zellen bleiben für einen Beobachter jedoch sichtbar. Genau diesen Umstand nutzen Website-Fingerprinting-Angriffe aus~\cite{jansen2023data}.
 
 \subsection{Circuits und Streams}
 
 Ein Circuit ist ein kryptografisch geschützter Pfad durch das Netzwerk und enthält in der Regel drei Knoten: Eingangs-, Mittel- und Ausgangsknoten.
 Der Eingangsknoten kennt den Client und den Mittelknoten, nicht aber den Ausgangsknoten oder das Ziel. Der Mittelknoten kennt nur seine beiden Nachbarn. Der Ausgangsknoten kennt das Ziel, nicht aber den Client.
 
-Der Client baut den Circuit schrittweise auf: Mit dem ersten Hop wird per Diffie-Hellman ein Sitzungsschlüssel ausgehandelt, anschliessend wird der Circuit über bereits etablierte Hops um jeweils einen weiteren Onion Router erweitert~\cite[S.~5\,ff.]{dingledine2004tor}.
+Der Client baut den Circuit schrittweise auf: Mit dem ersten Hop wird per Diffie-Hellman ein Sitzungsschlüssel ausgehandelt, anschliessend wird der Circuit über bereits etablierte Hops um jeweils einen weiteren Onion Router erweitert~\cite{dingledine2004tor}.
 
 Über einen einzelnen Circuit können mehrere TCP-Streams parallel geleitet werden, was die Anzahl rechenintensiver Public-Key-Operationen reduziert.
-Um die Privatsphäre zu erhöhen, rotiert der \gls{tor}-Client Circuits periodisch und nutzt für neu eintreffende Streams den jeweils neuesten offenen Circuit~\cite[S.~6\,f.]{dingledine2004tor}.
-Im Tor Browser werden zusätzlich alle Streams derselben First-Party-Domain (der in der Adresszeile angezeigten Domain) auf denselben Circuit gebündelt~\cite[S.~2]{jansen2023data}.
+Um die Privatsphäre zu erhöhen, rotiert der \gls{tor}-Client Circuits periodisch und nutzt für neu eintreffende Streams den jeweils neuesten offenen Circuit~\cite{dingledine2004tor}.
+Im Tor Browser werden zusätzlich alle Streams derselben First-Party-Domain (der in der Adresszeile angezeigten Domain) auf denselben Circuit gebündelt~\cite{jansen2023data}.
 
 \subsection{Onion Routing}
 
 Das namensgebende Verfahren von \gls{tor} (The Onion Router) ist das Onion Routing.
-Der Client verschlüsselt eine Nachricht schichtweise mit den Sitzungsschlüsseln aller drei Onion Router des Circuits, sodass jeder Hop genau eine Schicht entfernt und nur seine direkten Nachbarn kennt~\cite[S.~1]{dingledine2004tor}.
-Dadurch besitzt kein einzelner Onion Router gleichzeitig Kenntnis über Quelle und Ziel der Kommunikation~\cite[S.~1]{dingledine2004tor}.
+Der Client verschlüsselt eine Nachricht schichtweise mit den Sitzungsschlüsseln aller drei Onion Router des Circuits, sodass jeder Hop genau eine Schicht entfernt und nur seine direkten Nachbarn kennt~\cite{dingledine2004tor}.
+Dadurch besitzt kein einzelner Onion Router gleichzeitig Kenntnis über Quelle und Ziel der Kommunikation~\cite{dingledine2004tor}.
 
 
 Abbildung~\ref{fig:onion_routing} veranschaulicht diesen Vorgang: Vom Client zum Ziel reduziert sich die Anzahl der Verschlüsselungsschichten an jedem Hop um eine, bis der Ausgangsknoten die ursprüngliche Nachricht ohne Tor-Verschlüsselung an das Ziel weiterleitet.
@@ -61,24 +61,24 @@ Abbildung~\ref{fig:onion_routing} veranschaulicht diesen Vorgang: Vom Client zum
 \label{sec:tor_bedrohungsmodell}
 
 Tor ist explizit nicht gegen einen globalen passiven Beobachter ausgelegt.
-Angenommen wird stattdessen ein Angreifer, der einen Teil des Netzverkehrs beobachten, den Verkehr modifizieren oder verzögern, eigene Onion Router betreiben sowie einen Teil bestehender Router kompromittieren kann~\cite[S.~4]{dingledine2004tor}.
-Das Designziel ist die Abwehr von Traffic-Analysis-Angriffen, nicht aber von Traffic-Confirmation-Angriffen, bei denen der Angreifer beide Enden einer Verbindung beobachtet~\cite[S.~4]{dingledine2004tor}.
+Angenommen wird stattdessen ein Angreifer, der einen Teil des Netzverkehrs beobachten, den Verkehr modifizieren oder verzögern, eigene Onion Router betreiben sowie einen Teil bestehender Router kompromittieren kann~\cite{dingledine2004tor}.
+Das Designziel ist die Abwehr von Traffic-Analysis-Angriffen, nicht aber von Traffic-Confirmation-Angriffen, bei denen der Angreifer beide Enden einer Verbindung beobachtet~\cite{dingledine2004tor}.
 
 \subsection{Kein Padding im Originaldesign}
 
 Im ursprünglichen Tor-Design war kein Padding oder Traffic Shaping vorgesehen.
-Die Autoren begründen dies mit den Kosten solcher Verfahren und damit, dass zum damaligen Zeitpunkt kein praktikables, nachweislich anonymitätssteigerndes Padding-Schema existierte~\cite[S.~1]{dingledine2004tor}.
+Die Autoren begründen dies mit den Kosten solcher Verfahren und damit, dass zum damaligen Zeitpunkt kein praktikables, nachweislich anonymitätssteigerndes Padding-Schema existierte~\cite{dingledine2004tor}.
 Genau in diese Lücke setzen spätere Arbeiten zum Circuit Padding an, das in den folgenden Abschnitten behandelt wird.
 
 \subsection{Tor Browser}
 
 Das Tor-Projekt stellt mit dem Tor Browser eine modifizierte Variante von Firefox bereit, die für die Nutzung mit Tor optimiert ist und zusätzlich Browser-Fingerprinting erschwert\footnote{\url{https://www.torproject.org/de/}, abgerufen am 08.04.2026.}.
-Der Browser greift via SOCKS auf den lokalen Tor-Daemon zu, welcher den Internetverkehr in Form von Tor-Zellen über das Tor-Netzwerk weiterleitet~\cite[S.~2]{jansen2023data}.
+Der Browser greift via SOCKS auf den lokalen Tor-Daemon zu, welcher den Internetverkehr in Form von Tor-Zellen über das Tor-Netzwerk weiterleitet~\cite{jansen2023data}.
 
 \section{Angriffe auf Tor}
 \label{sec:angriffe_auf_tor}
 
-Das in Abschnitt~\ref{sec:tor_bedrohungsmodell} skizzierte Bedrohungsmodell von \gls{tor} schliesst einen globalen passiven Beobachter explizit aus und richtet sich gegen einen Angreifer mit einer Teilsicht auf das Netz~\cite[S.~4]{dingledine2004tor}.
+Das in Abschnitt~\ref{sec:tor_bedrohungsmodell} skizzierte Bedrohungsmodell von \gls{tor} schliesst einen globalen passiven Beobachter explizit aus und richtet sich gegen einen Angreifer mit einer Teilsicht auf das Netz~\cite{dingledine2004tor}.
 Innerhalb dieses Modells lassen sich Deanonymisierungsangriffe entlang zweier Achsen einordnen.
 Die erste Achse ist die Beobachtungsposition, also ob der Angreifer den Verkehr an einem Ende, an beiden Enden oder über Seitenkanäle erfasst.
 Die zweite Achse ist die Zielaussage, also ob die besuchte Webseite, die Identität der kommunizierenden Parteien oder der gewählte Pfad rekonstruiert werden soll.
@@ -87,16 +87,16 @@ Der folgende Unterabschnitt ordnet die für diese Arbeit relevanten Angriffsklas
 \subsection{Angriffsklassen im Überblick}
 
 Bei einem Website-Fingerprinting-Angriff beobachtet der Angreifer ausschliesslich die Verbindung zwischen Client und Eingangsknoten und kennt das Kommunikationsziel nicht.
-Aus dem Muster der verschlüsselten Zellsequenz wird inferiert, welche Webseite aus einer dem Angreifer im Voraus bekannten Menge aufgerufen wurde~\cite[S.~3]{jansen2023data}.
+Aus dem Muster der verschlüsselten Zellsequenz wird inferiert, welche Webseite aus einer dem Angreifer im Voraus bekannten Menge aufgerufen wurde~\cite{jansen2023data}.
 Diese Angriffsklasse steht im Mittelpunkt der vorliegenden Arbeit und wird in Abschnitt~\ref{sec:website_fingerprinting} ausführlich behandelt.
 
 Bei einem Traffic-Correlation-Angriff beobachtet der Angreifer hingegen beide Enden eines anonymisierten Kommunikationspfads gleichzeitig.
-Aus den beiden Verkehrsspuren werden zueinander gehörende Flow-Paare identifiziert, womit eine direkte Verbindung zwischen Absender und Ziel hergestellt wird~\cite[S.~1962]{nasr2018deepcorr}.
+Aus den beiden Verkehrsspuren werden zueinander gehörende Flow-Paare identifiziert, womit eine direkte Verbindung zwischen Absender und Ziel hergestellt wird~\cite{nasr2018deepcorr}.
 Da die Aussage nicht über eine bekannte Inhaltsmenge, sondern über eine Identitätszuordnung getroffen wird, lassen sich auf diesem Weg beliebige Ziele deanonymisieren, ohne dass diese im Voraus bekannt sein müssen.
 
 Eine dritte Klasse bilden Seitenkanal- und Latenzangriffe, die mit weniger weitreichenden Beobachtungsmöglichkeiten auskommen.
-Murdoch und Danezis zeigten bereits 2005, dass ein einzelner kompromittierter Tor-Knoten zusammen mit aktiven Latenzproben genügen kann, um die Auslastung anderer Relais zu schätzen und so wahrscheinliche Pfade zu rekonstruieren~\cite[S.~17]{crombe2016correlation}.
-Weitere Vertreter dieser Klasse sind Angriffe auf der Ebene von Autonomous Systems oder Internet Exchange Points, die durch ihre topologische Position eine Korrelation an beiden Enden begünstigen~\cite[S.~1963]{nasr2018deepcorr}, sowie Angriffe auf das Path-Selection- oder Entry-Guard-Verfahren.
+Murdoch und Danezis zeigten bereits 2005, dass ein einzelner kompromittierter Tor-Knoten zusammen mit aktiven Latenzproben genügen kann, um die Auslastung anderer Relais zu schätzen und so wahrscheinliche Pfade zu rekonstruieren~\cite{crombe2016correlation}.
+Weitere Vertreter dieser Klasse sind Angriffe auf der Ebene von Autonomous Systems oder Internet Exchange Points, die durch ihre topologische Position eine Korrelation an beiden Enden begünstigen~\cite{nasr2018deepcorr}, sowie Angriffe auf das Path-Selection- oder Entry-Guard-Verfahren.
 
 Abbildung~\ref{fig:angriffsklassen} fasst diese Einordnung schematisch zusammen.
 
@@ -119,25 +119,25 @@ Zweitens wird damit der Stand der Forschung zu einem Angriff dokumentiert, der z
 
 Ein Traffic-Correlation-Angriff geht von einem Angreifer aus, der gleichzeitig den eingehenden Verkehr am Eingangsknoten und den ausgehenden Verkehr am Ausgangsknoten beobachtet.
 Beide Verkehrsspuren tragen trotz Onion-Verschlüsselung dieselben verkehrsstatistischen Merkmale wie Inter-Paket-Zeiten, Burst-Verläufe und Volumen pro Zeitfenster.
-Aus $M$ ingress- und $N$ egress-Flows werden die zusammengehörenden Paare $(F_i, F_j)$ identifiziert~\cite[S.~1962\,f.]{nasr2018deepcorr}.
-Die nötige Beobachtungsposition lässt sich durch eigene Guard- und Exit-Relais oder durch eine Stellung im Internet-Backbone erreichen~\cite[S.~1963]{nasr2018deepcorr}.
+Aus $M$ ingress- und $N$ egress-Flows werden die zusammengehörenden Paare $(F_i, F_j)$ identifiziert~\cite{nasr2018deepcorr}.
+Die nötige Beobachtungsposition lässt sich durch eigene Guard- und Exit-Relais oder durch eine Stellung im Internet-Backbone erreichen~\cite{nasr2018deepcorr}.
 
-Klassische Verfahren beruhen auf allgemeinen statistischen Distanzmassen wie Pearson-Kreuzkorrelation, Packet-Counting oder zeitlicher Aktivitätsanalyse und erreichen unter Tor-typischem Rauschen Equal Error Rates im einstelligen Prozentbereich~\cite[S.~43,~48]{crombe2016correlation}.
-Lernbasierte Verfahren wie DeepCorr ersetzen diese statischen Masse durch ein \gls{cnn}, das die Korrelationsfunktion direkt aus Live-Tor-Daten lernt, und erreichen mit nur 300 Paketen pro Flow eine True-Positive-Rate von rund 80\,\% bei einer False-Positive-Rate von $10^{-3}$~\cite[S.~1962,~1968]{nasr2018deepcorr}.
+Klassische Verfahren beruhen auf allgemeinen statistischen Distanzmassen wie Pearson-Kreuzkorrelation, Packet-Counting oder zeitlicher Aktivitätsanalyse und erreichen unter Tor-typischem Rauschen Equal Error Rates im einstelligen Prozentbereich~\cite{crombe2016correlation}.
+Lernbasierte Verfahren wie DeepCorr ersetzen diese statischen Masse durch ein \gls{cnn}, das die Korrelationsfunktion direkt aus Live-Tor-Daten lernt, und erreichen mit nur 300 Paketen pro Flow eine True-Positive-Rate von rund 80\,\% bei einer False-Positive-Rate von $10^{-3}$~\cite{nasr2018deepcorr}.
 
-Für die vorliegende Arbeit ist Traffic-Correlation als Abgrenzung zu \gls{wf} relevant: Während \gls{wf} eine im Voraus bekannte Zielmenge benötigt und nur an einem Ende des Pfads operiert, erkennt Traffic-Correlation beliebige Verbindungen, sofern beide Enden beobachtet werden~\cite[S.~1964]{nasr2018deepcorr}.
+Für die vorliegende Arbeit ist Traffic-Correlation als Abgrenzung zu \gls{wf} relevant: Während \gls{wf} eine im Voraus bekannte Zielmenge benötigt und nur an einem Ende des Pfads operiert, erkennt Traffic-Correlation beliebige Verbindungen, sofern beide Enden beobachtet werden~\cite{nasr2018deepcorr}.
 Padding fügt Schein-Verkehr nur auf den Tor-internen Verbindungen ein und adressiert damit primär den einseitig beobachtenden \gls{wf}-Angreifer.
-Eine wirksame Verteidigung gegen lernbasierte Korrelation setzt deutlich aufwändigere Massnahmen wie volles Link-Padding oder Tamaraw-artiges Traffic Shaping voraus (vgl.\ Abschnitt~\ref{sec:wf_defenses_tamaraw})~\cite[S.~228]{cai2014systematic}, die im \gls{tor}-Netz aufgrund des Bandbreiten- und Latenz-Overheads nicht ausgerollt werden.
+Eine wirksame Verteidigung gegen lernbasierte Korrelation setzt deutlich aufwändigere Massnahmen wie volles Link-Padding oder Tamaraw-artiges Traffic Shaping voraus (vgl.\ Abschnitt~\ref{sec:wf_defenses_tamaraw})~\cite{cai2014systematic}, die im \gls{tor}-Netz aufgrund des Bandbreiten- und Latenz-Overheads nicht ausgerollt werden.
 
 \section{Website Fingerprinting}
 \label{sec:website_fingerprinting}
 
 \gls{wf} Angriffe versuchen, trotz \gls{tor}-Verschlüsselung herauszufinden, welche Webseite ein Nutzer aufgerufen hat.
-Der Angreifer zeichnet dazu den Datenverkehr zwischen Client und Eingangsknoten auf, entweder als Betreiber des Eingangsknotens~\cite[S.~3]{jansen2023data} oder als passiver lokaler Beobachter~\cite[S.~1]{wang2016realistically}.
+Der Angreifer zeichnet dazu den Datenverkehr zwischen Client und Eingangsknoten auf, entweder als Betreiber des Eingangsknotens~\cite{jansen2023data} oder als passiver lokaler Beobachter~\cite{wang2016realistically}.
 Aus Anzahl und Richtung der Tor-Zellen, optional ergänzt um Zeitstempel, leitet ein \gls{ml}-Klassifikator ein Verkehrsmuster pro Webseite ab.
 
 Der Angreifer definiert eine Menge überwachter Seiten (\emph{monitored pages}), alle übrigen gelten als nicht-überwacht.
-Der Klassifikator wird zweistufig trainiert: Zuerst entscheidet er binär, ob eine beobachtete Zellsequenz zu einer überwachten Seite gehört, anschliessend bestimmt eine Multiclass-Klassifikation die konkrete Seite~\cite[S.~3]{jansen2023data}.
+Der Klassifikator wird zweistufig trainiert: Zuerst entscheidet er binär, ob eine beobachtete Zellsequenz zu einer überwachten Seite gehört, anschliessend bestimmt eine Multiclass-Klassifikation die konkrete Seite~\cite{jansen2023data}.
 Pro beobachtete Sequenz ergeben sich die vier üblichen Ausgänge True Positive, True Negative, False Positive und False Negative.
 Welche Metriken daraus gebildet werden und warum eine niedrige False-Positive-Rate für die Beurteilung besonders wichtig ist, wird im Abschnitt~\ref{sec:closed_open_world} (Closed- und Open-World) behandelt.
 
@@ -147,35 +147,41 @@ Welche Metriken daraus gebildet werden und warum eine niedrige False-Positive-Ra
 
 \subsection{Shadow Simulator}
 
-Shadow ist ein diskreter Ereignissimulator, der unmodifizierte Netzwerkanwendungen wie den realen \gls{tor} Daemon, den Verkehrsgenerator TGen oder das in der vorliegenden Arbeit eingesetzte wget2 innerhalb der Simulation ausführt~\cite[S.~1]{jansen2011shadow}.
-Über einen Syscall-Shim fängt Shadow netzwerk- und zeitbezogene Aufrufe ab und beantwortet sie aus dem simulierten Netzwerk heraus, während alle übrigen Syscalls nativ ausgeführt werden~\cite[S.~1\,f.]{jansen2011shadow}.
-Da die Simulationszeit explizit verwaltet und von der Wanduhrzeit entkoppelt ist, skaliert Shadow unabhängig von der Hardware-Geschwindigkeit, wobei die Laufzeit grosser Modelle je nach Versuch von wenigen Stunden bis zu mehreren Wochen reichen kann~\cite[S.~7]{neverenough-sec2021}.
+Shadow ist ein diskreter Ereignissimulator, der unmodifizierte Netzwerkanwendungen wie den realen \gls{tor} Daemon, den Verkehrsgenerator TGen oder das in der vorliegenden Arbeit eingesetzte wget2 innerhalb der Simulation ausführt~\cite{jansen2011shadow}.
+Über einen Syscall-Shim fängt Shadow netzwerk- und zeitbezogene Aufrufe ab und beantwortet sie aus dem simulierten Netzwerk heraus, während alle übrigen Syscalls nativ ausgeführt werden~\cite{jansen2011shadow}.
+Da die Simulationszeit explizit verwaltet und von der Wanduhrzeit entkoppelt ist, skaliert Shadow unabhängig von der Hardware-Geschwindigkeit, wobei die Laufzeit grosser Modelle je nach Versuch von wenigen Stunden bis zu mehreren Wochen reichen kann~\cite{neverenough-sec2021}.
 
-Jansen und Wails zeigen, dass ein vollständig in Shadow trainierter \gls{wf} Klassifikator auf Live Tor Daten über 80\,\% der Aufrufe korrekt klassifiziert~\cite[S.~1]{jansen2023data}.
-Im Live Tor Netzwerk verändern unkontrollierte Faktoren wie laufende Denial-of-Service-Attacken oder überlastete Relais die Verkehrsmuster und erschweren so die Reproduzierbarkeit, was in der deterministischen Shadow Umgebung nicht auftritt~\cite[S.~1\,f.]{jansen2023data}.
+Jansen und Wails zeigen, dass ein vollständig in Shadow trainierter \gls{wf} Klassifikator auf Live Tor Daten über 80\,\% der Aufrufe korrekt klassifiziert~\cite{jansen2023data}.
+Im Live Tor Netzwerk verändern unkontrollierte Faktoren wie laufende Denial-of-Service-Attacken oder überlastete Relais die Verkehrsmuster und erschweren so die Reproduzierbarkeit, was in der deterministischen Shadow Umgebung nicht auftritt~\cite{jansen2023data}.
 Shadow eignet sich damit nicht nur für isolierte Vergleichsstudien, sondern auch für das Training produktiv einsetzbarer \gls{wf} Klassifikatoren.
 
 
 
 \subsection{Tornettools}
 
+<<<<<<< Updated upstream
 Tornettools ist der Modellierungsbaustein, der Shadow für realistische Tor-Experimente konfiguriert, und wurde 2021 von Jansen, Tracey und Goldberg veröffentlicht~\cite[S.~5]{neverenough-sec2021}.
 Aus Tor-Konsensdokumenten und Server-Deskriptoren des CollecTor-Archivs~\cite{tormetricsabout} sowie aus PrivCount-Verkehrsmessungen an Live-Tor-Exit-Relais~\cite[S.~5\,f.]{mani2018understanding} erzeugt es in einer zweistufigen Pipeline (Staging-Phase und Generation-Phase) eine skalierbare Shadow-Konfiguration~\cite[S.~3\,f.]{neverenough-sec2021}.
 Den Anwendungs-Verkehr der Hintergrund-Clients modelliert der Generator TGen über drei Markov-Modelle, deren Parameter aus PrivCount stammen und damit Volumen sowie zeitliche Struktur realer Tor-Nutzung nachbilden~\cite[S.~5]{neverenough-sec2021}.
+=======
+Tornettools ist der Modellierungsbaustein, der Shadow für realistische Tor-Experimente konfiguriert, und wurde 2021 von Jansen, Tracey und Goldberg veröffentlicht~\cite{neverenough-sec2021}.
+Aus Tor-Konsensdokumenten und Server-Deskriptoren des CollecTor-Archivs~\cite{tormetricsabout} sowie aus PrivCount-Verkehrsmessungen an Live-Tor-Exit-Relais~\cite{mani2018understanding} erzeugt es in einer zweistufigen Pipeline (rechenintensive Staging-Phase, rechengünstige Generation-Phase) eine skalierbare Shadow-Konfiguration~\cite{neverenough-sec2021}.
+Den Anwendungs-Verkehr der Hintergrund-Clients modelliert der Generator TGen über drei Markov-Modelle, deren Parameter aus PrivCount stammen und damit Volumen sowie zeitliche Struktur realer Tor-Nutzung nachbilden~\cite{neverenough-sec2021}.
+>>>>>>> Stashed changes
 Die konkrete Werkzeugkette und die in dieser Arbeit gewählten Parameter werden in Abschnitt~\ref{sec:realisierung_umgebung} beschrieben.
 
 \subsection{Validierung der Modellierung}
 
-Jansen et al.\ verglichen ihre Simulationen bei verschiedenen Netzwerkskalen mit Live-Tor-Metrics, wobei Median-Werte von Circuit Build Time, Round-Trip-Time und Time-to-Last-Byte weitgehend mit den realen Messwerten übereinstimmten~\cite[S.~6\,f.]{neverenough-sec2021}.
-Eine spätere Cross-Dataset-Validierung zeigte zudem, dass ein ausschliesslich auf Shadow-Daten trainierter CUMUL-Klassifikator auf Live-Tor-Traces eine Accuracy von 86\,\% erreichte, was die Eignung der Modellierung speziell für \gls{wf}-Studien bestätigt~\cite[S.~7]{jansen2023data}.
+Jansen et al.\ verglichen ihre Simulationen bei verschiedenen Netzwerkskalen mit Live-Tor-Metrics, wobei Median-Werte von Circuit Build Time, Round-Trip-Time und Time-to-Last-Byte weitgehend mit den realen Messwerten übereinstimmten~\cite{neverenough-sec2021}.
+Eine spätere Cross-Dataset-Validierung zeigte zudem, dass ein ausschliesslich auf Shadow-Daten trainierter CUMUL-Klassifikator auf Live-Tor-Traces eine Accuracy von 86\,\% erreichte, was die Eignung der Modellierung speziell für \gls{wf}-Studien bestätigt~\cite{jansen2023data}.
 
 \subsection{Website-Fingerprinting-Klassifikatoren}
 
-In der WF-Literatur haben sich vier Klassifikatoren als Vergleichsbasis etabliert, die sich entlang zweier Dimensionen unterscheiden: klassische Machine-Learning-Verfahren gegenüber neuronalen Netzen sowie zeitbasierte gegenüber zeitunabhängigen Ansätzen~\cite[S.~9\,f.]{jansen2023data}.
+In der WF-Literatur haben sich vier Klassifikatoren als Vergleichsbasis etabliert, die sich entlang zweier Dimensionen unterscheiden: klassische Machine-Learning-Verfahren gegenüber neuronalen Netzen sowie zeitbasierte gegenüber zeitunabhängigen Ansätzen~\cite{jansen2023data}.
 CUMUL~\cite{panchenko2016website} verwendet eine Support Vector Machine über kumulierten Zellrichtungssequenzen und arbeitet zeitunabhängig.
 $k$-Fingerprinting~\cite{hayes2016k} kombiniert einen Random Forest mit $k$-Nearest-Neighbors auf Basis von Summary-Statistiken der Zellsequenz, wobei Timing-Features (Inter-Arrival-Zeiten) genutzt werden.
 Deep Fingerprinting~\cite{sirinam2018deep} ist ein zeitunabhängiges Convolutional Neural Network, das direkt auf Zellrichtungssequenzen arbeitet und in früheren Vergleichen sowohl CUMUL als auch $k$-FP übertroffen hat.
-Tik-Tok~\cite{rahman2019tik} verwendet die DF-Architektur, ergänzt die Eingabe aber um Zeitstempel und reagiert dadurch empfindlicher auf variierende Netzwerkbedingungen~\cite[S.~10]{jansen2023data}.
+Tik-Tok~\cite{rahman2019tik} verwendet die DF-Architektur, ergänzt die Eingabe aber um Zeitstempel und reagiert dadurch empfindlicher auf variierende Netzwerkbedingungen~\cite{jansen2023data}.
 
 
 
@@ -196,7 +202,7 @@ wird die Klassifikationsgenauigkeit (Accuracy) als Performanzmass
 verwendet. Dieses Szenario eignet sich gut für kontrollierte 
 Experimente, ist jedoch unrealistisch, da es die Existenz 
 unbekannter Webseiten vollständig ausschliesst
-\cite[S.~1]{wang2016realistically}.
+\cite{wang2016realistically}.
 
 Im Open-World-Szenario hingegen definiert der Angreifer 
 eine Menge sensitiver Seiten $W_\alpha$, die er erkennen möchte, 
@@ -213,7 +219,7 @@ werden die True Positive Rate (TPR) und die False Positive Rate
 ist dabei besonders wichtig, da bei der geringen Basisrate 
 sensitiver Seitenbesuche selbst eine scheinbar kleine FPR zu einer 
 grossen Anzahl falsch-positiver Alarme führen kann
-\cite[S.~3]{wang2016realistically}.
+\cite{wang2016realistically}.
 
 Wang und Goldberg betonen, dass frühere WF-Arbeiten häufig unter 
 vereinfachenden Closed-World-Annahmen evaluiert wurden, was die 
@@ -223,7 +229,7 @@ jedoch gezeigt, dass die Closed-World-Accuracy selbst bei
 variierenden Netzwerkbedingungen stabil bleibt (Schwankungen von 
 nur 1--3\,\%), während TPR und FPR im Open-World-Szenario 
 deutlich empfindlicher auf veränderte Bedingungen reagieren
-\cite[S.~10\,f.]{jansen2023data}.
+\cite{jansen2023data}.
 
 
 
@@ -233,7 +239,7 @@ deutlich empfindlicher auf veränderte Bedingungen reagieren
 Da Tor seinen Dienst über einen \gls{socks}-Proxy bereitstellt, Webcrawler wie wget2 jedoch standardmässig nur HTTP-Proxies unterstützen, erweiterten Jansen und Wails wget2 um einen \gls{socks}-Client.
 Erst diese Modifikation ermöglichte es, wget2-Anfragen über den lokalen Tor-Prozess zu leiten und Zellsequenzen am Entry Relay aufzuzeichnen.
 Darüber hinaus wurde wget2 so konfiguriert, dass es alle eingebetteten Ressourcen einer Seite parallel herunterlädt und denselben User-Agent wie der Tor Browser verwendet.
-Durch lokale Tests wurde verifiziert, dass wget2 und der Tor Browser einen identischen Satz an Ressourcen vom Server abrufen~\cite[S.~3--5]{jansen2023data}.
+Durch lokale Tests wurde verifiziert, dass wget2 und der Tor Browser einen identischen Satz an Ressourcen vom Server abrufen~\cite{jansen2023data}.
 Die gepatchte wget2-Version ist im Artefakt-Repository der Autoren öffentlich verfügbar.
 
 
@@ -247,44 +253,44 @@ Drei Verfahren werden vorgestellt: Tamaraw als Vertreter bandbreitenintensiver T
 \subsection{Trade-off zwischen Sicherheit und Overhead}
 \label{sec:wf_defenses_tradeoff}
 
-Eine \gls{wf}-Verteidigung verändert die für den Klassifikator charakteristischen Merkmale einer Zellsequenz, also Reihenfolge, Volumen und Inter-Paket-Zeiten, so dass unterschiedliche Webseiten weniger unterscheidbar werden~\cite[S.~229\,f.]{cai2014systematic}.
+Eine \gls{wf}-Verteidigung verändert die für den Klassifikator charakteristischen Merkmale einer Zellsequenz, also Reihenfolge, Volumen und Inter-Paket-Zeiten, so dass unterschiedliche Webseiten weniger unterscheidbar werden~\cite{cai2014systematic}.
 Zwei Hebel stehen dafür zur Verfügung.
 Erstens das Einfügen zusätzlicher Dummy-Zellen (Padding), was die belegte Bandbreite erhöht.
 Zweitens das Verzögern realer Zellen (Delay), was die Latenz erhöht.
 
-Für Tor, dessen Designziel eine niedrige Latenz für interaktive Anwendungen vorsieht, scheidet der zweite Hebel weitgehend aus~\cite[S.~5]{kadianakis2021tor}.
-Cai et al.\ zeigen zudem für reine Bandbreiten-Verteidigungen eine prinzipielle untere Schranke: Jede Verteidigung, die ein gegebenes Sicherheitsniveau erreicht, muss mindestens eine bestimmte Bandbreitenmenge investieren~\cite[S.~233\,f.]{cai2014systematic}.
+Für Tor, dessen Designziel eine niedrige Latenz für interaktive Anwendungen vorsieht, scheidet der zweite Hebel weitgehend aus~\cite{kadianakis2021tor}.
+Cai et al.\ zeigen zudem für reine Bandbreiten-Verteidigungen eine prinzipielle untere Schranke: Jede Verteidigung, die ein gegebenes Sicherheitsniveau erreicht, muss mindestens eine bestimmte Bandbreitenmenge investieren~\cite{cai2014systematic}.
 Konkrete Verteidigungen lassen sich anhand dieser Schranke entlang eines Spektrums einordnen, das von hoher Sicherheit bei hohem Overhead bis zu moderater Sicherheit bei geringem Overhead reicht.
 Die folgenden Unterabschnitte behandeln drei etablierte Vertreter, die das in Tor tatsächlich eingesetzte Verfahren motivieren und einordnen.
 
 \subsection{Tamaraw}
 \label{sec:wf_defenses_tamaraw}
 
-Tamaraw wurde 2014 von Cai et al.\ als Weiterentwicklung des Buffered Fixed Length Obfuscator (BuFLO) vorgeschlagen~\cite[S.~235]{cai2014systematic}.
+Tamaraw wurde 2014 von Cai et al.\ als Weiterentwicklung des Buffered Fixed Length Obfuscator (BuFLO) vorgeschlagen~\cite{cai2014systematic}.
 Pakete werden in einer festen Grösse von 750~Byte versendet, und der Versand erfolgt pro Richtung mit einem konstanten Sende-Intervall, wobei eingehende und ausgehende Richtung asymmetrisch parametrisiert sind ($\rho_{\text{out}} \neq \rho_{\text{in}}$).
 Reale Daten werden bei Bedarf bis zum nächsten Sende-Slot zurückgehalten, leere Slots durch Dummy-Pakete aufgefüllt.
-Zur Beendigung einer Übertragung wartet Tamaraw nicht auf den Ablauf eines Mindestzeitfensters, sondern füllt die Gesamtanzahl gesendeter Pakete pro Richtung auf ein Vielfaches eines Parameters $L$ auf~\cite[S.~235\,f.]{cai2014systematic}.
+Zur Beendigung einer Übertragung wartet Tamaraw nicht auf den Ablauf eines Mindestzeitfensters, sondern füllt die Gesamtanzahl gesendeter Pakete pro Richtung auf ein Vielfaches eines Parameters $L$ auf~\cite{cai2014systematic}.
 Auf diese Weise werden Seiten ähnlicher Grösse in identischen Anonymitäts-Buckets gruppiert.
 
-In der Auswertung von Cai et al.\ erreicht Tamaraw bei einem geschlossenen 800-Seiten-Experiment ein Sicherheitsniveau von $\epsilon = 3{,}4\,\%$ bei rund $199\,\%$ Bandbreiten-Overhead~\cite[S.~228]{cai2014systematic}.
-Damit liegt das Verfahren nahe an der theoretischen unteren Schranke für nicht-uniforme Sicherheit, ist aber durch die systematische Verzögerung realer Zellen für Tors low-latency-Designziel ungeeignet~\cite[S.~5]{kadianakis2021tor}.
+In der Auswertung von Cai et al.\ erreicht Tamaraw bei einem geschlossenen 800-Seiten-Experiment ein Sicherheitsniveau von $\epsilon = 3{,}4\,\%$ bei rund $199\,\%$ Bandbreiten-Overhead~\cite{cai2014systematic}.
+Damit liegt das Verfahren nahe an der theoretischen unteren Schranke für nicht-uniforme Sicherheit, ist aber durch die systematische Verzögerung realer Zellen für Tors low-latency-Designziel ungeeignet~\cite{kadianakis2021tor}.
 In der vorliegenden Arbeit dient Tamaraw als Referenzpunkt für die obere Wirksamkeitsgrenze von Bandbreiten-Verteidigungen und wird in einer ergänzenden, exploratorischen Messreihe gegen das in Tor produktiv ausgerollte Circuit Padding gestellt.
 Da das Verfahren nicht im regulären Tor-Daemon implementiert ist, erfolgt die Einbindung über einen Pluggable-Transport-Bridge-Knoten, dessen Aufbau in Abschnitt~\ref{sec:realisierung_tamaraw} dokumentiert ist.
 
 \subsection{WTF-PAD}
 \label{sec:wf_defenses_wtfpad}
 
-\gls{wtfpad} wurde 2015 von Juarez, Imani, Perry, Diaz und Wright vorgeschlagen und bildet die methodische Grundlage für die später in Tor deployten Padding-Mechanismen~\cite[S.~1]{juarez2015wtf}.
-Konzeptionell beruht das Verfahren auf dem allgemeineren Ansatz Adaptive Padding von Shmatikov und Wang, der ursprünglich gegen Ende-zu-Ende-Verkehrsanalysen entwickelt wurde~\cite[S.~5]{juarez2015wtf}.
-Der zentrale Unterschied zu Tamaraw besteht darin, dass reale Zellen nicht verzögert werden, sodass kein Latenz-Overhead entsteht~\cite[S.~5]{juarez2015wtf}.
+\gls{wtfpad} wurde 2015 von Juarez, Imani, Perry, Diaz und Wright vorgeschlagen und bildet die methodische Grundlage für die später in Tor deployten Padding-Mechanismen~\cite{juarez2015wtf}.
+Konzeptionell beruht das Verfahren auf dem allgemeineren Ansatz Adaptive Padding von Shmatikov und Wang, der ursprünglich gegen Ende-zu-Ende-Verkehrsanalysen entwickelt wurde~\cite{juarez2015wtf}.
+Der zentrale Unterschied zu Tamaraw besteht darin, dass reale Zellen nicht verzögert werden, sodass kein Latenz-Overhead entsteht~\cite{juarez2015wtf}.
 
-Der Mechanismus ist als endlicher Zustandsautomat realisiert, der pro Endpunkt zwei Hauptzustände kennt, einen Burst-Modus ($B$) und einen Gap-Modus ($G$)~\cite[S.~6]{juarez2015wtf}.
+Der Mechanismus ist als endlicher Zustandsautomat realisiert, der pro Endpunkt zwei Hauptzustände kennt, einen Burst-Modus ($B$) und einen Gap-Modus ($G$)~\cite{juarez2015wtf}.
 Sobald eine reale Zelle versendet wird, zieht der Automat einen Inter-Paket-Delay $t$ aus einem Histogramm $H_B$, das aus typischen Burst-Verläufen eines grossen Referenzdatensatzes geschätzt wurde.
 Trifft vor Ablauf von $t$ eine weitere reale Zelle ein, wird sie unmittelbar weitergeleitet und ein neuer Delay-Wert gezogen.
 Läuft $t$ stattdessen ab, sendet der Automat eine Dummy-Zelle und wechselt in den Gap-Modus, in dem ein zweites Histogramm $H_G$ den Versand fingierter Burst-Sequenzen steuert.
-Statistisch unauffällige Lücken zwischen echten Bursts werden so durch Padding aufgefüllt, ohne dass die Anwendungsschicht ausgebremst wird~\cite[S.~5\,f.]{juarez2015wtf}.
+Statistisch unauffällige Lücken zwischen echten Bursts werden so durch Padding aufgefüllt, ohne dass die Anwendungsschicht ausgebremst wird~\cite{juarez2015wtf}.
 
-In einer geschlossenen Auswertung gegen den seinerzeit stärksten Angreifer reduziert \gls{wtfpad} die Trefferquote von rund $91\,\%$ auf etwa $20\,\%$ bei einem Bandbreiten-Overhead von weniger als $60\,\%$~\cite[S.~1]{juarez2015wtf}.
+In einer geschlossenen Auswertung gegen den seinerzeit stärksten Angreifer reduziert \gls{wtfpad} die Trefferquote von rund $91\,\%$ auf etwa $20\,\%$ bei einem Bandbreiten-Overhead von weniger als $60\,\%$~\cite{juarez2015wtf}.
 Damit liegt das Verfahren deutlich näher am Anforderungsprofil von Tor als die BuFLO-Familie und stellt die direkte Vorlage für das im folgenden Abschnitt beschriebene Circuit-Padding-System dar.
 
 \subsection{Tor Circuit Padding}
@@ -292,20 +298,20 @@ Damit liegt das Verfahren deutlich näher am Anforderungsprofil von Tor als die 
 
 \subsubsection{Adaptive-Padding-Framework}
 
-Aufbauend auf der Adaptive-Padding-Idee von \gls{wtfpad} beschreiben Kadianakis et al.\ ein generisches Padding-Framework, das seit Tor 0.4.0 fester Bestandteil des Tor-Daemons ist und in der vorliegenden Arbeit experimentell ausgewertet wird~\cite[S.~4\,f.]{kadianakis2021tor}.
-Im Zentrum stehen \emph{Padding-Maschinen}, die als endliche Automaten in C definiert sind und das Senden von Dummy-Zellen in Abhängigkeit von Ereignissen wie eintreffenden Zellen, abgelaufenen Timern oder Zustandsübergängen steuern~\cite[S.~4]{kadianakis2021tor}.
+Aufbauend auf der Adaptive-Padding-Idee von \gls{wtfpad} beschreiben Kadianakis et al.\ ein generisches Padding-Framework, das seit Tor 0.4.0 fester Bestandteil des Tor-Daemons ist und in der vorliegenden Arbeit experimentell ausgewertet wird~\cite{kadianakis2021tor}.
+Im Zentrum stehen \emph{Padding-Maschinen}, die als endliche Automaten in C definiert sind und das Senden von Dummy-Zellen in Abhängigkeit von Ereignissen wie eintreffenden Zellen, abgelaufenen Timern oder Zustandsübergängen steuern~\cite{kadianakis2021tor}.
 Jeder Zustand definiert eigene Verteilungen für Inter-Paket-Delays sowie Bedingungen für den Übergang in einen anderen Zustand und kann auf eine bestimmte Zellzahl beschränkt werden.
 
-Bevor eine Padding-Maschine auf einem Circuit aktiv wird, einigen sich Client und Relais über eine spezielle Padding-Negotiation-Zelle, welche Maschinen unterstützt und aktiv sind~\cite[S.~4]{kadianakis2021tor}.
+Bevor eine Padding-Maschine auf einem Circuit aktiv wird, einigen sich Client und Relais über eine spezielle Padding-Negotiation-Zelle, welche Maschinen unterstützt und aktiv sind~\cite{kadianakis2021tor}.
 Diese Aushandlung erlaubt die schrittweise Ausrollung neuer Verteidigungen, ohne ältere Tor-Versionen zu brechen, und stellt einen wesentlichen Unterschied zum Pluggable-Transport-Ansatz des ursprünglichen \gls{wtfpad}-Prototyps dar.
 
 Ein bewusst gewähltes Design-Prinzip lautet, dass das Framework reale Anwendungs-Zellen nicht verzögert.
-Schutz entsteht ausschliesslich über das Einfügen zusätzlicher Dummy-Zellen~\cite[S.~5]{kadianakis2021tor}.
+Schutz entsteht ausschliesslich über das Einfügen zusätzlicher Dummy-Zellen~\cite{kadianakis2021tor}.
 Diese Einschränkung folgt direkt aus dem low-latency-Designziel von Tor und positioniert das Verfahren am unteren Ende des in Abschnitt~\ref{sec:wf_defenses_tradeoff} skizzierten Trade-off-Spektrums, mit minimaler Latenz-Auswirkung, moderatem Bandbreiten-Overhead und entsprechend begrenzter, aber praktisch ausrollbarer Sicherheitswirkung.
 Stärkere Verfahren wie Tamaraw (Abschnitt~\ref{sec:wf_defenses_tamaraw}) liegen damit ausserhalb des für Tor zulässigen Designraums.
 
 Die zum Zeitpunkt dieser Arbeit standardmässig in Tor ausgerollten Padding-Maschinen zielen primär auf den Schutz von Onion-Service-Schaltkreisen vor Circuit-Fingerprinting-Angreifern.
-Sie maskieren die Zellsequenzen von Introduction- und Rendezvous-Handshakes, indem sie diese den Mustern von Verzeichnisabfragen angleichen~\cite[S.~5\,f.]{kadianakis2021tor}.
+Sie maskieren die Zellsequenzen von Introduction- und Rendezvous-Handshakes, indem sie diese den Mustern von Verzeichnisabfragen angleichen~\cite{kadianakis2021tor}.
 Auch wenn diese Maschinen nicht primär gegen \gls{wf} entwickelt wurden, verändern sie durch das Einstreuen zusätzlicher Zellen die für \gls{wf}-Klassifikatoren sichtbaren Verkehrsmuster.
 Damit lässt sich der Effekt des deployten Padding-Systems auch im \gls{wf}-Szenario experimentell messen, was Gegenstand der vorliegenden Arbeit ist.
 
@@ -315,7 +321,7 @@ Die in dieser Arbeit verglichenen Padding-Konfigurationen werden über zwei Opti
 Diese drei Konfigurationen bilden die unabhängige Variable des experimentellen Vergleichs.
 
 Der Modus \texttt{off} entspricht der Einstellung \texttt{CircuitPadding 0} und deaktiviert sämtliche Padding-Maschinen.
-Er bildet die Baseline ohne Verteidigung ab und entspricht in der Wirkung dem ursprünglichen Tor-Design von Dingledine et al., das explizit auf Padding verzichtete~\cite[S.~1]{dingledine2004tor}.
+Er bildet die Baseline ohne Verteidigung ab und entspricht in der Wirkung dem ursprünglichen Tor-Design von Dingledine et al., das explizit auf Padding verzichtete~\cite{dingledine2004tor}.
 
 Der Modus \texttt{on} aktiviert mit \texttt{CircuitPadding 1} die im Tor-Konsens aktuell deployten Standard-Maschinen, also primär die im vorigen Unterabschnitt beschriebenen Onion-Service-Schutzmaschinen.
 

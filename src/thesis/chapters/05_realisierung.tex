@@ -21,7 +21,7 @@ In einer dritten Stufe wird auf den so vorbereiteten Daten ein \gls{df}-Klassifi
 
 Abbildung~\ref{fig:shadowsetup} zeigt den Aufbau der Shadow-Simulation im Detail.
 Innerhalb der Simulation existiert ein vollständiges \gls{tor}-Netzwerk mit Performance-Clients, Verzeichnisservern (Authorities) und Eingangs-, Mittel- sowie Ausgangsknoten.
-Daneben laufen die für diese Arbeit eigens hinzugefügten Monitor-Clients (jeweils mit lokalem Tor-Daemon, gepatchtem \texttt{wget2} und Pcap-Aufzeichnung), ein Zim-Server für die Wikipedia-Inhalte sowie die von Tornettools generierten TGEN- und Markov-Hintergrund-Clients, deren Verkehr das Verhalten realer Tor-Nutzerinnen und -Nutzer nachbildet~\cite[S.~3\,f.]{neverenough-sec2021}.
+Daneben laufen die für diese Arbeit eigens hinzugefügten Monitor-Clients (jeweils mit lokalem Tor-Daemon, gepatchtem \texttt{wget2} und Pcap-Aufzeichnung), ein Zim-Server für die Wikipedia-Inhalte sowie die von Tornettools generierten TGEN- und Markov-Hintergrund-Clients, deren Verkehr das Verhalten realer Tor-Nutzerinnen und -Nutzer nachbildet~\cite{neverenough-sec2021}.
 
 \begin{figure}[H]
 \centering
@@ -47,7 +47,7 @@ Diese Einschränkung ist für den eigentlichen Versuch unerheblich, da Shadow se
 Sie ist jedoch für die Werkzeugkette relevant, weil das Steuerungsskript \texttt{shadowctl.py} per \gls{ssh} mit der VM kommuniziert und damit nur aus dem HSLU-Netzwerk heraus funktioniert.
 
 Die genannten Ressourcen begrenzen die Skalierung der Experimente nach oben.
-Die Simulation eines vollständigen \gls{tor}-Netzwerks bei einer Skalierung von 100\,\% wäre nach den Richtwerten von Jansen, Tracey und Goldberg nur auf Maschinen mit mehreren hundert Gigabyte Arbeitsspeicher möglich~\cite[S.~3]{neverenough-sec2021}.
+Die Simulation eines vollständigen \gls{tor}-Netzwerks bei einer Skalierung von 100\,\% wäre nach den Richtwerten von Jansen, Tracey und Goldberg nur auf Maschinen mit mehreren hundert Gigabyte Arbeitsspeicher möglich~\cite{neverenough-sec2021}.
 Eine deutlich kleinere Skalierung ist deshalb nicht primär eine inhaltliche Entscheidung, sondern auch eine pragmatische Anpassung an die zur Verfügung stehende Hardware.
 
 \subsection{Werkzeugkette}
@@ -58,7 +58,7 @@ Als externe Komponenten kommen zum Einsatz:
 \begin{itemize}
     \item Shadow~\cite{jansen2011shadow,netsim-atc2022} simuliert das \gls{tor}-Netzwerk (Begründung der Wahl: Abschnitt~\ref{sec:konzepte_simulator}).
     \item Tornettools~\cite{neverenough-sec2021} erzeugt aus den öffentlichen Tor-Metrik-Daten eine repräsentative Shadow-Konfiguration.
-    \item \texttt{wget2} mit dem \gls{socks}-Patch von Jansen und Wails~\cite[S.~5]{jansen2023data} lädt im Inneren der Simulation die Webseiten über \gls{tor} herunter.
+    \item \texttt{wget2} mit dem \gls{socks}-Patch von Jansen und Wails~\cite{jansen2023data} lädt im Inneren der Simulation die Webseiten über \gls{tor} herunter.
     \item WFlib\footnote{\url{https://github.com/Xinhao-Deng/Website-Fingerprinting-Library}} stellt eine Implementierung des \gls{df}-Klassifikators in PyTorch bereit und steuert Training, Validierung und Test.
 \end{itemize}
 
@@ -97,7 +97,7 @@ Die genaue Form der Nutzung sowie die zugehörige Erklärung sind in Abschnitt~\
 Die Shadow-Konfiguration wird mit Tornettools aus den Tor-Metriken (Konsensdokumente, Server-Deskriptoren, OnionPerf-Messungen, Bandbreitenwerte) eines frei wählbaren Monats erzeugt~\cite{neverenough-sec2021}.
 In der vorliegenden Arbeit wird durchgehend der Monat Januar 2025 verwendet, die Standardeinstellung der Steuerungsskripte.
 
-Die Tor-Netzwerkgrösse wird auf 1\,\% (\texttt{--network\_scale 0.01}) skaliert, was rund 79~Relais, drei Verzeichnisserver und ungefähr 100~Hintergrund-Clients ergibt~\cite[S.~3\,f.]{neverenough-sec2021,mani2018understanding}.
+Die Tor-Netzwerkgrösse wird auf 1\,\% (\texttt{--network\_scale 0.01}) skaliert, was rund 79~Relais, drei Verzeichnisserver und ungefähr 100~Hintergrund-Clients ergibt~\cite{neverenough-sec2021,mani2018understanding}.
 Die Begründung der Skalierung und ihre methodischen Konsequenzen sind in Abschnitt~\ref{sec:konzepte_skalierung} dargestellt.
 
 
@@ -229,7 +229,7 @@ Diese Variante enthält Bilder und damit deutlich vielfältigere Verkehrsmuster 
 Für den Webserver wurden mehrere Varianten geprüft.
 
 \paragraph{ZIMply}
-In der Arbeit von Jansen und Wails wird \texttt{ZIMply} als Webserver für ZIM-Dateien verwendet~\cite[S.~4]{jansen2023data}.
+In der Arbeit von Jansen und Wails wird \texttt{ZIMply} als Webserver für ZIM-Dateien verwendet~\cite{jansen2023data}.
 Die Bibliothek wird seit mehreren Jahren nicht mehr gepflegt und unterstützt das in den aktuellen Kiwix-Dumps verwendete ZIM-Format nicht mehr zuverlässig, was bei eigenen Tests zu Fehlern führte.
 
 \paragraph{kiwix-serve}
@@ -312,7 +312,7 @@ Die Begründung dieser strikten Circuit-Isolation ist in Abschnitt~\ref{sec:konz
 
 \subsection{Aufzeichnung des Datenverkehrs}
 
-Auf jedem Monitor-Host wird das Tor-typische Bedrohungsmodell eines lokalen Beobachters mit einer Pcap-Aufzeichnung an der Netzwerkschnittstelle umgesetzt~\cite[S.~3]{jansen2023data}.
+Auf jedem Monitor-Host wird das Tor-typische Bedrohungsmodell eines lokalen Beobachters mit einer Pcap-Aufzeichnung an der Netzwerkschnittstelle umgesetzt~\cite{jansen2023data}.
 Shadow erlaubt es, die Aufzeichnung pro Host über das Konfigurationsfeld \texttt{host\_options.pcap\_enabled} zu aktivieren.
 Aufgezeichnet wird die Schnittstelle \texttt{eth0} und nicht das Loopback-Interface \texttt{lo}, da nur \texttt{eth0} den Verkehr zwischen Monitor und Eingangsknoten enthält.
 Loopback-Verkehr ist in einem Shadow-Setup auf den lokalen \gls{tor}-Prozess beschränkt und enthält bereits den entschlüsselten Datenstrom, was einem realistischen Bedrohungsmodell widerspräche.
@@ -339,9 +339,9 @@ Abbildung~\ref{fig:tamarawsetup} zeigt die so erweiterte Topologie.
 \label{sec:realisierung_tamaraw_bridge}
 
 Tamaraw ist nicht Bestandteil des regulären Tor-Daemons.
-Im Gegensatz zum produktiv ausgerollten Circuit Padding, das als generisches Padding-Maschinen-Framework direkt im Tor-Quellcode verankert ist~\cite[S.~4]{kadianakis2021tor}, sieht das Tor-Projekt für Tamaraw keine native Implementierung vor.
-Der Grund liegt im Designprofil des Verfahrens: Tamaraw verzögert reale Zellen systematisch und erreicht in der ursprünglichen Auswertung rund 199\,\% Bandbreiten-Overhead bei zusätzlichem Latenz-Overhead~\cite[S.~228,~235\,f.]{cai2014systematic}.
-Beides widerspricht dem expliziten low-latency-Designziel von Tor, das eine Verzögerung realer Anwendungs-Zellen ausschliesst~\cite[S.~5]{kadianakis2021tor}.
+Im Gegensatz zum produktiv ausgerollten Circuit Padding, das als generisches Padding-Maschinen-Framework direkt im Tor-Quellcode verankert ist~\cite{kadianakis2021tor}, sieht das Tor-Projekt für Tamaraw keine native Implementierung vor.
+Der Grund liegt im Designprofil des Verfahrens: Tamaraw verzögert reale Zellen systematisch und erreicht in der ursprünglichen Auswertung rund 199\,\% Bandbreiten-Overhead bei zusätzlichem Latenz-Overhead~\cite{cai2014systematic}.
+Beides widerspricht dem expliziten low-latency-Designziel von Tor, das eine Verzögerung realer Anwendungs-Zellen ausschliesst~\cite{kadianakis2021tor}.
 
 Um Tamaraw dennoch in einem Tor-Kontext untersuchen zu können, wird das Verfahren als \gls{pt} ausserhalb des Tor-Daemons implementiert.
 Pluggable Transports sind ein generischer Mechanismus, mit dem Tor seine Verbindungen über ein modulares Hilfsprogramm leitet, das den Datenstrom vor dem Versand und nach dem Empfang transformiert.

@@ -11,7 +11,7 @@ Das vorliegende Kapitel beschränkt sich auf die methodische Begründung der Vor
 \section{Methodische Einordnung der Arbeit}
 \label{sec:methodische_einordnung}
 
-Die vorliegende Bachelorarbeit ist eine Mischform aus einer konstruktiven und einer empirischen Arbeit~\cite[S.~71\,f.]{book}.
+Die vorliegende Bachelorarbeit ist eine Mischform aus einer konstruktiven und einer empirischen Arbeit~\cite{book}.
 Konstruktiv ist die Arbeit, weil eine eigene Werkzeugkette aus Shadow-Steuerung, Konfigurationsgenerierung, Webserver, Datenkonvertierung und Klassifikator-Anbindung neu aufgebaut wird, um den untersuchten Effekt überhaupt messen zu können.
 Empirisch ist die Arbeit, weil mit dieser Werkzeugkette ein kontrolliertes Laborexperiment durchgeführt wird, dessen Ergebnisse die formulierten Hypothesen entweder bestätigen oder widerlegen.
 
@@ -23,7 +23,7 @@ Die Messung selbst erfolgt quantitativ über etablierte Klassifikationsmetriken 
 \section{Literaturrecherche}
 \label{sec:literaturrecherche}
 
-Die Literaturrecherche folgt dem in Balzert beschriebenen fünfstufigen Vorgehen aus den Schritten Was suche ich, wo suche ich, wie suche ich, was verwende ich, wie beschaffe ich~\cite[S.~215\,ff.]{book}.
+Die Literaturrecherche folgt dem in Balzert beschriebenen fünfstufigen Vorgehen aus den Schritten Was suche ich, wo suche ich, wie suche ich, was verwende ich, wie beschaffe ich~\cite{book}.
 Die einzelnen Stufen werden im Folgenden zusammengefasst.
 
 \subsection{Such\-strategie und Abgrenzung des Themenfelds}
@@ -56,7 +56,7 @@ Folgende Quellen werden eingesetzt:
 
 Sämtliche während der Recherche ermittelten Quellen werden in einem zentralen BibTeX-Verzeichnis (\texttt{src/thesis/references.bib}) gepflegt.
 Pro Quelle werden Autor, Titel, Erscheinungsjahr, Verlag oder Konferenz, \gls{doi} oder URL und das Zugriffsdatum erfasst.
-Im Text wird nach IEEE-Zitierstil mit Seitenangabe nach deutscher Konvention zitiert (\verb|\cite[S.~X]{key}|).
+Im Text wird nach IEEE-Zitierstil mit Seitenangabe nach deutscher Konvention zitiert (\verb|\cite{key}|).
 
 \section{Experimentelles Vorgehen}
 \label{sec:experimentelles_vorgehen}
@@ -78,7 +78,7 @@ Aus der Aufgabenstellung übernehmen.
 \subsection{Variablen und Messgrössen}
 \label{sec:experiment_variablen}
 
-Das Experiment unterscheidet zwischen unabhängigen und abhängigen Variablen, wie es für ein kontrolliertes Laborexperiment gefordert ist~\cite[S.~74]{book}.
+Das Experiment unterscheidet zwischen unabhängigen und abhängigen Variablen, wie es für ein kontrolliertes Laborexperiment gefordert ist~\cite{book}.
 
 \paragraph{Unabhängige Variablen}
 Drei Variablen werden gezielt variiert.
@@ -102,8 +102,8 @@ TODO
 \label{sec:experiment_grenzen}
 
 Die Methode hat zwei strukturelle Grenzen, die hier ehrlich benannt werden.
-Erstens reduziert die Skalierung des Netzwerks auf 1\,\% die Pfaddiversität gegenüber dem Live-Netzwerk, was die Verkehrsmuster einer Klasse homogener und damit leichter klassifizierbar macht~\cite[S.~11]{jansen2023data}.
-Zweitens wird der Tor Browser durch ein gepatchtes \texttt{wget2} ersetzt, das zwar denselben Satz an Ressourcen abruft, jedoch JavaScript und Browser-spezifische Verkehrsmuster nicht reproduziert~\cite[S.~5]{jansen2023data}.
+Erstens reduziert die Skalierung des Netzwerks auf 1\,\% die Pfaddiversität gegenüber dem Live-Netzwerk, was die Verkehrsmuster einer Klasse homogener und damit leichter klassifizierbar macht~\cite{jansen2023data}.
+Zweitens wird der Tor Browser durch ein gepatchtes \texttt{wget2} ersetzt, das zwar denselben Satz an Ressourcen abruft, jedoch JavaScript und Browser-spezifische Verkehrsmuster nicht reproduziert~\cite{jansen2023data}.
 Beide Einschränkungen werden bei der Interpretation der Resultate in Kapitel~\ref{cha:diskussion} berücksichtigt.
 
 \section{Projektplan}
