@@ -105,6 +105,9 @@ Die übrigen Klassen werden hier nur abgegrenzt, da sie für die Einordnung der 
 Eine für die vorliegende Arbeit zentrale Einordnung ergibt sich aus einem Blick auf öffentlich bekannte Tor-Deanonymisierungen.
 Trotz mehr als fünfzehn Jahren intensiver \gls{wf}-Forschung existiert kein öffentlich dokumentierter Fall, in dem die im akademischen Sinn definierte \gls{wf}-Klassifikation eingesetzt wurde, um eine reale Person zu deanonymisieren.
 Die durch Edward Snowden veröffentlichten Folien der \gls{nsa} und des GCHQ, insbesondere \emph{Tor Stinks} aus dem Jahr 2012, nennen als operative Methoden gegen Tor das Cookie-Tracking auf Exit-Verkehr, das Markieren von User-Agents sowie das Betreiben eigener Exit-Knoten, jedoch keine \gls{wf}-basierte Inhalts-Klassifikation~\cite{gchq2012torstinks}.
+Konkret nutzt das Cookie-Tracking aus, dass persistente Web-Cookies, etwa von Werbenetzwerken wie DoubleClick oder Google Analytics, die Tor-Anonymisierung auf der Anwendungsschicht überleben.
+Verwendet ein Nutzer denselben Browser oder dasselbe Browser-Profil für Tor- und Nicht-Tor-Verkehr, lässt sich derselbe Cookie-Wert sowohl im beobachteten Exit-Traffic als auch im Direkt-Verkehr mit bekannter IP-Adresse wiederfinden, womit eine Tor-Sitzung an eine reale Identität rückgebunden wird~\cite{gchq2012torstinks}.
+Genau diesem Muster begegnet der Tor Browser durch eine konsequente Isolation der Cookies pro First-Party-Domain und durch das automatische Verwerfen von Browser-Zuständen zwischen Sitzungen.
 
 Mehrere Faktoren erklären diese Lücke zwischen Labor und Praxis.
 Wang und Goldberg argumentieren, dass die in akademischen Closed-World-Experimenten ausgewiesenen Trefferquoten unter realistischen Bedingungen mit niedriger Basisrate sensitiver Seitenaufrufe rasch in unbrauchbar viele False Positives umschlagen~\cite{wang2016realistically}.
