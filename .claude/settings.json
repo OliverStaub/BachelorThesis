@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "Bash(grep -i -E \"hour|3600|interval|consensus.{0,50}\\(hour|each|every\\)\" /tmp/dir-uploading-relay-documents.html /tmp/dir-creating-key-certificates.html)",
-      "Bash(PYTHONPATH=/tmp/pypdf.whl python3 -c ' *)"
+      "Bash(PYTHONPATH=/tmp/pypdf.whl python3 -c ' *)",
+      "Bash(echo \"Exit: $?\")"
     ]
   }
 }

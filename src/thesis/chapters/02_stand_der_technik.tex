@@ -84,38 +84,39 @@ Innerhalb dieses Modells lassen sich verschiedene Deanonymisierungsangriffe ausm
 \subsection{Angriffsklassen im Überblick}
 
 Bei einem Website-Fingerprinting-Angriff beobachtet der Angreifer ausschliesslich die Verbindung zwischen Client und Eingangsknoten und kennt das Kommunikationsziel nicht.
-Aus dem Muster der Tor Zellen wird abeschätzt, welche Webseite aus einer dem Angreifer im Voraus bekannten Menge aufgerufen wurde~\cite{jansen2023data}.
+Aus dem Muster der Tor-Zellen wird abgeschätzt, welche Webseite aus einer dem Angreifer im Voraus bekannten Menge aufgerufen wurde~\cite{jansen2023data}.
 Diese Angriffsklasse steht im Mittelpunkt der vorliegenden Arbeit und wird in Abschnitt~\ref{sec:website_fingerprinting} ausführlich behandelt.
 
 Bei einem Traffic-Correlation-Angriff beobachtet der Angreifer hingegen beide Enden eines anonymisierten Kommunikationspfads gleichzeitig.
 Aus den beiden Verkehrsspuren werden zueinander gehörende Flow-Paare identifiziert, womit eine direkte Verbindung zwischen Absender und Ziel hergestellt wird~\cite{nasr2018deepcorr}.
 Da die Aussage nicht über eine bekannte Inhaltsmenge, sondern über eine Identitätszuordnung getroffen wird, lassen sich auf diesem Weg beliebige Ziele deanonymisieren, ohne dass diese im Voraus bekannt sein müssen.
 
-Eine dritte Klasse bilden Seitenkanal- und Latenzangriffe, die mit weniger weitreichenden Beobachtungsmöglichkeiten auskommen.
+Eine dritte Klasse bilden Seitenkanal- und Latenzangriffe.
+Anstatt den Tor-Verkehr direkt aufzuzeichnen, leitet ein solcher Angriff Information aus indirekt beobachtbaren Grössen wie Reaktionszeiten, Auslastungsschwankungen einzelner Relais oder Pfad-Entscheidungen ab und benötigt damit eine schwächere Beobachtungsposition als die beiden zuvor genannten Klassen.
 Murdoch und Danezis zeigten bereits 2005, dass ein einzelner kompromittierter Tor-Knoten zusammen mit aktiven Latenzproben genügen kann, um die Auslastung anderer Relais zu schätzen und so wahrscheinliche Pfade zu rekonstruieren~\cite{crombe2016correlation}.
 Weitere Vertreter dieser Klasse sind Angriffe auf der Ebene von Autonomous Systems oder Internet Exchange Points, die durch ihre topologische Position eine Korrelation an beiden Enden begünstigen~\cite{nasr2018deepcorr}, sowie Angriffe auf das Path-Selection- oder Entry-Guard-Verfahren.
 
 
 Im Rahmen dieser Arbeit wird ausschliesslich \gls{wf} experimentell untersucht.
-Die nachfolgende Beschreibung von Traffic-Correlation dient zwei Zwecken.
-Erstens lassen sich beide Angriffsklassen so methodisch sauber voneinander abgrenzen, was insbesondere bei der Bewertung von Circuit Padding wichtig ist.
-Zweitens wird damit der Stand der Forschung zu einem Angriff dokumentiert, der zwar nicht Gegenstand der eigenen Experimente ist, aber für die Einordnung der Schutzwirkung von Padding entscheidend bleibt.
+Die übrigen Klassen werden hier nur abgegrenzt, da sie für die Einordnung der Schutzwirkung von Circuit Padding wichtig sind: Padding fügt Schein-Verkehr ausschliesslich auf den Tor-internen Verbindungen ein und adressiert damit primär den einseitig beobachtenden \gls{wf}-Angreifer, nicht jedoch einen Angreifer, der beide Endpunkte beobachtet oder Seitenkanäle ausnutzt~\cite{cai2014systematic}.
 
 
 \subsection{Website Fingerprinting in der Praxis}
 \label{sec:wf_in_der_praxis}
 
-Aus den genannten Vorfällen lässt sich eine für die vorliegende Arbeit zentrale Beobachtung ableiten.
+Eine für die vorliegende Arbeit zentrale Einordnung ergibt sich aus einem Blick auf öffentlich bekannte Tor-Deanonymisierungen.
 Trotz mehr als fünfzehn Jahren intensiver \gls{wf}-Forschung existiert kein öffentlich dokumentierter Fall, in dem die im akademischen Sinn definierte \gls{wf}-Klassifikation eingesetzt wurde, um eine reale Person zu deanonymisieren.
 Die durch Edward Snowden veröffentlichten Folien der \gls{nsa} und des GCHQ, insbesondere \emph{Tor Stinks} aus dem Jahr 2012, nennen als operative Methoden gegen Tor das Cookie-Tracking auf Exit-Verkehr, das Markieren von User-Agents sowie das Betreiben eigener Exit-Knoten, jedoch keine \gls{wf}-basierte Inhalts-Klassifikation~\cite{gchq2012torstinks}.
 
 Mehrere Faktoren erklären diese Lücke zwischen Labor und Praxis.
 Wang und Goldberg argumentieren, dass die in akademischen Closed-World-Experimenten ausgewiesenen Trefferquoten unter realistischen Bedingungen mit niedriger Basisrate sensitiver Seitenaufrufe rasch in unbrauchbar viele False Positives umschlagen~\cite{wang2016realistically}.
 Cherubin et al.\ bestätigen diese Lücke 2022 mit einer Evaluation auf echtem Tor-Exit-Verkehr, bei der die Accuracy bereits ab 25~überwachten Seiten unter 80\,\% fiel~\cite{cherubin2022online}.
-Hinzu kommt, dass für staatliche Angreifer einfacher zu betreibende Alternativen wie Browser-Exploits oder Sybil-Operationen zur Verfügung stehen, die mit deutlich höherer Trefferwahrscheinlichkeit zu einer eindeutigen Identifikation führen.
+Hinzu kommt, dass für staatliche Angreifer einfacher zu betreibende Alternativen zur Verfügung stehen, die mit höherer Trefferwahrscheinlichkeit zu einer eindeutigen Identifikation führen.
+Browser-Exploits nutzen Schwachstellen im Tor Browser aus, um nach erfolgreicher Code-Ausführung die reale IP-Adresse des Clients direkt am Tor-Kanal vorbei zu exfiltrieren, wie beim FBI-Zugriff auf Freedom Hosting 2013~\cite{torproject2013freedom} oder bei der Operation Pacifier gegen den Hidden Service Playpen 2015~\cite{eff_playpen}.
+Sybil-Operationen bestehen darin, eine grosse Zahl bösartiger Relais unter einer Identität zu betreiben, um durch gleichzeitige Kontrolle von Guard- und Exit-Positionen End-zu-End-Traffic-Correlation zu ermöglichen, wie der Relay-Early-Angriff der Carnegie Mellon University 2014~\cite{torproject2014advisory} und die seit 2017 dokumentierte KAX17-Operation mit über 900~Relais~\cite{nusenu2021kax17} zeigen.
 
 \gls{wf}-ähnliche Verfahren werden in der Praxis dennoch operativ eingesetzt, jedoch zu einem anderen Zweck.
-Zensurregime wie die Great Firewall of China nutzen Protokoll-Fingerprinting, um Tor-Verbindungen anhand der verwendeten Ciphersuites und Handshake-Muster zu erkennen und zu blockieren~\cite{winter2012china}.
+Zensurregime wie die Great Firewall of China nutzen Protokoll-Fingerprinting, um Tor-Verbindungen am verwendeten TLS-Handshake zu erkennen und zu blockieren, also an der Auswahl und Reihenfolge der angebotenen Ciphersuites sowie an weiteren Verbindungsparametern, die sich von gewöhnlichem HTTPS-Verkehr unterscheiden~\cite{winter2012china}.
 Diese Erkennung zielt auf die Tatsache der Tor-Nutzung selbst und nicht auf den Inhalt der besuchten Webseiten und stellt damit ein anderes Bedrohungsmodell dar als das in der vorliegenden Arbeit untersuchte.
 
 Die experimentelle Auseinandersetzung mit \gls{wf}-Verteidigungen behält dennoch ihre Berechtigung.
