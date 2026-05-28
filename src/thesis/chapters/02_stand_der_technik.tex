@@ -79,15 +79,12 @@ Der Browser greift via SOCKS auf den lokalen Tor-Daemon zu, welcher den Internet
 \label{sec:angriffe_auf_tor}
 
 Das in Abschnitt~\ref{sec:tor_bedrohungsmodell} skizzierte Bedrohungsmodell von \gls{tor} schliesst einen globalen passiven Beobachter explizit aus und richtet sich gegen einen Angreifer mit einer Teilsicht auf das Netz~\cite{dingledine2004tor}.
-Innerhalb dieses Modells lassen sich Deanonymisierungsangriffe entlang zweier Achsen einordnen.
-Die erste Achse ist die Beobachtungsposition, also ob der Angreifer den Verkehr an einem Ende, an beiden Enden oder über Seitenkanäle erfasst.
-Die zweite Achse ist die Zielaussage, also ob die besuchte Webseite, die Identität der kommunizierenden Parteien oder der gewählte Pfad rekonstruiert werden soll.
-Der folgende Unterabschnitt ordnet die für diese Arbeit relevanten Angriffsklassen ein, anschliessend wird die relevanten Angriffsklassen Traffic-Correlation und \gls{wf} genauer eingegangen.
+Innerhalb dieses Modells lassen sich verschiedene Deanonymisierungsangriffe ausmachen.
 
 \subsection{Angriffsklassen im Überblick}
 
 Bei einem Website-Fingerprinting-Angriff beobachtet der Angreifer ausschliesslich die Verbindung zwischen Client und Eingangsknoten und kennt das Kommunikationsziel nicht.
-Aus dem Muster der verschlüsselten Zellsequenz wird inferiert, welche Webseite aus einer dem Angreifer im Voraus bekannten Menge aufgerufen wurde~\cite{jansen2023data}.
+Aus dem Muster der Tor Zellen wird abeschätzt, welche Webseite aus einer dem Angreifer im Voraus bekannten Menge aufgerufen wurde~\cite{jansen2023data}.
 Diese Angriffsklasse steht im Mittelpunkt der vorliegenden Arbeit und wird in Abschnitt~\ref{sec:website_fingerprinting} ausführlich behandelt.
 
 Bei einem Traffic-Correlation-Angriff beobachtet der Angreifer hingegen beide Enden eines anonymisierten Kommunikationspfads gleichzeitig.
@@ -98,94 +95,19 @@ Eine dritte Klasse bilden Seitenkanal- und Latenzangriffe, die mit weniger weitr
 Murdoch und Danezis zeigten bereits 2005, dass ein einzelner kompromittierter Tor-Knoten zusammen mit aktiven Latenzproben genügen kann, um die Auslastung anderer Relais zu schätzen und so wahrscheinliche Pfade zu rekonstruieren~\cite{crombe2016correlation}.
 Weitere Vertreter dieser Klasse sind Angriffe auf der Ebene von Autonomous Systems oder Internet Exchange Points, die durch ihre topologische Position eine Korrelation an beiden Enden begünstigen~\cite{nasr2018deepcorr}, sowie Angriffe auf das Path-Selection- oder Entry-Guard-Verfahren.
 
-Abbildung~\ref{fig:angriffsklassen} fasst diese Einordnung schematisch zusammen.
-
-\begin{figure}[H]
-\centering
-\resizebox{\textwidth}{!}{%
-\input{figs/angriffsklassen_body.tex}%
-}
-\caption{Einordnung der für diese Arbeit relevanten Angriffsklassen auf \gls{tor} entlang der Achsen Beobachtungsposition und Zielaussage. Der Fokus der vorliegenden Arbeit liegt auf Website-Fingerprinting (blau hervorgehoben). Die Zuordnung ist vereinfachend, einzelne Verfahren wie die \gls{as}-/IXP-Korrelation lassen sich auch als Sonderfall der Traffic-Correlation lesen.}
-\label{fig:angriffsklassen}
-\end{figure}
 
 Im Rahmen dieser Arbeit wird ausschliesslich \gls{wf} experimentell untersucht.
 Die nachfolgende Beschreibung von Traffic-Correlation dient zwei Zwecken.
 Erstens lassen sich beide Angriffsklassen so methodisch sauber voneinander abgrenzen, was insbesondere bei der Bewertung von Circuit Padding wichtig ist.
 Zweitens wird damit der Stand der Forschung zu einem Angriff dokumentiert, der zwar nicht Gegenstand der eigenen Experimente ist, aber für die Einordnung der Schutzwirkung von Padding entscheidend bleibt.
 
-\subsection{Traffic-Correlation-Angriffe}
-\label{sec:traffic_correlation}
 
-Ein Traffic-Correlation-Angriff geht von einem Angreifer aus, der gleichzeitig den eingehenden Verkehr am Eingangsknoten und den ausgehenden Verkehr am Ausgangsknoten beobachtet.
-Beide Verkehrsspuren tragen trotz Onion-Verschlüsselung dieselben verkehrsstatistischen Merkmale wie Inter-Paket-Zeiten, Burst-Verläufe und Volumen pro Zeitfenster.
-Aus $M$ ingress- und $N$ egress-Flows werden die zusammengehörenden Paare $(F_i, F_j)$ identifiziert~\cite{nasr2018deepcorr}.
-Die nötige Beobachtungsposition lässt sich durch eigene Guard- und Exit-Relais oder durch eine Stellung im Internet-Backbone erreichen~\cite{nasr2018deepcorr}.
-
-Klassische Verfahren beruhen auf allgemeinen statistischen Distanzmassen wie Pearson-Kreuzkorrelation, Packet-Counting oder zeitlicher Aktivitätsanalyse und erreichen unter Tor-typischem Rauschen Equal Error Rates im einstelligen Prozentbereich~\cite{crombe2016correlation}.
-Lernbasierte Verfahren wie DeepCorr ersetzen diese statischen Masse durch ein \gls{cnn}, das die Korrelationsfunktion direkt aus Live-Tor-Daten lernt, und erreichen mit nur 300 Paketen pro Flow eine True-Positive-Rate von rund 80\,\% bei einer False-Positive-Rate von $10^{-3}$~\cite{nasr2018deepcorr}.
-
-Für die vorliegende Arbeit ist Traffic-Correlation als Abgrenzung zu \gls{wf} relevant: Während \gls{wf} eine im Voraus bekannte Zielmenge benötigt und nur an einem Ende des Pfads operiert, erkennt Traffic-Correlation beliebige Verbindungen, sofern beide Enden beobachtet werden~\cite{nasr2018deepcorr}.
-Padding fügt Schein-Verkehr nur auf den Tor-internen Verbindungen ein und adressiert damit primär den einseitig beobachtenden \gls{wf}-Angreifer.
-Eine wirksame Verteidigung gegen lernbasierte Korrelation setzt deutlich aufwändigere Massnahmen wie volles Link-Padding oder Tamaraw-artiges Traffic Shaping voraus (vgl.\ Abschnitt~\ref{sec:wf_defenses_tamaraw})~\cite{cai2014systematic}, die im \gls{tor}-Netz aufgrund des Bandbreiten- und Latenz-Overheads nicht ausgerollt werden.
-
-\subsection{Dokumentierte Angriffe auf Tor in der Praxis}
-\label{sec:dokumentierte_angriffe}
-
-Die in den vorigen Abschnitten beschriebenen Angriffsklassen sind in der Literatur formal motiviert und durch akademische Experimente belegt.
-Ein Blick auf öffentlich dokumentierte Deanonymisierungs-Vorfälle der letzten zehn Jahre zeigt, dass die praktische Bedeutung der einzelnen Klassen unterschiedlich gross ist.
-Der folgende Abschnitt skizziert vier Vorfälle, ordnet sie den eingeführten Angriffsklassen zu und diskutiert abschliessend die praktische Relevanz von \gls{wf}.
-
-\subsubsection{Browser-Exploits gegen Hidden Services}
-
-Im August 2013 übernahm das \gls{fbi} im Rahmen der Auslieferung des Betreibers Eric Eoin Marques den Tor-Hosting-Dienst Freedom Hosting~\cite{torproject2013freedom}.
-In die ausgelieferten Seiten wurde ein JavaScript-Payload eingebettet, der die Schwachstelle \gls{cve}-2013-1690 in Firefox~17~ESR ausnutzte und Hostname sowie MAC-Adresse des Clients an einen Server in Virginia exfiltrierte~\cite{nvd_cve_2013_1690}.
-Da das Tor Browser Bundle zum damaligen Zeitpunkt auf derselben Firefox-Version basierte, war ein nennenswerter Teil der Nutzer mit veralteten Installationen betroffen.
-
-Eine vergleichbare Operation führte das \gls{fbi} 2015 unter dem Namen Operation Pacifier gegen den Hidden Service Playpen durch.
-Über einen Zeitraum von 13~Tagen lieferte das übernommene System eine \gls{nit} aus, die nach Gerichtsakten rund 8\,000 IP-Adressen weltweit identifizierte, davon etwa 1\,300 in den Vereinigten Staaten~\cite{eff_playpen}.
-Die genutzte Browser-Schwachstelle wurde nie offiziell veröffentlicht, das Verfahren \emph{United States v. Michaud} wurde eingestellt, weil das US-Justizministerium eine Offenlegung des Exploit-Codes verweigerte~\cite{eff_playpen}.
-
-Beide Operationen sind methodisch keine Angriffe auf das Tor-Protokoll, sondern Endpunkt-Exploits gegen die Client-Software.
-Nach erfolgreicher Code-Ausführung wurde die reale IP-Adresse des Clients direkt am Tor-Netzwerk vorbei versandt.
-Verteidigungen wie Padding oder Tamaraw, die ausschliesslich Verkehrsmuster innerhalb des Tor-Kanals verändern, adressieren diese Angriffsklasse nicht.
-
-\subsubsection{Sybil-basierte Traffic Confirmation}
-
-Zwischen Januar und Juli 2014 betrieben Forschende des Software Engineering Institute der Carnegie Mellon University rund 115 bösartige Tor-Relais, die gleichzeitig die Rollen Guard und Hidden Service Directory besetzten~\cite{torproject2014advisory}.
-Die Relais kodierten den Namen einer abgefragten \texttt{.onion}-Adresse in der Sequenz von \texttt{RELAY}- und \texttt{RELAY\_EARLY}-Zellen, die in Richtung Client gesendet wurden.
-Spielte ein zweites Relais derselben Sybil-Gruppe für denselben Client die Guard-Rolle, konnte es das Signal mitlesen und die IP-Adresse des Clients dem abgefragten Hidden Service zuordnen~\cite{torproject2014advisory}.
-Methodisch handelt es sich um eine Traffic-Confirmation-Variante mit aktivem Covert-Signal, nicht um \gls{wf}.
-
-Die Auswirkungen wurden im November 2014 öffentlich, als Europol unter dem Namen Operation Onymous in einer koordinierten Aktion mit 16~Staaten 17~Personen festnehmen und über 400 \texttt{.onion}-Adressen beschlagnahmen liess~\cite{europol2014onymous}.
-Ein Gerichtsbeschluss im Verfahren \emph{United States v. Farrell} bestätigte 2016, dass das Software Engineering Institute im Auftrag des US-Verteidigungsministeriums die IP-Adresse des Angeklagten identifiziert und auf richterliche Anordnung an das \gls{fbi} weitergegeben hatte~\cite{usa_v_farrell}.
-Eine direkte Auftragsfinanzierung durch das \gls{fbi}, wie sie das Tor Project öffentlich vermutet, ist nicht gerichtsfest belegt~\cite{torproject2015fbicmu}.
-
-\subsubsection{Moderne Sybil-Operationen: KAX17}
-
-Eine deutlich grössere und länger laufende Sybil-Operation wurde unter dem Pseudonym KAX17 dokumentiert.
-Der Sicherheitsforscher mit dem Pseudonym \emph{nusenu} machte sie im Dezember 2021 öffentlich und konnte zugehörige Aktivität bis 2017 zurückverfolgen~\cite{nusenu2021kax17}.
-Zum Höhepunkt der Operation betrieb KAX17 über 900 Tor-Relais in mehr als 50 autonomen Systemen, vorwiegend in den Guard- und Middle-Rollen, womit die Wahrscheinlichkeit eines KAX17-Knotens als erster Hop bei rund 16\,\% lag~\cite{therecord2021kax17}.
-Das Tor Project entfernte die identifizierten Relais in mehreren Bann-Wellen zwischen Oktober 2020 und Dezember 2021.
-
-Ob KAX17 aktive Deanonymisierungen durchgeführt hat, ist öffentlich nicht belegt.
-Die geografische Verteilung, die Laufzeit und die Konzentration auf Guard-Positionen erlauben jedoch die Beobachtungsposition für End-zu-End-Traffic-Correlation, gegen die \gls{wf}-Verteidigungen ebenfalls nicht wirken~\cite{nusenu2021kax17}.
-
-\subsubsection{Endpunkt-Identifikation jenseits des Tor-Protokolls}
-
-Eine vierte Klasse realer Deanonymisierungen umgeht das Tor-Protokoll vollständig, indem das Anonymitäts-Set des Nutzers über Kontextinformationen eingeschränkt wird.
-Im Dezember 2013 verschickte ein Harvard-Student eine Bombendrohung über das Tor-Netzwerk und den Wegwerf-Mail-Dienst Guerrilla Mail, um eine Abschlussprüfung zu vermeiden.
-Aus den WLAN-Logs der Universität war ablesbar, dass nur wenige Personen im Campus-Netz zur fraglichen Zeit Tor verwendet hatten, was eine sehr kleine Verdächtigen-Menge ergab.
-Die Identifikation erfolgte innerhalb von 24~Stunden, der Student gestand nach polizeilicher Belehrung~\cite{usa_v_kim}.
-Der Vorfall illustriert, dass selbst eine ideale \gls{wf}-Verteidigung ihre Wirkung verliert, sobald ein Beobachter zusätzliche Metadaten ausserhalb des Tor-Kanals heranziehen kann.
-
-\subsubsection{Website Fingerprinting in der Praxis}
+\subsection{Website Fingerprinting in der Praxis}
 \label{sec:wf_in_der_praxis}
 
 Aus den genannten Vorfällen lässt sich eine für die vorliegende Arbeit zentrale Beobachtung ableiten.
 Trotz mehr als fünfzehn Jahren intensiver \gls{wf}-Forschung existiert kein öffentlich dokumentierter Fall, in dem die im akademischen Sinn definierte \gls{wf}-Klassifikation eingesetzt wurde, um eine reale Person zu deanonymisieren.
 Die durch Edward Snowden veröffentlichten Folien der \gls{nsa} und des GCHQ, insbesondere \emph{Tor Stinks} aus dem Jahr 2012, nennen als operative Methoden gegen Tor das Cookie-Tracking auf Exit-Verkehr, das Markieren von User-Agents sowie das Betreiben eigener Exit-Knoten, jedoch keine \gls{wf}-basierte Inhalts-Klassifikation~\cite{gchq2012torstinks}.
-Auch Operation Onymous beruhte nicht auf \gls{wf}, sondern auf der zuvor beschriebenen Sybil-basierten Traffic Confirmation.
 
 Mehrere Faktoren erklären diese Lücke zwischen Labor und Praxis.
 Wang und Goldberg argumentieren, dass die in akademischen Closed-World-Experimenten ausgewiesenen Trefferquoten unter realistischen Bedingungen mit niedriger Basisrate sensitiver Seitenaufrufe rasch in unbrauchbar viele False Positives umschlagen~\cite{wang2016realistically}.
@@ -197,7 +119,7 @@ Zensurregime wie die Great Firewall of China nutzen Protokoll-Fingerprinting, um
 Diese Erkennung zielt auf die Tatsache der Tor-Nutzung selbst und nicht auf den Inhalt der besuchten Webseiten und stellt damit ein anderes Bedrohungsmodell dar als das in der vorliegenden Arbeit untersuchte.
 
 Die experimentelle Auseinandersetzung mit \gls{wf}-Verteidigungen behält dennoch ihre Berechtigung.
-Sie evaluiert eine präventive Massnahme gegen ein dokumentiert mögliches, in der akademischen Literatur kontinuierlich verfeinertes Angriffsmuster, dessen praktische Anwendung im Tor-Kontext zwar bisher ausgeblieben ist, durch Fortschritte im maschinellen Lernen und durch sinkende Kosten für Massendaten-Auswertungen mittelfristig aber denkbar bleibt.
+Sie evaluiert eine präventive Massnahme gegen ein dokumentiert mögliches, in der akademischen Literatur kontinuierlich verfeinertes Angriffsmuster, dessen praktische Anwendung im Tor-Kontext zwar bisher ausgeblieben ist, durch Fortschritte im maschinellen Lernen und durch sinkende Kosten für Massendaten-Auswertungen aber denkbar bleibt.
 
 \section{Website Fingerprinting}
 \label{sec:website_fingerprinting}
