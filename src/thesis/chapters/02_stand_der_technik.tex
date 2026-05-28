@@ -83,19 +83,17 @@ Innerhalb dieses Modells lassen sich verschiedene Deanonymisierungsangriffe ausm
 
 \subsection{Angriffsklassen im Überblick}
 
-Bei einem Website-Fingerprinting-Angriff beobachtet der Angreifer ausschliesslich die Verbindung zwischen Client und Eingangsknoten und kennt das Kommunikationsziel nicht.
+Bei einem \textbf{Website-Fingerprinting-Angriff} beobachtet der Angreifer ausschliesslich die Verbindung zwischen Client und Eingangsknoten und kennt das Kommunikationsziel nicht.
 Aus dem Muster der Tor-Zellen wird abgeschätzt, welche Webseite aus einer dem Angreifer im Voraus bekannten Menge aufgerufen wurde~\cite{jansen2023data}.
 Diese Angriffsklasse steht im Mittelpunkt der vorliegenden Arbeit und wird in Abschnitt~\ref{sec:website_fingerprinting} ausführlich behandelt.
 
-Bei einem Traffic-Correlation-Angriff beobachtet der Angreifer hingegen beide Enden eines anonymisierten Kommunikationspfads gleichzeitig.
+Bei einem \textbf{Traffic-Correlation-Angriff} beobachtet der Angreifer hingegen beide Enden eines anonymisierten Kommunikationspfads gleichzeitig.
 Aus den beiden Verkehrsspuren werden zueinander gehörende Flow-Paare identifiziert, womit eine direkte Verbindung zwischen Absender und Ziel hergestellt wird~\cite{nasr2018deepcorr}.
 Da die Aussage nicht über eine bekannte Inhaltsmenge, sondern über eine Identitätszuordnung getroffen wird, lassen sich auf diesem Weg beliebige Ziele deanonymisieren, ohne dass diese im Voraus bekannt sein müssen.
 
-Eine dritte Klasse bilden Seitenkanal- und Latenzangriffe.
+Eine dritte Klasse bilden \textbf{Seitenkanal- und Latenzangriffe}.
 Anstatt den Tor-Verkehr direkt aufzuzeichnen, leitet ein solcher Angriff Information aus indirekt beobachtbaren Grössen wie Reaktionszeiten, Auslastungsschwankungen einzelner Relais oder Pfad-Entscheidungen ab und benötigt damit eine schwächere Beobachtungsposition als die beiden zuvor genannten Klassen.
 Murdoch und Danezis zeigten bereits 2005, dass ein einzelner kompromittierter Tor-Knoten zusammen mit aktiven Latenzproben genügen kann, um die Auslastung anderer Relais zu schätzen und so wahrscheinliche Pfade zu rekonstruieren~\cite{crombe2016correlation}.
-Weitere Vertreter dieser Klasse sind Angriffe auf der Ebene von Autonomous Systems oder Internet Exchange Points, die durch ihre topologische Position eine Korrelation an beiden Enden begünstigen~\cite{nasr2018deepcorr}, sowie Angriffe auf das Path-Selection- oder Entry-Guard-Verfahren.
-
 
 Im Rahmen dieser Arbeit wird ausschliesslich \gls{wf} experimentell untersucht.
 Die übrigen Klassen werden hier nur abgegrenzt, da sie für die Einordnung der Schutzwirkung von Circuit Padding wichtig sind: Padding fügt Schein-Verkehr ausschliesslich auf den Tor-internen Verbindungen ein und adressiert damit primär den einseitig beobachtenden \gls{wf}-Angreifer, nicht jedoch einen Angreifer, der beide Endpunkte beobachtet oder Seitenkanäle ausnutzt~\cite{cai2014systematic}.
