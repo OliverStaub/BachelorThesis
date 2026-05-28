@@ -99,6 +99,7 @@ Im Rahmen dieser Arbeit wird ausschliesslich \gls{wf} experimentell untersucht.
 Die übrigen Klassen werden hier nur abgegrenzt, da sie für die Einordnung der Schutzwirkung von Circuit Padding wichtig sind: Padding fügt Schein-Verkehr ausschliesslich auf den Tor-internen Verbindungen ein und adressiert damit primär den einseitig beobachtenden \gls{wf}-Angreifer, nicht jedoch einen Angreifer, der beide Endpunkte beobachtet oder Seitenkanäle ausnutzt~\cite{cai2014systematic}.
 
 \subsection{Angriffe in der Praxis}
+\label{sec:angriffe_praxis}
 
 Die durch Edward Snowden veröffentlichten Folien der \gls{nsa} und des GCHQ, insbesondere \emph{Tor Stinks} aus dem Jahr 2012, nennen als operative Methoden gegen Tor das \textbf{Cookie-Tracking} auf Exit-Verkehr, das Markieren von User-Agents sowie das Betreiben \textbf{eigener Exit-Knoten}, jedoch keine \gls{wf}-basierte Inhalts-Klassifikation~\cite{gchq2012torstinks}.
 Konkret nutzt das Cookie-Tracking aus, dass persistente Web-Cookies, etwa von Werbenetzwerken wie DoubleClick oder Google Analytics, die Tor-Anonymisierung auf der Anwendungsschicht überleben.
@@ -107,7 +108,7 @@ Genau diesem Muster begegnet der Tor Browser durch eine konsequente Isolation de
 
 \textbf{Browser-Exploits} nutzen Schwachstellen im Tor Browser aus, um nach erfolgreicher Code-Ausführung die reale IP-Adresse des Clients direkt am Tor-Kanal vorbei zu exfiltrieren, wie beim FBI-Zugriff auf Freedom Hosting 2013~\cite{torproject2013freedom} oder bei der Operation Pacifier gegen den Hidden Service Playpen 2015~\cite{eff_playpen}.
 
-Sybil-Operationen bestehen darin, eine grosse Zahl bösartiger Relais unter einer Identität zu betreiben, um durch gleichzeitige Kontrolle von Guard- und Exit-Positionen End-zu-End-Traffic-Correlation zu ermöglichen, wie der Relay-Early-Angriff der Carnegie Mellon University 2014~\cite{torproject2014advisory} und die seit 2017 dokumentierte KAX17-Operation mit über 900~Relais~\cite{nusenu2021kax17} zeigen.
+\textbf{Sybil-Operationen} bestehen darin, eine grosse Zahl bösartiger Relais unter einer Identität zu betreiben, um durch gleichzeitige Kontrolle von Guard- und Exit-Positionen End-zu-End-Traffic-Correlation zu ermöglichen, wie der Relay-Early-Angriff der Carnegie Mellon University 2014~\cite{torproject2014advisory} und die seit 2017 dokumentierte KAX17-Operation mit über 900~Relais~\cite{nusenu2021kax17} zeigen.
 
 \subsection{Website Fingerprinting in der Praxis}
 \label{sec:wf_in_der_praxis}
@@ -119,8 +120,7 @@ Mehrere Faktoren erklären diese Lücke zwischen Labor und Praxis.
 Wang und Goldberg argumentieren, dass die in akademischen Closed-World-Experimenten ausgewiesenen Trefferquoten unter realistischen Bedingungen mit niedriger Basisrate sensitiver Seitenaufrufe rasch in unbrauchbar viele False Positives umschlagen~\cite{wang2016realistically}.
 Cherubin et al.\ bestätigen diese Lücke 2022 mit einer Evaluation auf echtem Tor-Exit-Verkehr, bei der die Accuracy bereits ab 25~überwachten Seiten unter 80\,\% fiel~\cite{cherubin2022online}.
 
-
-Hinzu kommt, dass für staatliche Angreifer einfacher zu betreibende Alternativen zur Verfügung stehen, die mit höherer Trefferwahrscheinlichkeit zu einer eindeutigen Identifikation führen (siehe oben).
+Hinzu kommt, dass für staatliche Angreifer einfacher zu betreibende Alternativen zur Verfügung stehen, die mit höherer Trefferwahrscheinlichkeit zu einer eindeutigen Identifikation führen (vgl.\ Abschnitt~\ref{sec:angriffe_praxis}).
 
 \gls{wf}-ähnliche Verfahren werden in der Praxis dennoch operativ eingesetzt, jedoch zu einem anderen Zweck.
 Zensurregime wie die Great Firewall of China nutzen Protokoll-Fingerprinting, um Tor-Verbindungen am verwendeten TLS-Handshake zu erkennen und zu blockieren, also an der Auswahl und Reihenfolge der angebotenen Ciphersuites sowie an weiteren Verbindungsparametern, die sich von gewöhnlichem HTTPS-Verkehr unterscheiden~\cite{winter2012china}.
