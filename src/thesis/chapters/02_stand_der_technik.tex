@@ -28,6 +28,16 @@ Unterschieden wird zwischen Control Cells (z.\,B.\ create, destroy, padding) und
 
 Im Gegensatz zu \gls{tcp}-Segmenten, deren Nutzdaten-Grösse durch die Maximum Transmission Unit nach oben begrenzt ist besitzt jede Tor-Zelle dieselbe feste Länge.
 Zwischen jedem Paar aufeinanderfolgender Knoten eines Circuits, also auch zwischen Client und Eingangsknoten, werden Zellen über eine TLS-gesicherte \gls{tcp}-Verbindung transportiert, sodass ein einzelnes \gls{tcp}-Segment je nach Auslastung eine oder mehrere vollständige Zellen tragen kann~\cite{dingledine2004tor}.
+Abbildung~\ref{fig:tcp_vs_cells} stellt den Unterschied schematisch dar: \gls{tcp}-Segmente besitzen variable Länge und folgen der Anwendungslogik, während Tor-Zellen eine einheitliche Länge aufweisen und unabhängig von den Segmentgrenzen im Bytestrom liegen.
+
+\begin{figure}[H]
+\centering
+\resizebox{\textwidth}{!}{%
+\input{figs/tcp_vs_cells_body.tex}%
+}
+\caption{Vergleich von \gls{tcp}-Segmenten und Tor-Zellen. \gls{tcp}-Segmente sind in ihrer Länge variabel und durch die Maximum Transmission Unit nach oben begrenzt. Tor-Zellen sind hingegen einheitlich 512~Byte gross. Segmentgrenzen und Zellgrenzen fallen im Allgemeinen nicht zusammen.}
+\label{fig:tcp_vs_cells}
+\end{figure}
 
 Die feste Zellgrösse soll Verkehrsmuster auf Paketebene vereinheitlichen. Anzahl und Richtung der Zellen bleiben für einen Beobachter jedoch sichtbar. Genau diesen Umstand nutzen Website-Fingerprinting-Angriffe aus~\cite{jansen2023data}.
 
