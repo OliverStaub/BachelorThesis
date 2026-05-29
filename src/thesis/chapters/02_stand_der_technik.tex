@@ -26,6 +26,9 @@ Sie sammeln in regelmässigen Abständen die Eigenschaften aller Relais (IP, Ban
 Die kleinste Übertragungseinheit ist eine Zelle fester Grösse, im ursprünglichen Design 512~Bytes.
 Unterschieden wird zwischen Control Cells (z.\,B.\ create, destroy, padding) und Relay Cells, die Ende-zu-Ende-Stream-Daten transportieren~\cite{dingledine2004tor}.
 
+Im Gegensatz zu \gls{tcp}-Segmenten, deren Nutzdaten-Grösse durch die Maximum Transmission Unit nach oben begrenzt ist und sich darunter an der Anwendungslogik orientiert, besitzt jede Tor-Zelle dieselbe feste Länge.
+Zwischen jedem Paar aufeinanderfolgender Knoten eines Circuits, also auch zwischen Client und Eingangsknoten, werden Zellen über eine TLS-gesicherte \gls{tcp}-Verbindung transportiert, sodass ein einzelnes \gls{tcp}-Segment je nach Auslastung eine oder mehrere vollständige Zellen tragen kann~\cite{dingledine2004tor}.
+
 Die feste Zellgrösse soll Verkehrsmuster auf Paketebene vereinheitlichen. Anzahl und Richtung der Zellen bleiben für einen Beobachter jedoch sichtbar. Genau diesen Umstand nutzen Website-Fingerprinting-Angriffe aus~\cite{jansen2023data}.
 
 \subsection{Circuits und Streams}
