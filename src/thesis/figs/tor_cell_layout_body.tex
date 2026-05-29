@@ -11,11 +11,11 @@
     },
     rhdrbox/.style={
         draw, minimum height=10mm,
-        align=center, fill=orange!20
+        align=center, fill=blue!30
     },
     rdatabox/.style={
         draw, minimum height=10mm,
-        align=center, fill=orange!10
+        align=center, fill=blue!15
     },
     lbl/.style={font=\scriptsize, anchor=east}
 ]
@@ -51,7 +51,7 @@
 
 % Zoom-in: gestrichelte Linien vom Payload in der oberen Zeile
 % zu den Aussenkanten der unteren Aufschluesselung
-\draw[dashed, gray] (pl.south west) -- (r1.north west);
-\draw[dashed, gray] (pl.south east) -- (r6.north east);
+\draw[thick, dashed, blue!60] (pl.south west) -- (r1.north west);
+\draw[thick, dashed, blue!60] (pl.south east) -- (r6.north east);
 
 \end{tikzpicture}
