@@ -179,9 +179,11 @@ Sie evaluiert eine präventive Massnahme gegen ein dokumentiert mögliches, in d
 
 \subsection{Shadow Simulator}
 
-Shadow ist ein diskreter Ereignissimulator, der unmodifizierte Netzwerkanwendungen wie den realen \gls{tor} Daemon, den Verkehrsgenerator TGen oder das in der vorliegenden Arbeit eingesetzte wget2 innerhalb der Simulation ausführt~\cite{jansen2011shadow}.
-Über einen Syscall-Shim fängt Shadow netzwerk- und zeitbezogene Aufrufe ab und beantwortet sie aus dem simulierten Netzwerk heraus, während alle übrigen Syscalls nativ ausgeführt werden~\cite{jansen2011shadow}.
-Da die Simulationszeit explizit verwaltet und von der Wanduhrzeit entkoppelt ist, skaliert Shadow unabhängig von der Hardware-Geschwindigkeit, wobei die Laufzeit grosser Modelle je nach Versuch von wenigen Stunden bis zu mehreren Wochen reichen kann~\cite{neverenough-sec2021}.
+Shadow ist ein Ereignissimulator, der unmodifizierte Netzwerkanwendungen wie den realen \gls{tor} Daemon, den Verkehrsgenerator TGen oder auch wget2 innerhalb einer Simulation ausführen kann~\cite{jansen2011shadow}.
+
+
+Shadow fängt netzwerk- und zeitbezogene Aufrufe ab und beantwortet sie aus dem simulierten Netzwerk heraus, während alle übrigen Syscalls nativ ausgeführt werden~\cite{jansen2011shadow}.
+Da die Simulationszeit explizit verwaltet und von der Wanduhrzeit entkoppelt ist, skaliert Shadow unabhängig von der Hardware-Geschwindigkeit, wobei die Laufzeit grosser Simulationen je nach Versuch von wenigen Stunden bis zu mehreren Wochen reichen kann~\cite{neverenough-sec2021}.
 
 Jansen und Wails zeigen, dass ein vollständig in Shadow trainierter \gls{wf} Klassifikator auf Live Tor Daten über 80\,\% der Aufrufe korrekt klassifiziert~\cite{jansen2023data}.
 Im Live Tor Netzwerk verändern unkontrollierte Faktoren wie laufende Denial-of-Service-Attacken oder überlastete Relais die Verkehrsmuster und erschweren so die Reproduzierbarkeit, was in der deterministischen Shadow Umgebung nicht auftritt~\cite{jansen2023data}.
@@ -191,9 +193,9 @@ Shadow eignet sich damit nicht nur für isolierte Vergleichsstudien, sondern auc
 
 \subsection{Tornettools}
 
-Tornettools ist der Modellierungsbaustein, der Shadow für realistische Tor-Experimente konfiguriert, und wurde 2021 von Jansen, Tracey und Goldberg veröffentlicht~\cite[S.~5]{neverenough-sec2021}.
-Aus Tor-Konsensdokumenten und Server-Deskriptoren des CollecTor-Archivs~\cite{tormetricsabout} sowie aus PrivCount-Verkehrsmessungen an Live-Tor-Exit-Relais~\cite[S.~5\,f.]{mani2018understanding} erzeugt es in einer zweistufigen Pipeline (Staging-Phase und Generation-Phase) eine skalierbare Shadow-Konfiguration~\cite[S.~3\,f.]{neverenough-sec2021}.
-Den Anwendungs-Verkehr der Hintergrund-Clients modelliert der Generator TGen über drei Markov-Modelle, deren Parameter aus PrivCount stammen und damit Volumen sowie zeitliche Struktur realer Tor-Nutzung nachbilden~\cite[S.~5]{neverenough-sec2021}.
+Tornettools ist ein Tool welches Shadow für realistische Tor-Experimente konfiguriert, und wurde 2021 von Jansen, Tracey und Goldberg veröffentlicht~\cite{neverenough-sec2021}.
+Aus Tor-Konsensdokumenten und Server-Deskriptoren des CollecTor-Archivs~\cite{tormetricsabout} sowie aus PrivCount-Verkehrsmessungen an Live-Tor-Exit-Relais~\cite{mani2018understanding} erzeugt es in einer zweistufigen Pipeline (Staging-Phase und Generation-Phase) eine skalierbare Shadow-Konfiguration~\cite{neverenough-sec2021}.
+Den Anwendungs-Verkehr der Hintergrund-Clients modelliert der Generator TGen über drei Markov-Modelle, deren Parameter aus PrivCount stammen und damit Volumen sowie zeitliche Struktur realer Tor-Nutzung nachbilden~\cite{neverenough-sec2021}.
 
 Tornettools ist der Modellierungsbaustein, der Shadow für realistische Tor-Experimente konfiguriert, und wurde 2021 von Jansen, Tracey und Goldberg veröffentlicht~\cite{neverenough-sec2021}.
 Aus Tor-Konsensdokumenten und Server-Deskriptoren des CollecTor-Archivs~\cite{tormetricsabout} sowie aus PrivCount-Verkehrsmessungen an Live-Tor-Exit-Relais~\cite{mani2018understanding} erzeugt es in einer zweistufigen Pipeline (rechenintensive Staging-Phase, rechengünstige Generation-Phase) eine skalierbare Shadow-Konfiguration~\cite{neverenough-sec2021}.
