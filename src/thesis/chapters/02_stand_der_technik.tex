@@ -132,13 +132,13 @@ Sie evaluiert eine präventive Massnahme gegen ein dokumentiert mögliches, in d
 \section{Website Fingerprinting}
 \label{sec:website_fingerprinting}
 
-\gls{wf} Angriffe versuchen, trotz \gls{tor}-Verschlüsselung herauszufinden, welche Webseite ein Nutzer aufgerufen hat.
+\gls{wf} Angriffe können, trotz \gls{tor}-Verschlüsselung, herausfinden, welche Webseite ein Nutzer aufgerufen hat.
 Der Angreifer zeichnet dazu den Datenverkehr zwischen Client und Eingangsknoten auf, entweder als Betreiber des Eingangsknotens~\cite{jansen2023data} oder als passiver lokaler Beobachter~\cite{wang2016realistically}.
 Aus Anzahl und Richtung der Tor-Zellen, optional ergänzt um Zeitstempel, leitet ein \gls{ml}-Klassifikator ein Verkehrsmuster pro Webseite ab.
 
 Der Angreifer definiert eine Menge überwachter Seiten (\emph{monitored pages}), alle übrigen gelten als nicht-überwacht.
 Der Klassifikator wird zweistufig trainiert: Zuerst entscheidet er binär, ob eine beobachtete Zellsequenz zu einer überwachten Seite gehört, anschliessend bestimmt eine Multiclass-Klassifikation die konkrete Seite~\cite{jansen2023data}.
-Pro beobachtete Sequenz ergeben sich die vier üblichen Ausgänge True Positive, True Negative, False Positive und False Negative.
+Pro beobachteter Sequenz ergeben sich die vier üblichen Ausgänge: True Positive, True Negative, False Positive und False Negative.
 Welche Metriken daraus gebildet werden und warum eine niedrige False-Positive-Rate für die Beurteilung besonders wichtig ist, wird im Abschnitt~\ref{sec:closed_open_world} (Closed- und Open-World) behandelt.
 
 
