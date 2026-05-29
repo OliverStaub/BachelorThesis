@@ -21,7 +21,7 @@ Pro Verbindung kommen drei Relais zum Einsatz, in den Rollen Eingangs-, Mittel- 
 Damit ein Client überhaupt weiss, welche Relais derzeit verfügbar sind, betreiben wenige vertrauenswürdige Stellen die Rolle der Verzeichnisserver (Directory Authorities).
 Sie sammeln in regelmässigen Abständen die Eigenschaften aller Relais (IP, Bandbreite, Flags), stimmen über diese Liste ab und veröffentlichen ein gemeinsames, signiertes Verzeichnisdokument, das ein Client vor dem Aufbau einer Verbindung herunterlädt~\cite{torspec_dirspec}.
 
-\subsection{Zellen}
+\subsection{Tor Zellen}
 
 Die kleinste Übertragungseinheit ist eine Zelle fester Grösse, im ursprünglichen Design 512~Bytes.
 Unterschieden wird zwischen Control Cells (z.\,B.\ create, destroy, padding) und Relay Cells, die Ende-zu-Ende-Stream-Daten transportieren~\cite{dingledine2004tor}.
@@ -110,6 +110,19 @@ Genau diesem Muster begegnet der Tor Browser durch eine konsequente Isolation de
 
 \textbf{Sybil-Operationen} bestehen darin, eine grosse Zahl bösartiger Relais unter einer Identität zu betreiben, um durch gleichzeitige Kontrolle von Guard- und Exit-Positionen End-zu-End-Traffic-Correlation zu ermöglichen, wie der Relay-Early-Angriff der Carnegie Mellon University 2014~\cite{torproject2014advisory} und die seit 2017 dokumentierte KAX17-Operation mit über 900~Relais~\cite{nusenu2021kax17} zeigen.
 
+\section{Website Fingerprinting}
+\label{sec:website_fingerprinting}
+
+\gls{wf} Angriffe können herausfinden welche Webseite ein Nutzer aufgerufen hat, trotz \gls{tor}-Verschlüsselung.
+Der Angreifer zeichnet dazu den Datenverkehr zwischen Client und Eingangsknoten auf, entweder als Betreiber des Eingangsknotens~\cite{jansen2023data} oder als passiver lokaler Beobachter~\cite{wang2016realistically}.
+Aus Anzahl und Richtung der Tor-Zellen, optional ergänzt um Zeitstempel, leitet ein \gls{ml}-Klassifikator ein Verkehrsmuster pro Webseite ab.
+
+Der Angreifer definiert eine Menge überwachter Seiten, alle übrigen gelten als nicht-überwacht.
+Der Klassifikator wird zweistufig trainiert: Zuerst entscheidet er binär, ob eine beobachtete Zellsequenz zu einer überwachten Seite gehört, anschliessend bestimmt eine Multiclass-Klassifikation die konkrete Seite~\cite{jansen2023data}.
+Pro beobachteter Sequenz ergeben sich die vier üblichen Ausgänge:a True Positive, True Negative, False Positive und False Negative.
+Welche Metriken daraus gebildet werden wird im Abschnitt~\ref{sec:closed_open_world} (Closed- und Open-World) behandelt.
+
+
 \subsection{Website Fingerprinting in der Praxis}
 \label{sec:wf_in_der_praxis}
 
@@ -127,19 +140,9 @@ Zensurregime wie die Great Firewall of China nutzen Protokoll-Fingerprinting, um
 Diese Erkennung zielt auf die Tatsache der Tor-Nutzung selbst und nicht auf den Inhalt der besuchten Webseiten und stellt damit ein anderes Bedrohungsmodell dar als das in der vorliegenden Arbeit untersuchte.
 
 Die experimentelle Auseinandersetzung mit \gls{wf}-Verteidigungen behält dennoch ihre Berechtigung.
-Sie evaluiert eine präventive Massnahme gegen ein dokumentiert mögliches, in der akademischen Literatur kontinuierlich verfeinertes Angriffsmuster, dessen praktische Anwendung im Tor-Kontext zwar bisher ausgeblieben ist, durch Fortschritte im maschinellen Lernen und durch sinkende Kosten für Massendaten-Auswertungen aber denkbar bleibt.
+Sie evaluiert eine präventive Massnahme gegen ein dokumentiert mögliches, in der akademischen Literatur kontinuierlich verfeinertes Angriffsmuster, dessen praktische Anwendung zwar bisher ausgeblieben ist aber denkbar bleibt.
 
-\section{Website Fingerprinting}
-\label{sec:website_fingerprinting}
 
-\gls{wf} Angriffe können, trotz \gls{tor}-Verschlüsselung, herausfinden, welche Webseite ein Nutzer aufgerufen hat.
-Der Angreifer zeichnet dazu den Datenverkehr zwischen Client und Eingangsknoten auf, entweder als Betreiber des Eingangsknotens~\cite{jansen2023data} oder als passiver lokaler Beobachter~\cite{wang2016realistically}.
-Aus Anzahl und Richtung der Tor-Zellen, optional ergänzt um Zeitstempel, leitet ein \gls{ml}-Klassifikator ein Verkehrsmuster pro Webseite ab.
-
-Der Angreifer definiert eine Menge überwachter Seiten (\emph{monitored pages}), alle übrigen gelten als nicht-überwacht.
-Der Klassifikator wird zweistufig trainiert: Zuerst entscheidet er binär, ob eine beobachtete Zellsequenz zu einer überwachten Seite gehört, anschliessend bestimmt eine Multiclass-Klassifikation die konkrete Seite~\cite{jansen2023data}.
-Pro beobachteter Sequenz ergeben sich die vier üblichen Ausgänge: True Positive, True Negative, False Positive und False Negative.
-Welche Metriken daraus gebildet werden und warum eine niedrige False-Positive-Rate für die Beurteilung besonders wichtig ist, wird im Abschnitt~\ref{sec:closed_open_world} (Closed- und Open-World) behandelt.
 
 
 
