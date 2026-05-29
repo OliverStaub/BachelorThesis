@@ -26,6 +26,20 @@ Sie sammeln in regelmässigen Abständen die Eigenschaften aller Relais (IP, Ban
 Die kleinste Übertragungseinheit ist eine Zelle fester Grösse, im ursprünglichen Design 512~Bytes.
 Unterschieden wird zwischen Control Cells (z.\,B.\ create, destroy, padding) und Relay Cells, die Ende-zu-Ende-Stream-Daten transportieren~\cite{dingledine2004tor}.
 
+Jede Zelle besteht aus einem kurzen Header und einem Payload-Bereich.
+Der Header enthält eine Circuit-ID, die den Schaltkreis innerhalb einer Hop-Verbindung identifiziert, sowie ein Befehlsbyte (Command), das den Zelltyp angibt~\cite{dingledine2004tor}.
+Bei Relay Cells ist der Payload zusätzlich strukturiert und enthält einen inneren Relay-Header mit Stream-ID, einer Längenangabe und einer Integritätsprüfsumme (Digest) sowie das eigentliche Datenfeld, in dem die Anwendungs-Nutzdaten transportiert werden~\cite{dingledine2004tor}.
+Abbildung~\ref{fig:tor_cell_layout} fasst diesen Aufbau zusammen.
+
+\begin{figure}[H]
+\centering
+\resizebox{\textwidth}{!}{%
+\input{figs/tor_cell_layout_body.tex}%
+}
+\caption{Aufbau einer Tor-Zelle. Der äussere Header besteht aus Circuit-ID und Befehlsbyte und ist für alle Zelltypen gleich. Der 509~Byte grosse Payload einer Relay Cell enthält einen inneren Header mit Stream-ID, Integritätsprüfsumme und Längenangabe sowie ein Datenfeld von 498~Byte für die Anwendungs-Nutzdaten.}
+\label{fig:tor_cell_layout}
+\end{figure}
+
 Im Gegensatz zu \gls{tcp}-Segmenten, deren Nutzdaten-Grösse durch die Maximum Transmission Unit nach oben begrenzt ist besitzt jede Tor-Zelle dieselbe feste Länge.
 Zwischen jedem Paar aufeinanderfolgender Knoten eines Circuits, also auch zwischen Client und Eingangsknoten, werden Zellen über eine TLS-gesicherte \gls{tcp}-Verbindung transportiert, sodass ein einzelnes \gls{tcp}-Segment je nach Auslastung eine oder mehrere vollständige Zellen tragen kann~\cite{dingledine2004tor}.
 Abbildung~\ref{fig:tcp_vs_cells} stellt den Unterschied schematisch dar: \gls{tcp}-Segmente besitzen variable Länge und folgen der Anwendungslogik, während Tor-Zellen eine einheitliche Länge aufweisen und unabhängig von den Segmentgrenzen im Bytestrom liegen.
@@ -39,7 +53,9 @@ Abbildung~\ref{fig:tcp_vs_cells} stellt den Unterschied schematisch dar: \gls{tc
 \label{fig:tcp_vs_cells}
 \end{figure}
 
-Die feste Zellgrösse soll Verkehrsmuster auf Paketebene vereinheitlichen. Anzahl und Richtung der Zellen bleiben für einen Beobachter jedoch sichtbar. Genau diesen Umstand nutzen Website-Fingerprinting-Angriffe aus~\cite{jansen2023data}.
+Die feste Zellgrösse soll Verkehrsmuster auf Paketebene vereinheitlichen.
+Sichtbar bleiben für einen Beobachter zwischen Client und Eingangsknoten jedoch Anzahl und Richtung der Zellen, das heisst, ob eine Zelle vom Client zum Eingangsknoten (ausgehend) oder vom Eingangsknoten zum Client (eingehend) übertragen wird.
+Genau diese Sequenz aus eingehenden und ausgehenden Zellen bildet das Eingangssignal späterer Website-Fingerprinting-Klassifikatoren~\cite{jansen2023data}.
 
 \subsection{Circuits und Streams}
 

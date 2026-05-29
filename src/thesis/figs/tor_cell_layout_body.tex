@@ -1,0 +1,57 @@
+\begin{tikzpicture}[
+    >=latex,
+    every node/.style={font=\small},
+    hdrbox/.style={
+        draw, minimum height=10mm,
+        align=center, fill=blue!10
+    },
+    plbox/.style={
+        draw, minimum height=10mm,
+        align=center, fill=blue!20
+    },
+    rhdrbox/.style={
+        draw, minimum height=10mm,
+        align=center, fill=orange!20
+    },
+    rdatabox/.style={
+        draw, minimum height=10mm,
+        align=center, fill=orange!10
+    },
+    lbl/.style={font=\scriptsize, anchor=east}
+]
+
+% ----------------------------------------------------------
+% Obere Zeile: gesamte Tor-Zelle (512 B)
+% Felder: CircID (2 B) | Command (1 B) | Payload (509 B)
+% ----------------------------------------------------------
+\node[lbl] at (-2mm, 5mm) {Tor-Zelle};
+
+\node[hdrbox, minimum width=18mm] (h1) at (9mm,  5mm) {CircID\\\scriptsize 2 B};
+\node[hdrbox, minimum width=14mm] (h2) at (25mm, 5mm) {Cmd\\\scriptsize 1 B};
+\node[plbox,  minimum width=90mm] (pl) at (77mm, 5mm) {Payload\\\scriptsize 509 B};
+
+% Hinweislinie unten: fest 512 B
+\draw (0mm, -2mm) -- (122mm, -2mm);
+\node[font=\scriptsize] at (61mm, -6mm) {fest 512 B};
+
+% ----------------------------------------------------------
+% Untere Zeile: Aufschluesselung der Relay-Cell-Payload (509 B)
+% Felder: RelayCmd (1 B) | Recognized (2 B) | StreamID (2 B)
+%       | Digest (4 B)   | Length (2 B)     | Daten (498 B)
+% ----------------------------------------------------------
+\node[lbl] at (-2mm, -28mm) {Relay-Cell};
+\node[lbl] at (-2mm, -32mm) {Payload};
+
+\node[rhdrbox,  minimum width=14mm] (r1) at (7mm,   -30mm) {RelayCmd\\\scriptsize 1 B};
+\node[rhdrbox,  minimum width=14mm] (r2) at (21mm,  -30mm) {Recog.\\\scriptsize 2 B};
+\node[rhdrbox,  minimum width=16mm] (r3) at (36mm,  -30mm) {StreamID\\\scriptsize 2 B};
+\node[rhdrbox,  minimum width=14mm] (r4) at (51mm,  -30mm) {Digest\\\scriptsize 4 B};
+\node[rhdrbox,  minimum width=14mm] (r5) at (65mm,  -30mm) {Length\\\scriptsize 2 B};
+\node[rdatabox, minimum width=50mm] (r6) at (97mm,  -30mm) {Daten\\\scriptsize 498 B};
+
+% Zoom-in: gestrichelte Linien vom Payload in der oberen Zeile
+% zu den Aussenkanten der unteren Aufschluesselung
+\draw[dashed, gray] (pl.south west) -- (r1.north west);
+\draw[dashed, gray] (pl.south east) -- (r6.north east);
+
+\end{tikzpicture}
