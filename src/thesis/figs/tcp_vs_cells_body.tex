@@ -35,29 +35,29 @@
 % ----------------------------------------------------------
 % Untere Zeile: Tor-Zellen mit fester Grösse 512 B
 % ----------------------------------------------------------
-\node[lbl] at (-2mm, -16mm) {Tor-Zellen};
-\node[lbl] at (-2mm, -20mm) {(fest 512 B)};
+\node[lbl] at (-2mm, -11mm) {Tor-Zellen};
+\node[lbl] at (-2mm, -15mm) {(fest 512 B)};
 
 % Sieben Zellen, alle gleich breit, identisch hoch
 \foreach \i [count=\j from 0] in {1,2,3,4,5,6,7} {
-    \node[cell] at ({0mm + \j*16mm + 8mm}, -18mm) {Zelle \i};
+    \node[cell] at ({0mm + \j*16mm + 8mm}, -13mm) {Zelle \i};
 }
-\node[font=\scriptsize, anchor=west] at (122mm, -18mm) {\dots};
+\node[font=\scriptsize, anchor=west] at (122mm, -13mm) {\dots};
 
 % ----------------------------------------------------------
 % Verbindungslinien zwischen den Ebenen (Encapsulation)
 % Sie zeigen, dass Segment- und Zellgrenzen nicht zusammenfallen
 % ----------------------------------------------------------
-\draw[dotted, gray] (0mm, 0mm)    -- (0mm, -14mm);
-\draw[dotted, gray] (44mm, 0mm)   -- (44mm, -14mm);
-\draw[dotted, gray] (62mm, 0mm)   -- (62mm, -14mm);
-\draw[dotted, gray] (98mm, 0mm)   -- (98mm, -14mm);
-\draw[dotted, gray] (120mm, 0mm)  -- (120mm, -14mm);
+\draw[dotted, gray] (0mm, 0mm)    -- (0mm, -9mm);
+\draw[dotted, gray] (44mm, 0mm)   -- (44mm, -9mm);
+\draw[dotted, gray] (62mm, 0mm)   -- (62mm, -9mm);
+\draw[dotted, gray] (98mm, 0mm)   -- (98mm, -9mm);
+\draw[dotted, gray] (120mm, 0mm)  -- (120mm, -9mm);
 
 % ----------------------------------------------------------
 % Erklärender Hinweis
 % ----------------------------------------------------------
-\node[font=\scriptsize, align=center] at (60mm, -28mm)
+\node[font=\scriptsize, align=center] at (60mm, -23mm)
     {Segmentgrenzen (gepunktet) fallen nicht mit Zellgrenzen zusammen:\\
      ein TCP-Segment kann mehrere ganze oder Teile von Zellen enthalten.};
 

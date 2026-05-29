@@ -39,15 +39,15 @@
 % Felder: RelayCmd (1 B) | Recognized (2 B) | StreamID (2 B)
 %       | Digest (4 B)   | Length (2 B)     | Daten (498 B)
 % ----------------------------------------------------------
-\node[lbl] at (-2mm, -28mm) {Relay-Cell};
-\node[lbl] at (-2mm, -32mm) {Payload};
+\node[lbl] at (-2mm, -18mm) {Relay-Cell};
+\node[lbl] at (-2mm, -22mm) {Payload};
 
-\node[rhdrbox,  minimum width=14mm] (r1) at (7mm,   -30mm) {RelayCmd\\\scriptsize 1 B};
-\node[rhdrbox,  minimum width=14mm] (r2) at (21mm,  -30mm) {Recog.\\\scriptsize 2 B};
-\node[rhdrbox,  minimum width=16mm] (r3) at (36mm,  -30mm) {StreamID\\\scriptsize 2 B};
-\node[rhdrbox,  minimum width=14mm] (r4) at (51mm,  -30mm) {Digest\\\scriptsize 4 B};
-\node[rhdrbox,  minimum width=14mm] (r5) at (65mm,  -30mm) {Length\\\scriptsize 2 B};
-\node[rdatabox, minimum width=50mm] (r6) at (97mm,  -30mm) {Daten\\\scriptsize 498 B};
+\node[rhdrbox,  minimum width=14mm] (r1) at (7mm,   -20mm) {RelayCmd\\\scriptsize 1 B};
+\node[rhdrbox,  minimum width=14mm] (r2) at (21mm,  -20mm) {Recog.\\\scriptsize 2 B};
+\node[rhdrbox,  minimum width=16mm] (r3) at (36mm,  -20mm) {StreamID\\\scriptsize 2 B};
+\node[rhdrbox,  minimum width=14mm] (r4) at (51mm,  -20mm) {Digest\\\scriptsize 4 B};
+\node[rhdrbox,  minimum width=14mm] (r5) at (65mm,  -20mm) {Length\\\scriptsize 2 B};
+\node[rdatabox, minimum width=50mm] (r6) at (97mm,  -20mm) {Daten\\\scriptsize 498 B};
 
 % Zoom-in: gestrichelte Linien vom Payload in der oberen Zeile
 % zu den Aussenkanten der unteren Aufschluesselung
