@@ -308,6 +308,16 @@ Sobald eine reale Zelle versendet wird, zieht der Automat einen Inter-Paket-Dela
 Trifft vor Ablauf von $t$ eine weitere reale Zelle ein, wird sie unmittelbar weitergeleitet und ein neuer Delay-Wert gezogen.
 Läuft $t$ stattdessen ab, sendet der Automat eine Dummy-Zelle und wechselt in den Gap-Modus, in dem ein zweites Histogramm $H_G$ den Versand fingierter Burst-Sequenzen steuert.
 Statistisch unauffällige Lücken zwischen echten Bursts werden so durch Padding aufgefüllt, ohne dass die Anwendungsschicht ausgebremst wird~\cite{juarez2015wtf}.
+Abbildung~\ref{fig:wtfpad_fsm} fasst den Automaten mit seinen zwei Zuständen und den vier möglichen Übergängen zusammen.
+
+\begin{figure}[H]
+\centering
+\resizebox{\textwidth}{!}{%
+\input{figs/wtfpad_fsm_body.tex}%
+}
+\caption{Zustandsautomat von \gls{wtfpad}. Im Burst-Modus $B$ werden Delay-Werte aus dem Histogramm $H_B$ gezogen. Trifft eine reale Zelle vor Ablauf des aktuellen Delays $t$ ein, bleibt der Automat in $B$ und zieht einen neuen Delay-Wert. Läuft $t$ ab, wird eine Dummy-Zelle gesendet und der Automat wechselt in den Gap-Modus $G$, in dem $H_G$ den Versand fingierter Burst-Sequenzen steuert. Sobald wieder reale Zellen eintreffen, kehrt der Automat in den Burst-Modus zurück.}
+\label{fig:wtfpad_fsm}
+\end{figure}
 
 In einer geschlossenen Auswertung gegen den seinerzeit stärksten Angreifer reduziert \gls{wtfpad} die Trefferquote von rund $91\,\%$ auf etwa $20\,\%$ bei einem Bandbreiten-Overhead von weniger als $60\,\%$~\cite{juarez2015wtf}.
 Damit liegt das Verfahren deutlich näher am Anforderungsprofil von Tor als die BuFLO-Familie und stellt die direkte Vorlage für das im folgenden Abschnitt beschriebene Circuit-Padding-System dar.
