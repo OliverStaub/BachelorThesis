@@ -317,15 +317,6 @@ So entsteht im sonst leeren Gap-Intervall ein künstlicher Pseudo-Burst, der fü
 Sobald eine reale Zelle eintrifft, kehrt der Mechanismus in den Burst-Modus zurück und der Zyklus beginnt von vorne~\cite{juarez2015wtf}.
 Reale Zellen werden zu keinem Zeitpunkt aufgehalten, weshalb für die Anwendung kein Latenz-Overhead entsteht.
 
-\begin{figure}[H]
-\centering
-\resizebox{\textwidth}{!}{%
-\input{figs/wtfpad_effect_body.tex}%
-}
-\caption{Wirkung von \gls{wtfpad} auf einen Zellstrom. Ohne Padding ist die Pause zwischen zwei realen Bursts für einen Beobachter direkt sichtbar. Mit \gls{wtfpad} füllt der Gap-Modus dieses Intervall mit Dummy-Zellen auf, sodass an Stelle der Pause ein Pseudo-Burst entsteht und die ursprüngliche Burst-Struktur verschleiert wird.}
-\label{fig:wtfpad_effect}
-\end{figure}
-
 In einer geschlossenen Auswertung gegen den seinerzeit stärksten Angreifer reduziert \gls{wtfpad} die Trefferquote von rund $91\,\%$ auf etwa $20\,\%$ bei einem Bandbreiten-Overhead von weniger als $60\,\%$~\cite{juarez2015wtf}.
 Damit liegt das Verfahren deutlich näher am Anforderungsprofil von Tor als die BuFLO-Familie und stellt die direkte Vorlage für das im folgenden Abschnitt beschriebene Circuit-Padding-System dar.
 
