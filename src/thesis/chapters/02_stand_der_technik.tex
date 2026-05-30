@@ -342,13 +342,10 @@ Diese drei Konfigurationen bilden die unabhängige Variable des experimentellen 
 Der Modus \texttt{off} entspricht der Einstellung \texttt{CircuitPadding 0} und deaktiviert sämtliche Padding-Maschinen.
 Er bildet die Baseline ohne Verteidigung ab und entspricht in der Wirkung dem ursprünglichen Tor-Design von Dingledine et al., das explizit auf Padding verzichtete~\cite{dingledine2004tor}.
 
-Der Modus \texttt{on} aktiviert mit \texttt{CircuitPadding 1} die im Tor-Konsens aktuell deployten Standard-Maschinen, also primär die im vorigen Unterabschnitt beschriebenen Onion-Service-Schutzmaschinen.
+Der Modus \texttt{on} aktiviert mit \texttt{CircuitPadding 1} die im Tor-Konsens aktuell deployten Standard-Maschinen.
 
 Der Modus \texttt{reduced} kombiniert \texttt{CircuitPadding 1} mit der zusätzlichen Option \texttt{ReducedCircuitPadding 1}.
 Diese Option ist für mobile oder bandbreitenschwache Clients vorgesehen und reduziert Anzahl und Intensität der aktiven Padding-Maschinen, sodass der Bandbreiten-Overhead sinkt.
-Erwartungsgemäss lägen die Verteidigungseffekte daher zwischen \texttt{off} und \texttt{on}, was im Rahmen der Arbeit für unterschiedliche Datensatzgrössen experimentell überprüft wird.
-
-Die konkrete technische Umsetzung dieser drei Konfigurationen im Shadow-Simulator inklusive der automatisierten Generierung der zugehörigen torrc-Dateien wird im Realisierungskapitel beschrieben.
 
 
 \subsection{Tamaraw}
