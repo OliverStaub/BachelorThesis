@@ -359,10 +359,8 @@ Steht in einem Sende-Slot eine reale Zelle bereit, wird sie versendet, andernfal
 Reale Daten, die zwischen zwei Slots eintreffen, müssen bis zum nächsten Slot warten, wodurch eine systematische Verzögerung entsteht.
 Am Ende einer Übertragung wird die Gesamtzahl der versendeten Pakete pro Richtung auf das nächste Vielfache eines Parameters $L$ aufgefüllt, sodass Seiten ähnlicher Grösse in identischen Anonymitäts-Buckets landen~\cite{cai2014systematic}.
 
-In der Auswertung der Autoren erreicht Tamaraw in einem geschlossenen 800-Seiten-Experiment ein Sicherheitsniveau von $\epsilon = 3{,}4\,\%$ bei rund $199\,\%$ Bandbreiten-Overhead und liegt damit nahe an der theoretischen unteren Schranke für nicht-uniforme Sicherheit~\cite{cai2014systematic}.
-Die systematische Verzögerung realer Zellen macht das Verfahren jedoch für Tors low-latency-Designziel ungeeignet~\cite{kadianakis2021tor}.
-In der vorliegenden Arbeit dient Tamaraw deshalb als Referenzpunkt für die obere Wirksamkeitsgrenze von Bandbreiten-Verteidigungen und wird in einer ergänzenden, exploratorischen Messreihe gegen das in Tor produktiv ausgerollte Circuit Padding gestellt.
-Da Tamaraw nicht im regulären Tor-Daemon implementiert ist, erfolgt die Einbindung über einen Pluggable-Transport-Bridge-Knoten, dessen Aufbau in Abschnitt~\ref{sec:realisierung_tamaraw} dokumentiert ist.
+
+Die systematische Verzögerung realer Zellen macht das Verfahren jedoch für Tors ungeeignet und es wurde nicht eingeführt ~\cite{kadianakis2021tor}.
 
 
 
