@@ -198,10 +198,12 @@ Aus Tor-Konsensdokumenten und Server-Deskriptoren des CollecTor-Archivs~\cite{to
 Den Anwendungs-Verkehr der Hintergrund-Clients modelliert der Generator TGen über drei Markov-Modelle, deren Parameter aus PrivCount stammen und damit Volumen sowie zeitliche Struktur realer Tor-Nutzung nachbilden~\cite{neverenough-sec2021}.
 
 Tornettools ist der Modellierungsbaustein, der Shadow für realistische Tor-Experimente konfiguriert, und wurde 2021 von Jansen, Tracey und Goldberg veröffentlicht~\cite{neverenough-sec2021}.
-Aus Tor-Konsensdokumenten und Server-Deskriptoren des CollecTor-Archivs~\cite{tormetricsabout} sowie aus PrivCount-Verkehrsmessungen an Live-Tor-Exit-Relais~\cite{mani2018understanding} erzeugt es in einer zweistufigen Pipeline (rechenintensive Staging-Phase, rechengünstige Generation-Phase) eine skalierbare Shadow-Konfiguration~\cite{neverenough-sec2021}.
-Den Anwendungs-Verkehr der Hintergrund-Clients modelliert der Generator TGen über drei Markov-Modelle, deren Parameter aus PrivCount stammen und damit Volumen sowie zeitliche Struktur realer Tor-Nutzung nachbilden~\cite{neverenough-sec2021}.
+Aus Tor-Konsensdokumenten und Server-Deskriptoren des CollecTor-Archivs~\cite{tormetricsabout} sowie aus den Verkehrsmessungen an Live-Tor-Exit-Relais~\cite{mani2018understanding} erzeugt es in einer zweistufigen Pipeline (rechenintensive Staging-Phase, rechengünstige Generation-Phase) eine skalierbare Shadow-Konfiguration~\cite{neverenough-sec2021}.
 
-Die konkrete Werkzeugkette und die in dieser Arbeit gewählten Parameter werden in Abschnitt~\ref{sec:realisierung_umgebung} beschrieben.
+
+Den Anwendungs-Verkehr der Hintergrund-Clients modelliert der Generator TGen über Markov-Modelle, welche das Volumen sowie zeitliche Struktur realer Tor-Nutzung nachbilden~\cite{neverenough-sec2021}.
+
+Die konkrete Werkzeugkette und die in dieser Arbeit gewählten Parameter werden im Abschnitt~\ref{sec:realisierung_umgebung} beschrieben.
 
 \subsection{Validierung der Modellierung}
 
@@ -211,9 +213,11 @@ Eine spätere Cross-Dataset-Validierung zeigte zudem, dass ein ausschliesslich a
 \subsection{Website-Fingerprinting-Klassifikatoren}
 
 In der WF-Literatur haben sich vier Klassifikatoren als Vergleichsbasis etabliert, die sich entlang zweier Dimensionen unterscheiden: klassische Machine-Learning-Verfahren gegenüber neuronalen Netzen sowie zeitbasierte gegenüber zeitunabhängigen Ansätzen~\cite{jansen2023data}.
+
+
 CUMUL~\cite{panchenko2016website} verwendet eine Support Vector Machine über kumulierten Zellrichtungssequenzen und arbeitet zeitunabhängig.
-$k$-Fingerprinting~\cite{hayes2016k} kombiniert einen Random Forest mit $k$-Nearest-Neighbors auf Basis von Summary-Statistiken der Zellsequenz, wobei Timing-Features (Inter-Arrival-Zeiten) genutzt werden.
-Deep Fingerprinting~\cite{sirinam2018deep} ist ein zeitunabhängiges Convolutional Neural Network, das direkt auf Zellrichtungssequenzen arbeitet und in früheren Vergleichen sowohl CUMUL als auch $k$-FP übertroffen hat.
+k-Fingerprinting~\cite{hayes2016k} kombiniert einen Random Forest mit k-Nearest-Neighbors auf Basis von Summary-Statistiken der Zellsequenz, wobei Timing-Features (Inter-Arrival-Zeiten) genutzt werden.
+Deep Fingerprinting~\cite{sirinam2018deep} ist ein zeitunabhängiges Convolutional Neural Network, das direkt auf Zellrichtungssequenzen arbeitet und in früheren Vergleichen sowohl CUMUL als auch k-FP übertroffen hat.
 Tik-Tok~\cite{rahman2019tik} verwendet die DF-Architektur, ergänzt die Eingabe aber um Zeitstempel und reagiert dadurch empfindlicher auf variierende Netzwerkbedingungen~\cite{jansen2023data}.
 
 
@@ -228,7 +232,7 @@ Open-World-Szenario \cite{wang2016realistically, jansen2023data}.
 
 Im Closed-World-Szenario wird angenommen, dass der Nutzer 
 ausschliesslich Webseiten aus einer dem Angreifer bekannten, 
-endlichen Menge $W_\alpha$ besucht. Der Klassifikator muss 
+endlichen Liste besucht. Der Klassifikator muss 
 lediglich entscheiden, welche der bekannten Seiten besucht wurde. 
 Da alle Klassen gleich häufig im Testdatensatz vertreten sind, 
 wird die Klassifikationsgenauigkeit (Accuracy) als Performanzmass 
@@ -255,7 +259,7 @@ grossen Anzahl falsch-positiver Alarme führen kann
 \cite{wang2016realistically}.
 
 Wang und Goldberg betonen, dass frühere WF-Arbeiten häufig unter 
-vereinfachenden Closed-World-Annahmen evaluiert wurden, was die 
+ttvereinfachenden Closed-World-Annahmen evaluiert wurden, was die 
 tatsächliche Bedrohung durch WF-Angriffe nur unzureichend 
 widerspiegelt \cite{wang2016realistically}. Jansen und Wails haben 
 jedoch gezeigt, dass die Closed-World-Accuracy selbst bei 
@@ -279,9 +283,8 @@ Die gepatchte wget2-Version ist im Artefakt-Repository der Autoren öffentlich v
 \section{Website-Fingerprinting-Verteidigungen}
 \label{sec:wf_defenses}
 
-In den vorigen Abschnitten wurde \gls{wf} als Angriffsklasse, der Klassifikator Deep Fingerprinting sowie das Closed- und Open-World-Szenario behandelt.
-Der folgende Abschnitt schliesst diese Vorbetrachtung mit den korrespondierenden Verteidigungen ab.
-Drei Verfahren werden vorgestellt: Tamaraw als Vertreter bandbreitenintensiver Traffic-Shaping-Lösungen, \gls{wtfpad} als ressourcenschonende Vorlage und das in Tor real ausgerollte Circuit Padding, dessen drei Konfigurationen in den Experimenten dieser Arbeit verglichen werden.
+In den vorigen Abschnitten wurde \gls{wf} als Angriffsklasse behandelt.
+Der folgende Abschnitt schliesst diese Vorbetrachtung mit den möglichen Verteidigungen WTF-PAD als ressourcenschonende Vorlage für das in Tor real ausgerollte Circuit Padding, und Tamaraw als alternatives, aufwendigeres Verfahren.
 
 \subsection{Trade-off zwischen Sicherheit und Overhead}
 \label{sec:wf_defenses_tradeoff}
@@ -294,28 +297,11 @@ Zweitens das Verzögern realer Zellen (Delay), was die Latenz erhöht.
 Für Tor, dessen Designziel eine niedrige Latenz für interaktive Anwendungen vorsieht, scheidet der zweite Hebel weitgehend aus~\cite{kadianakis2021tor}.
 Cai et al.\ zeigen zudem für reine Bandbreiten-Verteidigungen eine prinzipielle untere Schranke: Jede Verteidigung, die ein gegebenes Sicherheitsniveau erreicht, muss mindestens eine bestimmte Bandbreitenmenge investieren~\cite{cai2014systematic}.
 Konkrete Verteidigungen lassen sich anhand dieser Schranke entlang eines Spektrums einordnen, das von hoher Sicherheit bei hohem Overhead bis zu moderater Sicherheit bei geringem Overhead reicht.
-Die folgenden Unterabschnitte behandeln drei etablierte Vertreter, die das in Tor tatsächlich eingesetzte Verfahren motivieren und einordnen.
-
-\subsection{Tamaraw}
-\label{sec:wf_defenses_tamaraw}
-
-Tamaraw wurde 2014 von Cai et al.\ als Weiterentwicklung des Buffered Fixed Length Obfuscator (BuFLO) vorgeschlagen~\cite{cai2014systematic}.
-Pakete werden in einer festen Grösse von 750~Byte versendet, und der Versand erfolgt pro Richtung mit einem konstanten Sende-Intervall, wobei eingehende und ausgehende Richtung asymmetrisch parametrisiert sind ($\rho_{\text{out}} \neq \rho_{\text{in}}$).
-Reale Daten werden bei Bedarf bis zum nächsten Sende-Slot zurückgehalten, leere Slots durch Dummy-Pakete aufgefüllt.
-Zur Beendigung einer Übertragung wartet Tamaraw nicht auf den Ablauf eines Mindestzeitfensters, sondern füllt die Gesamtanzahl gesendeter Pakete pro Richtung auf ein Vielfaches eines Parameters $L$ auf~\cite{cai2014systematic}.
-Auf diese Weise werden Seiten ähnlicher Grösse in identischen Anonymitäts-Buckets gruppiert.
-
-In der Auswertung von Cai et al.\ erreicht Tamaraw bei einem geschlossenen 800-Seiten-Experiment ein Sicherheitsniveau von $\epsilon = 3{,}4\,\%$ bei rund $199\,\%$ Bandbreiten-Overhead~\cite{cai2014systematic}.
-Damit liegt das Verfahren nahe an der theoretischen unteren Schranke für nicht-uniforme Sicherheit, ist aber durch die systematische Verzögerung realer Zellen für Tors low-latency-Designziel ungeeignet~\cite{kadianakis2021tor}.
-In der vorliegenden Arbeit dient Tamaraw als Referenzpunkt für die obere Wirksamkeitsgrenze von Bandbreiten-Verteidigungen und wird in einer ergänzenden, exploratorischen Messreihe gegen das in Tor produktiv ausgerollte Circuit Padding gestellt.
-Da das Verfahren nicht im regulären Tor-Daemon implementiert ist, erfolgt die Einbindung über einen Pluggable-Transport-Bridge-Knoten, dessen Aufbau in Abschnitt~\ref{sec:realisierung_tamaraw} dokumentiert ist.
 
 \subsection{WTF-PAD}
 \label{sec:wf_defenses_wtfpad}
 
 \gls{wtfpad} wurde 2015 von Juarez, Imani, Perry, Diaz und Wright vorgeschlagen und bildet die methodische Grundlage für die später in Tor deployten Padding-Mechanismen~\cite{juarez2015wtf}.
-Konzeptionell beruht das Verfahren auf dem allgemeineren Ansatz Adaptive Padding von Shmatikov und Wang, der ursprünglich gegen Ende-zu-Ende-Verkehrsanalysen entwickelt wurde~\cite{juarez2015wtf}.
-Der zentrale Unterschied zu Tamaraw besteht darin, dass reale Zellen nicht verzögert werden, sodass kein Latenz-Overhead entsteht~\cite{juarez2015wtf}.
 
 Der Mechanismus ist als endlicher Zustandsautomat realisiert, der pro Endpunkt zwei Hauptzustände kennt, einen Burst-Modus ($B$) und einen Gap-Modus ($G$)~\cite{juarez2015wtf}.
 Sobald eine reale Zelle versendet wird, zieht der Automat einen Inter-Paket-Delay $t$ aus einem Histogramm $H_B$, das aus typischen Burst-Verläufen eines grossen Referenzdatensatzes geschätzt wurde.
@@ -363,3 +349,21 @@ Diese Option ist für mobile oder bandbreitenschwache Clients vorgesehen und red
 Erwartungsgemäss lägen die Verteidigungseffekte daher zwischen \texttt{off} und \texttt{on}, was im Rahmen der Arbeit für unterschiedliche Datensatzgrössen experimentell überprüft wird.
 
 Die konkrete technische Umsetzung dieser drei Konfigurationen im Shadow-Simulator inklusive der automatisierten Generierung der zugehörigen torrc-Dateien wird im Realisierungskapitel beschrieben.
+
+
+\subsection{Tamaraw}
+\label{sec:wf_defenses_tamaraw}
+
+Tamaraw wurde 2014 von Cai et al.\ als Weiterentwicklung des Buffered Fixed Length Obfuscator (BuFLO) vorgeschlagen~\cite{cai2014systematic}.
+Pakete werden in einer festen Grösse von 750~Byte versendet, und der Versand erfolgt pro Richtung mit einem konstanten Sende-Intervall, wobei eingehende und ausgehende Richtung asymmetrisch parametrisiert sind ($\rho_{\text{out}} \neq \rho_{\text{in}}$).
+Reale Daten werden bei Bedarf bis zum nächsten Sende-Slot zurückgehalten, leere Slots durch Dummy-Pakete aufgefüllt.
+Zur Beendigung einer Übertragung wartet Tamaraw nicht auf den Ablauf eines Mindestzeitfensters, sondern füllt die Gesamtanzahl gesendeter Pakete pro Richtung auf ein Vielfaches eines Parameters $L$ auf~\cite{cai2014systematic}.
+Auf diese Weise werden Seiten ähnlicher Grösse in identischen Anonymitäts-Buckets gruppiert.
+
+In der Auswertung von Cai et al.\ erreicht Tamaraw bei einem geschlossenen 800-Seiten-Experiment ein Sicherheitsniveau von $\epsilon = 3{,}4\,\%$ bei rund $199\,\%$ Bandbreiten-Overhead~\cite{cai2014systematic}.
+Damit liegt das Verfahren nahe an der theoretischen unteren Schranke für nicht-uniforme Sicherheit, ist aber durch die systematische Verzögerung realer Zellen für Tors low-latency-Designziel ungeeignet~\cite{kadianakis2021tor}.
+In der vorliegenden Arbeit dient Tamaraw als Referenzpunkt für die obere Wirksamkeitsgrenze von Bandbreiten-Verteidigungen und wird in einer ergänzenden, exploratorischen Messreihe gegen das in Tor produktiv ausgerollte Circuit Padding gestellt.
+Da das Verfahren nicht im regulären Tor-Daemon implementiert ist, erfolgt die Einbindung über einen Pluggable-Transport-Bridge-Knoten, dessen Aufbau in Abschnitt~\ref{sec:realisierung_tamaraw} dokumentiert ist.
+
+
+
