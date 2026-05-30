@@ -325,13 +325,14 @@ Damit liegt das Verfahren deutlich näher am Anforderungsprofil von Tor als die 
 
 \subsubsection{Adaptive-Padding-Framework}
 
-Aufbauend auf der Adaptive-Padding-Idee von \gls{wtfpad} beschreiben Kadianakis et al.\ ein generisches Padding-Framework, das seit Tor 0.4.0 fester Bestandteil des Tor-Daemons ist und in der vorliegenden Arbeit experimentell ausgewertet wird~\cite{kadianakis2021tor}.
-Im Zentrum stehen \emph{Padding-Maschinen}, die als endliche Automaten in C definiert sind und das Senden von Dummy-Zellen in Abhängigkeit von eintreffenden Zellen, abgelaufenen Timern oder Zustandsübergängen steuern, wobei jeder Zustand eigene Verteilungen für Inter-Paket-Delays und Übergangsbedingungen festlegt~\cite{kadianakis2021tor}.
-Vor der Aktivierung einer Maschine handeln Client und Relais über eine Padding-Negotiation-Zelle aus, welche Maschinen unterstützt und aktiv sind, was die schrittweise Ausrollung neuer Verteidigungen ohne Bruch älterer Tor-Versionen erlaubt.
-Als bewusst gewähltes Design-Prinzip verzögert das Framework reale Anwendungs-Zellen nicht und erzeugt Schutz ausschliesslich über zusätzliche Dummy-Zellen, was es im Einklang mit dem low-latency-Designziel von Tor am unteren Ende des in Abschnitt~\ref{sec:wf_defenses_tradeoff} skizzierten Trade-off-Spektrums positioniert und stärkere Verfahren wie Tamaraw (Abschnitt~\ref{sec:wf_defenses_tamaraw}) ausserhalb des zulässigen Designraums verortet.
+Den unmittelbaren Anlass für die Einführung von Padding in Tor lieferte 2015 ein \emph{Circuit-Fingerprinting}-Angriff von Kwon et al.~\cite{kwon2015circuit}.
+Sie zeigten, dass ein Beobachter am Eingangsknoten allein anhand der Zellsequenz des Circuit-Aufbaus die verschiedenen Circuit-Typen unterscheiden kann, also einen gewöhnlichen Browsing-Circuit von einem Introduction- oder Rendezvous-Circuit eines Onion Services.
+Damit liess sich erkennen, dass und wann eine Person einen Onion Service ansteuert oder betreibt, was die Anonymitätsmenge von Onion-Service-Nutzern und -Betreibern erheblich schwächte.
+Die ersten produktiv ausgerollten Padding-Maschinen adressieren genau dieses Muster, indem sie die Aufbau-Sequenzen von Onion-Service-Circuits durch eingestreute Dummy-Zellen den Mustern gewöhnlicher Verzeichnisabfragen angleichen~\cite{kadianakis2021tor}.
 
-Die zum Zeitpunkt dieser Arbeit standardmässig in Tor ausgerollten Padding-Maschinen zielen primär auf den Schutz von Onion-Service-Schaltkreisen vor Circuit-Fingerprinting-Angreifern, indem sie die Zellsequenzen von Introduction- und Rendezvous-Handshakes den Mustern von Verzeichnisabfragen angleichen~\cite{kadianakis2021tor}.
-Auch wenn diese Maschinen nicht primär gegen \gls{wf} entwickelt wurden, verändern sie durch das Einstreuen zusätzlicher Zellen die für \gls{wf}-Klassifikatoren sichtbaren Verkehrsmuster und werden in der vorliegenden Arbeit experimentell als Verteidigung gegen \gls{wf} ausgewertet.
+Anstatt diesen Angriff mit einer Punktlösung zu beheben, entschied sich das Tor-Projekt für ein generisches Padding-Framework, das seit der Tor-Version 0.4.0.1-alpha fester Bestandteil des Tor-Daemons ist und über einen eigenen Padding-Negotiation-Mechanismus zwischen Client und Relais aktiviert wird~\cite{kadianakis2021tor}.
+Die zugrunde liegende Adaptive-Padding-Idee entspricht dem im vorigen Abschnitt beschriebenen \gls{wtfpad}-Mechanismus, das Framework wurde aber bewusst als Plattform konzipiert, auf der künftig auch \gls{wf}-Verteidigungen ohne weitere Eingriffe in den Tor-Daemon lauffähig sein sollen.
+Auch wenn die aktuell ausgerollten Maschinen primär gegen Circuit Fingerprinting gerichtet sind, verändern sie durch die zusätzlich eingestreuten Zellen die für \gls{wf}-Klassifikatoren sichtbaren Verkehrsmuster, was Gegenstand der experimentellen Auswertung dieser Arbeit ist.
 
 \subsubsection{Padding-Modi off, on und reduced}
 
