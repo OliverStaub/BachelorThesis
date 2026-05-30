@@ -303,20 +303,39 @@ Konkrete Verteidigungen lassen sich anhand dieser Schranke entlang eines Spektru
 
 \gls{wtfpad} wurde 2015 von Juarez, Imani, Perry, Diaz und Wright vorgeschlagen und bildet die methodische Grundlage für die später in Tor deployten Padding-Mechanismen~\cite{juarez2015wtf}.
 
-Der Mechanismus kennt zwei Hauptzustände, einen Burst-Modus und einen Gap-Modus ~\cite{juarez2015wtf}.
-Sobald eine reale Zelle versendet wird, zieht der Automat einen Inter-Paket-Delay $t$ aus einem Histogramm $H_B$, das aus typischen Burst-Verläufen eines grossen Referenzdatensatzes geschätzt wurde.
-Trifft vor Ablauf von $t$ eine weitere reale Zelle ein, wird sie unmittelbar weitergeleitet und ein neuer Delay-Wert gezogen.
-Läuft $t$ stattdessen ab, sendet der Automat eine Dummy-Zelle und wechselt in den Gap-Modus, in dem ein zweites Histogramm $H_G$ den Versand fingierter Burst-Sequenzen steuert.
-Statistisch unauffällige Lücken zwischen echten Bursts werden so durch Padding aufgefüllt, ohne dass die Anwendungsschicht ausgebremst wird~\cite{juarez2015wtf}.
-Abbildung~\ref{fig:wtfpad_fsm} fasst den Automaten mit seinen zwei Zuständen und den vier möglichen Übergängen zusammen.
+Das Ziel von \gls{wtfpad} ist es, die für \gls{wf}-Klassifikatoren auffälligen Pausen zwischen echten Zellbursts zu maskieren, indem genau dort Dummy-Zellen eingestreut werden~\cite{juarez2015wtf}.
+Dafür beobachtet eine pro Endpunkt laufende Komponente den ausgehenden Zellstrom und unterscheidet zwei Phasen, die als Burst-Modus und Gap-Modus bezeichnet werden.
+
+Solange reale Zellen versendet werden, bleibt der Mechanismus im Burst-Modus und leitet jede Zelle ohne Verzögerung weiter.
+Nach jeder versendeten realen Zelle startet \gls{wtfpad} jedoch eine kurze Wartezeit $t$, deren Länge zufällig aus einem Histogramm $H_B$ gezogen wird.
+$H_B$ wurde im Voraus aus den Inter-Paket-Abständen typischer Tor-Sitzungen geschätzt und beschreibt damit, wie schnell auf eine reale Zelle in der Regel die nächste folgt~\cite{juarez2015wtf}.
+Trifft innerhalb dieser Wartezeit eine weitere reale Zelle ein, wird sie sofort versendet und es startet eine neue Wartezeit.
+Trifft hingegen keine reale Zelle ein, gilt der aktuelle Burst als beendet.
+
+Genau in diesem Moment wechselt \gls{wtfpad} in den Gap-Modus und sendet selbst Dummy-Zellen.
+Deren zeitliche Abstände stammen aus einem zweiten Histogramm $H_G$, das echte Burst-Verläufe nachbildet.
+So entsteht im sonst leeren Gap-Intervall ein künstlicher Pseudo-Burst, der für einen aussenstehenden Beobachter wie weitere echte Aktivität aussieht.
+Sobald eine reale Zelle eintrifft, kehrt der Mechanismus in den Burst-Modus zurück und der Zyklus beginnt von vorne~\cite{juarez2015wtf}.
+Reale Zellen werden zu keinem Zeitpunkt aufgehalten, weshalb für die Anwendung kein Latenz-Overhead entsteht.
+
+Abbildung~\ref{fig:wtfpad_fsm} fasst diesen Ablauf als Zustandsautomat zusammen, Abbildung~\ref{fig:wtfpad_effect} veranschaulicht die Wirkung auf einen exemplarischen Zellstrom.
 
 \begin{figure}[H]
 \centering
 \resizebox{\textwidth}{!}{%
 \input{figs/wtfpad_fsm_body.tex}%
 }
-\caption{Zustandsautomat von \gls{wtfpad}. Im Burst-Modus $B$ werden Delay-Werte aus dem Histogramm $H_B$ gezogen. Trifft eine reale Zelle vor Ablauf des aktuellen Delays $t$ ein, bleibt der Automat in $B$ und zieht einen neuen Delay-Wert. Läuft $t$ ab, wird eine Dummy-Zelle gesendet und der Automat wechselt in den Gap-Modus $G$, in dem $H_G$ den Versand fingierter Burst-Sequenzen steuert. Sobald wieder reale Zellen eintreffen, kehrt der Automat in den Burst-Modus zurück.}
+\caption{Zustandsautomat von \gls{wtfpad}. Im Burst-Modus $B$ wird nach jeder realen Zelle ein neuer Delay-Wert aus $H_B$ gezogen. Trifft eine weitere reale Zelle vor Ablauf des Delays ein, bleibt der Automat in $B$. Läuft der Delay ab, wird eine Dummy-Zelle gesendet und der Automat wechselt in den Gap-Modus $G$, in dem $H_G$ den Versand weiterer Dummy-Zellen steuert. Sobald wieder eine reale Zelle eintrifft, kehrt der Automat in den Burst-Modus zurück.}
 \label{fig:wtfpad_fsm}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\resizebox{\textwidth}{!}{%
+\input{figs/wtfpad_effect_body.tex}%
+}
+\caption{Wirkung von \gls{wtfpad} auf einen Zellstrom. Ohne Padding ist die Pause zwischen zwei realen Bursts für einen Beobachter direkt sichtbar. Mit \gls{wtfpad} füllt der Gap-Modus dieses Intervall mit Dummy-Zellen auf, sodass an Stelle der Pause ein Pseudo-Burst entsteht und die ursprüngliche Burst-Struktur verschleiert wird.}
+\label{fig:wtfpad_effect}
 \end{figure}
 
 In einer geschlossenen Auswertung gegen den seinerzeit stärksten Angreifer reduziert \gls{wtfpad} die Trefferquote von rund $91\,\%$ auf etwa $20\,\%$ bei einem Bandbreiten-Overhead von weniger als $60\,\%$~\cite{juarez2015wtf}.
