@@ -335,21 +335,12 @@ Damit liegt das Verfahren deutlich näher am Anforderungsprofil von Tor als die 
 \subsubsection{Adaptive-Padding-Framework}
 
 Aufbauend auf der Adaptive-Padding-Idee von \gls{wtfpad} beschreiben Kadianakis et al.\ ein generisches Padding-Framework, das seit Tor 0.4.0 fester Bestandteil des Tor-Daemons ist und in der vorliegenden Arbeit experimentell ausgewertet wird~\cite{kadianakis2021tor}.
-Im Zentrum stehen \emph{Padding-Maschinen}, die als endliche Automaten in C definiert sind und das Senden von Dummy-Zellen in Abhängigkeit von Ereignissen wie eintreffenden Zellen, abgelaufenen Timern oder Zustandsübergängen steuern~\cite{kadianakis2021tor}.
-Jeder Zustand definiert eigene Verteilungen für Inter-Paket-Delays sowie Bedingungen für den Übergang in einen anderen Zustand und kann auf eine bestimmte Zellzahl beschränkt werden.
+Im Zentrum stehen \emph{Padding-Maschinen}, die als endliche Automaten in C definiert sind und das Senden von Dummy-Zellen in Abhängigkeit von eintreffenden Zellen, abgelaufenen Timern oder Zustandsübergängen steuern, wobei jeder Zustand eigene Verteilungen für Inter-Paket-Delays und Übergangsbedingungen festlegt~\cite{kadianakis2021tor}.
+Vor der Aktivierung einer Maschine handeln Client und Relais über eine Padding-Negotiation-Zelle aus, welche Maschinen unterstützt und aktiv sind, was die schrittweise Ausrollung neuer Verteidigungen ohne Bruch älterer Tor-Versionen erlaubt.
+Als bewusst gewähltes Design-Prinzip verzögert das Framework reale Anwendungs-Zellen nicht und erzeugt Schutz ausschliesslich über zusätzliche Dummy-Zellen, was es im Einklang mit dem low-latency-Designziel von Tor am unteren Ende des in Abschnitt~\ref{sec:wf_defenses_tradeoff} skizzierten Trade-off-Spektrums positioniert und stärkere Verfahren wie Tamaraw (Abschnitt~\ref{sec:wf_defenses_tamaraw}) ausserhalb des zulässigen Designraums verortet.
 
-Bevor eine Padding-Maschine auf einem Circuit aktiv wird, einigen sich Client und Relais über eine spezielle Padding-Negotiation-Zelle, welche Maschinen unterstützt und aktiv sind~\cite{kadianakis2021tor}.
-Diese Aushandlung erlaubt die schrittweise Ausrollung neuer Verteidigungen, ohne ältere Tor-Versionen zu brechen, und stellt einen wesentlichen Unterschied zum Pluggable-Transport-Ansatz des ursprünglichen \gls{wtfpad}-Prototyps dar.
-
-Ein bewusst gewähltes Design-Prinzip lautet, dass das Framework reale Anwendungs-Zellen nicht verzögert.
-Schutz entsteht ausschliesslich über das Einfügen zusätzlicher Dummy-Zellen~\cite{kadianakis2021tor}.
-Diese Einschränkung folgt direkt aus dem low-latency-Designziel von Tor und positioniert das Verfahren am unteren Ende des in Abschnitt~\ref{sec:wf_defenses_tradeoff} skizzierten Trade-off-Spektrums, mit minimaler Latenz-Auswirkung, moderatem Bandbreiten-Overhead und entsprechend begrenzter, aber praktisch ausrollbarer Sicherheitswirkung.
-Stärkere Verfahren wie Tamaraw (Abschnitt~\ref{sec:wf_defenses_tamaraw}) liegen damit ausserhalb des für Tor zulässigen Designraums.
-
-Die zum Zeitpunkt dieser Arbeit standardmässig in Tor ausgerollten Padding-Maschinen zielen primär auf den Schutz von Onion-Service-Schaltkreisen vor Circuit-Fingerprinting-Angreifern.
-Sie maskieren die Zellsequenzen von Introduction- und Rendezvous-Handshakes, indem sie diese den Mustern von Verzeichnisabfragen angleichen~\cite{kadianakis2021tor}.
-Auch wenn diese Maschinen nicht primär gegen \gls{wf} entwickelt wurden, verändern sie durch das Einstreuen zusätzlicher Zellen die für \gls{wf}-Klassifikatoren sichtbaren Verkehrsmuster.
-Damit lässt sich der Effekt des deployten Padding-Systems auch im \gls{wf}-Szenario experimentell messen, was Gegenstand der vorliegenden Arbeit ist.
+Die zum Zeitpunkt dieser Arbeit standardmässig in Tor ausgerollten Padding-Maschinen zielen primär auf den Schutz von Onion-Service-Schaltkreisen vor Circuit-Fingerprinting-Angreifern, indem sie die Zellsequenzen von Introduction- und Rendezvous-Handshakes den Mustern von Verzeichnisabfragen angleichen~\cite{kadianakis2021tor}.
+Auch wenn diese Maschinen nicht primär gegen \gls{wf} entwickelt wurden, verändern sie durch das Einstreuen zusätzlicher Zellen die für \gls{wf}-Klassifikatoren sichtbaren Verkehrsmuster und werden in der vorliegenden Arbeit experimentell als Verteidigung gegen \gls{wf} ausgewertet.
 
 \subsubsection{Padding-Modi off, on und reduced}
 
