@@ -54,8 +54,8 @@ Eine eigene Padding-Maschine wird nicht entwickelt, da das Ziel die Evaluation d
 \section{Wahl der Inhaltsquelle}
 \label{sec:konzepte_inhaltsquelle}
 
-Als Inhalt für die zu klassifizierenden Webseiten wird die Simple-English-Wikipedia verwendet, lokal in der Simulation über einen eigens entwickelten Webserver ausgeliefert.
-Wikipedia liefert pro Artikel eine eigenständige HTML-Seite, was eine saubere Eins-zu-eins-Zuordnung zwischen Klasse und Inhalt ermöglicht, und ein lokaler Mirror umgeht den unter Shadow nicht vorgesehenen Internetzugriff der Simulation (technischer Aufbau in Abschnitt~\ref{sec:realisierung_zimsrv}).
+Als Inhalt für die zu klassifizierenden Webseiten wird die Simple-English-Wikipedia verwendet.
+Wikipedia liefert pro Artikel eine eigenständige HTML-Seite, was eine saubere Eins-zu-eins-Zuordnung zwischen Klasse und Inhalt ermöglicht. Da in Shadow kein Internetzugriff möglich ist wird ein lokaler Spiegel eingerichtet.
 
 \section{Wahl des Hintergrundverkehrs}
 \label{sec:konzepte_hintergrundverkehr}
@@ -67,12 +67,12 @@ Eine eigene Verkehrsmodellierung wird nicht entwickelt, da diese Modelle an Priv
 \label{sec:konzepte_pcap}
 
 Jansen und Wails verwenden für die Aufzeichnung eine gepatchte Tor-Version, die nicht öffentlich verfügbar ist~\cite{jansen2023data}.
-Statt eines Cell-Traces wird der Verkehr am Monitor als \gls{pcap}-Datei mitgeschnitten und anschliessend in Richtungssequenzen umgewandelt.
+Statt eines Cell-Traces wird in unserer Simulation am Monitor eine \gls{pcap} Datei mitgeschnitten und anschliessend in Richtungssequenzen umgewandelt.
 
 Die zeitliche Auflösung ist gröber als ein Cell-Trace, da mehrere Zellen in einem TCP-Segment zusammengefasst sein können.
 Der Padding-Effekt bildet sich im \gls{pcap} dadurch tendenziell konservativer ab, weil Dummy-Zellen im TCP-Batching mit Nutz-Zellen verschmelzen können.
-Beobachtete Genauigkeitsverluste durch Padding sind in dieser Aufzeichnungsweise also eher eine untere Schranke des tatsächlichen Effekts.
-Der Vorteil liegt darin, dass das \gls{pcap} dem Sichtfeld eines passiven Beobachters und damit dem üblichen \gls{wf}-Bedrohungsmodell entspricht~\cite{jansen2023data}.
+
+Ausserdem bildet das \gls{pcap} ein realistisches Angriffsszenario von einem passiven Beobachter. Angreifer haben normalerweise auch keinen Zugriff auf die Tor Cell-Traces ~\cite{jansen2023data}.
 
 \section{Port-zu-Klasse-Zuordnung statt Zeitfenster-Heuristik}
 \label{sec:konzepte_port_class}
