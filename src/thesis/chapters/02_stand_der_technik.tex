@@ -351,16 +351,16 @@ Diese Option ist für mobile oder bandbreitenschwache Clients vorgesehen und red
 \subsection{Tamaraw}
 \label{sec:wf_defenses_tamaraw}
 
-Tamaraw wurde 2014 von Cai et al.\ als Weiterentwicklung des Buffered Fixed Length Obfuscator (BuFLO) vorgeschlagen und verfolgt das Ziel, den Verkehr unterschiedlicher Webseiten so weit zu vereinheitlichen, dass Seiten ähnlicher Grösse für einen Klassifikator nicht mehr unterscheidbar sind~\cite{cai2014systematic}.
+Tamaraw wurde 2014 von Cai et al.\ vorgeschlagen und verfolgt das Ziel, den Verkehr unterschiedlicher Webseiten so weit zu vereinheitlichen, dass Seiten ähnlicher Grösse für einen Klassifikator nicht mehr unterscheidbar sind~\cite{cai2014systematic}.
 
 Im Kern sendet Tamaraw Pakete in einem festen Takt, unabhängig davon, ob gerade reale Daten zu übertragen sind.
 Pakete besitzen eine einheitliche Grösse von 750~Byte und werden pro Richtung in konstanten Zeitabständen versendet, wobei die Takte für eingehende und ausgehende Richtung unabhängig voneinander gewählt werden.
 Steht in einem Sende-Slot eine reale Zelle bereit, wird sie versendet, andernfalls wird der Slot durch eine Dummy-Zelle aufgefüllt.
 Reale Daten, die zwischen zwei Slots eintreffen, müssen bis zum nächsten Slot warten, wodurch eine systematische Verzögerung entsteht.
-Am Ende einer Übertragung wird die Gesamtzahl der versendeten Pakete pro Richtung auf das nächste Vielfache eines Parameters $L$ aufgefüllt, sodass Seiten ähnlicher Grösse in identischen Anonymitäts-Buckets landen~\cite{cai2014systematic}.
+Am Ende einer Übertragung wird die Gesamtzahl der versendeten Pakete pro Richtung auf das nächste Vielfache eines Parameters aufgefüllt, sodass Seiten ähnlicher Grösse in identischen Anonymitäts-Buckets landen~\cite{cai2014systematic}.
 
 
-Die systematische Verzögerung realer Zellen macht das Verfahren jedoch für Tors ungeeignet und es wurde nicht eingeführt ~\cite{kadianakis2021tor}.
+Die systematische Verzögerung realer Zellen macht das Verfahren jedoch für Tor ungeeignet und es wurde nicht eingeführt ~\cite{kadianakis2021tor}.
 
 
 
