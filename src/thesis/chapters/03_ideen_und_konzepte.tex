@@ -51,6 +51,18 @@ Die unabhängige Variable nimmt drei Ausprägungen an: OFF, ON und Reduced.
 Diese Wahl orientiert sich an den von Tor selbst angebotenen Optionen und erlaubt einen direkten Vergleich mit dem von Kadianakis et al.\ vorgeschlagenen Schema~\cite{kadianakis2021tor}.
 Eine eigene Padding-Maschine wird nicht entwickelt, da das Ziel die Evaluation des produktiv eingesetzten Schemas ist und nicht der Entwurf einer neuen Verteidigung.
 
+\section{Wahl der Inhaltsquelle}
+\label{sec:konzepte_inhaltsquelle}
+
+Als Inhalt für die zu klassifizierenden Webseiten wird die Simple-English-Wikipedia verwendet, lokal in der Simulation über einen eigens entwickelten Webserver ausgeliefert.
+Wikipedia liefert pro Artikel eine eigenständige HTML-Seite, was eine saubere Eins-zu-eins-Zuordnung zwischen Klasse und Inhalt ermöglicht, und ein lokaler Mirror umgeht den unter Shadow nicht vorgesehenen Internetzugriff der Simulation (technischer Aufbau in Abschnitt~\ref{sec:realisierung_zimsrv}).
+
+\section{Wahl des Hintergrundverkehrs}
+\label{sec:konzepte_hintergrundverkehr}
+
+Der Hintergrundverkehr stammt aus den von Tornettools bereitgestellten TGen-Clients, die das Anwendungsverhalten realer Tor-Nutzung über Markov-Modelle nachbilden~\cite{neverenough-sec2021}.
+Eine eigene Verkehrsmodellierung wird nicht entwickelt, da diese Modelle an PrivCount-Messungen kalibriert sind und damit eine validierte Grundlage für realistischen Mischverkehr bilden~\cite{mani2018understanding}.
+
 \section{Methodische Vereinfachung: Pcap statt Cell-Trace}
 \label{sec:konzepte_pcap}
 
