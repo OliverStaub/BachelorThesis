@@ -80,14 +80,15 @@ Die zellgenaue Auflösung wird nicht erreicht, was gegenüber Cell-Traces einen 
 
 Zugleich bildet dieses \gls{pcap}-Verfahren ein realistisches Angriffsszenario eines passiven Beobachters ab, dem ebenfalls keine internen Tor-Cell-Traces zur Verfügung stehen~\cite{wang2016realistically}.
 
+Die Sequenzlänge wird nach Sirinam et al.\ auf 5000~Werte fixiert~\cite{sirinam2018deep}.
+Jeder Wert entspricht in der vorliegenden Pipeline einem TCP-Paket innerhalb des Besuchsfensters, bei Sirinam et al.\ einer Tor-Zelle.
+Aufzeichnungen mit mehr als 5000 Paketen werden am Ende abgeschnitten, kürzere Aufzeichnungen mit Nullen aufgefüllt.
+
 \section{Merkmalswahl: nur Richtungen}
 \label{sec:konzepte_features}
 
 Als Eingangsmerkmal werden ausschliesslich die Paketrichtungen verwendet (ausgehend $+1$, eingehend $-1$), keine Zeitstempel.
 Circuit Padding wirkt direkt auf die Richtungsabfolge, weshalb der Effekt im Richtungssignal am deutlichsten sichtbar wird.
-Die Sequenzlänge wird nach Sirinam et al.\ auf 5000~Werte fixiert~\cite{sirinam2018deep}.
-Jeder Wert entspricht in der vorliegenden Pipeline einem TCP-Paket innerhalb des Besuchsfensters, bei Sirinam et al.\ einer Tor-Zelle.
-Aufzeichnungen mit mehr als 5000 Paketen werden am Ende abgeschnitten, kürzere Aufzeichnungen mit Nullen aufgefüllt.
 
 \section{Port-zu-Klasse-Zuordnung}
 \label{sec:konzepte_port_class}
