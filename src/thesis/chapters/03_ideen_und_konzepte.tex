@@ -51,17 +51,18 @@ Die unabhängige Variable nimmt drei Ausprägungen an: OFF, ON und Reduced.
 Diese Wahl orientiert sich an den von Tor selbst angebotenen Optionen und erlaubt einen direkten Vergleich mit dem von Kadianakis et al.\ vorgeschlagenen Schema~\cite{kadianakis2021tor}.
 Eine eigene Padding-Maschine wird nicht entwickelt, da das Ziel die Evaluation des produktiv eingesetzten Schemas ist und nicht der Entwurf einer neuen Verteidigung.
 
+\section{Wahl des Hintergrundverkehrs}
+\label{sec:konzepte_hintergrundverkehr}
+
+Der Hintergrundverkehr stammt aus den von Tornettools bereitgestellten TGen-Clients, die das Anwendungsverhalten realer Tor-Nutzung über Markov-Modelle nachbilden~\cite{neverenough-sec2021}.
+Eine eigene Verkehrsmodellierung wird nicht entwickelt, da diese Modelle an PrivCount-Messungen kalibriert sind und damit eine validierte Grundlage für realistischen Mischverkehr bilden~\cite{mani2018understanding}.
+
 \section{Wahl der Inhaltsquelle}
 \label{sec:konzepte_inhaltsquelle}
 
 Als Inhalt für die zu klassifizierenden Webseiten wird die Simple-English-Wikipedia verwendet.
 Wikipedia liefert pro Artikel eine eigenständige HTML-Seite, was eine saubere Eins-zu-eins-Zuordnung zwischen Klasse und Inhalt ermöglicht. Da in Shadow kein Internetzugriff möglich ist wird ein lokaler Spiegel eingerichtet.
 
-\section{Wahl des Hintergrundverkehrs}
-\label{sec:konzepte_hintergrundverkehr}
-
-Der Hintergrundverkehr stammt aus den von Tornettools bereitgestellten TGen-Clients, die das Anwendungsverhalten realer Tor-Nutzung über Markov-Modelle nachbilden~\cite{neverenough-sec2021}.
-Eine eigene Verkehrsmodellierung wird nicht entwickelt, da diese Modelle an PrivCount-Messungen kalibriert sind und damit eine validierte Grundlage für realistischen Mischverkehr bilden~\cite{mani2018understanding}.
 
 \section{Methodische Vereinfachung: Pcap statt Cell-Trace}
 \label{sec:konzepte_pcap}
@@ -74,7 +75,7 @@ Der Padding-Effekt bildet sich im \gls{pcap} dadurch tendenziell konservativer a
 
 Ausserdem bildet das \gls{pcap} ein realistisches Angriffsszenario von einem passiven Beobachter. Angreifer haben normalerweise auch keinen Zugriff auf die Tor Cell-Traces ~\cite{jansen2023data}.
 
-\section{Port-zu-Klasse-Zuordnung statt Zeitfenster-Heuristik}
+\section{Port-zu-Klasse-Zuordnung}
 \label{sec:konzepte_port_class}
 
 Pro Webseite wird auf dem Zim-Webserver ein eigener TCP-Port verwendet (8000 für die erste Seite, 8001 für die zweite und so fort).
