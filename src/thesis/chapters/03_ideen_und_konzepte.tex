@@ -113,7 +113,7 @@ Eine Markierung im Tor-Datenstrom selbst oder eine gepatchte Tor-Version, wie si
 
 Vor jedem Seitenbesuch wird über das Tor-Control-Interface ein neuer Circuit erzwungen.
 Damit sind die einzelnen Besuche statistisch unabhängig und Verkehr aus früheren Besuchen kontaminiert die Zuordnung nicht.
-Diese strikte Isolation ist eine Vereinfachung gegenüber dem realen Tor-Browser-Verhalten (First-Party-Bundling)~\cite{jansen2023data}, in der \gls{wf}-Literatur jedoch übliche Praxis und für die saubere Zuordnung von Verkehr zu Klasse notwendig.
+Diese strikte Isolation ist eine Vereinfachung gegenüber dem realen Tor-Browser-Verhalten (First-Party-Bundling)~\cite{jansen2023data}, in der \gls{wf}-Literatur jedoch übliche Praxis.
 
 \section{Round-Robin-Schedule}
 \label{sec:konzepte_roundrobin}
@@ -129,10 +129,3 @@ Die Tor-Topologie wird auf 1\,\% des Live-Netzwerks skaliert, was rund 79~Relais
 Eine Vollskalierung übersteigt den Arbeitsspeicher der bereitgestellten VM (128~GB).
 Die Reduktion verringert die Pfaddiversität und macht die Verkehrsmuster für einen \gls{wf}-Klassifikator tendenziell leichter erlernbar~\cite{jansen2023data}, weshalb die gemessenen Accuracy-Werte als optimistische obere Schranke gegenüber dem Live-Netzwerk zu lesen sind.
 Diese Limitation wird in Kapitel~\ref{cha:diskussion} wieder aufgegriffen.
-
-\section{Abgrenzung zu verwandten Arbeiten}
-\label{sec:konzepte_abgrenzung}
-
-Sirinam et al.\ trainieren \gls{df} auf Live-Tor-Daten ohne systematische Padding-Variation und mit Cell-Trace statt \gls{pcap}~\cite{sirinam2018deep}.
-Jansen und Wails fokussieren auf die Übertragbarkeit von Shadow-Klassifikatoren auf Live-Tor mit gepatchtem Tor und kleinerer Klassenanzahl, ohne Padding als unabhängige Variable~\cite{jansen2023data}.
-Die vorliegende Arbeit verwendet weder den nicht-öffentlichen Tor-Patch noch den Cell-Trace, erhöht die Klassenanzahl auf bis zu 80 und variiert den Padding-Modus systematisch.
