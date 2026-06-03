@@ -94,8 +94,11 @@ Circuit Padding wirkt direkt auf die Richtungsabfolge, weshalb der Effekt im Ric
 \label{sec:konzepte_port_class}
 
 Pro Webseite wird auf dem Zim-Webserver ein eigener TCP-Port verwendet (8000 für die erste Seite, 8001 für die zweite und so fort).
-Diese Eins-zu-Eins-Zuordnung erlaubt im Konvertierungsschritt die eindeutige Zuordnung von Paketen zu Klassen anhand des Zielports, ohne dass eine fehleranfällige Zeitfenster-Heuristik oder ein Eingriff in den Tor-Code nötig wäre.
-Bei Überlappungen oder Verzögerungen einzelner Besuche bleibt die Zuordnung robust.
+Im \texttt{schedule.json} wird jeder Besuch mit Startzeit und Zielport protokolliert, wodurch der Port als ganzzahliges, eindeutiges Klassen-Label dient.
+
+Die Zuordnung von Paketen zu Besuchen erfolgt im Konvertierungsschritt über das Zeitfenster aus dem Schedule (Startzeit zuzüglich Besuchsintervall), der Port liefert anschliessend das Klassen-Label dieses Besuchs.
+Da jeder Monitor zu einem Zeitpunkt nur eine URL und damit nur einen Zielport abruft, enthält jedes Besuchsfenster Verkehr aus genau einer Klasse.
+Klassenüberlagerungen innerhalb eines Fensters sind damit per Versuchsdesign ausgeschlossen, ohne dass eine Klassenmarkierung im Tor-Datenstrom selbst (wie bei Jansen und Wails durch eine gepatchte Tor-Version) notwendig wäre~\cite{jansen2023data}.
 
 
 \section{Circuit-Isolation per NEWNYM}
