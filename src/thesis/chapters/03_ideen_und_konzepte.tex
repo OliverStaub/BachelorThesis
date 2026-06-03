@@ -68,17 +68,15 @@ Wikipedia liefert pro Artikel eine eigenständige HTML-Seite, was eine saubere E
 
 Jansen und Wails verwenden eine gepatchte Tor-Version, die pro Zelle einen beschrifteten Eintrag mit Circuit-Zuordnung in einen Cell-Trace schreibt~\cite{jansen2023data}.
 Diese Variante ist nicht öffentlich verfügbar.
-Stattdessen wird am Monitor eine fortlaufende \gls{pcap} Datei mit allen TCP-Paketen aufgezeichnet und im Nachgang in beschriftete Richtungssequenzen pro Seitenbesuch zerlegt.
+
+Stattdessen wird in dieser Arbeit am Monitor eine fortlaufende \gls{pcap} Datei mit allen TCP-Paketen aufgezeichnet und im Nachgang in beschriftete Richtungssequenzen pro Seitenbesuch zerlegt.
 
 Während ein Cell-Trace die Pakete bereits zellgenau und mit Circuit-Information versehen liefert, ist das \gls{pcap} ein einziger unbeschrifteter Paketstrom, der erst nachträglich den einzelnen Besuchen zugeordnet werden muss.
 Diese Zerlegung übernimmt ein eigens für die vorliegende Arbeit entwickeltes Python-Skript (vgl.\ Abschnitt~\ref{sec:realisierung_pcap_to_npz}), das das \gls{pcap} mit der \texttt{dpkt}-Bibliothek parst und die Pakete anhand der in der \texttt{schedule.json} protokollierten Besuchsfenster und der Port-zu-Klasse-Zuordnung (Abschnitt~\ref{sec:konzepte_port_class}) den jeweiligen Seiten zuweist.
 
-Bei diesem Schritt gehen drei Arten von Information verloren.
-Erstens kann ein TCP-Segment mehrere Tor-Zellen enthalten, weshalb die zellgenaue Auflösung des Cell-Trace nicht erreicht wird und der Padding-Effekt im \gls{pcap} tendenziell konservativer sichtbar ist.
-Zweitens werden die Richtungssequenzen nach Sirinam et al.\ auf 5000~Werte normiert (Abschnitt~\ref{sec:konzepte_features}), wodurch Pakete besonders langer Besuche abgeschnitten werden.
-Drittens werden Besuche mit zu wenigen Paketen als fehlgeschlagene Abrufe verworfen.
+Damit arbeiten wir auf der TCP Ebene und erfahren einen Detailverlust.  Die zellgenaue Auflösung der Cell-Traces wird nicht erreicht, was zu einem Informationsverlust führt gegenüber den Cell-Traces.
 
-Trotz dieser Vereinfachungen bildet das \gls{pcap} ein realistisches Angriffsszenario gegen einen passiven Beobachter ab, dem ebenfalls keine internen Tor-Cell-Traces zur Verfügung stehen~\cite{jansen2023data}.
+Zugleich bildet dieses \gls{pcap}-Verfahren ein realistisches Angriffsszenario eines passiven Beobachter ab, dem ebenfalls keine internen Tor-Cell-Traces zur Verfügung stehen~\cite{jansen2023data}.
 
 \section{Port-zu-Klasse-Zuordnung}
 \label{sec:konzepte_port_class}
