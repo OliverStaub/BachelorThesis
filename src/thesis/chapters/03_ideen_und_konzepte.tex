@@ -90,18 +90,22 @@ Aufzeichnungen mit mehr als 5000 Paketen werden am Ende abgeschnitten, kürzere 
 Als Eingangsmerkmal werden ausschliesslich die Paketrichtungen verwendet (ausgehend $+1$, eingehend $-1$), keine Zeitstempel.
 Circuit Padding wirkt direkt auf die Richtungsabfolge, weshalb der Effekt im Richtungssignal am deutlichsten sichtbar wird.
 
-\section{Port-zu-Klasse-Zuordnung}
+\section{Zuordnung von Verkehr zu Webseiten}
 \label{sec:konzepte_port_class}
 
-Pro Webseite wird auf dem Zim-Webserver ein eigener TCP-Port verwendet (8000 für die erste Seite, 8001 für die zweite und so fort).
-Parallel dazu erzeugt diese Arbeit eine Schedule-Datei (\texttt{schedule.json}, vgl.\ Abschnitt~\ref{sec:realisierung_schedule}), die pro Besuch die Startzeit und den abzurufenden Zielport festhält.
-Der Port dient dabei als eindeutiges Webseite-Label.
+Aus dem aufgezeichneten Paketstrom sollen beschriftete Trainingsbeispiele werden, jeweils bestehend aus einer Richtungssequenz und dem Label der abgerufenen Webseite.
+Dazu muss jeder Seitenbesuch zweifach identifiziert werden: zeitlich, um die Besuche im fortlaufenden Paketstrom voneinander zu trennen, und inhaltlich, um die jeweils abgerufene Webseite zu benennen.
 
-Jede Seite wird in der Simulation mehrfach hintereinander angefragt.
-Das Zeitfenster aus der Schedule-Datei trennt die Aufrufe in einzelne Samples und der für jeden Besuch hinterlegte Port liefert anschliessend das Webseite-Label.
+Die zeitliche Trennung folgt aus dem festen Visit-Intervall (vgl.\ Abschnitt~\ref{sec:konzepte_roundrobin}).
+Jeder Monitor startet pro Intervall genau einen Seitenabruf, sodass jedem Zeitfenster genau ein Besuch entspricht.
 
-Da jeder Monitor zu einem Zeitpunkt nur eine URL und damit nur einen Zielport abruft, enthält jedes Besuchsfenster Verkehr aus genau einer Webseite.
-Eine Markierung der Webseiten im Tor-Datenstrom selbst, wie sie Jansen und Wails über eine gepatchte Tor-Version umsetzen~\cite{jansen2023data}, ist damit nicht notwendig.
+Die inhaltliche Identifikation nutzt den TCP-Zielport als Label.
+Der lokale Wikipedia-Spiegel (Abschnitt~\ref{sec:konzepte_inhaltsquelle}) stellt jede Seite auf einem eigenen Port bereit (Seite~1 auf Port~8000, Seite~2 auf Port~8001 und so fort), wobei alle Ports auf demselben Host laufen.
+Da zwischen Port und Inhalt eine eineindeutige Beziehung besteht, benennt der Port die Webseite eindeutig.
+
+Beide Informationen werden beim Aufbau der Simulation in einer Plandatei \texttt{schedule.json} (vgl.\ Abschnitt~\ref{sec:realisierung_schedule}) zusammengeführt, die pro Monitor und Besuch die Startzeit und den vorgesehenen Zielport enthält.
+Bei der Auswertung wird der \gls{pcap}-Strom an den Zeitgrenzen der Plandatei zerlegt und der hinterlegte Port als Klassenlabel übernommen.
+Eine Markierung im Tor-Datenstrom selbst oder eine gepatchte Tor-Version, wie sie Jansen und Wails einsetzen~\cite{jansen2023data}, ist damit nicht erforderlich.
 
 
 \section{Circuit-Isolation per NEWNYM}
