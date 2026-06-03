@@ -7,9 +7,8 @@ Die technische Umsetzung folgt in Kapitel~\ref{cha:realisierung}.
 \section{Bewertung des Stands der Forschung}
 \label{sec:konzepte_bewertung}
 
-Padding und Website-Fingerprinting wurden in der Literatur einzeln untersucht, aber nicht im selben deterministischen Aufbau systematisch gekoppelt.
+Padding und Website-Fingerprinting wurden in der Literatur untersucht, aber nicht in einer shadow Simulation systematisch gekoppelt.
 Jansen und Wails messen \gls{df} in Shadow, variieren aber den Padding-Modus nicht~\cite{jansen2023data}.
-Kadianakis et al.\ entwickeln das Padding-Schema, evaluieren es jedoch nicht gegen einen \gls{df}-Angreifer~\cite{kadianakis2021tor}.
 Die vorliegende Arbeit füllt diese Lücke, indem sie die drei in Tor angebotenen Padding-Konfigurationen unter sonst konstanten Bedingungen gegen \gls{df} misst.
 
 \section{Konzeptioneller Versuchsaufbau}
@@ -55,7 +54,7 @@ Eine eigene Padding-Maschine wird nicht entwickelt, da das Ziel die Evaluation d
 \label{sec:konzepte_hintergrundverkehr}
 
 Der Hintergrundverkehr stammt aus den von Tornettools bereitgestellten TGen-Clients, die das Anwendungsverhalten realer Tor-Nutzung über Markov-Modelle nachbilden~\cite{neverenough-sec2021}.
-Eine eigene Verkehrsmodellierung wird nicht entwickelt, da diese Modelle an PrivCount-Messungen kalibriert sind und damit eine validierte Grundlage für realistischen Mischverkehr bilden~\cite{mani2018understanding}.
+Eine eigene Verkehrsmodellierung wird nicht entwickelt, da die bestehenden Modelle bereits eine validierte Grundlage für realistischen Mischverkehr bilden~\cite{mani2018understanding}.
 
 \section{Wahl der Inhaltsquelle}
 \label{sec:konzepte_inhaltsquelle}
