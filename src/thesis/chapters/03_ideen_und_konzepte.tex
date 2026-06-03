@@ -9,6 +9,7 @@ Die technische Umsetzung folgt in Kapitel~\ref{cha:realisierung}.
 
 Padding und Website-Fingerprinting wurden in der Literatur untersucht, aber nicht in einer shadow Simulation systematisch gekoppelt.
 Jansen und Wails messen \gls{df} in Shadow, variieren aber den Padding-Modus nicht~\cite{jansen2023data}.
+Sie arbeiten zudem mit einem zellgenauen Cell-Trace aus einer gepatchten Tor-Version, während die vorliegende Arbeit am Monitor mitgeschnittene TCP-Pakete verwendet.
 Die vorliegende Arbeit füllt diese Lücke, indem sie die drei in Tor angebotenen Padding-Konfigurationen unter sonst konstanten Bedingungen gegen \gls{df} misst.
 
 \section{Konzeptioneller Versuchsaufbau}
@@ -74,9 +75,10 @@ Stattdessen wird in dieser Arbeit am Monitor eine fortlaufende \gls{pcap} Datei 
 Während ein Cell-Trace die Pakete bereits zellgenau und mit Circuit-Information versehen liefert, ist das \gls{pcap} ein einziger unbeschrifteter Paketstrom, der erst nachträglich den einzelnen Besuchen zugeordnet werden muss.
 Diese Zerlegung übernimmt ein eigens für die vorliegende Arbeit entwickeltes Python-Skript (vgl.\ Abschnitt~\ref{sec:realisierung_pcap_to_npz}), das das \gls{pcap} mit der \texttt{dpkt}-Bibliothek parst und die Pakete anhand der in der \texttt{schedule.json} protokollierten Besuchsfenster und der Port-zu-Klasse-Zuordnung (Abschnitt~\ref{sec:konzepte_port_class}) den jeweiligen Seiten zuweist.
 
-Damit arbeiten wir auf der TCP Ebene und erfahren einen Detailverlust.  Die zellgenaue Auflösung der Cell-Traces wird nicht erreicht, was zu einem Informationsverlust führt gegenüber den Cell-Traces.
+Damit arbeitet die vorliegende Pipeline auf TCP-Ebene und nimmt einen Detailverlust in Kauf.
+Die zellgenaue Auflösung wird nicht erreicht, was gegenüber Cell-Traces einen Informationsverlust bedeutet.
 
-Zugleich bildet dieses \gls{pcap}-Verfahren ein realistisches Angriffsszenario eines passiven Beobachter ab, dem ebenfalls keine internen Tor-Cell-Traces zur Verfügung stehen~\cite{jansen2023data}.
+Zugleich bildet dieses \gls{pcap}-Verfahren ein realistisches Angriffsszenario eines passiven Beobachters ab, dem ebenfalls keine internen Tor-Cell-Traces zur Verfügung stehen~\cite{jansen2023data}.
 
 \section{Port-zu-Klasse-Zuordnung}
 \label{sec:konzepte_port_class}
