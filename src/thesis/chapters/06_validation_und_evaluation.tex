@@ -87,6 +87,10 @@ Abbildung~\ref{fig:eval_acc_vs_pages} zeigt die Accuracy in Abhängigkeit der Kl
 Über alle Modi hinweg sinkt die Accuracy mit wachsender Klassenanzahl, was dem theoretisch erwartbaren Verhalten eines mehrklassigen Klassifikators entspricht.
 Die Baseline fällt von 92.7\,\% bei 20 Klassen auf 82.4\,\% bei 80 Klassen.
 Die Random-Basis sinkt im selben Schritt von 5.0\,\% auf 1.2\,\%, weshalb die absolute Differenz von rund 10~Prozentpunkten den relativen Vorteil des Klassifikators gegenüber dem Zufall sogar vergrössert.
+Ursächlich für den absoluten Rückgang sind zwei zusammenwirkende Effekte.
+Erstens wachsen mit jeder zusätzlichen Klasse die paarweisen Überlappungen im Merkmalsraum, sodass einzelne Seiten mit ähnlichen Burst-Mustern, Paketzahlen oder Übertragungsgrössen verwechselbar werden.
+Zweitens muss der Klassifikator viele feinere Trennflächen statt weniger breiter Entscheidungsregionen lernen, was bei vergleichbarer Trainingsmenge pro Klasse die effektive Trennschärfe senkt.
+Dass der Vorsprung gegenüber der Random-Basis dabei von Faktor 18.5 auf Faktor 68.7 wächst, zeigt, dass der Klassifikator die zusätzlichen Klassen durchaus nutzt und nicht systematisch versagt.
 Die hier erzielten Werte liegen damit unterhalb der von Sirinam et al.\ ursprünglich gemeldeten 98\,\% bei 95 Klassen~\cite{sirinam2018deep}, jedoch in der Grössenordnung, die Jansen und Wails für ähnlich kleine Shadow-Datensätze berichten~\cite{jansen2023data}.
 
 \begin{figure}[H]
@@ -215,6 +219,9 @@ Tabelle~\ref{tab:eval_openworld} fasst die Resultate über alle vier Padding-Mod
 Zwei Beobachtungen verdienen eine Diskussion.
 Erstens fällt die Accuracy gegenüber dem Closed-World-Lauf mit 80 Klassen klar ab.
 Die Baseline sinkt von 82.4\,\% (Closed-World) auf 68.3\,\% (Open-World), was den höheren Schwierigkeitsgrad der Open-World-Aufgabe quantifiziert.
+Strukturell wirkt der Effekt im Open-World doppelt.
+Der Klassifikator entscheidet erst, ob ein Besuch zu einer der überwachten Seiten oder zur unüberwachten Sammelklasse gehört, und ordnet ihn im positiven Fall anschliessend einer konkreten überwachten Seite zu.
+Beide Stufen werden mit wachsender Anzahl überwachter Klassen schwieriger, da einerseits die Wahrscheinlichkeit zufälliger Ähnlichkeit zwischen einer überwachten Seite und einem Vertreter der Sammelklasse steigt und andererseits die Mehrklassen-Trennung innerhalb der überwachten Seiten dieselben Überlappungsprobleme wie im Closed-World-Lauf aufweist.
 Dies ist konsistent mit den Beobachtungen von Juarez et al., dass Open-World-Szenarien deutlich höhere Falsch-Positiv-Raten erzeugen und die in Closed-World-Studien gemeldeten Erkennungsraten in der Praxis nicht erreicht werden~\cite{juarez2014critical}.
 Zweitens liegen die Werte für ON (70.7\,\%) und Reduced (71.9\,\%) leicht oberhalb der OFF-Baseline (68.3\,\%).
 Dieses Resultat widerspricht der Erwartung aus dem Closed-World-Vergleich.
