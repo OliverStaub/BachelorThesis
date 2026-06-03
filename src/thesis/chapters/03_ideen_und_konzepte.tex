@@ -80,6 +80,13 @@ Die zellgenaue Auflösung wird nicht erreicht, was gegenüber Cell-Traces einen 
 
 Zugleich bildet dieses \gls{pcap}-Verfahren ein realistisches Angriffsszenario eines passiven Beobachters ab, dem ebenfalls keine internen Tor-Cell-Traces zur Verfügung stehen~\cite{wang2016realistically}.
 
+\section{Merkmalswahl: nur Richtungen}
+\label{sec:konzepte_features}
+
+Als Eingangsmerkmal werden ausschliesslich die Paketrichtungen verwendet (ausgehend $+1$, eingehend $-1$), keine Zeitstempel.
+Circuit Padding wirkt direkt auf die Richtungsabfolge, weshalb der Effekt im Richtungssignal am deutlichsten sichtbar wird.
+Die Sequenzlänge wird nach Sirinam et al.\ auf 5000~Werte normiert~\cite{sirinam2018deep}.
+
 \section{Port-zu-Klasse-Zuordnung}
 \label{sec:konzepte_port_class}
 
@@ -87,12 +94,6 @@ Pro Webseite wird auf dem Zim-Webserver ein eigener TCP-Port verwendet (8000 fü
 Diese Eins-zu-Eins-Zuordnung erlaubt im Konvertierungsschritt die eindeutige Zuordnung von Paketen zu Klassen anhand des Zielports, ohne dass eine fehleranfällige Zeitfenster-Heuristik oder ein Eingriff in den Tor-Code nötig wäre.
 Bei Überlappungen oder Verzögerungen einzelner Besuche bleibt die Zuordnung robust.
 
-\section{Merkmalswahl: nur Richtungen}
-\label{sec:konzepte_features}
-
-Als Eingangsmerkmal werden ausschliesslich die Paketrichtungen verwendet (ausgehend $+1$, eingehend $-1$), keine Zeitstempel.
-Circuit Padding wirkt direkt auf die Richtungsabfolge, weshalb der Effekt im Richtungssignal am deutlichsten sichtbar wird.
-Die Sequenzlänge wird nach Sirinam et al.\ auf 5000~Werte normiert~\cite{sirinam2018deep}.
 
 \section{Circuit-Isolation per NEWNYM}
 \label{sec:konzepte_newnym}
