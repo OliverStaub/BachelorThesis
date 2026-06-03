@@ -97,10 +97,12 @@ Pro Webseite wird auf dem Zim-Webserver ein eigener TCP-Port verwendet (8000 fü
 Parallel dazu erzeugt diese Arbeit eine Schedule-Datei (\texttt{schedule.json}, vgl.\ Abschnitt~\ref{sec:realisierung_schedule}), die pro Besuch die Startzeit und den abzurufenden Zielport festhält.
 Der Port dient dabei als eindeutiges Webseite-Label.
 
-Damit können im Konvertierungsschritt die Webseite Aufrufe eindeutig einer Webseite und 
+Beide Informationen werden im Konvertierungsschritt benötigt.
+Jede Seite wird im Schedule mehrfach hintereinander angefragt, im 20-Seiten-Setup beispielsweise 150 Mal.
+Eine Filterung allein nach Zielport würde diese Aufrufe zu einer einzigen sehr langen Sequenz verschmelzen und nur ein Sample pro Webseite liefern, was für einen sinnvollen Training/Test-Split nicht reicht.
+Erst das Zeitfenster aus der Schedule-Datei trennt die Aufrufe in einzelne Samples.
+Der für jeden Besuch hinterlegte Port liefert anschliessend das Webseite-Label.
 
-Im Konvertierungsschritt erfolgt die Zuordnung von Paketen zu Besuchen über das Zeitfenster aus der Schedule-Datei.
-Der für diesen Besuch hinterlegte Port liefert das Webseite-Label.
 Da jeder Monitor zu einem Zeitpunkt nur eine URL und damit nur einen Zielport abruft, enthält jedes Besuchsfenster Verkehr aus genau einer Webseite.
 Eine Markierung der Webseiten im Tor-Datenstrom selbst, wie sie Jansen und Wails über eine gepatchte Tor-Version umsetzen~\cite{jansen2023data}, ist damit nicht notwendig.
 
