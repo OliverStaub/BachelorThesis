@@ -68,12 +68,23 @@ Die konkrete technische Umsetzung folgt in Kapitel~\ref{cha:realisierung}.
 \subsection{Wahl des Experimenttyps}
 \label{sec:experiment_typ}
 
-TODO
+Aus den von Balzert beschriebenen Experimenttypen Laborexperiment, Feldexperiment und Simulationsexperiment~\cite{book} fällt die Wahl auf das Laborexperiment in einer deterministischen Netzwerksimulation.
+Ein Feldexperiment im Live-Tor-Netzwerk scheidet aus, weil dort weder die Padding-Konfiguration der Relays kontrolliert variiert werden kann noch die Erzeugung grosser Mengen Trainingsverkehrs ethisch vertretbar wäre.
+Der Shadow-Simulator erlaubt im Gegensatz dazu, die unabhängige Variable Padding-Modus gezielt zu schalten, alle übrigen Parameter konstant zu halten und denselben Versuch über einen festen Seed reproduzierbar zu wiederholen.
+Damit erfüllt das Vorgehen die für ein Laborexperiment gegebenen Anforderungen an Kontrolle, Wiederholbarkeit und Variation einer Einflussgrösse~\cite{book}.
 
 \subsection{Forschungsfragen und Hypothesen}
 \label{sec:experiment_hypothesen}
 
-Aus der Aufgabenstellung übernehmen.
+Die in Kapitel~\ref{cha:problem_fragestellung_vision} formulierten Forschungsfragen werden für das Experiment in überprüfbare Hypothesen überführt.
+Aus den Arbeiten von Sirinam et al.~\cite{sirinam2018deep} und Kadianakis et al.~\cite{kadianakis2021tor} wird abgeleitet, dass Circuit Padding die für \gls{df} charakteristischen Burst-Muster verschleiert und die Klassifikationsgenauigkeit senkt.
+Daraus ergeben sich drei gerichtete Hypothesen.
+
+\begin{itemize}
+    \item \textbf{H1:} Die \gls{df}-Accuracy mit aktiviertem Circuit Padding ist niedriger als ohne Padding bei identischer Trainings- und Testdatenbasis.
+    \item \textbf{H2:} Reduced Padding liegt in der Schutzwirkung zwischen den Modi OFF und ON, weil nur eine Teilmenge der Padding-Maschinen aktiv ist.
+    \item \textbf{H3:} Das Open-World-Szenario führt wegen der zusätzlichen Unmonitored-Klasse und der grösseren Klassenanzahl zu einer niedrigeren Accuracy als das Closed-World-Szenario derselben Padding-Konfiguration.
+\end{itemize}
 
 \subsection{Variablen und Messgrössen}
 \label{sec:experiment_variablen}
@@ -93,10 +104,17 @@ Gemessen werden Accuracy, Precision, Recall und F1-Wert auf einer zurückgehalte
 Alle übrigen Parameter bleiben über die Experimente einer Vergleichsgruppe konstant.
 Dazu zählen die Skalierung des simulierten Netzwerks (1\,\%), der Simulator-Seed, der Seed der Trainings- und Testaufteilung, die Hyperparameter des Klassifikators sowie die Auswahl der Wikipedia-URLs.
 
-\subsection{Versuchsplan}
+\subsection{Versuchsplan und Ausführungsreihenfolge}
 \label{sec:experiment_plan}
 
-TODO
+Der Versuchsplan folgt einem faktoriellen Design über die unabhängigen Variablen Padding-Modus und Klassenanzahl, ergänzt um eine separate Bedingung zum Welt-Szenario.
+Die konkreten Versuchsdurchläufe und ihre Parameter sind in Kapitel~\ref{cha:realisierung} dokumentiert, das vorliegende Kapitel beschränkt sich auf die Ausführungslogik.
+
+Die Durchführung erfolgt in drei aufeinander aufbauenden Stufen.
+In einer ersten Stufe wird die Werkzeugkette mit den kleinen Closed-World-Experimenten validiert, weil deren kurze Laufzeit ein schnelles Feedback zu Fehlern in Simulation, Datenkonvertierung und Klassifikator-Anbindung erlaubt.
+In einer zweiten Stufe werden dieselben Padding-Modi auf die grössere Closed-World übertragen, um den Effekt unter realistischeren Bedingungen zu prüfen.
+In einer dritten Stufe wird ergänzend das Open-World-Szenario gemessen, das ausschliesslich ohne Padding ausgeführt wird, weil die Hypothese H3 sich auf den Vergleich der Szenarien bezieht und nicht auf eine weitere Padding-Variation.
+Jeder Durchlauf besteht aus den Schritten Simulation in Shadow, Konvertierung der pcap-Aufzeichnungen in das WFlib-Format und Training sowie Test des \gls{df}-Klassifikators auf einer festen Datenaufteilung.
 
 \subsection{Grenzen der gewählten Methode}
 \label{sec:experiment_grenzen}
