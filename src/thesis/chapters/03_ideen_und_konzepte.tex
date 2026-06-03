@@ -93,15 +93,16 @@ Circuit Padding wirkt direkt auf die Richtungsabfolge, weshalb der Effekt im Ric
 \section{Port-zu-Klasse-Zuordnung}
 \label{sec:konzepte_port_class}
 
-Im Folgenden bezeichnet Klasse die einer Webseite zugeordnete Zielkategorie der Klassifikation, das heisst eine Wikipedia-Seite entspricht einer Klasse.
 Pro Webseite wird auf dem Zim-Webserver ein eigener TCP-Port verwendet (8000 für die erste Seite, 8001 für die zweite und so fort).
 Parallel dazu erzeugt diese Arbeit eine Schedule-Datei (\texttt{schedule.json}, vgl.\ Abschnitt~\ref{sec:realisierung_schedule}), die pro Besuch die Startzeit und den abzurufenden Zielport festhält.
-Der Port dient dabei als ganzzahliges, eindeutiges Klassen-Label.
+Der Port dient dabei als eindeutiges Webseite-Label.
 
-Im Konvertierungsschritt erfolgt die Zuordnung von Paketen zu Besuchen über das Zeitfenster aus dem Schedule (Startzeit zuzüglich Besuchsintervall).
-Der für diesen Besuch hinterlegte Port liefert das Klassen-Label.
-Da jeder Monitor zu einem Zeitpunkt nur eine URL und damit nur einen Zielport abruft, enthält jedes Besuchsfenster Verkehr aus genau einer Klasse.
-Eine Klassenmarkierung im Tor-Datenstrom selbst, wie sie Jansen und Wails über eine gepatchte Tor-Version umsetzen~\cite{jansen2023data}, ist damit nicht notwendig.
+Damit können im Konvertierungsschritt die Webseite Aufrufe eindeutig einer Webseite und 
+
+Im Konvertierungsschritt erfolgt die Zuordnung von Paketen zu Besuchen über das Zeitfenster aus der Schedule-Datei.
+Der für diesen Besuch hinterlegte Port liefert das Webseite-Label.
+Da jeder Monitor zu einem Zeitpunkt nur eine URL und damit nur einen Zielport abruft, enthält jedes Besuchsfenster Verkehr aus genau einer Webseite.
+Eine Markierung der Webseiten im Tor-Datenstrom selbst, wie sie Jansen und Wails über eine gepatchte Tor-Version umsetzen~\cite{jansen2023data}, ist damit nicht notwendig.
 
 
 \section{Circuit-Isolation per NEWNYM}
