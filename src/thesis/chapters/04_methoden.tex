@@ -81,7 +81,7 @@ Das Experiment unterscheidet zwischen unabhängigen und abhängigen Variablen, w
 
 \paragraph{Unabhängige Variablen}
 Drei Variablen werden gezielt variiert.
-Erstens der Padding-Modus mit den drei Ausprägungen OFF, ON und Reduced, die in Tabelle~\ref{tab:padding_modi} (Kapitel~\ref{cha:realisierung}) erläutert sind.
+Erstens das Verteidigungsverfahren mit den drei in Tor angebotenen Padding-Modi OFF, ON und Reduced (vgl.\ Tabelle~\ref{tab:padding_modi}, Kapitel~\ref{cha:realisierung}) sowie Tamaraw als ergänzendes, alternatives Schema.
 Zweitens die Anzahl der Klassen mit den Ausprägungen 20, 80 und 280 (letzteres als Open-World mit 80 überwachten Seiten).
 Drittens das Welt-Szenario mit den Ausprägungen Closed-World und Open-World.
 
@@ -95,10 +95,11 @@ Dazu zählen die Skalierung des simulierten Netzwerks (1\,\%), der Simulator-See
 \subsection{Versuchsplan und Ausführungsreihenfolge}
 \label{sec:experiment_plan}
 
-Die Durchführung erfolgt in drei aufeinander aufbauenden Stufen.
+Die Durchführung erfolgt in vier aufeinander aufbauenden Stufen.
 In einer ersten Stufe wird die Werkzeugkette mit den kleinen Closed-World-Experimenten validiert, weil deren kurze Laufzeit ein schnelles Feedback zu Fehlern in Simulation, Datenkonvertierung und Klassifikator-Anbindung erlaubt.
 In einer zweiten Stufe werden dieselben Padding-Modi auf die grössere Closed-World übertragen, um den Effekt unter realistischeren Bedingungen zu prüfen.
-In einer dritten Stufe wird ergänzend das Open-World-Szenario gemessen.
+In einer dritten Stufe wird das Open-World-Szenario gemessen, ebenfalls über alle drei Padding-Modi, um den Padding-Effekt auch unter unbekanntem Hintergrundverkehr zu prüfen.
+In einer vierten Stufe wird ergänzend Tamaraw als alternatives Verteidigungsverfahren über die drei Klassenzahlen 20, 80 und 280 (Open-World) gemessen, um den in Tor ausgerollten Padding-Modi einen Referenzpunkt mit aufwendigerem Schema gegenüberzustellen.
 Jeder Durchlauf besteht aus den Schritten Simulation in Shadow, Konvertierung der pcap-Aufzeichnungen in das WFlib-Format und Training sowie Test des \gls{df}-Klassifikators auf einer festen Datenaufteilung.
 
 \subsection{Grenzen der gewählten Methode}
