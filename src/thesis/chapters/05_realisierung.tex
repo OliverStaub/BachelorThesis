@@ -129,30 +129,8 @@ monitor0:
 
 \paragraph{Schedule}
 Zusätzlich erzeugt das Skript eine Datei \texttt{schedule.json}, in der für jeden Monitor festgehalten ist, wann (\texttt{start\_time}) er welche Seite besucht.
-Listing~\ref{lst:schedulejson} zeigt einen Ausschnitt für einen einzelnen Monitor.
 Diese Datei dient später als Ground Truth für den Konvertierungsschritt: ohne sie liesse sich nicht eindeutig rekonstruieren, welcher Teil eines Pcaps zu welchem Seitenaufruf gehört.
-
-\begin{lstlisting}[
-    basicstyle=\ttfamily\footnotesize,
-    breaklines=true,
-    frame=single,
-    captionpos=b,
-    label={lst:schedulejson},
-    caption={Auszug aus \texttt{schedule.json}: für jeden Monitor werden Startzeit, Zielport und URL der geplanten Besuche festgehalten.}
-]
-"monitor0": [
-    {
-        "start_time": 1200,
-        "port": 8000,
-        "url": "http://129.114.108.192:8000/Eurovision_Song_Contest_2018"
-    },
-    {
-        "start_time": 1230,
-        "port": 8010,
-        "url": "http://129.114.108.192:8010/Ionizing_radiation"
-    }
-]
-\end{lstlisting}
+Ein Auszug des Dateiformats findet sich in Anhang~\ref{app:listing_schedule}.
 
 \paragraph{Padding-Konfiguration}
 Die Padding-Parameter werden ebenfalls von \texttt{generate-wf-config.py} in die torrc-Vorlagen der Monitor-Hosts geschrieben.
@@ -231,23 +209,9 @@ Die Liste der zu besuchenden Seiten wird zufällig aus der ZIM-Datei gezogen\foo
 Zugelassen sind ausserdem nur Titel, die ausschliesslich aus alphanumerischen Zeichen, Unterstrich, Bindestrich und Punkt bestehen.
 Diese Einschränkung ist notwendig, weil Shadows YAML-Parser, die HTTP-URL und die Shell-Expansion auf den Monitor-Hosts unterschiedlich auf Sonderzeichen wie Doppelpunkt, Anführungszeichen oder Klammern reagieren und einzelne Bestandteile der Pipeline andernfalls unbemerkt scheitern.
 
-Pro Zeile enthält die erzeugte Datei \texttt{urls.txt} die IP des Webservers, den für die Seite verwendeten Port und die vollständige URL (Listing~\ref{lst:urltxt}).
+Pro Zeile enthält die erzeugte Datei \texttt{urls.txt} die IP des Webservers, den für die Seite verwendeten Port und die vollständige URL.
 Die Datei wird von \texttt{generate-wf-config.py} eingelesen und bestimmt, welche Seiten den Monitor-Hosts zugewiesen werden.
-
-\begin{lstlisting}[
-    basicstyle=\ttfamily\footnotesize,
-    breaklines=true,
-    frame=single,
-    captionpos=b,
-    label={lst:urltxt},
-    caption={Beispielhafter Auszug aus \texttt{urls.txt}. Jede Zeile enthält IP, Port und URL einer ausgewählten Wikipedia-Seite.}
-]
-129.114.108.192 8000 http://129.114.108.192:8000/Eurovision_Song_Contest_2018
-129.114.108.192 8001 http://129.114.108.192:8001/Andhra_Pradesh
-129.114.108.192 8002 http://129.114.108.192:8002/Rajon_Rondo
-129.114.108.192 8003 http://129.114.108.192:8003/Hagerman,_Idaho
-129.114.108.192 8004 http://129.114.108.192:8004/Echzell
-\end{lstlisting}
+Ein Beispielauszug ist in Anhang~\ref{app:listing_urls} abgedruckt.
 
 \section{Monitor-Knoten und Verkehrserfassung}
 \label{sec:realisierung_monitore}
@@ -271,22 +235,8 @@ Der erste Besuch beginnt nach einer Aufwärmphase von 1200~Sekunden (20~Minuten)
 \label{sec:realisierung_newnym}
 
 Damit jeder Seitenbesuch über einen frischen Circuit läuft, plant \texttt{generate-wf-config.py} jeweils eine Sekunde vor einem \texttt{wget2}-Aufruf einen \texttt{newnym.py}-Prozess in der \texttt{shadow.config.yaml} ein (vgl.\ Listing~\ref{lst:shadow_monitor}, Zeitpunkte 1229 und 1230).
-Das Skript öffnet einen Socket zum lokalen Tor-Control-Port und sendet \texttt{SIGNAL NEWNYM}, woraufhin Tor bestehende Circuits markiert und für neue Streams einen frischen Pfad aushandelt (Listing~\ref{lst:newnym}).
-
-\begin{lstlisting}[
-    basicstyle=\ttfamily\footnotesize,
-    frame=single,
-    captionpos=b,
-    label={lst:newnym},
-    caption={\texttt{newnym.py}: minimaler Tor-Control-Port-Client, der vor jedem Besuch einen frischen Circuit erzwingt.}
-]
-import socket
-
-with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-    s.connect(("127.0.0.1", 9051))
-    s.sendall(b"AUTHENTICATE\r\n"); s.recv(1024)
-    s.sendall(b"SIGNAL NEWNYM\r\n"); s.recv(1024)
-\end{lstlisting}
+Das Skript öffnet einen Socket zum lokalen Tor-Control-Port und sendet \texttt{SIGNAL NEWNYM}, woraufhin Tor bestehende Circuits markiert und für neue Streams einen frischen Pfad aushandelt.
+Der vollständige Quelltext des Skripts ist in Anhang~\ref{app:listing_newnym} abgedruckt.
 
 Die Begründung dieser strikten Circuit-Isolation ist in Abschnitt~\ref{sec:konzepte_newnym} dargestellt.
 

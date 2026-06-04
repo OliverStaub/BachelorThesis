@@ -1,0 +1,75 @@
+\chapter{Ausgewählte Konfigurations- und Code-Auszüge}
+\label{app:listings}
+
+Dieser Anhang sammelt drei Auszüge aus den in Kapitel~\ref{cha:realisierung} beschriebenen Skripten und Konfigurationsdateien.
+Sie dienen als Beleg für die im Fliesstext zusammengefasste Funktionsweise und erlauben es, die Pipeline anhand der konkreten Dateiformate nachzuvollziehen.
+
+\section{Schedule-Datei}
+\label{app:listing_schedule}
+
+Die von \texttt{generate-wf-config.py} erzeugte Datei \texttt{schedule.json} dient als Ground Truth für die spätere Zuordnung von Pcap-Abschnitten zu Seitenaufrufen (vgl.\ Abschnitt~\ref{sec:realisierung_generate_wf_config}).
+Pro Monitor enthält sie eine Liste der geplanten Besuche mit Startzeit, Zielport und URL.
+
+\begin{lstlisting}[
+    basicstyle=\ttfamily\footnotesize,
+    breaklines=true,
+    frame=single,
+    captionpos=b,
+    label={lst:schedulejson},
+    caption={Auszug aus \texttt{schedule.json}: für jeden Monitor werden Startzeit, Zielport und URL der geplanten Besuche festgehalten.}
+]
+"monitor0": [
+    {
+        "start_time": 1200,
+        "port": 8000,
+        "url": "http://129.114.108.192:8000/Eurovision_Song_Contest_2018"
+    },
+    {
+        "start_time": 1230,
+        "port": 8010,
+        "url": "http://129.114.108.192:8010/Ionizing_radiation"
+    }
+]
+\end{lstlisting}
+
+\section{URL-Liste}
+\label{app:listing_urls}
+
+Die von \texttt{generate-urls.py} erzeugte Datei \texttt{urls.txt} legt fest, welche Wikipedia-Seiten den Monitor-Hosts zugewiesen werden (vgl.\ Abschnitt~\ref{sec:realisierung_urls}).
+Pro Zeile sind die IP des Webservers, der für die Seite verwendete Port und die vollständige URL angegeben.
+
+\begin{lstlisting}[
+    basicstyle=\ttfamily\footnotesize,
+    breaklines=true,
+    frame=single,
+    captionpos=b,
+    label={lst:urltxt},
+    caption={Beispielhafter Auszug aus \texttt{urls.txt}. Jede Zeile enthält IP, Port und URL einer ausgewählten Wikipedia-Seite.}
+]
+129.114.108.192 8000 http://129.114.108.192:8000/Eurovision_Song_Contest_2018
+129.114.108.192 8001 http://129.114.108.192:8001/Andhra_Pradesh
+129.114.108.192 8002 http://129.114.108.192:8002/Rajon_Rondo
+129.114.108.192 8003 http://129.114.108.192:8003/Hagerman,_Idaho
+129.114.108.192 8004 http://129.114.108.192:8004/Echzell
+\end{lstlisting}
+
+\section{NEWNYM-Skript}
+\label{app:listing_newnym}
+
+Das Skript \texttt{newnym.py} erzwingt vor jedem Seitenbesuch einen frischen Tor-Circuit (vgl.\ Abschnitt~\ref{sec:realisierung_newnym}).
+Es öffnet einen Socket zum lokalen Tor-Control-Port und sendet das Signal \texttt{NEWNYM}.
+
+\begin{lstlisting}[
+    basicstyle=\ttfamily\footnotesize,
+    frame=single,
+    captionpos=b,
+    label={lst:newnym},
+    caption={\texttt{newnym.py}: minimaler Tor-Control-Port-Client, der vor jedem Besuch einen frischen Circuit erzwingt.}
+]
+import socket
+
+with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+    s.connect(("127.0.0.1", 9051))
+    s.sendall(b"AUTHENTICATE\r\n"); s.recv(1024)
+    s.sendall(b"SIGNAL NEWNYM\r\n"); s.recv(1024)
+\end{lstlisting}
