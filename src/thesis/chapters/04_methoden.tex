@@ -110,6 +110,43 @@ Erstens reduziert die Skalierung des Netzwerks auf 1\,\% die Pfaddiversität geg
 Zweitens wird der Tor Browser durch ein gepatchtes \texttt{wget2} ersetzt, das zwar denselben Satz an Ressourcen abruft, jedoch JavaScript und Browser-spezifische Verkehrsmuster nicht reproduziert~\cite{jansen2023data}.
 Beide Einschränkungen werden bei der Interpretation der Resultate in Kapitel~\ref{cha:diskussion} berücksichtigt.
 
+\section{Einsatz von KI-Werkzeugen}
+\label{sec:ki_werkzeuge}
+
+Dieser Abschnitt dokumentiert offen, welche KI-gestützten Werkzeuge im Rahmen dieser Arbeit eingesetzt wurden, wofür sie verwendet wurden und wie die fachliche Verantwortung des Autors gewahrt bleibt.
+Die Darstellung ist als Ergänzung zur Selbstständigkeitserklärung im Frontmatter dieser Arbeit zu verstehen.
+
+\subsection{Eingesetzte Werkzeuge}
+\label{sec:ki_werkzeuge_uebersicht}
+
+Tabelle~\ref{tab:ki_werkzeuge} listet die verwendeten KI-Werkzeuge, die jeweils genutzten Modellversionen und die konkreten Anwendungsbereiche auf.
+
+\begin{table}[H]
+\centering
+\caption{Im Rahmen der Arbeit eingesetzte KI-Werkzeuge.}
+\label{tab:ki_werkzeuge}
+\begin{tabular}{p{3.6cm}p{3.4cm}p{6.5cm}}
+\hline
+Werkzeug & Modell(e) & Verwendung \\
+\hline
+Claude Code & Opus 4.5, Opus 4.6, Opus 4.7, Opus 4.8 & Hauptsächlich genutztes Werkzeug. Iterative Entwicklung sämtlicher in dieser Arbeit selbst geschriebenen Python- und Shell-Skripte. \\
+Claude Desktop & Opus 4.5, Opus 4.6, Opus 4.7, Opus 4.8 & Sprachliche Politur, Vereinheitlichung des Stils, Korrektur von Formulierungen und Tippfehlern an Teilen des Prosatexts der Arbeit. \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Art der Nutzung}
+\label{sec:ki_werkzeuge_nutzung}
+
+\paragraph{Code}
+Die Skripte wurden nicht in einem einzigen Schritt von einer KI generiert, sondern in einem iterativen Dialog entwickelt.
+Der Autor formulierte die fachliche Anforderung (Eingabe, Ausgabe, Bibliotheken, Constraints), Claude Code generierte daraufhin einen Implementierungsentwurf, der Autor las, prüfte und korrigierte den Entwurf, führte das Skript aus und validierte es gegen die erwarteten Resultate.
+Als hilfreich hat sich die Planungsfunktion erwiesen, bei welcher die KI einen Plan erstellt, bevor sie Code schreibt.
+So können Fehler und Abweichungen früh korrigiert werden.
+
+\paragraph{Text}
+Der Prosatext wurde teilweise mit KI-Werkzeugen sprachlich überarbeitet.
+
 \section{Projektplan}
 \label{sec:projektplan}
 

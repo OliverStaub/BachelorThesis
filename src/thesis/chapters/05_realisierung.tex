@@ -197,7 +197,7 @@ Eine statisch gelinkte Binärdatei kann der Shim von Shadow nicht abfangen, was 
 
 \paragraph{\texttt{zimsrv.py}}
 Aus diesen Gründen wurde im Rahmen dieser Arbeit ein eigener, schlanker Webserver \texttt{zimsrv.py} mit etwa 125~Zeilen Python entwickelt.
-Die Implementierung erfolgte iterativ mit Claude Code (vgl.\ Abschnitt~\ref{sec:realisierung_ki_werkzeuge}). Designentscheidungen, Anforderungen und Verifikation gegen den Versuchsaufbau verantwortet der Autor.
+Die Implementierung erfolgte iterativ mit Claude Code (vgl.\ Abschnitt~\ref{sec:ki_werkzeuge}). Designentscheidungen, Anforderungen und Verifikation gegen den Versuchsaufbau verantwortet der Autor.
 \texttt{zimsrv.py} nutzt die offizielle Python-Bindung \texttt{libzim} zum Lesen der ZIM-Datei und stellt die Inhalte über einen \texttt{ThreadingHTTPServer} bereit.
 Da der Server in Python läuft, ist er per Definition dynamisch gelinkt und damit für Shadow geeignet.
 Pro Seite (also pro Port) wird ein separater Prozess gestartet, was die spätere Zuordnung von Verkehr zu Klasse über den Zielport erlaubt.
