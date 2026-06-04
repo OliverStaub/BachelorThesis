@@ -15,11 +15,9 @@ Die vorliegende Arbeit füllt diese Lücke, indem sie die drei in Tor angebotene
 \section{Konzeptioneller Versuchsaufbau}
 \label{sec:konzepte_versuchsaufbau}
 
-Der Versuchsaufbau folgt einem kontrollierten Laborexperiment.
-Unabhängige Variable ist der Padding-Modus (OFF, ON, Reduced), abhängige Variablen sind Accuracy, Precision, Recall und F1-Wert auf der Testmenge.
-Alle übrigen Parameter werden konstant gehalten.
+Der Versuchsaufbau folgt einem kontrollierten Laborexperiment, in dem der Padding-Modus gezielt variiert und alle übrigen Parameter konstant gehalten werden.
 Die primäre Untersuchung erfolgt im Closed-World, ergänzt um ein einzelnes Open-World-Experiment als Realitätsanker.
-Die formale methodische Einordnung steht in Kapitel~\ref{cha:methoden}.
+Die formale Einordnung der Variablen und Messgrössen steht in Kapitel~\ref{cha:methoden}.
 
 \section{Wahl des Simulators}
 \label{sec:konzepte_simulator}
@@ -47,7 +45,7 @@ Ergänzend wird ein Open-World-Experiment als Realitätsanker durchgeführt, ohn
 \section{Wahl der Padding-Konfigurationen}
 \label{sec:konzepte_padding_modi}
 
-Die unabhängige Variable nimmt drei Ausprägungen an: OFF, ON und Reduced.
+Der Padding-Modus nimmt drei Ausprägungen an: OFF, ON und Reduced.
 Diese Wahl orientiert sich an den von Tor selbst angebotenen Optionen und erlaubt einen direkten Vergleich mit dem von Kadianakis et al.\ vorgeschlagenen Schema~\cite{kadianakis2021tor}.
 Eine eigene Padding-Maschine wird nicht entwickelt, da das Ziel die Evaluation des produktiv eingesetzten Schemas ist und nicht der Entwurf einer neuen Verteidigung.
 
