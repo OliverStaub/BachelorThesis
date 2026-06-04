@@ -128,8 +128,8 @@ monitor0:
 \end{lstlisting}
 
 \paragraph{Schedule}
-Zusätzlich erzeugt \texttt{generate-wf-config.py} eine Datei \texttt{schedule.json}, in der für jeden Monitor festgehalten ist, wann (\texttt{start\_time}) er welche Seite besucht.
-Diese Datei dient später als Ground Truth für den Konvertierungsschritt: ohne sie liesse sich nicht eindeutig rekonstruieren, welcher Teil eines Pcaps zu welchem Seitenaufruf gehört.
+Zusätzlich erzeugt \texttt{generate-wf-config.py} eine Datei \texttt{schedule.json}, in der für jeden Monitor festgehalten ist, wann er welche Seite besucht.
+Diese Datei wird später für den Konvertierungsschritt genutzt: ohne sie liesse sich nicht eindeutig rekonstruieren, welcher Teil eines Pcaps zu welchem Seitenaufruf gehört.
 Ein Auszug des Dateiformats findet sich in Anhang~\ref{app:listing_schedule}.
 
 \paragraph{Padding-Konfiguration}
