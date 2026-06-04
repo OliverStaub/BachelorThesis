@@ -92,7 +92,6 @@ Beides wird in dieser Arbeit von dem Skript \texttt{generate-wf-config.py} ergä
 \paragraph{Hinzufügen der Hosts}
 Das Skript fügt der \texttt{shadow.config.yaml} einen \texttt{zimserverN}-Host und eine konfigurierbare Anzahl \texttt{monitorN}-Hosts hinzu.
 Pro besuchter Seite wird ein eigener Port auf dem Webserver verwendet (8000 für die erste Seite, 8001 für die zweite, und so fort), siehe Abschnitt~\ref{sec:konzepte_port_class} für die Begründung dieser Zuordnung.
-Der Bandbreitenwert für \texttt{zimserverN} ist mit 200~Mbps doppelt so hoch wie der eines einzelnen Monitors gewählt, damit der Webserver bei parallelen Anfragen nicht zum Engpass wird.
 
 Listing~\ref{lst:shadow_monitor} zeigt einen verkürzten Ausschnitt eines Monitor-Hosts aus der generierten \texttt{shadow.config.yaml}.
 
