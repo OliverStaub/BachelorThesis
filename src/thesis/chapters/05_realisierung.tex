@@ -53,20 +53,20 @@ Die eigens entwickelten Skripte sind in Tabelle~\ref{tab:werkzeugkette_skripte} 
 \begin{table}[H]
 \centering
 \footnotesize
-\caption{Eigens entwickelte Pipeline-Skripte mit Aufgabe und Datenfluss.}
+\caption{Eigens entwickelte Pipeline-Skripte mit ihrer jeweiligen Aufgabe.}
 \label{tab:werkzeugkette_skripte}
-\begin{tabularx}{\textwidth}{l >{\raggedright\arraybackslash}p{4cm} >{\raggedright\arraybackslash}X}
+\begin{tabularx}{\textwidth}{l >{\raggedright\arraybackslash}X}
 \hline
-Skript & Aufgabe & Datenfluss \\
+Skript & Aufgabe \\
 \hline
-\texttt{shadowctl.py}          & Lebenszyklus eines Experiments         & CLI-Optionen \newline $\rightarrow$ Logs, Ergebnis-Bundle \\
-\texttt{generate-wf-config.py} & Monitore und Webserver eintragen       & Tornettools-Config, \texttt{urls.txt} \newline $\rightarrow$ \texttt{shadow.config.yaml}, \texttt{schedule.json} \\
-\texttt{generate-urls.py}      & Zufallsstichprobe aus ZIM              & ZIM-Datei \newline $\rightarrow$ \texttt{urls.txt} \\
-\texttt{zimsrv.py}             & Wikipedia in der Simulation ausliefern & ZIM-Datei \newline $\rightarrow$ HTTP-Antworten \\
-\texttt{newnym.py}             & Frischen Tor-Circuit erzwingen         & Tor-Control-Port \newline $\rightarrow$ NEWNYM-Signal \\
-\texttt{pcap\_to\_npz.py}      & Pcaps in WFlib-Format konvertieren     & Monitor-Pcaps, \texttt{schedule.json} \newline $\rightarrow$ \texttt{.npz}, \texttt{labels.json} \\
-\texttt{run\_df.sh}            & Training und Auswertung steuern        & \texttt{.npz} \newline $\rightarrow$ Modell, Metriken \\
-\texttt{report.py}             & Ergebnis-JSON aggregieren              & Ergebnis-JSON \newline $\rightarrow$ \texttt{ExperimentLogs.csv} \\
+\texttt{shadowctl.py}          & Steuert per \gls{ssh} den Lebenszyklus eines Experiments, vom Start des Simulationslaufs über die Fortschrittsüberwachung bis zur Rückübertragung der \glspl{pcap} und Ergebnisdateien auf die Arbeitsstation. \\
+\texttt{generate-wf-config.py} & Ergänzt die von Tornettools erzeugte \texttt{shadow.config.yaml} um Monitor- und Webserver-Hosts, schreibt die Padding-Einstellungen in die torrc-Vorlagen und erzeugt die \texttt{schedule.json} mit den geplanten Seitenbesuchen. \\
+\texttt{generate-urls.py}      & Zieht eine Zufallsstichprobe von Wikipedia-Artikeln aus der ZIM-Datei und schreibt die für Shadow zulässigen Artikelnamen nach \texttt{urls.txt}. \\
+\texttt{zimsrv.py}             & Minimaler HTTP-Server auf Basis der \texttt{libzim}, der die Wikipedia-Artikel innerhalb der Simulation an die Monitor-Hosts ausliefert. \\
+\texttt{newnym.py}             & Sendet ein NEWNYM-Signal an den Tor-Control-Port, um vor jedem Seitenbesuch einen frischen Circuit zu erzwingen. \\
+\texttt{pcap\_to\_npz.py}      & Parst die Monitor-\glspl{pcap} mit \texttt{dpkt}, ordnet die Pakete anhand der \texttt{schedule.json} den Seitenbesuchen zu und konvertiert sie in Richtungssequenzen im WFlib-Format. \\
+\texttt{run\_df.sh}            & Steuert den End-to-End-Ablauf aus Datensatz-Split, Training und Test des \gls{df}-Klassifikators und protokolliert Modellgewichte sowie Metriken. \\
+\texttt{report.py}             & Aggregiert die Ergebnisdateien einzelner Experimente zu einer Zeile in \texttt{ExperimentLogs.csv} und erlaubt damit den direkten Vergleich aller Läufe. \\
 \hline
 \end{tabularx}
 \end{table}
