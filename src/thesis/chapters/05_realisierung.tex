@@ -90,7 +90,7 @@ Für ein \gls{wf}-Experiment wird zusätzlich ein Webserver, der die Zielseiten 
 Beides wird in dieser Arbeit von dem Skript \texttt{generate-wf-config.py} ergänzt.
 
 \paragraph{Hinzufügen der Hosts}
-Das Skript fügt der \texttt{shadow.config.yaml} einen \texttt{zimserverN}-Host und eine konfigurierbare Anzahl \texttt{monitorN}-Hosts hinzu.
+\texttt{generate-wf-config.py} fügt der \texttt{shadow.config.yaml} einen \texttt{zimserverN}-Host und eine konfigurierbare Anzahl \texttt{monitorN}-Hosts hinzu.
 Pro besuchter Seite wird ein eigener Port auf dem Webserver verwendet (8000 für die erste Seite, 8001 für die zweite, und so fort), siehe Abschnitt~\ref{sec:konzepte_port_class} für die Begründung dieser Zuordnung.
 
 Listing~\ref{lst:shadow_monitor} zeigt einen verkürzten Ausschnitt eines Monitor-Hosts aus der generierten \texttt{shadow.config.yaml}.
@@ -128,7 +128,7 @@ monitor0:
 \end{lstlisting}
 
 \paragraph{Schedule}
-Zusätzlich erzeugt das Skript eine Datei \texttt{schedule.json}, in der für jeden Monitor festgehalten ist, wann (\texttt{start\_time}) er welche Seite besucht.
+Zusätzlich erzeugt \texttt{generate-wf-config.py} eine Datei \texttt{schedule.json}, in der für jeden Monitor festgehalten ist, wann (\texttt{start\_time}) er welche Seite besucht.
 Diese Datei dient später als Ground Truth für den Konvertierungsschritt: ohne sie liesse sich nicht eindeutig rekonstruieren, welcher Teil eines Pcaps zu welchem Seitenaufruf gehört.
 Ein Auszug des Dateiformats findet sich in Anhang~\ref{app:listing_schedule}.
 
@@ -235,7 +235,7 @@ Der erste Besuch beginnt nach einer Aufwärmphase von 1200~Sekunden (20~Minuten)
 \label{sec:realisierung_newnym}
 
 Damit jeder Seitenbesuch über einen frischen Circuit läuft, plant \texttt{generate-wf-config.py} jeweils eine Sekunde vor einem \texttt{wget2}-Aufruf einen \texttt{newnym.py}-Prozess in der \texttt{shadow.config.yaml} ein (vgl.\ Listing~\ref{lst:shadow_monitor}, Zeitpunkte 1229 und 1230).
-Das Skript öffnet einen Socket zum lokalen Tor-Control-Port und sendet \texttt{SIGNAL NEWNYM}, woraufhin Tor bestehende Circuits markiert und für neue Streams einen frischen Pfad aushandelt.
+\texttt{newnym.py} öffnet einen Socket zum lokalen Tor-Control-Port und sendet \texttt{SIGNAL NEWNYM}, woraufhin Tor bestehende Circuits markiert und für neue Streams einen frischen Pfad aushandelt.
 Der vollständige Quelltext des Skripts ist in Anhang~\ref{app:listing_newnym} abgedruckt.
 
 Die Begründung dieser strikten Circuit-Isolation ist in Abschnitt~\ref{sec:konzepte_newnym} dargestellt.
