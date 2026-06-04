@@ -4,7 +4,7 @@
 In diesem Kapitel wird beschrieben, mit welchen wissenschaftlichen Methoden die in Kapitel~\ref{cha:stand_der_technik} aufgeworfenen Fragen bearbeitet werden.
 Zwei Methoden werden eingesetzt.
 Die Literaturrecherche dient dazu, den aktuellen Stand der Forschung zu Tor, Website-Fingerprinting und Circuit Padding aufzuarbeiten und daraus die Forschungslücke abzuleiten.
-Das anschliessende Laborexperiment im Shadow-Simulator dient dazu, die aus dieser Literatur abgeleiteten Hypothesen quantitativ zu überprüfen.
+Das anschliessende Laborexperiment im Shadow-Simulator dient dazu, die aus dieser Literatur motivierten Forschungsfragen quantitativ zu beantworten.
 Die konkrete Umsetzung dieses Versuchsaufbaus wird in Kapitel~\ref{cha:realisierung} beschrieben.
 Das vorliegende Kapitel beschränkt sich auf die methodische Begründung der Vorgehensweise.
 
@@ -13,11 +13,10 @@ Das vorliegende Kapitel beschränkt sich auf die methodische Begründung der Vor
 
 Die vorliegende Bachelorarbeit ist eine Mischform aus einer konstruktiven und einer empirischen Arbeit~\cite{book}.
 Konstruktiv ist die Arbeit, weil eine eigene Werkzeugkette aus Shadow-Steuerung, Konfigurationsgenerierung, Webserver, Datenkonvertierung und Klassifikator-Anbindung neu aufgebaut wird, um den untersuchten Effekt überhaupt messen zu können.
-Empirisch ist die Arbeit, weil mit dieser Werkzeugkette ein kontrolliertes Laborexperiment durchgeführt wird, dessen Ergebnisse die formulierten Hypothesen entweder bestätigen oder widerlegen.
+Empirisch ist die Arbeit, weil mit dieser Werkzeugkette ein kontrolliertes Laborexperiment durchgeführt wird, dessen Ergebnisse die in der Aufgabenstellung definierten Forschungsfragen beantworten.
 
 Die Arbeit verwendet ein deduktives Vorgehen.
-Aus der Literatur, insbesondere aus den Arbeiten von Jansen und Wails~\cite{jansen2023data}, Sirinam et al.~\cite{sirinam2018deep} und Kadianakis et al.~\cite{kadianakis2021tor}, werden Hypothesen über den Einfluss von Circuit Padding auf die Klassifikationsgenauigkeit von \gls{df} abgeleitet.
-Diese Hypothesen werden anschliessend an Messdaten überprüft.
+Aus der Literatur, insbesondere aus den Arbeiten von Jansen und Wails~\cite{jansen2023data}, Sirinam et al.~\cite{sirinam2018deep} und Kadianakis et al.~\cite{kadianakis2021tor}, wird der theoretische Rahmen abgeleitet, in dem die Forschungsfragen aus Kapitel~\ref{cha:problem_fragestellung_vision} bearbeitet werden.
 Die Messung selbst erfolgt quantitativ über etablierte Klassifikationsmetriken (Accuracy, Precision, Recall, F1-Wert).
 
 \section{Literaturrecherche}
@@ -75,18 +74,14 @@ Ein Feldexperiment im Live-Tor-Netzwerk scheidet aus, weil dort weder die Paddin
 Der Shadow-Simulator erlaubt im Gegensatz dazu, die unabhängige Variable Padding-Modus gezielt zu schalten, alle übrigen Parameter konstant zu halten und denselben Versuch über einen festen Seed reproduzierbar zu wiederholen.
 Damit erfüllt das Vorgehen die für ein Laborexperiment gegebenen Anforderungen an Kontrolle, Wiederholbarkeit und Variation einer Einflussgrösse~\cite{book}.
 
-\subsection{Forschungsfragen und Hypothesen}
+\subsection{Forschungsfragen}
 \label{sec:experiment_hypothesen}
 
-Die in Kapitel~\ref{cha:problem_fragestellung_vision} formulierten Forschungsfragen werden für das Experiment in überprüfbare Hypothesen überführt.
-Aus den Arbeiten von Sirinam et al.~\cite{sirinam2018deep} und Kadianakis et al.~\cite{kadianakis2021tor} wird abgeleitet, dass Circuit Padding die für \gls{df} charakteristischen Burst-Muster verschleiert und die Klassifikationsgenauigkeit senkt.
-Daraus ergeben sich drei gerichtete Hypothesen.
-
-\begin{itemize}
-    \item \textbf{H1:} Die \gls{df}-Accuracy mit aktiviertem Circuit Padding ist niedriger als ohne Padding bei identischer Trainings- und Testdatenbasis.
-    \item \textbf{H2:} Reduced Padding liegt in der Schutzwirkung zwischen den Modi OFF und ON, weil nur eine Teilmenge der Padding-Maschinen aktiv ist.
-    \item \textbf{H3:} Das Open-World-Szenario führt wegen der zusätzlichen Unmonitored-Klasse und der grösseren Klassenanzahl zu einer niedrigeren Accuracy als das Closed-World-Szenario derselben Padding-Konfiguration.
-\end{itemize}
+Massgeblich sind die in Kapitel~\ref{cha:problem_fragestellung_vision} aus der Aufgabenstellung übernommenen Forschungsfragen.
+Im Rahmen des Experiments werden diese in der dort vorgegebenen Formulierung beantwortet, ohne sie in eigene Hypothesen umzudeuten.
+Die erste Frage nach dem Einfluss unterschiedlicher Padding-Einstellungen auf die Erkennungsrate eines \gls{wf}-Angriffs wird über den Vergleich der Klassifikationsmetriken zwischen den Padding-Modi OFF, ON und Reduced beantwortet.
+Die zweite Frage nach den in der Literatur dokumentierten Limitationen simulierter und laborbasierter \gls{wf}-Angriffe wird über die Literaturrecherche bearbeitet und die experimentellen Ergebnisse darin eingeordnet.
+Die dritte Frage zur zusätzlichen Schutzwirkung des Tamaraw-Verfahrens wird über die explorative Anwendung von Tamaraw auf dieselbe Datenbasis bearbeitet.
 
 \subsection{Variablen und Messgrössen}
 \label{sec:experiment_variablen}
