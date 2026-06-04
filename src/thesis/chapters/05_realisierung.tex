@@ -59,10 +59,10 @@ Die eigens entwickelten Skripte sind in Tabelle~\ref{tab:werkzeugkette_skripte} 
 \hline
 Skript & Aufgabe \\
 \hline
-\texttt{shadowctl.py}          & Lebenszyklus eines Experiments \\
-\texttt{generate-wf-config.py} & Monitore und Webserver eintragen \\
-\texttt{generate-urls.py}      & Zufallsstichprobe aus ZIM \\
-\texttt{zimsrv.py}             & Wikipedia in der Simulation ausliefern \\
+\texttt{shadowctl.py}          & Steuerung der Experimente \\
+\texttt{generate-wf-config.py} & Monitore und Webserver in shadow config eintragen \\
+\texttt{generate-urls.py}      & Zufallsstichprobe aus URL Liste generieren \\
+\texttt{zimsrv.py}             & Wikipedia Server in der Simulation \\
 \texttt{newnym.py}             & Frischen Tor-Circuit erzwingen \\
 \texttt{pcap\_to\_npz.py}      & Pcaps in WFlib-Format konvertieren \\
 \texttt{run\_df.sh}            & Training und Auswertung steuern \\
@@ -71,11 +71,7 @@ Skript & Aufgabe \\
 \end{tabularx}
 \end{table}
 
-Die Aufteilung in mehrere kleine, voneinander unabhängige Skripte erlaubt es, einzelne Phasen der Pipeline gezielt erneut auszuführen, ohne den vorgelagerten und sehr zeitintensiven Simulationslauf zu wiederholen.
-
-Ergänzend zu diesen versuchsspezifischen Werkzeugen wurde während der gesamten Entwicklungs- und Schreibphase Claude Code (Anthropic) als KI-gestütztes Entwicklungswerkzeug eingesetzt.
-Claude Code wird im Folgenden bewusst nicht als Bestandteil des Versuchsaufbaus, sondern als Hilfsmittel der Umsetzung verstanden.
-Die genaue Form der Nutzung sowie die zugehörige Erklärung sind in Abschnitt~\ref{sec:realisierung_ki_werkzeuge} und in Anhang~\ref{app:ki_werkzeuge} dokumentiert.
+Die Aufteilung in mehrere kleine, voneinander unabhängige Skripte erlaubt es, einzelne Phasen der Pipeline gezielt erneut auszuführen, ohne den zeitintensiven Simulationslauf zu wiederholen.
 
 \subsection{Generierung der Topologie mit Tornettools}
 
@@ -94,7 +90,7 @@ Für ein \gls{wf}-Experiment wird zusätzlich ein Webserver, der die Zielseiten 
 Beides wird in dieser Arbeit von dem Skript \texttt{generate-wf-config.py} ergänzt.
 
 \paragraph{Hinzufügen der Hosts}
-Das Skript fügt der \texttt{shadow.config.yaml} einen oder mehrere \texttt{zimserverN}-Hosts und eine konfigurierbare Anzahl \texttt{monitorN}-Hosts hinzu.
+Das Skript fügt der \texttt{shadow.config.yaml} einen \texttt{zimserverN}-Host und eine konfigurierbare Anzahl \texttt{monitorN}-Hosts hinzu.
 Pro besuchter Seite wird ein eigener Port auf dem Webserver verwendet (8000 für die erste Seite, 8001 für die zweite, und so fort), siehe Abschnitt~\ref{sec:konzepte_port_class} für die Begründung dieser Zuordnung.
 Der Bandbreitenwert für \texttt{zimserverN} ist mit 200~Mbps doppelt so hoch wie der eines einzelnen Monitors gewählt, damit der Webserver bei parallelen Anfragen nicht zum Engpass wird.
 
