@@ -43,13 +43,12 @@ Als externe Komponenten kommen zum Einsatz:
 \begin{itemize}
     \item Shadow~\cite{jansen2011shadow,netsim-atc2022} simuliert das \gls{tor}-Netzwerk.
     \item Tornettools~\cite{neverenough-sec2021} erzeugt aus den öffentlichen Tor-Metrik-Daten eine repräsentative Shadow-Konfiguration.
+    \item Der Wikipedia-ZIM-Dump dient als Inhalt für die zu klassifizierenden Webseiten.
     \item \texttt{wget2} mit dem \gls{socks}-Patch von Jansen und Wails~\cite{jansen2023data} lädt im Inneren der Simulation die Webseiten über \gls{tor} herunter.
-    \item Der Wikipedia-ZIM-Dump des Kiwix-Projekts dient als Inhalt für die zu klassifizierenden Webseiten, gelesen über die Python-Bindung \texttt{libzim}.
     \item WFlib\footnote{\url{https://github.com/Xinhao-Deng/Website-Fingerprinting-Library}} stellt eine Implementierung des \gls{df}-Klassifikators in PyTorch bereit und steuert Training, Validierung und Test.
 \end{itemize}
 
 Die eigens entwickelten Skripte sind in Tabelle~\ref{tab:werkzeugkette_skripte} mit Aufgabe sowie ihren Ein- und Ausgaben zusammengefasst.
-Designentscheidungen, die einzelne Skripte betreffen, werden in den folgenden Abschnitten dort vertieft, wo sie inhaltlich verankert sind.
 
 \begin{table}[H]
 \centering
