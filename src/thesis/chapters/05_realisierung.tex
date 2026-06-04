@@ -5,25 +5,22 @@
 \label{sec:realisierung_uebersicht}
 
 Der Versuchsaufbau besteht aus drei aufeinander aufbauenden Teilsystemen.
-Zuerst wird mit dem Shadow-Netzwerksimulator~\cite{netsim-atc2022} ein realitätsnahes \gls{tor}-Netzwerk auf einem einzelnen Server reproduzierbar simuliert.
+Zuerst wird mit dem Shadow-Netzwerksimulator~\cite{netsim-atc2022} ein realitätsnahes \gls{tor}-Netzwerk auf einem einzelnen Server simuliert.
 Innerhalb dieses simulierten Netzwerks führt eine Anzahl von Monitor-Knoten automatisierte Webseitenbesuche über \gls{tor} durch.
 Der dabei anfallende Netzwerkverkehr wird auf den Monitor-Knoten als \gls{pcap}-Datei mitgeschnitten.
-In einer zweiten Stufe werden diese Aufzeichnungen ausserhalb der Simulation in das von der Website-Fingerprinting-Bibliothek WFlib erwartete Format konvertiert.
-In einer dritten Stufe wird auf den so vorbereiteten Daten ein \gls{df}-Klassifikator trainiert und ausgewertet.
-
-Abbildung~\ref{fig:shadowsetup} zeigt den Aufbau der Shadow-Simulation im Detail.
-Innerhalb der Simulation existiert ein vollständiges \gls{tor}-Netzwerk mit Performance-Clients, Verzeichnisservern (Authorities) und Eingangs-, Mittel- sowie Ausgangsknoten.
-Daneben laufen die für diese Arbeit eigens hinzugefügten Monitor-Clients (jeweils mit lokalem Tor-Daemon, gepatchtem \texttt{wget2} und Pcap-Aufzeichnung), ein Zim-Server für die Wikipedia-Inhalte sowie die von Tornettools generierten TGEN- und Markov-Hintergrund-Clients, deren Verkehr das Verhalten realer Tor-Nutzerinnen und -Nutzer nachbildet~\cite{neverenough-sec2021}.
+In einer zweiten Stufe werden diese Aufzeichnungen exportiert und in ein passendes Dateiformat konvertiert.
+In der dritten Stufe wird auf den Daten ein \gls{df}-Klassifikator trainiert und ausgewertet.
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{../../images/ShadowSetup.png}
-\caption{Aufbau der Shadow-Simulation. Innerhalb des simulierten \gls{tor}-Netzwerks (oben) leiten die Monitor-Clients ihre Anfragen über den lokalen Tor-Daemon und einen \gls{socks}5-Proxy an den Zim-Server. Pcap-Aufzeichnungen werden auf den Monitor-Clients abgegriffen.}
+\caption{Innerhalb der Simulation existiert ein vollständiges \gls{tor}-Netzwerk mit Eingangs-, Mittel- sowie Ausgangsknoten.
+Daneben laufen die für diese Arbeit eigens hinzugefügten Monitor-Clients (jeweils mit lokalem Tor-Daemon, gepatchtem \texttt{wget2} und Pcap-Aufzeichnung), ein Zim-Server für die Wikipedia-Inhalte sowie die von Tornettools generierten TGEN- und Markov-Hintergrund-Clients, deren Verkehr das Verhalten realer Tor-Nutzerinnen und -Nutzer nachbildet~\cite{neverenough-sec2021}.}
 \label{fig:shadowsetup}
 \end{figure}
 
 Der gesamte Ablauf wird von dem zentralen Steuerungsskript \texttt{shadowctl.py} orchestriert, das per \gls{ssh} auf den Simulationsserver zugreift, dort die Simulation startet, ihren Fortschritt überwacht und nach dem Lauf die Ergebnisdateien zurück auf die Arbeitsstation des Autors überträgt.
-Diese Trennung zwischen Steuerung (lokal) und Ausführung (remote) erlaubt es, mehrere Experimente seriell zu bearbeiten, ohne die rechenintensive Simulation auf einem Notebook ausführen zu müssen.
+Diese Trennung zwischen Steuerung (lokal) und Ausführung (remote) erlaubt eine benutzerfreundliche Steuerung Simulationen.
 
 \section{Versuchsumgebung}
 \label{sec:realisierung_umgebung}
@@ -31,16 +28,12 @@ Diese Trennung zwischen Steuerung (lokal) und Ausführung (remote) erlaubt es, m
 \subsection{Server}
 
 Sämtliche Simulationen laufen auf einer dedizierten virtuellen Maschine mit dem Hostnamen \texttt{shadowsrv-001.prod.projects.ls.eee.intern}, die von HSLU Lab Services für die Dauer dieser Arbeit bereitgestellt wurde.
-Die VM verfügt über 32~vCPU-Kerne, 128~GB Arbeitsspeicher und ein 156~GB grosses Root-Dateisystem.
+Die VM verfügt über 32~vCPU-Kerne, 128~GB Arbeitsspeicher und ein 156~GB grossen Speicher.
 Eine ausführliche Auflistung der bereitgestellten Ressourcen sowie der eingerichteten Software-Umgebung findet sich in Anhang~\ref{app:serverumgebung}.
 
 Der Zugriff auf die VM ist nur aus dem HSLU-Netzwerk (Campus-WLAN oder VPN) über \gls{ssh} möglich, ein direkter Zugriff aus dem Internet ist administrativ unterbunden.
 Diese Einschränkung ist für den eigentlichen Versuch unerheblich, da Shadow seine Simulationen ausschliesslich lokal auf der VM ausführt und keine Aussenkommunikation benötigt.
 Sie ist jedoch für die Werkzeugkette relevant, weil das Steuerungsskript \texttt{shadowctl.py} per \gls{ssh} mit der VM kommuniziert und damit nur aus dem HSLU-Netzwerk heraus funktioniert.
-
-Die genannten Ressourcen begrenzen die Skalierung der Experimente nach oben.
-Die Simulation eines vollständigen \gls{tor}-Netzwerks bei einer Skalierung von 100\,\% wäre nach den Richtwerten von Jansen, Tracey und Goldberg nur auf Maschinen mit mehreren hundert Gigabyte Arbeitsspeicher möglich~\cite{neverenough-sec2021}.
-Eine deutlich kleinere Skalierung ist deshalb nicht primär eine inhaltliche Entscheidung, sondern auch eine pragmatische Anpassung an die zur Verfügung stehende Hardware.
 
 \subsection{Werkzeugkette}
 
@@ -48,7 +41,7 @@ Die Werkzeugkette gliedert sich in extern bezogene Komponenten und eigens für d
 Als externe Komponenten kommen zum Einsatz:
 
 \begin{itemize}
-    \item Shadow~\cite{jansen2011shadow,netsim-atc2022} simuliert das \gls{tor}-Netzwerk (Begründung der Wahl: Abschnitt~\ref{sec:konzepte_simulator}).
+    \item Shadow~\cite{jansen2011shadow,netsim-atc2022} simuliert das \gls{tor}-Netzwerk.
     \item Tornettools~\cite{neverenough-sec2021} erzeugt aus den öffentlichen Tor-Metrik-Daten eine repräsentative Shadow-Konfiguration.
     \item \texttt{wget2} mit dem \gls{socks}-Patch von Jansen und Wails~\cite{jansen2023data} lädt im Inneren der Simulation die Webseiten über \gls{tor} herunter.
     \item WFlib\footnote{\url{https://github.com/Xinhao-Deng/Website-Fingerprinting-Library}} stellt eine Implementierung des \gls{df}-Klassifikators in PyTorch bereit und steuert Training, Validierung und Test.
