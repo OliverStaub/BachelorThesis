@@ -55,20 +55,20 @@ Die eigens entwickelten Skripte sind in Tabelle~\ref{tab:werkzeugkette_skripte} 
 \footnotesize
 \caption{Eigens entwickelte Pipeline-Skripte mit Aufgabe und Datenfluss.}
 \label{tab:werkzeugkette_skripte}
-\begin{tabular}{llll}
+\begin{tabularx}{\textwidth}{l X X}
 \hline
-Skript & Aufgabe & Eingabe & Ausgabe \\
+Skript & Aufgabe & Datenfluss (Eingabe $\rightarrow$ Ausgabe) \\
 \hline
-\texttt{shadowctl.py}          & Lebenszyklus eines Experiments     & CLI-Optionen                          & Logs, Ergebnis-Bundle \\
-\texttt{generate-wf-config.py} & Monitore und Webserver eintragen   & Tornettools-Config, \texttt{urls.txt} & \texttt{shadow.config.yaml}, \texttt{schedule.json} \\
-\texttt{generate-urls.py}      & Zufallsstichprobe aus ZIM          & ZIM-Datei                             & \texttt{urls.txt} \\
-\texttt{zimsrv.py}             & Wikipedia in der Simulation ausliefern & ZIM-Datei                         & HTTP-Antworten \\
-\texttt{newnym.py}             & Frischen Tor-Circuit erzwingen     & Tor-Control-Port                      & NEWNYM-Signal \\
-\texttt{pcap\_to\_npz.py}      & Pcaps in WFlib-Format konvertieren & Monitor-Pcaps, \texttt{schedule.json} & \texttt{.npz}, \texttt{labels.json} \\
-\texttt{run\_df.sh}            & Training und Auswertung steuern    & \texttt{.npz}                         & Modell, Metriken \\
-\texttt{report.py}             & Ergebnis-JSON aggregieren          & Ergebnis-JSON                         & \texttt{ExperimentLogs.csv} \\
+\texttt{shadowctl.py}          & Lebenszyklus eines Experiments         & CLI-Optionen $\rightarrow$ Logs, Ergebnis-Bundle \\
+\texttt{generate-wf-config.py} & Monitore und Webserver eintragen       & Tornettools-Config, \texttt{urls.txt} $\rightarrow$ \texttt{shadow.config.yaml}, \texttt{schedule.json} \\
+\texttt{generate-urls.py}      & Zufallsstichprobe aus ZIM              & ZIM-Datei $\rightarrow$ \texttt{urls.txt} \\
+\texttt{zimsrv.py}             & Wikipedia in der Simulation ausliefern & ZIM-Datei $\rightarrow$ HTTP-Antworten \\
+\texttt{newnym.py}             & Frischen Tor-Circuit erzwingen         & Tor-Control-Port $\rightarrow$ NEWNYM-Signal \\
+\texttt{pcap\_to\_npz.py}      & Pcaps in WFlib-Format konvertieren     & Monitor-Pcaps, \texttt{schedule.json} $\rightarrow$ \texttt{.npz}, \texttt{labels.json} \\
+\texttt{run\_df.sh}            & Training und Auswertung steuern        & \texttt{.npz} $\rightarrow$ Modell, Metriken \\
+\texttt{report.py}             & Ergebnis-JSON aggregieren              & Ergebnis-JSON $\rightarrow$ \texttt{ExperimentLogs.csv} \\
 \hline
-\end{tabular}
+\end{tabularx}
 \end{table}
 
 Die Aufteilung in mehrere kleine, voneinander unabhängige Skripte erlaubt es, einzelne Phasen der Pipeline gezielt erneut auszuführen, ohne den vorgelagerten und sehr zeitintensiven Simulationslauf zu wiederholen.
