@@ -55,18 +55,18 @@ Die eigens entwickelten Skripte sind in Tabelle~\ref{tab:werkzeugkette_skripte} 
 \footnotesize
 \caption{Eigens entwickelte Pipeline-Skripte mit Aufgabe und Datenfluss.}
 \label{tab:werkzeugkette_skripte}
-\begin{tabularx}{\textwidth}{l X X}
+\begin{tabularx}{\textwidth}{l >{\raggedright\arraybackslash}p{4cm} >{\raggedright\arraybackslash}X}
 \hline
-Skript & Aufgabe & Datenfluss (Eingabe $\rightarrow$ Ausgabe) \\
+Skript & Aufgabe & Datenfluss \\
 \hline
-\texttt{shadowctl.py}          & Lebenszyklus eines Experiments         & CLI-Optionen $\rightarrow$ Logs, Ergebnis-Bundle \\
-\texttt{generate-wf-config.py} & Monitore und Webserver eintragen       & Tornettools-Config, \texttt{urls.txt} $\rightarrow$ \texttt{shadow.config.yaml}, \texttt{schedule.json} \\
-\texttt{generate-urls.py}      & Zufallsstichprobe aus ZIM              & ZIM-Datei $\rightarrow$ \texttt{urls.txt} \\
-\texttt{zimsrv.py}             & Wikipedia in der Simulation ausliefern & ZIM-Datei $\rightarrow$ HTTP-Antworten \\
-\texttt{newnym.py}             & Frischen Tor-Circuit erzwingen         & Tor-Control-Port $\rightarrow$ NEWNYM-Signal \\
-\texttt{pcap\_to\_npz.py}      & Pcaps in WFlib-Format konvertieren     & Monitor-Pcaps, \texttt{schedule.json} $\rightarrow$ \texttt{.npz}, \texttt{labels.json} \\
-\texttt{run\_df.sh}            & Training und Auswertung steuern        & \texttt{.npz} $\rightarrow$ Modell, Metriken \\
-\texttt{report.py}             & Ergebnis-JSON aggregieren              & Ergebnis-JSON $\rightarrow$ \texttt{ExperimentLogs.csv} \\
+\texttt{shadowctl.py}          & Lebenszyklus eines Experiments         & CLI-Optionen \newline $\rightarrow$ Logs, Ergebnis-Bundle \\
+\texttt{generate-wf-config.py} & Monitore und Webserver eintragen       & Tornettools-Config, \texttt{urls.txt} \newline $\rightarrow$ \texttt{shadow.config.yaml}, \texttt{schedule.json} \\
+\texttt{generate-urls.py}      & Zufallsstichprobe aus ZIM              & ZIM-Datei \newline $\rightarrow$ \texttt{urls.txt} \\
+\texttt{zimsrv.py}             & Wikipedia in der Simulation ausliefern & ZIM-Datei \newline $\rightarrow$ HTTP-Antworten \\
+\texttt{newnym.py}             & Frischen Tor-Circuit erzwingen         & Tor-Control-Port \newline $\rightarrow$ NEWNYM-Signal \\
+\texttt{pcap\_to\_npz.py}      & Pcaps in WFlib-Format konvertieren     & Monitor-Pcaps, \texttt{schedule.json} \newline $\rightarrow$ \texttt{.npz}, \texttt{labels.json} \\
+\texttt{run\_df.sh}            & Training und Auswertung steuern        & \texttt{.npz} \newline $\rightarrow$ Modell, Metriken \\
+\texttt{report.py}             & Ergebnis-JSON aggregieren              & Ergebnis-JSON \newline $\rightarrow$ \texttt{ExperimentLogs.csv} \\
 \hline
 \end{tabularx}
 \end{table}
