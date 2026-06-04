@@ -98,14 +98,14 @@ Dazu zählen die Skalierung des simulierten Netzwerks (1\,\%), der Simulator-See
 Die Durchführung erfolgt in vier aufeinander aufbauenden Stufen.
 In einer ersten Stufe wird die Werkzeugkette mit den kleinen Closed-World-Experimenten validiert, weil deren kurze Laufzeit ein schnelles Feedback zu Fehlern in Simulation, Datenkonvertierung und Klassifikator-Anbindung erlaubt.
 In einer zweiten Stufe werden dieselben Padding-Modi auf die grössere Closed-World übertragen, um den Effekt unter realistischeren Bedingungen zu prüfen.
-In einer dritten Stufe wird das Open-World-Szenario gemessen, ebenfalls über alle drei Padding-Modi, um den Padding-Effekt auch unter unbekanntem Hintergrundverkehr zu prüfen.
-In einer vierten Stufe wird ergänzend Tamaraw als alternatives Verteidigungsverfahren über die drei Klassenzahlen 20, 80 und 280 (Open-World) gemessen, um den in Tor ausgerollten Padding-Modi einen Referenzpunkt mit aufwendigerem Schema gegenüberzustellen.
+In einer dritten Stufe wird das Open-World-Szenario gemessen, ebenfalls über alle drei Padding-Modi, um den Padding-Effekt auch mit nicht überwachten Webseiten zu prüfen.
+In einer vierten Stufe wird ergänzend Tamaraw als alternatives, nicht implementiertes Verteidigungsverfahren über die drei Klassenzahlen 20, 80 und 280 (Open-World) gemessen.
 Jeder Durchlauf besteht aus den Schritten Simulation in Shadow, Konvertierung der pcap-Aufzeichnungen in das WFlib-Format und Training sowie Test des \gls{df}-Klassifikators auf einer festen Datenaufteilung.
 
 \subsection{Grenzen der gewählten Methode}
 \label{sec:experiment_grenzen}
 
-Die Methode hat zwei strukturelle Grenzen, die hier ehrlich benannt werden.
+Die Methode hat zwei strukturelle Grenzen:
 Erstens reduziert die Skalierung des Netzwerks auf 1\,\% die Pfaddiversität gegenüber dem Live-Netzwerk, was die Verkehrsmuster einer Klasse homogener und damit leichter klassifizierbar macht~\cite{jansen2023data}.
 Zweitens wird der Tor Browser durch ein gepatchtes \texttt{wget2} ersetzt, das zwar denselben Satz an Ressourcen abruft, jedoch JavaScript und Browser-spezifische Verkehrsmuster nicht reproduziert~\cite{jansen2023data}.
 Beide Einschränkungen werden bei der Interpretation der Resultate in Kapitel~\ref{cha:diskussion} berücksichtigt.
