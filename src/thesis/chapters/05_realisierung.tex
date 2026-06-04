@@ -1,14 +1,6 @@
 \chapter{Realisierung}
 \label{cha:realisierung}
 
-In diesem Kapitel wird beschrieben, wie der in Kapitel~\ref{cha:methoden} skizzierte Versuchsaufbau konkret umgesetzt wurde.
-Der Schwerpunkt liegt auf der Dokumentation der getroffenen Entscheidungen und ihrer Begründung, sodass die Experimente unabhängig nachvollzogen und auch kritisch hinterfragt werden können.
-Die Reihenfolge der Abschnitte orientiert sich an dem Datenfluss der Pipeline: von der Konfiguration der \gls{tor}-Simulation über die Bereitstellung der Webinhalte, die Aufzeichnung des Datenverkehrs und die Aufbereitung der Daten bis hin zum Training und Test des Klassifikators.
-
-Sämtliche Skripte, Konfigurationsvorlagen und Auswertungs-Notebooks der hier beschriebenen Pipeline sind im begleitenden Repository\footnote{\url{https://github.com/OliverStaub/BachelorThesis}} öffentlich verfügbar.
-Im Folgenden werden ausschliesslich diejenigen Bestandteile dokumentiert, die für das Verständnis der Designentscheidungen und ihrer Wirkung auf die Messresultate notwendig sind.
-Implementierungsdetails, die für die Reproduktion durchgeführt, aber für die Argumentation nicht zentral sind, befinden sich im Repository und werden im Text nur dort genannt, wo sie eine Entscheidung tragen.
-
 \section{Übersicht des Versuchsaufbaus}
 \label{sec:realisierung_uebersicht}
 
