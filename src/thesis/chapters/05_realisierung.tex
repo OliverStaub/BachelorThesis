@@ -59,14 +59,14 @@ Die eigens entwickelten Skripte sind in Tabelle~\ref{tab:werkzeugkette_skripte} 
 \hline
 Skript & Aufgabe \\
 \hline
-\texttt{shadowctl.py}          & Steuert per \gls{ssh} den Lebenszyklus eines Experiments, vom Start des Simulationslaufs über die Fortschrittsüberwachung bis zur Rückübertragung der \glspl{pcap} und Ergebnisdateien auf die Arbeitsstation. \\
-\texttt{generate-wf-config.py} & Ergänzt die von Tornettools erzeugte \texttt{shadow.config.yaml} um Monitor- und Webserver-Hosts, schreibt die Padding-Einstellungen in die torrc-Vorlagen und erzeugt die \texttt{schedule.json} mit den geplanten Seitenbesuchen. \\
-\texttt{generate-urls.py}      & Zieht eine Zufallsstichprobe von Wikipedia-Artikeln aus der ZIM-Datei und schreibt die für Shadow zulässigen Artikelnamen nach \texttt{urls.txt}. \\
-\texttt{zimsrv.py}             & Minimaler HTTP-Server auf Basis der \texttt{libzim}, der die Wikipedia-Artikel innerhalb der Simulation an die Monitor-Hosts ausliefert. \\
-\texttt{newnym.py}             & Sendet ein NEWNYM-Signal an den Tor-Control-Port, um vor jedem Seitenbesuch einen frischen Circuit zu erzwingen. \\
-\texttt{pcap\_to\_npz.py}      & Parst die Monitor-\glspl{pcap} mit \texttt{dpkt}, ordnet die Pakete anhand der \texttt{schedule.json} den Seitenbesuchen zu und konvertiert sie in Richtungssequenzen im WFlib-Format. \\
-\texttt{run\_df.sh}            & Steuert den End-to-End-Ablauf aus Datensatz-Split, Training und Test des \gls{df}-Klassifikators und protokolliert Modellgewichte sowie Metriken. \\
-\texttt{report.py}             & Aggregiert die Ergebnisdateien einzelner Experimente zu einer Zeile in \texttt{ExperimentLogs.csv} und erlaubt damit den direkten Vergleich aller Läufe. \\
+\texttt{shadowctl.py}          & Lebenszyklus eines Experiments \\
+\texttt{generate-wf-config.py} & Monitore und Webserver eintragen \\
+\texttt{generate-urls.py}      & Zufallsstichprobe aus ZIM \\
+\texttt{zimsrv.py}             & Wikipedia in der Simulation ausliefern \\
+\texttt{newnym.py}             & Frischen Tor-Circuit erzwingen \\
+\texttt{pcap\_to\_npz.py}      & Pcaps in WFlib-Format konvertieren \\
+\texttt{run\_df.sh}            & Training und Auswertung steuern \\
+\texttt{report.py}             & Ergebnis-JSON aggregieren \\
 \hline
 \end{tabularx}
 \end{table}
