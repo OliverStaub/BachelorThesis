@@ -95,13 +95,10 @@ Dazu zählen die Skalierung des simulierten Netzwerks (1\,\%), der Simulator-See
 \subsection{Versuchsplan und Ausführungsreihenfolge}
 \label{sec:experiment_plan}
 
-Der Versuchsplan folgt einem faktoriellen Design über die unabhängigen Variablen Padding-Modus und Klassenanzahl, ergänzt um eine separate Bedingung zum Welt-Szenario.
-Die konkreten Versuchsdurchläufe und ihre Parameter sind in Kapitel~\ref{cha:realisierung} dokumentiert, das vorliegende Kapitel beschränkt sich auf die Ausführungslogik.
-
 Die Durchführung erfolgt in drei aufeinander aufbauenden Stufen.
 In einer ersten Stufe wird die Werkzeugkette mit den kleinen Closed-World-Experimenten validiert, weil deren kurze Laufzeit ein schnelles Feedback zu Fehlern in Simulation, Datenkonvertierung und Klassifikator-Anbindung erlaubt.
 In einer zweiten Stufe werden dieselben Padding-Modi auf die grössere Closed-World übertragen, um den Effekt unter realistischeren Bedingungen zu prüfen.
-In einer dritten Stufe wird ergänzend das Open-World-Szenario gemessen, das ausschliesslich ohne Padding ausgeführt wird, weil die Hypothese H3 sich auf den Vergleich der Szenarien bezieht und nicht auf eine weitere Padding-Variation.
+In einer dritten Stufe wird ergänzend das Open-World-Szenario gemessen.
 Jeder Durchlauf besteht aus den Schritten Simulation in Shadow, Konvertierung der pcap-Aufzeichnungen in das WFlib-Format und Training sowie Test des \gls{df}-Klassifikators auf einer festen Datenaufteilung.
 
 \subsection{Grenzen der gewählten Methode}
