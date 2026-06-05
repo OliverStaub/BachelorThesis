@@ -162,6 +162,9 @@ Abbildungen~\ref{fig:eval_confusion_baseline20} und~\ref{fig:eval_confusion_comp
 In der Baseline konzentrieren sich die Vorhersagen weitgehend auf die Diagonale.
 Mit aktiviertem Padding (ON) wird die Diagonale schwächer und es treten leicht häufiger Verwechslungen zwischen benachbarten Klassen auf.
 Die qualitative Form der Konfusion bleibt jedoch erhalten und der Klassifikator versagt nicht systematisch auf einzelnen Klassen.
+Abbildungen~\ref{fig:eval_confusion_baseline80} und~\ref{fig:eval_confusion_comparison80} zeigen dieselbe Gegenüberstellung für 80 Klassen.
+Die Diagonale ist gegenüber dem 20-Klassen-Lauf insgesamt schwächer ausgeprägt, was dem schwierigeren Klassifikationsproblem entspricht.
+Auch hier bleibt der qualitative Unterschied zwischen OFF und ON klein und betrifft vor allem die Schärfe einzelner Diagonalpunkte und nicht systematische Falschzuordnungen.
 
 \begin{figure}[H]
     \centering
@@ -182,6 +185,13 @@ Die qualitative Form der Konfusion bleibt jedoch erhalten und der Klassifikator 
     \includegraphics[width=0.55\textwidth]{../../confusion_baseline80.pdf}
     \caption{Konfusionsmatrix der Baseline mit 80 Klassen. Eigene Darstellung.}
     \label{fig:eval_confusion_baseline80}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{../../confusion_comparison_80.pdf}
+    \caption{Konfusionsmatrizen OFF (links) und ON (rechts) bei 80 Klassen. Eigene Darstellung.}
+    \label{fig:eval_confusion_comparison80}
 \end{figure}
 
 \subsection{Reduced Padding}

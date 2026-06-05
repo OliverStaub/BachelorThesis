@@ -87,6 +87,20 @@ Drittens das Welt-Szenario mit den Ausprägungen Closed-World und Open-World.
 
 \paragraph{Abhängige Variablen}
 Gemessen werden Accuracy, Precision, Recall und F1-Wert auf einer zurückgehaltenen Testmenge.
+Diese vier Klassifikationsmetriken sind in der \gls{wf}-Literatur etabliert und ergänzen sich gegenseitig.
+Sie werden aus den vier Grundgrössen True Positive (TP, korrekt als überwacht klassifiziert), True Negative (TN, korrekt als unüberwacht klassifiziert), False Positive (FP, fälschlich als überwacht klassifiziert) und False Negative (FN, fälschlich als unüberwacht klassifiziert) berechnet:
+
+\begin{align}
+\mathrm{Accuracy}  &= \frac{TP + TN}{TP + TN + FP + FN} \\
+\mathrm{Precision} &= \frac{TP}{TP + FP} \\
+\mathrm{Recall}    &= \frac{TP}{TP + FN} \\
+\mathrm{F1}        &= 2 \cdot \frac{\mathrm{Precision} \cdot \mathrm{Recall}}{\mathrm{Precision} + \mathrm{Recall}}
+\end{align}
+
+Accuracy gibt den Anteil korrekt klassifizierter Beispiele an und ist bei balancierten Klassen aussagekräftig, was dem Closed-World-Szenario dieser Arbeit entspricht.
+Precision misst den Anteil tatsächlich überwachter Seiten unter den als überwacht klassifizierten und ist im Open-World-Szenario relevant, weil dort eine niedrige False-Positive-Rate gefordert ist.
+Recall misst den Anteil der erkannten überwachten Seiten an allen tatsächlich überwachten und beschreibt die Erfassungsrate des Angreifers.
+Der F1-Wert ist das harmonische Mittel aus Precision und Recall und bleibt auch bei stark unbalancierten Klassen wie im Open-World-Szenario ein robustes Mass.
 
 \paragraph{Konstant gehaltene Rahmenbedingungen}
 Alle übrigen Parameter bleiben über die Experimente einer Vergleichsgruppe konstant.

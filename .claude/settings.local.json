@@ -63,7 +63,17 @@
       "Bash(/opt/homebrew/bin/python3.13 -m venv /tmp/perfmon-venv)",
       "Bash(/tmp/perfmon-venv/bin/pip install *)",
       "Bash(/tmp/perfmon-venv/bin/python *)",
-      "Bash(ssh-add -l)"
+      "Bash(ssh-add -l)",
+      "Bash(ls -d venv)",
+      "Bash(ls wflib/datasets/)",
+      "Bash(ls wflib/checkpoints/)",
+      "Bash(./venv/bin/python3 plot_confusion.py --dataset ExpBaseline20 --output ../../confusion_baseline20.pdf)",
+      "Bash(brew --prefix expat)",
+      "Bash(DYLD_LIBRARY_PATH=/opt/homebrew/opt/expat/lib ./venv/bin/python3 -c \"import matplotlib.pyplot; print\\('matplotlib OK'\\)\")",
+      "Bash(export DYLD_LIBRARY_PATH=/opt/homebrew/opt/expat/lib)",
+      "Bash(./venv/bin/python3 plot_confusion.py --dataset ExpBaseline80 --output ../../confusion_baseline80.pdf)",
+      "Bash(./venv/bin/python3 plot_confusion.py --dataset ExpBaseline20 ExpPadding20 --labels \"Padding OFF\" \"Padding ON\" --output ../../confusion_comparison_20.pdf)",
+      "Bash(./venv/bin/python3 plot_confusion.py --dataset ExpBaseline80 ExpPadding80 --labels \"Padding OFF\" \"Padding ON\" --output ../../confusion_comparison_80.pdf)"
     ]
   }
 }
