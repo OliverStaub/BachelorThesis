@@ -159,8 +159,11 @@ Die Begründung der Wahl genau dieser drei Modi ist in Abschnitt~\ref{sec:konzep
 
 \subsection{Wikipedia als Datenquelle}
 
-Für die Webseiten wird die einfache englische Variante (Simple English) von Wikipedia in einer ZIM-Datei verwendet.
+Für die Webseiten wird die einfache englische Variante von Wikipedia in einer ZIM-Datei verwendet.
 ZIM ist ein offenes, vom Kiwix-Projekt definiertes Containerformat, das eine vollständige Webseiten-Sammlung in einer einzigen Datei zusammenfasst und Offline-Zugriff erlaubt\footnote{\url{https://kiwix.org} (Zugriff: 2026-06-05).}.
+
+Verwendet wird in dieser Arbeit ausschliesslich \texttt{wikipedia\_en\_simple\_all\_maxi}\footnote{ZIM-Dateien: \url{https://download.kiwix.org/zim/wikipedia/} (Zugriff: 2026-04-05).}.
+Diese Variante enthält Bilder und damit deutlich vielfältigere Webseiten als die bildlose Version, ist aber gleichzeitig klein genug, um vollständig in den Speicher des Servers zu passen.
 
 \begin{table}[H]
 \centering
@@ -170,15 +173,12 @@ ZIM ist ein offenes, vom Kiwix-Projekt definiertes Containerformat, das eine vol
 \hline
 Datei & Grösse & Bemerkung \\
 \hline
-\texttt{wikipedia\_en\_simple\_all\_nopic} & 921~MB & Simple English ohne Bilder \\
-\texttt{wikipedia\_en\_simple\_all\_maxi} & 3.2~GB & Simple English mit Bildern \\
-\texttt{wikipedia\_en\_all\_maxi} & 115~GB & Vollständige englische Wikipedia \\
+\texttt{wikipedia\_en\_simple\_all\_nopic} & 921~MB & Einfaches Englisch ohne Bilder \\
+\texttt{wikipedia\_en\_simple\_all\_maxi} & 3.2~GB & Einfaches Englisch mit Bildern \\
+\texttt{wikipedia\_en\_all\_maxi} & 115~GB & Vollständiges englisches Wikipedia \\
 \hline
 \end{tabular}
 \end{table}
-
-Verwendet wird in dieser Arbeit ausschliesslich \texttt{wikipedia\_en\_simple\_all\_maxi}\footnote{Bezugsquelle der ZIM-Dateien: \url{https://download.kiwix.org/zim/wikipedia/} (Zugriff: 2026-06-05).}.
-Diese Variante enthält Bilder und damit deutlich vielfältigere Verkehrsmuster als die bildlose Version, ist aber gleichzeitig klein genug, um vollständig in den Speicher des Servers zu passen.
 
 \subsection{Webserver: \texttt{zimsrv.py}}
 \label{sec:realisierung_zimsrv}
@@ -187,12 +187,12 @@ Für den Webserver wurden mehrere Varianten geprüft.
 
 \paragraph{ZIMply}
 In der Arbeit von Jansen und Wails wird \texttt{ZIMply} als Webserver für ZIM-Dateien verwendet~\cite{jansen2023data}.
-Die Bibliothek wird seit mehreren Jahren nicht mehr gepflegt und unterstützt das in den aktuellen Kiwix-Dumps verwendete ZIM-Format nicht mehr zuverlässig, was bei eigenen Tests zu Fehlern führte.
+Die Bibliothek wurde schon länger nicht mehr aktualisiert funktionierte bei unseren Tests nicht zuverlässig.
 
 \paragraph{kiwix-serve}
-\texttt{kiwix-serve} ist die offizielle Referenzimplementierung des Kiwix-Projekts\footnote{\url{https://github.com/kiwix/kiwix-tools} (Zugriff: 2026-06-05).} und wäre funktional die ideale Wahl.
+Kiwix-Serve ist die offizielle Referenzimplementierung des Kiwix-Projekts\footnote{\url{https://github.com/kiwix/kiwix-tools} (Zugriff: 2026-06-05).} und wäre funktional die ideale Wahl.
 Es wird jedoch als statisch gelinkte Binärdatei ausgeliefert.
-Eine statisch gelinkte Binärdatei kann der Shim von Shadow nicht abfangen, was den Einsatz erschwert.
+Eine statisch gelinkte Binärdatei kann von Shadow nicht ausgeführt werden, was den Einsatz erschwert.
 
 \paragraph{\texttt{zimsrv.py}}
 Aus diesen Gründen wurde im Rahmen dieser Arbeit ein eigener, schlanker Webserver \texttt{zimsrv.py} mit etwa 125~Zeilen Python entwickelt.
@@ -201,23 +201,12 @@ Die Implementierung erfolgte iterativ mit Claude Code (vgl.\ Abschnitt~\ref{sec:
 Da der Server in Python läuft, ist er per Definition dynamisch gelinkt und damit für Shadow geeignet.
 Pro Seite (also pro Port) wird ein separater Prozess gestartet, was die spätere Zuordnung von Verkehr zu Klasse über den Zielport erlaubt.
 
-\subsection{Auswahl der URLs}
-\label{sec:realisierung_urls}
-
-Die Liste der zu besuchenden Seiten wird zufällig aus der ZIM-Datei gezogen\footnote{\texttt{generate-urls.py}}, wobei Weiterleitungen aufgelöst und nur eigentliche Artikel berücksichtigt werden.
-Zugelassen sind ausserdem nur Titel, die ausschliesslich aus alphanumerischen Zeichen, Unterstrich, Bindestrich und Punkt bestehen.
-Diese Einschränkung ist notwendig, weil Shadows YAML-Parser, die HTTP-URL und die Shell-Expansion auf den Monitor-Hosts unterschiedlich auf Sonderzeichen wie Doppelpunkt, Anführungszeichen oder Klammern reagieren und einzelne Bestandteile der Pipeline andernfalls unbemerkt scheitern.
-
-Pro Zeile enthält die erzeugte Datei \texttt{urls.txt} die IP des Webservers, den für die Seite verwendeten Port und die vollständige URL.
-Die Datei wird von \texttt{generate-wf-config.py} eingelesen und bestimmt, welche Seiten den Monitor-Hosts zugewiesen werden.
-Ein Beispielauszug ist in Anhang~\ref{app:listing_urls} abgedruckt.
-
 \section{Monitor-Knoten und Verkehrserfassung}
 \label{sec:realisierung_monitore}
 
 \subsection{Webclient: gepatchtes \texttt{wget2}}
 
-Der Tor Browser kann in Shadow nicht ausgeführt werden, da er auf eine grafische Oberfläche und JavaScript-Engines angewiesen ist, die Shadow nicht unterstützt.
+Der Tor Browser kann in Shadow nicht ausgeführt werden, da er auf eine grafische Oberfläche und JavaScript-Engines angewiesen ist.
 In der vorliegenden Arbeit wird der von Jansen und Wails entwickelte \gls{socks}-Patch für \texttt{wget2} verwendet (vgl.\ Abschnitt~\ref{sec:standtechnik_wget2}).
 Er wird aus dem öffentlichen Artefakt-Repository\footnote{\url{https://github.com/torproject/explainwf-popets2023}} bezogen, auf einen festgehaltenen \texttt{wget2}-Commit angewendet und einmalig auf dem Server gebaut\footnote{\texttt{setup-wf-server.sh}}.
 
