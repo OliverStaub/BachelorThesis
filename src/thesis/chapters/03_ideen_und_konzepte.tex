@@ -115,9 +115,13 @@ Die inhaltliche Identifikation nutzt den TCP-Zielport als Label.
 Der lokale Wikipedia-Spiegel (Abschnitt~\ref{sec:konzepte_inhaltsquelle}) stellt jede Seite auf einem eigenen Port bereit (Seite~1 auf Port~8000, Seite~2 auf Port~8001 und so fort), wobei alle Ports auf demselben Host laufen.
 Da zwischen Port und Inhalt eine eineindeutige Beziehung besteht, benennt der Port die Webseite eindeutig.
 
+Diese Zuordnung muss bei der Simulationsplanung festgehalten werden, weil sie aus dem Monitor-Pcap allein nicht rekonstruierbar ist.
+Das Monitor-Pcap zeichnet ausschliesslich den verschlüsselten Verkehr zum Tor-Guard auf Port~9001 auf, der eigentliche Zielport zum Wikipedia-Spiegel liegt innerhalb der Tor-Zellen und ist erst am Exit-Relay wieder im Klartext lesbar.
+Damit entspricht der Aufbau dem realistischen Angreifermodell: dem passiven Beobachter zwischen Monitor und Guard sind weder Ziel-IP noch Zielport zugänglich, und genau diese Information liefert die Plandatei dem Experimentator als Ground Truth.
+
 Beide Informationen werden beim Aufbau der Simulation in einer Plandatei \texttt{schedule.json} (vgl.\ Abschnitt~\ref{sec:realisierung_schedule}) zusammengeführt, die pro Monitor und Besuch die Startzeit und den vorgesehenen Zielport enthält.
 Bei der Auswertung wird der \gls{pcap}-Strom an den Zeitgrenzen der Plandatei zerlegt und der hinterlegte Port als Klassenlabel übernommen.
-Eine Markierung im Tor-Datenstrom selbst oder eine gepatchte Tor-Version, wie sie Jansen und Wails einsetzen~\cite{jansen2023data}, ist damit nicht erforderlich.
+Eine Markierung im Tor-Datenstrom selbst oder eine gepatchte Tor-Version, wie sie Jansen und Wails einsetzen~\cite{jansen2023data}, wird damit umgangen.
 
 
 \section{Circuit-Isolation per NEWNYM}
