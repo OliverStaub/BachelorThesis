@@ -1,6 +1,6 @@
 <mxfile host="Electron" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/26.2.15 Chrome/134.0.6998.205 Electron/35.2.1 Safari/537.36" version="26.2.15" pages="3">
   <diagram name="Page-1" id="gUtYHLV5G_G_Fh9yZYu5">
-    <mxGraphModel dx="1273" dy="875" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="328" dy="875" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -279,7 +279,7 @@
     </mxGraphModel>
   </diagram>
   <diagram id="TamarawSetupDiagramId" name="Tamaraw Setup">
-    <mxGraphModel dx="1566" dy="1077" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="582" dy="1556" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -316,21 +316,20 @@
         <mxCell id="TAM-bridge-label" value="&lt;span style=&quot;font-weight: normal;&quot;&gt;Tamaraw Bridge&lt;/span&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontStyle=1;" parent="1" vertex="1">
           <mxGeometry x="290" y="740" width="90" height="20" as="geometry" />
         </mxCell>
-        <mxCell id="TAM-bridge-tor" value="Tor Relay" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d79b00;" parent="1" vertex="1">
+        <mxCell id="TAM-bridge-tor" value="Tor Relay (Guard)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d79b00;" parent="1" vertex="1">
           <mxGeometry x="214" y="774.5" width="103" height="41" as="geometry" />
         </mxCell>
-        <mxCell id="eZEdEBmBwL4kGt83_MKK-2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="TAM-bridge-pt" target="TAM-bridge-tor">
+        <mxCell id="eZEdEBmBwL4kGt83_MKK-2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="TAM-bridge-pt" target="TAM-bridge-tor" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="TAM-bridge-pt" value="obfs4proxy_tamaraw" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d79b00;" parent="1" vertex="1">
           <mxGeometry x="195.25" y="835" width="140" height="35" as="geometry" />
         </mxCell>
-        <mxCell id="TAM-e-bridgetor-guard" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;strokeWidth=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;" parent="1" source="TAM-bridge-tor" edge="1">
+        <mxCell id="TAM-e-bridgetor-middle" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;strokeWidth=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="TAM-bridge-tor" target="TAM-middle">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="264" y="789" as="sourcePoint" />
-            <mxPoint x="266" y="690" as="targetPoint" />
             <Array as="points">
-              <mxPoint x="266" y="690" />
+              <mxPoint x="265" y="720" />
+              <mxPoint x="401" y="720" />
             </Array>
           </mxGeometry>
         </mxCell>
@@ -340,7 +339,7 @@
         <mxCell id="TAM-monitor-label" value="&lt;span style=&quot;font-weight: normal;&quot;&gt;Monitor clients&lt;/span&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontStyle=1;" parent="1" vertex="1">
           <mxGeometry x="341" y="940" width="90" height="20" as="geometry" />
         </mxCell>
-        <mxCell id="es6P3vnAjnfAW5F-RWiN-7" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="TAM-tor-client" target="TAM-bridge-pt">
+        <mxCell id="es6P3vnAjnfAW5F-RWiN-7" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="TAM-tor-client" target="TAM-bridge-pt" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="TAM-tor-client" value="Tor Client" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#9673a6;" parent="1" vertex="1">
@@ -393,10 +392,10 @@
         <mxCell id="TAM-pcap" value="PCAP Capture" style="rounded=0;whiteSpace=wrap;html=1;fillColor=light-dark(#f8cfcc, #512d2b);strokeColor=#b85450;" parent="1" vertex="1">
           <mxGeometry x="490" y="880" width="120" height="50" as="geometry" />
         </mxCell>
-        <mxCell id="es6P3vnAjnfAW5F-RWiN-6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="TAM-pcap-src" target="TAM-bridge-pt">
+        <mxCell id="es6P3vnAjnfAW5F-RWiN-6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" parent="1" source="TAM-pcap-src" target="TAM-bridge-pt" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="es6P3vnAjnfAW5F-RWiN-8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fillColor=#f8cecc;strokeColor=#b85450;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" source="TAM-pcap-src" target="TAM-pcap">
+        <mxCell id="es6P3vnAjnfAW5F-RWiN-8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fillColor=#f8cecc;strokeColor=#b85450;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" parent="1" source="TAM-pcap-src" target="TAM-pcap" edge="1">
           <mxGeometry relative="1" as="geometry">
             <mxPoint x="265.4999999999998" y="913" as="sourcePoint" />
             <mxPoint x="490" y="917.5" as="targetPoint" />

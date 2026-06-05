@@ -49,6 +49,20 @@ Der Padding-Modus nimmt drei Ausprägungen an: OFF, ON und Reduced.
 Diese Wahl orientiert sich an den von Tor selbst angebotenen Optionen und erlaubt einen direkten Vergleich mit dem von Kadianakis et al.\ vorgeschlagenen Schema~\cite{kadianakis2021tor}.
 Eine eigene Padding-Maschine wird nicht entwickelt, da das Ziel die Evaluation des produktiv eingesetzten Schemas ist und nicht der Entwurf einer neuen Verteidigung.
 
+\section{Wahl der Tamaraw-Integration}
+\label{sec:konzepte_tamaraw_integration}
+
+Tamaraw ist nicht Bestandteil des regulären Tor-Daemons.
+Im Gegensatz zum produktiv ausgerollten Circuit Padding plant das Tor-Projekt auch keine native Implementierung.
+Tamaraw verzögert reale Zellen systematisch und erreicht in der ursprünglichen Auswertung rund 199\,\% Bandbreiten-Overhead bei zusätzlichem Latenz-Overhead~\cite{cai2014systematic}.
+Beides widerspricht dem expliziten low-latency-Designziel von Tor, das eine Verzögerung realer Anwendungs-Zellen ausschliesst~\cite{kadianakis2021tor}.
+
+Um Tamaraw dennoch in einem Tor-Kontext zu untersuchen, wird das Verfahren als externes Hilfsprogramm zwischen Monitor und Bridge realisiert, das den Zellfluss vor dem Versand abfängt, gemäss Tamaraw-Regelwerk formt und anschliessend wieder an Tor übergibt.
+Die Einbindung erfolgt über Tors Pluggable-Transport-Schnittstelle\footnote{\url{https://spec.torproject.org/pt-spec/}}.
+Ein \gls{pt} ist ein eigenständiges Hilfsprogramm, das der Tor-Daemon vor sich schaltet.
+Jede Tor-Verbindung wird durch das Programm geleitet, das die Bytes vor dem Versand transformieren und beim Empfang zurücktransformieren kann.
+Diese Schnittstelle ist in der Praxis vor allem zur Zensurumgehung (etwa obfs4) im Einsatz, ist aber generisch genug, um beliebige Strom-Transformationen einzuhängen, darunter auch eine WF-Verteidigung.
+
 \section{Wahl des Hintergrundverkehrs}
 \label{sec:konzepte_hintergrundverkehr}
 

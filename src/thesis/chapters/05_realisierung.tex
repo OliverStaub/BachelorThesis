@@ -241,7 +241,7 @@ Abbildung~\ref{fig:tamarawsetup} zeigt die so erweiterte Topologie.
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=\textwidth]{../../images/tamaraw-schema}
+\includegraphics[width=\textwidth]{../../images/Tamaraw-Setup.png}
 \caption{Tamaraw-Variante des Versuchsaufbaus. Gegenüber der Baseline-Topologie aus Abbildung~\ref{fig:shadowsetup} kommt der orange dargestellte Bridge-Knoten \texttt{wfbridge0} hinzu. Der monitor-seitige Tor-Daemon verbindet sich nicht direkt zu einem Guard, sondern über den Bridge-Knoten, dessen Relay-Prozess die geformten Zellen anschliessend regulär in das simulierte Tor-Netzwerk einspeist.}
 \label{fig:tamarawsetup}
 \end{figure}
@@ -249,15 +249,10 @@ Abbildung~\ref{fig:tamarawsetup} zeigt die so erweiterte Topologie.
 \subsection{Bridge-Knoten}
 \label{sec:realisierung_tamaraw_bridge}
 
-Tamaraw ist nicht Bestandteil des regulären Tor-Daemons.
-Im Gegensatz zum produktiv ausgerollten Circuit Padding, plant das Tor-Projekt keine native Implementierung von Tamaraw.
-Der Grund liegt im Designprofil des Verfahrens: Tamaraw verzögert reale Zellen systematisch und erreicht in der ursprünglichen Auswertung rund 199\,\% Bandbreiten-Overhead bei zusätzlichem Latenz-Overhead~\cite{cai2014systematic}.
-Beides widerspricht dem expliziten low-latency-Designziel von Tor, das eine Verzögerung realer Anwendungs-Zellen ausschliesst~\cite{kadianakis2021tor}.
-
-Um Tamaraw dennoch in einem Tor-Kontext untersuchen zu können, wird das Verfahren als \gls{pt} ausserhalb des Tor-Daemons implementiert.
-Pluggable Transports sind ein generischer Mechanismus, mit dem Tor seine Verbindungen über ein modulares Hilfsprogramm leitet, das den Datenstrom vor dem Versand und nach dem Empfang transformiert.
-Sie sind in der Tor-Spezifikation als eigene Protokollebene definiert\footnote{\url{https://spec.torproject.org/pt-spec/}} und werden ursprünglich zur Zensurumgehung eingesetzt, etwa über die obfs4-Familie.
-Im Fall der vorliegenden Arbeit transformiert der \gls{pt} keine Bytes zum Zweck der Zensurumgehung, sondern formt den Zellfluss gemäss Tamaraw-Regelwerk.
+Wie in Abschnitt~\ref{sec:konzepte_tamaraw_integration} begründet, wird Tamaraw als \gls{pt} realisiert.
+Dazu wird der Topologie ein zusätzlicher Bridge-Host hinzugefügt, auf dem zwei Prozesse parallel laufen.
+Der \gls{pt} formt den Zellfluss in Richtung Monitor nach dem Tamaraw-Regelwerk.
+Der lokal mitlaufende Tor-Daemon übernimmt die Guard-Rolle für den Monitor-Circuit und leitet die geformten Zellen anschliessend regulär in das simulierte Tor-Netzwerk weiter.
 
 \subsection{Implementierung: obfs4proxy\_tamaraw}
 \label{sec:realisierung_tamaraw_obfs4}
