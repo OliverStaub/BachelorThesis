@@ -226,32 +226,31 @@ Der vollständige Quelltext des Skripts ist in Anhang~\ref{app:listing_newnym} a
 Die Begründung dieser strikten Circuit-Isolation ist in Abschnitt~\ref{sec:konzepte_newnym} dargestellt.
 
 \subsection{Aufzeichnung des Datenverkehrs}
+\label{sec:realisierung_pcap_capture}
 
 Auf jedem Monitor-Host wird über das Shadow Konfigurationsfeld \texttt{host\_options.pcap\_enabled} der Netzwerkverkehr aufgezeichnet.
 
 Die so aufgezeichneten Pcaps werden im Anschluss an die Simulation per \texttt{shadowctl.py pull-results} auf die Arbeitsstation des Autors übertragen.
-Eine Besonderheit der Shadow-Pcaps ist, dass sie den Linktyp \texttt{101} (Raw IP) anstelle des sonst üblichen \texttt{Ethernet} verwenden.
-Die nachgelagerten Auswertungsskripte berücksichtigen diese Eigenheit (vgl.\ Abschnitt~\ref{sec:realisierung_pcap_to_npz}).
 
 \section{Tamaraw-Variante des Versuchsaufbaus}
 \label{sec:realisierung_tamaraw}
 
-Für die ergänzende Messreihe gegen das Tamaraw-Verfahren (Abschnitt~\ref{sec:wf_defenses_tamaraw}) wird der bisher beschriebene Versuchsaufbau um einen zusätzlichen Bridge-Knoten erweitert.
+Für die ergänzende Messreihe gegen das Tamaraw-Verfahren (Abschnitt~\ref{sec:wf_defenses_tamaraw}) muss der bisher beschriebene Versuchsaufbau um einen zusätzlichen Bridge-Knoten erweitert werden. 
 Die übrigen Bestandteile, also Tor-Netzwerk aus Tornettools, Monitor-Clients, Zim-Server und Pcap-Aufzeichnung, bleiben unverändert.
 Abbildung~\ref{fig:tamarawsetup} zeigt die so erweiterte Topologie.
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{../../images/tamaraw-schema}
-\caption{Tamaraw-Variante des Versuchsaufbaus. Gegenüber der Baseline-Topologie aus Abbildung~\ref{fig:shadowsetup} kommt der orange dargestellte Bridge-Knoten \texttt{wfbridge0} hinzu. Der monitor-seitige Tor-Daemon verbindet sich nicht direkt zu einem Guard, sondern über den \gls{pt} \texttt{obfs4proxy\_tamaraw} zu diesem Bridge-Knoten, dessen Relay-Prozess die geformten Zellen anschliessend regulär in das simulierte Tor-Netzwerk einspeist.}
+\caption{Tamaraw-Variante des Versuchsaufbaus. Gegenüber der Baseline-Topologie aus Abbildung~\ref{fig:shadowsetup} kommt der orange dargestellte Bridge-Knoten \texttt{wfbridge0} hinzu. Der monitor-seitige Tor-Daemon verbindet sich nicht direkt zu einem Guard, sondern über den Bridge-Knoten, dessen Relay-Prozess die geformten Zellen anschliessend regulär in das simulierte Tor-Netzwerk einspeist.}
 \label{fig:tamarawsetup}
 \end{figure}
 
-\subsection{Warum überhaupt ein Bridge-Knoten}
+\subsection{Bridge-Knoten}
 \label{sec:realisierung_tamaraw_bridge}
 
 Tamaraw ist nicht Bestandteil des regulären Tor-Daemons.
-Im Gegensatz zum produktiv ausgerollten Circuit Padding, das als generisches Padding-Maschinen-Framework direkt im Tor-Quellcode verankert ist~\cite{kadianakis2021tor}, sieht das Tor-Projekt für Tamaraw keine native Implementierung vor.
+Im Gegensatz zum produktiv ausgerollten Circuit Padding, plant das Tor-Projekt keine native Implementierung von Tamaraw.
 Der Grund liegt im Designprofil des Verfahrens: Tamaraw verzögert reale Zellen systematisch und erreicht in der ursprünglichen Auswertung rund 199\,\% Bandbreiten-Overhead bei zusätzlichem Latenz-Overhead~\cite{cai2014systematic}.
 Beides widerspricht dem expliziten low-latency-Designziel von Tor, das eine Verzögerung realer Anwendungs-Zellen ausschliesst~\cite{kadianakis2021tor}.
 
