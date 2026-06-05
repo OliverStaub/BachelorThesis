@@ -220,17 +220,14 @@ Der erste Besuch beginnt nach einer Aufwärmphase von 1200~Sekunden (20~Minuten)
 \subsection{Circuit-Isolation per NEWNYM}
 \label{sec:realisierung_newnym}
 
-Damit jeder Seitenbesuch über einen frischen Circuit läuft, plant \texttt{generate-wf-config.py} jeweils eine Sekunde vor einem \texttt{wget2}-Aufruf einen \texttt{newnym.py}-Prozess in der \texttt{shadow.config.yaml} ein (vgl.\ Listing~\ref{lst:shadow_monitor}, Zeitpunkte 1229 und 1230).
+Damit jeder Seitenbesuch über einen frischen Circuit läuft, plant \texttt{generate-wf-config.py} jeweils eine Sekunde vor einem wget2-Aufruf einen \texttt{newnym.py}-Prozess in der \texttt{shadow.config.yaml} ein .
 Der vollständige Quelltext des Skripts ist in Anhang~\ref{app:listing_newnym} abgedruckt.
 
 Die Begründung dieser strikten Circuit-Isolation ist in Abschnitt~\ref{sec:konzepte_newnym} dargestellt.
 
 \subsection{Aufzeichnung des Datenverkehrs}
 
-Auf jedem Monitor-Host wird das Tor-typische Bedrohungsmodell eines lokalen Beobachters mit einer Pcap-Aufzeichnung an der Netzwerkschnittstelle umgesetzt~\cite{jansen2023data}.
-Shadow erlaubt es, die Aufzeichnung pro Host über das Konfigurationsfeld \texttt{host\_options.pcap\_enabled} zu aktivieren.
-Aufgezeichnet wird die Schnittstelle \texttt{eth0} und nicht das Loopback-Interface \texttt{lo}, da nur \texttt{eth0} den Verkehr zwischen Monitor und Eingangsknoten enthält.
-Loopback-Verkehr ist in einem Shadow-Setup auf den lokalen \gls{tor}-Prozess beschränkt und enthält bereits den entschlüsselten Datenstrom, was einem realistischen Bedrohungsmodell widerspräche.
+Auf jedem Monitor-Host wird über das Shadow Konfigurationsfeld \texttt{host\_options.pcap\_enabled} der Netzwerkverkehr aufgezeichnet.
 
 Die so aufgezeichneten Pcaps werden im Anschluss an die Simulation per \texttt{shadowctl.py pull-results} auf die Arbeitsstation des Autors übertragen.
 Eine Besonderheit der Shadow-Pcaps ist, dass sie den Linktyp \texttt{101} (Raw IP) anstelle des sonst üblichen \texttt{Ethernet} verwenden.
