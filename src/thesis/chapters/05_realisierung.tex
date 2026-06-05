@@ -317,21 +317,13 @@ Pro Experiment entstehen eine \texttt{.npz}-Datei mit den Richtungssequenzen sow
 \label{fig:datapipeline}
 \end{figure}
 
-Als Pcap-Bibliothek wird \texttt{dpkt} verwendet.
-
 Für jeden Eintrag der \texttt{schedule.json} wird das Zeitintervall des Besuchs aus dem Pcap geschnitten, Pakete mit der Client-IP als Quelle gelten als ausgehend ($+1$), Pakete mit der Client-IP als Ziel als eingehend ($-1$).
-Die Sequenz wird auf $5000$~Werte normiert (kürzer aufgefüllt, länger abgeschnitten), wie es Sirinam et al.\ für \gls{df} vorschlagen~\cite{sirinam2018deep} und WFlib erwartet.
-Sequenzen mit weniger als zehn Paketen werden als fehlgeschlagene Besuche verworfen.
 Die Klassen-Labels werden aus der \texttt{schedule.json} übernommen und zusammen mit der Umkehrabbildung und der Anzahl der Klassen als \texttt{labels.json} neben der \texttt{.npz}-Datei abgelegt, damit die Ergebnisse später eindeutig den ursprünglichen Wikipedia-Seiten zugeordnet werden können.
-
-Aus den Pcaps werden nur die Paketrichtungen und nicht die Zeitstempel als Merkmale verwendet (Begründung: Abschnitt~\ref{sec:konzepte_features}).
 
 \subsection{Aufteilung in Trainings-, Validierungs- und Testdatensatz}
 
 Die WFlib-Komponente \texttt{dataset\_split.py} teilt den Datensatz in 81\,\% Training, 9\,\% Validierung und 10\,\% Test auf.
 Die Aufteilung erfolgt zufällig, durch einen festen Zufalls-Seed wird sie aber reproduzierbar: derselbe Datensatz wird bei jedem Aufruf identisch zerlegt.
-So lassen sich Läufe mit unterschiedlicher Padding-Konfiguration auf exakt denselben Trainings- und Testdaten vergleichen und beobachtete Unterschiede sind ausschliesslich auf das Padding zurückzuführen.
-
 \section{Training und Auswertung des Klassifikators}
 \label{sec:realisierung_training}
 
