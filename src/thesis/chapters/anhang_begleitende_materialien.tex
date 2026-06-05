@@ -78,3 +78,56 @@ Zur Veranschaulichung wird hier exemplarisch die Reproduktion des Closed-World-L
 
 Wer den Trainingsschritt überspringen möchte, kann das mitgelieferte Modell \texttt{src/ml/wflib/checkpoints/ExpBaseline80/DF/max\_f1.pth} mit \texttt{wflib/exp/test.py} direkt auf der Testmenge auswerten.
 Damit lassen sich Accuracy, Precision, Recall und F1-Wert ohne erneutes Training reproduzieren.
+
+\section{Tabellarische Gesamtsicht aller Hauptexperimente}
+\label{app:experimentlogs}
+
+Tabelle~\ref{tab:experimentlogs} fasst die in Kapitel~\ref{cha:diskussion} ausgewerteten zwölf Hauptexperimente in einer einzigen Übersicht zusammen.
+Die Werte entsprechen direkt der Datei \texttt{ExperimentLogs.csv} im Hauptverzeichnis des begleitenden Repositoriums und sind auf die in dieser Arbeit ausgewerteten Spalten reduziert.
+Konstante Spalten wie Netzwerk-Skala, Seed, ZIM-Datei oder Trainings-Epochen werden weggelassen, da sie für alle Hauptexperimente identisch sind (Network Scale 0.010, Seed 1, ZIM \texttt{simple\_en\_maxi\_2026-02}, 30 Trainings-Epochen, Visit-Interval 30~s, Visits pro Seite 150).
+Explorative Läufe (Smoketests, frühe Korrelations- und Tamaraw-Vorversuche) sind nicht enthalten, sind in der vollständigen CSV-Datei aber dokumentiert.
+
+\begin{landscape}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{longtable}{lrlrrrrrrrrrr}
+\caption{Aggregierte Kennzahlen der zwölf Hauptexperimente. Quelle: \texttt{ExperimentLogs.csv}.} \label{tab:experimentlogs} \\
+\hline
+Experiment & Klassen & Padding & Wall-Clock & Samples & /Klasse & Fail\,\% & Pkt/Sample & Acc.\,\% & Prec.\,\% & Rec.\,\% & F1\,\% & Rand.\,\% \\
+\hline
+\endfirsthead
+\multicolumn{13}{l}{\textit{Fortsetzung von Tabelle~\ref{tab:experimentlogs}}} \\
+\hline
+Experiment & Klassen & Padding & Wall-Clock & Samples & /Klasse & Fail\,\% & Pkt/Sample & Acc.\,\% & Prec.\,\% & Rec.\,\% & F1\,\% & Rand.\,\% \\
+\hline
+\endhead
+\hline
+\multicolumn{13}{r}{\textit{Fortsetzung nächste Seite}} \\
+\endfoot
+\hline
+\endlastfoot
+exp-baseline-20       &  20 & OFF     & 07:57 &  3\,000 & 150 & 1.7 &    635 & 92.7 & 93.3 & 92.7 & 92.7 & 5.0 \\
+exp-padding-20        &  20 & ON      & 08:16 &  3\,000 & 150 & 1.5 &    638 & 83.3 & 84.2 & 83.3 & 82.8 & 5.0 \\
+exp-reduced-20        &  20 & Reduced & 08:18 &  3\,000 & 150 & 1.9 &    611 & 86.7 & 88.1 & 86.7 & 86.3 & 5.0 \\
+exp-tamaraw-20v2      &  20 & Tamaraw & 08:19 &  3\,000 & 150 & 1.6 & 5\,000 & 39.3 & 50.7 & 39.3 & 38.6 & 5.0 \\
+exp-baseline-80       &  80 & OFF     & 15:48 & 12\,000 & 150 & 4.4 &    583 & 82.4 & 81.8 & 82.4 & 81.4 & 1.2 \\
+exp-padding-80        &  80 & ON      & 16:01 & 12\,000 & 150 & 4.5 &    601 & 78.6 & 78.5 & 78.6 & 76.9 & 1.2 \\
+exp-reduced-80        &  80 & Reduced & 15:39 & 12\,000 & 150 & 4.1 &    591 & 77.5 & 76.7 & 77.5 & 76.2 & 1.2 \\
+exp-tamaraw-80        &  80 & Tamaraw & 16:47 & 12\,000 & 150 & 2.9 & 5\,000 & 31.6 & 39.4 & 31.6 & 29.2 & 1.2 \\
+exp-openworld         & 280 & OFF     & 17:48 & 13\,740 & 146 & 3.1 &    601 & 68.3 & 67.9 & 74.6 & 69.8 & 1.2 \\
+exp-openworld-on      & 280 & ON      & 18:00 & 13\,680 & 146 & 3.3 &    604 & 70.7 & 72.5 & 75.6 & 72.5 & 1.2 \\
+exp-openworld-reduced & 280 & Reduced & 18:03 & 13\,680 & 146 & 3.1 &    592 & 71.9 & 73.3 & 76.4 & 73.6 & 1.2 \\
+exp-tamaraw-openworld & 280 & Tamaraw & 16:45 & 12\,620 & 132 & 3.2 & 4\,994 & 28.0 & 26.6 & 21.4 & 20.0 & 1.2 \\
+\end{longtable}
+\normalsize
+\end{landscape}
+
+Die Spalten haben folgende Bedeutung.
+Klassen entspricht der Anzahl der vom Klassifikator unterschiedenen Seiten (Closed-World) beziehungsweise der Anzahl Quellseiten (Open-World: 280 Quellseiten, davon 80 überwachte Klassen plus eine Sammelklasse).
+Padding bezeichnet die im Tor-Daemon der Monitor-Hosts gesetzte Verteidigung (OFF, ON, Reduced) beziehungsweise das auf den Bridge-Hosts aktivierte Tamaraw.
+Wall-Clock ist die Laufzeit der Shadow-Simulation in Stunden:Minuten.
+Samples und /Klasse geben die nach Konvertierung mit \texttt{pcap\_to\_npz.py} verfügbaren Aufzeichnungen wieder.
+Fail\,\% beziffert den Anteil der durch \texttt{wget2} abgebrochenen Seitenabrufe.
+Pkt/Sample ist die mittlere Anzahl Pakete pro Aufzeichnung über die ersten 5000 Werte des direction-Vektors.
+Acc., Prec., Rec.\ und F1 stammen aus dem WFlib-Testlauf des \gls{df}-Modells.
+Rand.\ ist die theoretische Zufallsbasis $1/K$ mit $K$ effektiv vom Klassifikator unterschiedenen Klassen (Open-World: 81 = 80 überwachte + 1 Sammelklasse, daher 1.2\,\%).

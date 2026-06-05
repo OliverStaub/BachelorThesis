@@ -7,7 +7,8 @@
       "Bash(git rebase *)",
       "Bash(git pull *)",
       "Bash(/workspaces/BachelorThesis/src/ml/venv/bin/python -c \"import torch, sklearn, matplotlib, numpy; print\\('torch', torch.__version__\\); print\\('OK'\\)\")",
-      "Bash(/workspaces/BachelorThesis/src/ml/venv/bin/python3 -c \"import torch, sklearn, matplotlib, numpy; print\\('torch', torch.__version__\\)\")"
+      "Bash(/workspaces/BachelorThesis/src/ml/venv/bin/python3 -c \"import torch, sklearn, matplotlib, numpy; print\\('torch', torch.__version__\\)\")",
+      "Bash(latexmk --version)"
     ]
   }
 }
