@@ -71,7 +71,7 @@ Diese Variante ist nicht öffentlich verfügbar.
 Stattdessen wird in dieser Arbeit am Monitor eine fortlaufende \gls{pcap} Datei mit allen TCP-Paketen aufgezeichnet und im Nachgang in beschriftete Richtungssequenzen pro Seitenbesuch zerlegt.
 
 Während ein Cell-Trace die Pakete bereits zellgenau und mit Circuit-Information versehen liefert, ist das \gls{pcap} ein einziger unbeschrifteter Paketstrom, der erst nachträglich den einzelnen Besuchen zugeordnet werden muss.
-Diese Zerlegung übernimmt ein eigens für die vorliegende Arbeit entwickeltes Python-Skript (vgl.\ Abschnitt~\ref{sec:realisierung_pcap_to_npz}), das das \gls{pcap} mit der \texttt{dpkt}-Bibliothek parst und die Pakete anhand der in der \texttt{schedule.json} protokollierten Besuchsfenster und der Port-zu-Klasse-Zuordnung (Abschnitt~\ref{sec:konzepte_port_class}) den jeweiligen Seiten zuweist.
+Diese Zerlegung übernimmt ein eigens für die vorliegende Arbeit entwickeltes Python-Skript (vgl.\ Abschnitt~\ref{sec:realisierung_pcap_to_npz}), das die Pakete anhand der in der \texttt{schedule.json} protokollierten Besuchsfenster und der Port-zu-Klasse-Zuordnung (Abschnitt~\ref{sec:konzepte_port_class}) den jeweiligen Seiten zuweist.
 
 Damit arbeitet die vorliegende Pipeline auf TCP-Ebene und nimmt einen Detailverlust in Kauf.
 Die zellgenaue Auflösung wird nicht erreicht, was gegenüber Cell-Traces einen Informationsverlust bedeutet.

@@ -212,7 +212,7 @@ Er wird aus dem öffentlichen Artefakt-Repository\footnote{\url{https://github.c
 \subsection{Besuchsplanung und Round-Robin-Verteilung}
 \label{sec:realisierung_schedule}
 
-Die Seiten werden nach einem Round-Robin-Verfahren auf die Monitore verteilt und dort zyklisch besucht: zuerst jede zugewiesene Seite einmal, dann jede ein zweites Mal und so fort, bis die geforderte Anzahl an Besuchen pro Seite erreicht ist.
+Die Seiten werden nach dem in Abschnitt~\ref{sec:konzepte_roundrobin} beschriebenen Round-Robin-Verfahren auf die Monitore verteilt.
 
 Zwischen zwei Besuchen liegen 30~Sekunden, ausreichend auch für grössere Wikipedia-Seiten samt eingebetteter Bilder.
 Der erste Besuch beginnt nach einer Aufwärmphase von 1200~Sekunden (20~Minuten), in der das Tor-Netzwerk seinen Konsens aushandelt und die Markov-Hintergrundclients ihre Verkehrsmuster aufbauen.
@@ -347,10 +347,10 @@ So lassen sich Läufe mit unterschiedlicher Padding-Konfiguration auf exakt dens
 \section{Training und Auswertung des Klassifikators}
 \label{sec:realisierung_training}
 
-\subsection{Wahl des Klassifikators und der Bibliothek}
+\subsection{Bibliothek}
 
-Als Klassifikator wird \gls{df} nach Sirinam et al.~\cite{sirinam2018deep} verwendet.
-Die Implementierung wird von WFlib bereitgestellt, einer in PyTorch realisierten Sammlung von WF-Klassifikatoren von Deng et al.\footnote{\url{https://github.com/Xinhao-Deng/Website-Fingerprinting-Library}}.
+Wie in Abschnitt~\ref{sec:konzepte_klassifikator} begründet, wird \gls{df} nach Sirinam et al.~\cite{sirinam2018deep} als Klassifikator verwendet.
+Die Implementierung stammt aus WFlib, einer in PyTorch realisierten Sammlung von WF-Klassifikatoren von Deng et al.\footnote{\url{https://github.com/Xinhao-Deng/Website-Fingerprinting-Library}}.
 WFlib hat sich in mehreren neueren Veröffentlichungen als Vergleichsplattform etabliert, was auch die Vergleichbarkeit der Ergebnisse erhöht.
 
 \subsection{Hyperparameter}
