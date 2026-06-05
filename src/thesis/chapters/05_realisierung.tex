@@ -357,8 +357,8 @@ Epochen & 30 \\
 \end{tabular}
 \end{table}
 
-Während des Trainings passt der Adamax-Optimierer die Gewichte des neuronalen Netzes Schritt für Schritt so an, dass die Cross-Entropy-Verlustfunktion auf der Trainingsmenge minimiert wird.
-Die Trainingsschleife speichert nach jeder Epoche das Modell, sofern es auf der Validierungsmenge einen besseren F1-Wert erreicht als alle bisherigen Checkpoints.
+Während des Trainings passt der Adamax-Optimierer die Gewichte des neuronalen Netzes Schritt für Schritt an um eine möglichst geringe Fehlerrate zu erreichen.
+Dabei speichert der Optimierer nach jeder Epoche das Modell, sofern es auf der Validierungsmenge einen besseren F1-Wert erreicht als alle bisherigen Checkpoints.
 Damit ist das endgültig getestete Modell nicht zwangsläufig das letzte, sondern das auf Basis der Validierung beste.
 
 \subsection{Trainingsablauf}
