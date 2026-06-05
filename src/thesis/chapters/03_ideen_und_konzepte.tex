@@ -85,7 +85,7 @@ Diese Variante ist nicht öffentlich verfügbar.
 Stattdessen wird in dieser Arbeit am Monitor eine fortlaufende \gls{pcap} Datei mit allen TCP-Paketen aufgezeichnet und im Nachgang in beschriftete Richtungssequenzen pro Seitenbesuch zerlegt.
 
 Während ein Cell-Trace die Pakete bereits zellgenau und mit Circuit-Information versehen liefert, ist das \gls{pcap} ein einziger unbeschrifteter Paketstrom, der erst nachträglich den einzelnen Besuchen zugeordnet werden muss.
-Diese Zerlegung übernimmt ein eigens für die vorliegende Arbeit entwickeltes Python-Skript (vgl.\ Abschnitt~\ref{sec:realisierung_pcap_to_npz}), das die Pakete anhand der in der \texttt{schedule.json} protokollierten Besuchsfenster und der Port-zu-Klasse-Zuordnung (Abschnitt~\ref{sec:konzepte_port_class}) den jeweiligen Seiten zuweist.
+Diese Zerlegung übernimmt ein eigens für die vorliegende Arbeit entwickeltes Python-Skript (vgl.\ Abschnitt~\ref{sec:realisierung_pcap_to_npz}), das die Pakete anhand der in der \texttt{schedule.json} protokollierten Besuchsfenster und Labels (Abschnitt~\ref{sec:konzepte_port_class}) den jeweiligen Seiten zuweist.
 
 Damit arbeitet die vorliegende Pipeline auf TCP-Ebene und nimmt einen Detailverlust in Kauf.
 Die zellgenaue Auflösung wird nicht erreicht, was gegenüber Cell-Traces einen Informationsverlust bedeutet.
@@ -111,16 +111,11 @@ Dazu muss jeder Seitenbesuch zweifach identifiziert werden: zeitlich, um die Bes
 Die zeitliche Trennung folgt aus dem festen Visit-Intervall (vgl.\ Abschnitt~\ref{sec:konzepte_roundrobin}).
 Jeder Monitor startet pro Intervall genau einen Seitenabruf, sodass jedem Zeitfenster genau ein Besuch entspricht.
 
-Die inhaltliche Identifikation nutzt den TCP-Zielport als Label.
-Der lokale Wikipedia-Spiegel (Abschnitt~\ref{sec:konzepte_inhaltsquelle}) stellt jede Seite auf einem eigenen Port bereit (Seite~1 auf Port~8000, Seite~2 auf Port~8001 und so fort), wobei alle Ports auf demselben Host laufen.
-Da zwischen Port und Inhalt eine eineindeutige Beziehung besteht, benennt der Port die Webseite eindeutig.
-
-Diese Zuordnung muss bei der Simulationsplanung festgehalten werden, weil sie aus dem Monitor-Pcap allein nicht rekonstruierbar ist.
-Das Monitor-Pcap zeichnet ausschliesslich den verschlüsselten Verkehr zum Tor-Guard auf Port~9001 auf, der eigentliche Zielport zum Wikipedia-Spiegel liegt innerhalb der Tor-Zellen und ist erst am Exit-Relay wieder im Klartext lesbar.
-Damit entspricht der Aufbau dem realistischen Angreifermodell: dem passiven Beobachter zwischen Monitor und Guard sind weder Ziel-IP noch Zielport zugänglich, und genau diese Information liefert die Plandatei dem Experimentator als Ground Truth.
-
-Beide Informationen werden beim Aufbau der Simulation in einer Plandatei \texttt{schedule.json} (vgl.\ Abschnitt~\ref{sec:realisierung_schedule}) zusammengeführt, die pro Monitor und Besuch die Startzeit und den vorgesehenen Zielport enthält.
-Bei der Auswertung wird der \gls{pcap}-Strom an den Zeitgrenzen der Plandatei zerlegt und der hinterlegte Port als Klassenlabel übernommen.
+Die inhaltliche Zuordnung ist aus dem Monitor-Pcap allein nicht rekonstruierbar.
+Das Pcap zeichnet ausschliesslich den verschlüsselten Verkehr zum Tor-Guard auf, weder Ziel-IP noch Zielport des angesprochenen Webservers sind sichtbar.
+Genau dieser Umstand entspricht dem realistischen Angreifermodell: dem passiven Beobachter zwischen Monitor und Guard fehlt eben jene Information.
+Sie wird deshalb beim Aufbau der Simulation in einer Plandatei \texttt{schedule.json} (vgl.\ Abschnitt~\ref{sec:realisierung_schedule}) festgehalten, die pro Monitor und Besuch die Startzeit und die abgerufene Seite enthält.
+Bei der Auswertung wird der \gls{pcap}-Strom an den Zeitgrenzen der Plandatei zerlegt und das hinterlegte Label übernommen.
 Eine Markierung im Tor-Datenstrom selbst oder eine gepatchte Tor-Version, wie sie Jansen und Wails einsetzen~\cite{jansen2023data}, wird damit umgangen.
 
 

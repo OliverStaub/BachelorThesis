@@ -91,7 +91,7 @@ Beides wird in dieser Arbeit von dem Skript \texttt{generate-wf-config.py} ergä
 
 \paragraph{Hinzufügen der Hosts}
 \texttt{generate-wf-config.py} fügt der \texttt{shadow.config.yaml} einen \texttt{zimserverN}-Host und eine konfigurierbare Anzahl \texttt{monitorN}-Hosts hinzu.
-Pro besuchter Seite wird ein eigener Port auf dem Webserver verwendet (8000 für die erste Seite, 8001 für die zweite, und so fort), siehe Abschnitt~\ref{sec:konzepte_port_class} für die Begründung dieser Zuordnung.
+Pro besuchter Seite wird ein eigener Port auf dem Webserver verwendet.
 
 Listing~\ref{lst:shadow_monitor} zeigt einen verkürzten Ausschnitt eines Monitor-Hosts aus der generierten \texttt{shadow.config.yaml}.
 
@@ -198,7 +198,7 @@ Eine statisch gelinkte Binärdatei kann von Shadow nicht ausgeführt werden, was
 Aus diesen Gründen wurde im Rahmen dieser Arbeit ein eigener, schlanker Webserver \texttt{zimsrv.py} mit etwa 125~Zeilen Python entwickelt.
 Die Implementierung erfolgte iterativ mit Claude Code (vgl.\ Abschnitt~\ref{sec:ki_werkzeuge}).
 Da der Server in Python läuft, ist er per Definition dynamisch gelinkt und damit für Shadow geeignet.
-Pro Seite (also pro Port) wird ein separater Prozess gestartet, was die spätere Zuordnung von Verkehr zur Webseite über den Zielport erlaubt.
+Pro Seite wird ein separater Prozess gestartet.
 
 \section{Monitor-Knoten und Verkehrserfassung}
 \label{sec:realisierung_monitore}
@@ -286,7 +286,7 @@ Die Tamaraw-Variante steht so in direkter Vergleichsposition zu den drei Circuit
 \label{sec:realisierung_pcap_to_npz}
 
 Das Skript \texttt{pcap\_to\_npz.py} überführt die Monitor-Pcaps zusammen mit der \texttt{schedule.json} in das von WFlib erwartete \texttt{.npz}-Format.
-Pro Experiment entstehen eine \texttt{.npz}-Datei mit den Richtungssequenzen sowie eine \texttt{labels.json}-Datei mit der Zuordnung von Port zu Klassen-Label (Abbildung~\ref{fig:datapipeline}).
+Pro Experiment entstehen eine \texttt{.npz}-Datei mit den Richtungssequenzen sowie eine \texttt{labels.json}-Datei mit der Zuordnung von Seite zu Klassen-Label (Abbildung~\ref{fig:datapipeline}).
 
 \begin{figure}[H]
 \centering
@@ -322,7 +322,7 @@ Als Pcap-Bibliothek wird \texttt{dpkt} verwendet.
 Für jeden Eintrag der \texttt{schedule.json} wird das Zeitintervall des Besuchs aus dem Pcap geschnitten, Pakete mit der Client-IP als Quelle gelten als ausgehend ($+1$), Pakete mit der Client-IP als Ziel als eingehend ($-1$).
 Die Sequenz wird auf $5000$~Werte normiert (kürzer aufgefüllt, länger abgeschnitten), wie es Sirinam et al.\ für \gls{df} vorschlagen~\cite{sirinam2018deep} und WFlib erwartet.
 Sequenzen mit weniger als zehn Paketen werden als fehlgeschlagene Besuche verworfen.
-Die Klassen-Labels ergeben sich aus dem Zielport (vgl.\ Abschnitt~\ref{sec:realisierung_generate_wf_config}) und werden zusammen mit der Umkehrabbildung und der Anzahl der Klassen als \texttt{labels.json} neben der \texttt{.npz}-Datei abgelegt, damit die Ergebnisse später eindeutig den ursprünglichen Wikipedia-Seiten zugeordnet werden können.
+Die Klassen-Labels werden aus der \texttt{schedule.json} übernommen und zusammen mit der Umkehrabbildung und der Anzahl der Klassen als \texttt{labels.json} neben der \texttt{.npz}-Datei abgelegt, damit die Ergebnisse später eindeutig den ursprünglichen Wikipedia-Seiten zugeordnet werden können.
 
 Aus den Pcaps werden nur die Paketrichtungen und nicht die Zeitstempel als Merkmale verwendet (Begründung: Abschnitt~\ref{sec:konzepte_features}).
 
