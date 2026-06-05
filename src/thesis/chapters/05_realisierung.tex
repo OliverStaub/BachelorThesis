@@ -270,7 +270,7 @@ Die Erweiterung der Shadow-Konfiguration übernimmt \texttt{generate-wf-config.p
 Drei Änderungen werden vorgenommen.
 
 Erstens wird ein zusätzlicher Host \texttt{wfbridge0} mit fester IP-Adresse in die \texttt{shadow.config.yaml} eingetragen.
-Auf diesem Host laufen zwei Prozesse: ein regulärer Tor-Daemon, der als Bridge-Relay konfiguriert ist, sowie der \gls{pt}-Server \texttt{obfs4proxy\_tamaraw}, der über die torrc-Direktive \texttt{ServerTransportPlugin tamaraw exec} eingebunden ist.
+Auf diesem Host laufen zwei Prozesse: ein regulärer Tor-Daemon, der als Bridge-Relay konfiguriert ist, sowie der \gls{pt}-Server \texttt{obfs4proxy\_tamaraw}.
 Eine feste IP erlaubt es, den Bridge-Eintrag direkt in die Monitor-torrc zu schreiben, ohne auf einen separaten Bridge-Discovery-Mechanismus angewiesen zu sein.
 
 Zweitens wird in der torrc der Monitor-Hosts die Direktive \texttt{ClientTransportPlugin tamaraw exec} ergänzt, und ein \texttt{Bridge}-Eintrag verweist auf \texttt{wfbridge0}.
