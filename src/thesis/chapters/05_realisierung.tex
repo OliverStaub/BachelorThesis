@@ -187,19 +187,18 @@ Für den Webserver wurden mehrere Varianten geprüft.
 
 \paragraph{ZIMply}
 In der Arbeit von Jansen und Wails wird \texttt{ZIMply} als Webserver für ZIM-Dateien verwendet~\cite{jansen2023data}.
-Die Bibliothek wurde schon länger nicht mehr aktualisiert funktionierte bei unseren Tests nicht zuverlässig.
+Die Bibliothek wurde schon länger nicht mehr aktualisiert funktionierte bei in der Simulation nicht zuverlässig.
 
 \paragraph{kiwix-serve}
 Kiwix-Serve ist die offizielle Referenzimplementierung des Kiwix-Projekts\footnote{\url{https://github.com/kiwix/kiwix-tools} (Zugriff: 2026-06-05).} und wäre funktional die ideale Wahl.
 Es wird jedoch als statisch gelinkte Binärdatei ausgeliefert.
 Eine statisch gelinkte Binärdatei kann von Shadow nicht ausgeführt werden, was den Einsatz erschwert.
 
-\paragraph{\texttt{zimsrv.py}}
+\paragraph{zimsrv.py}
 Aus diesen Gründen wurde im Rahmen dieser Arbeit ein eigener, schlanker Webserver \texttt{zimsrv.py} mit etwa 125~Zeilen Python entwickelt.
-Die Implementierung erfolgte iterativ mit Claude Code (vgl.\ Abschnitt~\ref{sec:ki_werkzeuge}). Designentscheidungen, Anforderungen und Verifikation gegen den Versuchsaufbau verantwortet der Autor.
-\texttt{zimsrv.py} nutzt die offizielle Python-Bindung \texttt{libzim} zum Lesen der ZIM-Datei und stellt die Inhalte über einen \texttt{ThreadingHTTPServer} bereit.
+Die Implementierung erfolgte iterativ mit Claude Code (vgl.\ Abschnitt~\ref{sec:ki_werkzeuge}).
 Da der Server in Python läuft, ist er per Definition dynamisch gelinkt und damit für Shadow geeignet.
-Pro Seite (also pro Port) wird ein separater Prozess gestartet, was die spätere Zuordnung von Verkehr zu Klasse über den Zielport erlaubt.
+Pro Seite (also pro Port) wird ein separater Prozess gestartet, was die spätere Zuordnung von Verkehr zur Webseite über den Zielport erlaubt.
 
 \section{Monitor-Knoten und Verkehrserfassung}
 \label{sec:realisierung_monitore}
@@ -214,7 +213,6 @@ Er wird aus dem öffentlichen Artefakt-Repository\footnote{\url{https://github.c
 \label{sec:realisierung_schedule}
 
 Die Seiten werden nach einem Round-Robin-Verfahren auf die Monitore verteilt und dort zyklisch besucht: zuerst jede zugewiesene Seite einmal, dann jede ein zweites Mal und so fort, bis die geforderte Anzahl an Besuchen pro Seite erreicht ist.
-Die Begründung dieses Verteilungsschemas ist in Abschnitt~\ref{sec:konzepte_roundrobin} dargestellt.
 
 Zwischen zwei Besuchen liegen 30~Sekunden, ausreichend auch für grössere Wikipedia-Seiten samt eingebetteter Bilder.
 Der erste Besuch beginnt nach einer Aufwärmphase von 1200~Sekunden (20~Minuten), in der das Tor-Netzwerk seinen Konsens aushandelt und die Markov-Hintergrundclients ihre Verkehrsmuster aufbauen.
@@ -223,7 +221,6 @@ Der erste Besuch beginnt nach einer Aufwärmphase von 1200~Sekunden (20~Minuten)
 \label{sec:realisierung_newnym}
 
 Damit jeder Seitenbesuch über einen frischen Circuit läuft, plant \texttt{generate-wf-config.py} jeweils eine Sekunde vor einem \texttt{wget2}-Aufruf einen \texttt{newnym.py}-Prozess in der \texttt{shadow.config.yaml} ein (vgl.\ Listing~\ref{lst:shadow_monitor}, Zeitpunkte 1229 und 1230).
-\texttt{newnym.py} öffnet einen Socket zum lokalen Tor-Control-Port und sendet \texttt{SIGNAL NEWNYM}, woraufhin Tor bestehende Circuits markiert und für neue Streams einen frischen Pfad aushandelt.
 Der vollständige Quelltext des Skripts ist in Anhang~\ref{app:listing_newnym} abgedruckt.
 
 Die Begründung dieser strikten Circuit-Isolation ist in Abschnitt~\ref{sec:konzepte_newnym} dargestellt.
