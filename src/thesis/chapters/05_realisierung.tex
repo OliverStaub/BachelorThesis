@@ -267,9 +267,6 @@ WFDefProxy ist ein in Go geschriebener Fork von \texttt{obfs4proxy} und implemen
 Das resultierende Binary wird im Verlauf von \texttt{setup-wf-server.sh} aus den Quellen gebaut und unter dem Namen \texttt{obfs4proxy\_tamaraw} im Server-Arbeitsverzeichnis abgelegt.
 
 Die in dieser Arbeit verwendeten Tamaraw-Parameter entsprechen den Voreinstellungen von WFDefProxy.
-Das Inter-Paket-Intervall in Client-zu-Bridge-Richtung beträgt $\rho_{\text{client}} = 12$~ms, in Bridge-zu-Client-Richtung $\rho_{\text{server}} = 4$~ms.
-Die zur Anonymitäts-Bucket-Bildung verwendete Segmentlänge ist $L = 200$ Zellen.
-Damit ergibt sich das in Abschnitt~\ref{sec:wf_defenses_tamaraw} beschriebene asymmetrische Send-Schema mit Padding bis zum jeweils nächsten Vielfachen von $L$.
 
 \subsection{Einbindung in die Shadow-Konfiguration}
 \label{sec:realisierung_tamaraw_shadow}
