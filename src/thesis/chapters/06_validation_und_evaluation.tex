@@ -1,26 +1,18 @@
 \chapter{Validation und Evaluation}
 \label{cha:diskussion}
 
-\section{Einführung und Abgrenzung}
-\label{sec:eval_einfuehrung}
-
-Sämtliche Kennzahlen stammen aus der Datei \texttt{ExperimentLogs.csv} welche sich im Anhang~\ref{app:begleitmaterial} befindet.
-
-Alle Resultate beruhen auf einem einzelnen Simulator-Seed pro Konfiguration.
-Die berichteten Differenzen sind daher Punktschätzungen und keine über mehrere Wiederholungen gemittelten Werte.
+Die Resultate sind in der Tabelle xy im Anhang zusammenfgefasst  
 
 \section{Validierung des Versuchsaufbaus}
 \label{sec:eval_validierung}
 
-Zur Validierung werden drei Sanity-Kontrollen herangezogen, deren Kennzahlen in Tabelle~\ref{tab:experimentlogs} im Anhang dokumentiert sind.
+Zur Validierung werden drei Kennzahlen herangezogen, die in der Tabelle~\ref{tab:experimentlogs} im Anhang dokumentiert sind.
 Erstens liegt der Anteil fehlgeschlagener Seitenabrufe in allen Closed-World-Läufen unter 5\,\% und ist innerhalb einer Klassenanzahl zwischen den Padding-Modi vergleichbar.
-Dass die Fehlerquote mit der Klassenanzahl leicht steigt, ist erwartbar, da bei mehr Seiten auch mehr seltene Wikipedia-Artikel auftreten, deren ZIM-Auflösung oder URL-Encoding gelegentlich fehlschlägt.
+
 Zweitens liegt die mittlere Paketanzahl pro Sample für die Circuit-Padding-Modi konsistent zwischen 580 und 640, was dafür spricht, dass die Seitenabrufe vergleichbar gross sind und sich nicht systematisch zwischen den Vergleichsgruppen unterscheiden, während Tamaraw die Sequenz erwartungsgemäss bis zur 5000-Werte-Grenze füllt.
+
 Drittens erreichen alle Modelle Klassifikationsraten deutlich über der Random-Basis (vergleiche Tabelle~\ref{tab:eval_closedworld}), lernen also tatsächlich Merkmale des Verkehrs und reagieren nicht zufällig.
 
-Ergänzend prüft Tabelle~\ref{tab:eval_seqlen} im Anhang, ob die in Abschnitt~\ref{sec:konzepte_features} festgelegte Obergrenze von 5000~Werten greift.
-In allen Circuit-Padding-Läufen liegt das beobachtete Maximum bei 2454~Paketen und damit klar unterhalb des Caps, sodass die Trunkierung nie greift und die Sequenzen am Ende mit Nullen aufgefüllt werden.
-Unter Tamaraw erreicht praktisch jede Sequenz die 5000-Werte-Marke, da die konstante Senderate das 30-Sekunden-Visit-Fenster bis zur Grenze füllt.
 Der Versuchsaufbau wird auf Basis dieser Kontrollen als valide angesehen.
 
 \section{Closed-World-Resultate}
