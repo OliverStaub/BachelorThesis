@@ -15,7 +15,12 @@
       "Bash(kpsewhich type1cm.sty cm-super.sty underscore.sty type1ec.sty)",
       "Bash(pdfinfo /tmp/usetex_test.pdf)",
       "Bash(pdftotext -layout -f 1 -l 77 hslu_thesis.pdf -)",
-      "Bash(pdftoppm -r 110 -f 49 -l 51 hslu_thesis.pdf /tmp/eval -png)"
+      "Bash(pdftoppm -r 110 -f 49 -l 51 hslu_thesis.pdf /tmp/eval -png)",
+      "Bash(latexmk -pdf -interaction=nonstopmode -file-line-error hslu_thesis.tex)",
+      "Bash(pdftoppm -r 110 -f 45 -l 45 hslu_thesis.pdf /tmp/fig61 -png)",
+      "Bash(pdftoppm -r 130 -f 45 -l 45 hslu_thesis.pdf /tmp/fig61 -png)",
+      "Bash(pdftoppm -r 130 -f 51 -l 51 hslu_thesis.pdf /tmp/fig61b -png)",
+      "Bash(pdftoppm -r 130 -f 48 -l 48 hslu_thesis.pdf /tmp/fig61c -png)"
     ]
   }
 }
