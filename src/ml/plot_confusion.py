@@ -197,22 +197,22 @@ def main():
 
     if len(datasets) == 1:
         # Single matrix
-        fig, ax = plt.subplots(figsize=(12, 10))
+        fig, ax = plt.subplots(figsize=(12, 10), constrained_layout=True)
         im = plot_single(results[0][1], labels[0], ax, results[0][2],
                          class_names, show_numbers)
-        plt.colorbar(im, ax=ax, label="Recall", shrink=0.8)
+        fig.colorbar(im, ax=ax, label="Recall", shrink=0.8)
 
     elif len(datasets) == 2 and not args.diff:
         # Side-by-side comparison
-        fig, axes = plt.subplots(1, 2, figsize=(22, 10))
+        fig, axes = plt.subplots(1, 2, figsize=(22, 10), constrained_layout=True)
         for i, (ax, label) in enumerate(zip(axes, labels)):
             im = plot_single(results[i][1], label, ax, results[i][2],
                              class_names, show_numbers)
-        plt.colorbar(im, ax=axes, label="Recall", shrink=0.8)
+        fig.colorbar(im, ax=axes, label="Recall", shrink=0.8, location="right")
 
     elif len(datasets) == 2 and args.diff:
         # Side-by-side + difference
-        fig, axes = plt.subplots(1, 3, figsize=(30, 9))
+        fig, axes = plt.subplots(1, 3, figsize=(30, 9), constrained_layout=True)
         for i, (ax, label) in enumerate(zip(axes[:2], labels)):
             im = plot_single(results[i][1], label, ax, results[i][2],
                              class_names, show_numbers)
@@ -244,13 +244,13 @@ def main():
                                      color="white" if abs(val) > 0.15 else "black",
                                      fontsize=max(4, 8 - n // 5))
 
-        plt.colorbar(im_diff, ax=axes[2], label="Δ Recall", shrink=0.8)
+        fig.colorbar(im, ax=axes[:2], label="Recall", shrink=0.8, location="right")
+        fig.colorbar(im_diff, ax=axes[2], label="Δ Recall", shrink=0.8)
 
     else:
         print("Provide 1 or 2 datasets", file=sys.stderr)
         sys.exit(1)
 
-    plt.tight_layout()
     plt.savefig(args.output, dpi=300, bbox_inches="tight")
     print(f"Saved {args.output}", file=sys.stderr)
 

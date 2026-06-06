@@ -89,14 +89,6 @@ Die Aktivierung des produktiv im Tor-Netzwerk eingesetzten Circuit Paddings (ON)
 Bei 80 Klassen ist der Effekt deutlich kleiner: Die Accuracy sinkt um 3.8~Prozentpunkte von 82.4\,\% auf 78.6\,\%.
 Eine plausible Interpretation ist, dass das Klassifikationsproblem mit wachsender Klassenanzahl bereits ohne Padding fordernder wird, sodass das zusätzliche Rauschen durch Padding-Zellen relativ weniger ins Gewicht fällt.
 Die Grössenordnung dieser Reduktion ist konsistent mit Sirinam et al., die für die ebenfalls auf Adaptive Padding basierende Verteidigung WTF-PAD einen Rückgang des \gls{df}-Angriffs von 98.3\,\% auf 90.7\,\% berichten~\cite{sirinam2018deep}.
-Abbildung~\ref{fig:eval_confusion_off_on_80} zeigt die Konfusionsmatrizen für 80 Klassen mit und ohne Padding und macht sichtbar, dass die Diagonale unter ON leicht schwächer wird, der qualitative Charakter der Konfusion aber erhalten bleibt.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=\textwidth]{../../confusion_comparison_80.pdf}
-    \caption{Konfusionsmatrizen OFF (links) und ON (rechts) bei 80 Klassen. Eigene Darstellung.}
-    \label{fig:eval_confusion_off_on_80}
-\end{figure}
 
 \subsection{Reduced Padding und Open-World-Inversion}
 \label{sec:eval_reduced}
