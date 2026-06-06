@@ -20,7 +20,8 @@
       "Bash(pdftoppm -r 110 -f 45 -l 45 hslu_thesis.pdf /tmp/fig61 -png)",
       "Bash(pdftoppm -r 130 -f 45 -l 45 hslu_thesis.pdf /tmp/fig61 -png)",
       "Bash(pdftoppm -r 130 -f 51 -l 51 hslu_thesis.pdf /tmp/fig61b -png)",
-      "Bash(pdftoppm -r 130 -f 48 -l 48 hslu_thesis.pdf /tmp/fig61c -png)"
+      "Bash(pdftoppm -r 130 -f 48 -l 48 hslu_thesis.pdf /tmp/fig61c -png)",
+      "Bash(pdftoppm -r 130 -f 52 -l 52 hslu_thesis.pdf /tmp/fig64b -png)"
     ]
   }
 }

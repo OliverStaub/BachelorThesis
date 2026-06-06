@@ -169,13 +169,14 @@ Abbildung~\ref{fig:eval_defense_tradeoff} visualisiert diesen Kosten-Schutz-Verg
             xmajorgrids=true, ymajorgrids=true,
             grid style={dashed, gray!35},
             tick style={black!50},
+            legend style={at={(0.5,-0.22)}, anchor=north, legend columns=3, draw=none, /tikz/every even column/.append style={column sep=12pt}},
         ]
             \addplot[only marks, mark=*, mark size=3.5pt, color=green!55!black] coordinates {(1.3, 4.9)};
-            \node[anchor=south, font=\small, yshift=4pt] at (axis cs:1.3, 4.9) {Reduced};
+            \addlegendentry{Reduced (1.3\,\%, $-$4.9\,pp)}
             \addplot[only marks, mark=*, mark size=3.5pt, color=orange!80!black] coordinates {(3.0, 3.8)};
-            \node[anchor=north, font=\small, yshift=-4pt] at (axis cs:3.0, 3.8) {ON};
+            \addlegendentry{ON (3.0\,\%, $-$3.8\,pp)}
             \addplot[only marks, mark=*, mark size=3.5pt, color=violet!70!black] coordinates {(1063.1, 50.8)};
-            \node[anchor=east, font=\small, xshift=-4pt] at (axis cs:1063.1, 50.8) {Tamaraw};
+            \addlegendentry{Tamaraw (1063.1\,\%, $-$50.8\,pp)}
         \end{semilogxaxis}
     \end{tikzpicture}
     \caption{Bandbreiten-Overhead (logarithmisch) gegen Accuracy-Reduktion bei 80 Klassen. Reduced und ON liegen im unteren linken Bereich (geringe Kosten, geringer Schutz), Tamaraw rechts oben (hoher Schutz, hohe Kosten). Eigene Darstellung.}
