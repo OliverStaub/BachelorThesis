@@ -24,6 +24,25 @@ matplotlib.use("Agg")
 import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 
+THESIS_RC = {
+    "text.usetex": True,
+    "font.family": "serif",
+    "font.serif": ["Computer Modern Roman"],
+    "font.size": 10,
+    "axes.titlesize": 10,
+    "axes.labelsize": 10,
+    "xtick.labelsize": 9,
+    "ytick.labelsize": 9,
+    "legend.fontsize": 9,
+    "axes.linewidth": 0.6,
+    "axes.edgecolor": "#333333",
+    "grid.color": "#cccccc",
+    "grid.linewidth": 0.4,
+    "grid.linestyle": "--",
+    "pdf.fonttype": 42,
+}
+plt.rcParams.update(THESIS_RC)
+
 
 # Experiment time windows (UTC). End is exclusive; samples are filtered by [t_start, t_end].
 EXPERIMENTS = [
@@ -228,32 +247,33 @@ def plot_summary(experiments_rows, output_dir: Path):
     experiment start) so the runs can be compared even though they happened on
     different days.
     """
-    colors = {"exp-tamaraw-80": "#d62728",
-              "exp-tamaraw-openworld": "#1f77b4",
-              "exp-tamaraw-20v2": "#2ca02c"}
-    labels = {"exp-tamaraw-80": "Tamaraw 80 Klassen",
-              "exp-tamaraw-openworld": "Tamaraw Open-World",
-              "exp-tamaraw-20v2": "Tamaraw 20 Klassen (v2)"}
+    colors = {"exp-tamaraw-80":        "#4C72B0",
+              "exp-tamaraw-openworld": "#DD8452",
+              "exp-tamaraw-20v2":      "#55A868"}
+    labels = {"exp-tamaraw-80":        r"Tamaraw, 80 Klassen",
+              "exp-tamaraw-openworld": r"Tamaraw, Open-World",
+              "exp-tamaraw-20v2":      r"Tamaraw, 20 Klassen (v2)"}
 
-    fig, axes = plt.subplots(3, 1, figsize=(10, 9), sharex=True)
+    fig, axes = plt.subplots(3, 1, figsize=(6.3, 7.0), sharex=True)
     for name, rows in experiments_rows.items():
         if not rows:
             continue
         t0 = rows[0]["t"]
         hours = [(r["t"] - t0).total_seconds() / 3600 for r in rows]
-        axes[0].plot(hours, [r["cpu"]  for r in rows], color=colors[name], linewidth=0.9, label=labels[name])
-        axes[1].plot(hours, [r["mem"]  for r in rows], color=colors[name], linewidth=0.9, label=labels[name])
+        axes[0].plot(hours, [r["cpu"]  for r in rows], color=colors[name], linewidth=0.8, label=labels[name])
+        axes[1].plot(hours, [r["mem"]  for r in rows], color=colors[name], linewidth=0.8, label=labels[name])
         disk_vals = [r["disk"] for r in rows]
         if any(d == d for d in disk_vals):
-            axes[2].plot(hours, disk_vals, color=colors[name], linewidth=0.9, label=labels[name])
+            axes[2].plot(hours, disk_vals, color=colors[name], linewidth=0.8, label=labels[name])
 
     for ax, title in zip(axes, ["CPU", "Arbeitsspeicher", "Disk"]):
-        ax.set_ylabel(f"{title} [%]")
-        ax.grid(True, alpha=0.3)
+        ax.set_ylabel(rf"{title} [\%]")
+        ax.grid(True)
         ax.set_ylim(0, 105)
-    axes[0].legend(loc="lower right", frameon=True, fontsize=9)
-    axes[2].set_xlabel("Laufzeit seit Experimentstart [h]")
-    axes[0].set_title("Serverauslastung im Vergleich der Tamaraw-Experimente", fontsize=11)
+        for spine in ("top", "right"):
+            ax.spines[spine].set_visible(False)
+    axes[0].legend(loc="lower right", frameon=False)
+    axes[2].set_xlabel(r"Laufzeit seit Experimentstart [h]")
 
     out = output_dir / "perfmon_comparison"
     fig.tight_layout()
