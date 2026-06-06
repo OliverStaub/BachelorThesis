@@ -1,66 +1,61 @@
 \chapter{Validation und Evaluation}
 \label{cha:diskussion}
 
-Die Resultate sind in Tabelle~\ref{tab:experimentlogs} im Anhang zusammengefasst.
+Die Resultate sind in Tabelle~\ref{tab:experimentlogs} im Anhang vollständig aufgeführt.
 
 \section{Validierung des Versuchsaufbaus}
 \label{sec:eval_validierung}
 
 Um den Versuchsaufbau zu validieren werden drei Kennzahlen betrachtet.
-Erstens liegt der Anteil fehlgeschlagener Seitenabrufe in allen Durchführungen unter 5\,\% und ist innerhalb einer Klasse zwischen den Padding-Modi vergleichbar.
-
-Zweitens liegt die mittlere Paketanzahl pro Sample für die Circuit-Padding-Modi relativ konsistent, was dafür spricht, dass die Seitenabrufe vergleichbar gross sind und sich nicht systematisch zwischen den Vergleichsgruppen unterscheiden.
-
-Drittens erreichen alle Modelle Klassifikationsraten deutlich über der Random-Basis (vergleiche Tabelle~\ref{tab:eval_closedworld}), lernen also tatsächlich Merkmale des Verkehrs und reagieren nicht zufällig.
-
+Erstens liegt der Anteil fehlgeschlagener Seitenabrufe in allen Closed-World-Läufen unter 5\,\% und ist innerhalb einer Klasse zwischen den Padding-Modi vergleichbar.
+Zweitens liegt die mittlere Paketanzahl pro Sample für die Circuit-Padding-Modi konsistent zwischen 580 und 640, was dafür spricht, dass die Seitenabrufe vergleichbar gross sind und sich nicht systematisch zwischen den Vergleichsgruppen unterscheiden, während Tamaraw die Sequenz erwartungsgemäss bis zur 5000-Werte-Grenze füllt.
+Drittens erreichen alle Modelle Klassifikationsraten deutlich über der Random-Basis (vergleiche Tabelle~\ref{tab:eval_results}), lernen also tatsächlich Merkmale des Verkehrs und reagieren nicht zufällig.
 Der Versuchsaufbau wird auf Basis dieser Kontrollen als valide angesehen.
 
-\section{Closed-World-Resultate}
-\label{sec:eval_closedworld}
+\section{Klassifikationsresultate}
+\label{sec:eval_results}
 
-Tabelle~\ref{tab:eval_closedworld} stellt die wichtigsten Closed-World-Resultate gegenüber.
-Die Spalten Acc. und F1 vergleichen jede Variante mit der ungeschützten Baseline derselben Klassenanzahl.
+Tabelle~\ref{tab:eval_results} fasst Accuracy und F1-Wert über die drei Klassenstufen und vier Padding-Modi zusammen.
+Abbildung~\ref{fig:eval_results_overview} stellt dieselben Daten grafisch gegenüber.
+Die nachfolgenden Unterabschnitte diskutieren die Resultate entlang von vier Achsen: dem Effekt der Klassenanzahl, dem Schutzbeitrag von Circuit Padding, der Sonderrolle von Reduced Padding inklusive einer im Open-World beobachteten Inversion, und Tamaraw als Referenzpunkt einer schweren Verteidigung.
 
 \begin{table}[H]
     \centering
-    \caption{Closed-World-Resultate. $\Delta$ bezieht sich auf die Baseline (OFF) derselben Klassenanzahl. Quelle: \texttt{ExperimentLogs.csv}.}
-    \label{tab:eval_closedworld}
-    \begin{tabular}{llrrrr}
+    \caption{Accuracy und F1-Wert der vier Padding-Modi für die drei Klassenstufen. Open-World bezieht sich auf 80 überwachte Seiten in einem Topf von 280 Quellseiten. Quelle: \texttt{ExperimentLogs.csv}.}
+    \label{tab:eval_results}
+    \begin{tabular}{lrrrrrr}
         \hline
-        Klassen & Padding & Accuracy & F1-Wert & $\Delta$ Acc. (pp) & $\Delta$ F1 (pp) \\
+         & \multicolumn{2}{c}{Closed-World 20} & \multicolumn{2}{c}{Closed-World 80} & \multicolumn{2}{c}{Open-World 80/280} \\
+        Padding & Acc.\,[\%] & F1\,[\%] & Acc.\,[\%] & F1\,[\%] & Acc.\,[\%] & F1\,[\%] \\
         \hline
-        20 & OFF     & 92.7\,\% & 92.7\,\% & Basis  & Basis  \\
-        20 & Reduced & 86.7\,\% & 86.3\,\% & $-6.0$  & $-6.4$  \\
-        20 & ON      & 83.3\,\% & 82.8\,\% & $-9.4$  & $-9.9$  \\
-        20 & Tamaraw & 39.3\,\% & 38.6\,\% & $-53.4$ & $-54.1$ \\
+        OFF     & 92.7 & 92.7 & 82.4 & 81.4 & 68.3 & 69.8 \\
+        Reduced & 86.7 & 86.3 & 77.5 & 76.2 & 71.9 & 73.6 \\
+        ON      & 83.3 & 82.8 & 78.6 & 76.9 & 70.7 & 72.5 \\
+        Tamaraw & 39.3 & 38.6 & 31.6 & 29.2 & 28.0 & 20.0 \\
         \hline
-        80 & OFF     & 82.4\,\% & 81.4\,\% & Basis  & Basis  \\
-        80 & Reduced & 77.5\,\% & 76.2\,\% & $-4.9$  & $-5.2$  \\
-        80 & ON      & 78.6\,\% & 76.9\,\% & $-3.8$  & $-4.5$  \\
-        80 & Tamaraw & 31.6\,\% & 29.2\,\% & $-50.8$ & $-52.2$ \\
+        Random-Basis & \multicolumn{2}{c}{5.0\,\%} & \multicolumn{2}{c}{1.2\,\%} & \multicolumn{2}{c}{1.2\,\%} \\
         \hline
     \end{tabular}
 \end{table}
 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{../../images/results/results_overview.pdf}
+    \caption{Accuracy des \gls{df}-Klassifikators für die vier untersuchten Verteidigungen (OFF, Reduced, ON, Tamaraw) über die drei Klassenstufen 20, 80 und Open-World (80 überwacht in einem Topf von 280). Die gestrichelten Linien markieren die jeweilige Random-Basis. Eigene Darstellung.}
+    \label{fig:eval_results_overview}
+\end{figure}
+
 \subsection{Skalierung mit der Klassenanzahl}
 \label{sec:eval_skalierung}
 
-Abbildung~\ref{fig:eval_acc_vs_pages} zeigt die Accuracy in Abhängigkeit der Klassenanzahl, getrennt nach Padding-Modus.
-Über alle Modi hinweg sinkt die Accuracy mit wachsender Klassenanzahl, was dem theoretisch erwartbaren Verhalten eines mehrklassigen Klassifikators entspricht.
-Die Baseline fällt von 92.7\,\% bei 20 Klassen auf 82.4\,\% bei 80 Klassen.
-Die Random-Basis sinkt im selben Schritt von 5.0\,\% auf 1.2\,\%, weshalb die absolute Differenz von rund 10~Prozentpunkten den relativen Vorteil des Klassifikators gegenüber dem Zufall sogar vergrössert.
-Ursächlich für den absoluten Rückgang sind zwei zusammenwirkende Effekte.
-Erstens wachsen mit jeder zusätzlichen Klasse die paarweisen Überlappungen im Merkmalsraum, sodass einzelne Seiten mit ähnlichen Burst-Mustern, Paketzahlen oder Übertragungsgrössen verwechselbar werden.
-Zweitens muss der Klassifikator viele feinere Trennflächen statt weniger breiter Entscheidungsregionen lernen, was bei vergleichbarer Trainingsmenge pro Klasse die effektive Trennschärfe senkt.
-Dass der Vorsprung gegenüber der Random-Basis dabei von Faktor 18.5 auf Faktor 68.7 wächst, zeigt, dass der Klassifikator die zusätzlichen Klassen durchaus nutzt und nicht systematisch versagt.
-Die hier erzielten Werte liegen damit unterhalb der von Sirinam et al.\ ursprünglich gemeldeten 98\,\% bei 95 Klassen~\cite{sirinam2018deep}, jedoch in der Grössenordnung, die Jansen und Wails für ähnlich kleine Shadow-Datensätze berichten~\cite{jansen2023data}.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.85\textwidth]{../../images/results/accuracy_vs_pages.pdf}
-    \caption{Accuracy als Funktion der Klassenanzahl, getrennt nach Padding-Modus. Eigene Darstellung.}
-    \label{fig:eval_acc_vs_pages}
-\end{figure}
+Über alle Padding-Modi hinweg sinkt die Accuracy mit wachsender Klassenanzahl.
+Die ungeschützte Baseline fällt von 92.7\,\% bei 20 Klassen auf 82.4\,\% bei 80 Klassen und weiter auf 68.3\,\% im Open-World.
+Mit jeder zusätzlichen Klasse wachsen die paarweisen Überlappungen im Merkmalsraum, sodass einzelne Seiten mit ähnlichen Burst-Mustern, Paketzahlen oder Übertragungsgrössen verwechselbar werden.
+Zusätzlich muss der Klassifikator viele feinere Trennflächen statt weniger breiter Entscheidungsregionen lernen, was bei vergleichbarer Trainingsmenge pro Klasse die effektive Trennschärfe senkt.
+Im Open-World tritt ein struktureller Effekt hinzu: Der Klassifikator entscheidet erst, ob ein Besuch zu einer überwachten Seite oder zur unüberwachten Sammelklasse gehört, und ordnet ihn im positiven Fall anschliessend einer konkreten überwachten Seite zu, was beide Stufen schwieriger macht.
+Diese Beobachtung ist konsistent mit Juarez et al., die für Open-World-Szenarien deutlich höhere Falsch-Positiv-Raten berichten und betonen, dass die in Closed-World-Studien gemeldeten Erkennungsraten in der Praxis nicht erreicht werden~\cite{juarez2014critical}.
+Der Vorsprung gegenüber der Random-Basis (5.0\,\% bei 20 Klassen, 1.2\,\% bei 80 und Open-World) wächst dabei, was zeigt, dass der Klassifikator die zusätzlichen Klassen nutzt und nicht systematisch versagt.
+Die hier erzielten Werte liegen unterhalb der von Sirinam et al.\ ursprünglich gemeldeten 98\,\% bei 95 Klassen~\cite{sirinam2018deep}, jedoch in der Grössenordnung, die Jansen und Wails für ähnlich kleine Shadow-Datensätze berichten~\cite{jansen2023data}.
 
 \subsection{Effekt von Circuit Padding}
 \label{sec:eval_padding_effekt}
@@ -69,148 +64,52 @@ Die Aktivierung des produktiv im Tor-Netzwerk eingesetzten Circuit Paddings (ON)
 Bei 80 Klassen ist der Effekt deutlich kleiner: Die Accuracy sinkt um 3.8~Prozentpunkte von 82.4\,\% auf 78.6\,\%.
 Eine plausible Interpretation ist, dass das Klassifikationsproblem mit wachsender Klassenanzahl bereits ohne Padding fordernder wird, sodass das zusätzliche Rauschen durch Padding-Zellen relativ weniger ins Gewicht fällt.
 Die Grössenordnung dieser Reduktion ist konsistent mit Sirinam et al., die für die ebenfalls auf Adaptive Padding basierende Verteidigung WTF-PAD einen Rückgang des \gls{df}-Angriffs von 98.3\,\% auf 90.7\,\% berichten~\cite{sirinam2018deep}.
-Die in derselben Studie evaluierte molding-basierte Verteidigung Walkie-Talkie drückt den Angriff demgegenüber auf 49.7\,\% und gehört damit zu einer anderen Schutzklasse, die in Tor produktiv nicht ausgerollt wird und im Rahmen dieser Arbeit nicht direkt nachgemessen wurde~\cite{sirinam2018deep}.
-Abbildung~\ref{fig:eval_padding_comp} stellt die drei Padding-Modi für beide Klassengrössen gegenüber.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.85\textwidth]{../../images/results/padding_comparison.pdf}
-    \caption{Accuracy-Vergleich der drei Padding-Modi für 20 und 80 Klassen. Eigene Darstellung.}
-    \label{fig:eval_padding_comp}
-\end{figure}
-
-Abbildung~\ref{fig:eval_padding_delta} visualisiert dieselbe Information als Differenz zur Baseline.
-Aus der Visualisierung wird ersichtlich, dass der absolute Schutzbeitrag von Circuit Padding im untersuchten Bereich klein ist und bei 80 Klassen mit dem Reduced-Modus vergleichbar wird.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.75\textwidth]{../../images/results/padding_delta.pdf}
-    \caption{Veränderung der Accuracy gegenüber der Baseline (OFF) in Prozentpunkten. Eigene Darstellung.}
-    \label{fig:eval_padding_delta}
-\end{figure}
-
-Abbildungen~\ref{fig:eval_confusion_baseline20} und~\ref{fig:eval_confusion_comparison20} zeigen die Konfusionsmatrizen der 20-Klassen-Läufe.
-In der Baseline konzentrieren sich die Vorhersagen weitgehend auf die Diagonale.
-Mit aktiviertem Padding (ON) wird die Diagonale schwächer und es treten leicht häufiger Verwechslungen zwischen benachbarten Klassen auf.
-Die qualitative Form der Konfusion bleibt jedoch erhalten und der Klassifikator versagt nicht systematisch auf einzelnen Klassen.
-Abbildungen~\ref{fig:eval_confusion_baseline80} und~\ref{fig:eval_confusion_comparison80} zeigen dieselbe Gegenüberstellung für 80 Klassen.
-Die Diagonale ist gegenüber dem 20-Klassen-Lauf insgesamt schwächer ausgeprägt, was dem schwierigeren Klassifikationsproblem entspricht.
-Auch hier bleibt der qualitative Unterschied zwischen OFF und ON klein und betrifft vor allem die Schärfe einzelner Diagonalpunkte und nicht systematische Falschzuordnungen.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.55\textwidth]{../../confusion_baseline20.pdf}
-    \caption{Konfusionsmatrix der Baseline mit 20 Klassen. Eigene Darstellung.}
-    \label{fig:eval_confusion_baseline20}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=\textwidth]{../../confusion_comparison_20.pdf}
-    \caption{Konfusionsmatrizen OFF (links) und ON (rechts) bei 20 Klassen. Eigene Darstellung.}
-    \label{fig:eval_confusion_comparison20}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.55\textwidth]{../../confusion_baseline80.pdf}
-    \caption{Konfusionsmatrix der Baseline mit 80 Klassen. Eigene Darstellung.}
-    \label{fig:eval_confusion_baseline80}
-\end{figure}
+Abbildung~\ref{fig:eval_confusion_off_on_80} zeigt die Konfusionsmatrizen für 80 Klassen mit und ohne Padding und macht sichtbar, dass die Diagonale unter ON leicht schwächer wird, der qualitative Charakter der Konfusion aber erhalten bleibt.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{../../confusion_comparison_80.pdf}
     \caption{Konfusionsmatrizen OFF (links) und ON (rechts) bei 80 Klassen. Eigene Darstellung.}
-    \label{fig:eval_confusion_comparison80}
+    \label{fig:eval_confusion_off_on_80}
 \end{figure}
 
-\subsection{Reduced Padding}
+\subsection{Reduced Padding und Open-World-Inversion}
 \label{sec:eval_reduced}
 
 Der Reduced-Modus ist als sparsamere Variante des Circuit Paddings ausgelegt und wird in der torrc-Konfiguration zusätzlich zu \texttt{CircuitPadding 1} mit \texttt{ReducedCircuitPadding 1} aktiviert.
-Bei 20 Klassen liegt seine Accuracy mit 86.7\,\% zwischen Baseline (92.7\,\%) und voll aktiviertem Padding (83.3\,\%).
-Bei 80 Klassen kehrt sich die Reihenfolge um: Mit 77.5\,\% liegt Reduced sogar minimal unterhalb von ON (78.6\,\%).
-Dieser Unterschied von 1.1~Prozentpunkten ist mit dem hier verwendeten einmaligen Seed nicht von statistischer Streuung zu unterscheiden.
-Festzuhalten bleibt, dass Reduced Padding bei 20 Klassen klar zwischen den Extremen liegt und bei 80 Klassen praktisch gleichauf mit dem vollen Padding wirkt.
-
-Abbildung~\ref{fig:eval_f1} zeigt den F1-Wert über alle Closed-World- und Open-World-Hauptexperimente und bestätigt das oben skizzierte Bild auch unter Berücksichtigung von Precision und Recall.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.85\textwidth]{../../images/results/f1_comparison.pdf}
-    \caption{F1-Wert über alle Hauptexperimente. Eigene Darstellung.}
-    \label{fig:eval_f1}
-\end{figure}
+Bei 20 Klassen liegt seine Accuracy mit 86.7\,\% wie erwartet zwischen Baseline (92.7\,\%) und voll aktiviertem Padding (83.3\,\%).
+Bei 80 Klassen kehrt sich die Reihenfolge um: Mit 77.5\,\% liegt Reduced minimal unterhalb von ON (78.6\,\%).
+Im Open-World tritt ein verwandtes Phänomen auf: Sowohl ON (70.7\,\%) als auch Reduced (71.9\,\%) liegen leicht oberhalb der OFF-Baseline (68.3\,\%), was der aus dem Closed-World abgeleiteten Erwartung widerspricht.
+Beide Beobachtungen stammen aus jeweils einem einzigen Shadow-Lauf pro Konfiguration, und die Unterschiede liegen in der Grössenordnung von zwei bis vier Prozentpunkten, was bei stark unbalancierten Klassenverteilungen wie im Open-World im Bereich der zu erwartenden Streuung liegt.
+Die kleinen Unterschiede zwischen OFF, ON und Reduced bei 80 Klassen und im Open-World werden daher nicht als statistisch signifikante Schutz- oder Schadenswirkungen interpretiert.
+Festzuhalten bleibt, dass der absolute Schutzbeitrag von Circuit Padding und Reduced Padding im untersuchten Bereich klein genug ist, dass die natürliche Streuung einzelner Läufe ihn überdecken oder sogar umkehren kann.
 
 \subsection{Tamaraw als Referenzpunkt}
 \label{sec:eval_tamaraw}
 
 Tamaraw wurde als zweite Verteidigung in einer exploratorischen Messreihe untersucht, um den im produktiv ausgelieferten Circuit Padding gemessenen Effekt einzuordnen.
-Im Closed-World-Szenario mit 20 Klassen sinkt die Accuracy unter Tamaraw auf 39.3\,\%, im Lauf mit 80 Klassen auf 31.6\,\%.
-Damit verliert der \gls{df}-Klassifikator gegenüber der Baseline 53.4 beziehungsweise 50.8~Prozentpunkte.
-Abbildung~\ref{fig:eval_padding_vs_tamaraw} stellt alle vier Verteidigungen für 20 und 80 Klassen direkt gegenüber und macht den Grössenunterschied zwischen Circuit Padding und Tamaraw auf einen Blick sichtbar.
+Im Closed-World mit 20 Klassen sinkt die Accuracy unter Tamaraw auf 39.3\,\%, bei 80 Klassen auf 31.6\,\% und im Open-World auf 28.0\,\%.
+Damit verliert der \gls{df}-Klassifikator gegenüber der jeweiligen Baseline 53.4, 50.8 beziehungsweise 40.3~Prozentpunkte.
+Tamaraw bleibt jedoch deutlich über der Random-Basis von 5.0\,\% beziehungsweise 1.2\,\%, das heisst die konstante Senderate alleine reicht nicht aus, um den Verkehr vollständig in Rauschen aufzulösen.
+Der Klassifikator nutzt offensichtlich noch verbleibende, padding-resistente Merkmale wie etwa Dauer des Nutzverkehrs oder Verteilung der Paketgrössen ausserhalb der Tor-Zellen aus.
+Im Open-World fällt insbesondere der Recall mit 21.4\,\% deutlich ab, was darauf hindeutet, dass Tamaraw vor allem die zuverlässige Erkennung der überwachten Seiten erschwert und stattdessen viele überwachte Besuche fälschlich der unüberwachten Sammelklasse zuordnet.
+Im Vergleich zu Circuit Padding ergibt sich ein deutlicher qualitativer Unterschied: Circuit Padding senkt die Accuracy um wenige Prozentpunkte, während Tamaraw sie um eine ganze Grössenordnung reduziert.
+Diese Beobachtung deckt sich mit den ursprünglich von Cai et al.\ für Tamaraw berichteten starken Schutzwirkungen~\cite{cai2014systematic} und mit der Einordnung von Circuit Padding als low-overhead-Verteidigung durch Kadianakis et al.~\cite{kadianakis2021tor}.
+Abbildung~\ref{fig:eval_confusion_off_tamaraw_80} macht den Unterschied auf Ebene der Konfusionsmatrix sichtbar: Unter Tamaraw löst sich die Diagonale weitgehend auf und die Vorhersagen verteilen sich breit über viele Klassen.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.9\textwidth]{../../images/results/padding_vs_tamaraw.pdf}
-    \caption{Accuracy des \gls{df}-Klassifikators für die vier untersuchten Verteidigungen (OFF, Reduced, ON, Tamaraw) bei 20 und 80 Klassen. Die gestrichelten Linien markieren die jeweilige Random-Basis. Eigene Darstellung.}
-    \label{fig:eval_padding_vs_tamaraw}
+    \includegraphics[width=\textwidth]{../../confusion_comparison_tamaraw_80.pdf}
+    \caption{Konfusionsmatrizen OFF (links) und Tamaraw (rechts) bei 80 Klassen. Eigene Darstellung.}
+    \label{fig:eval_confusion_off_tamaraw_80}
 \end{figure}
 
-Tamaraw bleibt damit jedoch deutlich über der Random-Basis von 5.0\,\% beziehungsweise 1.2\,\%, das heisst die konstante Senderate alleine reicht nicht aus, um den Verkehr vollständig in Rauschen aufzulösen.
-Der Klassifikator nutzt offensichtlich noch verbleibende, padding-resistente Merkmale wie etwa Dauer des Nutzverkehrs oder Verteilung der Paketgrössen ausserhalb der Tor-Zellen aus.
-
-Im Vergleich zu Circuit Padding ergibt sich ein deutlicher qualitativer Unterschied.
-Circuit Padding senkt die Accuracy im untersuchten Bereich um wenige Prozentpunkte, während Tamaraw die Accuracy um eine ganze Grössenordnung reduziert.
-Diese Beobachtung deckt sich mit den ursprünglich von Cai et al.\ für Tamaraw berichteten starken Schutzwirkungen~\cite{cai2014systematic} und mit der Einordnung von Circuit Padding als low-overhead-Verteidigung durch Kadianakis et al.~\cite{kadianakis2021tor}.
-Der praktische Preis dieser Schutzwirkung wird in Abschnitt~\ref{sec:eval_bandwidth} sichtbar: Tamaraw vervielfacht den Bandbreitenbedarf um über eine Grössenordnung, was die Verteidigung für den realen Tor-Betrieb derzeit nicht praktikabel macht~\cite{wfdefproxy}.
-
-\section{Open-World-Resultate}
-\label{sec:eval_openworld}
-
-Die Open-World-Experimente verwenden 280 Quellseiten, von denen 80 als überwacht (Klassen 0--79) und die übrigen 200 als unüberwacht (Sammelklasse) eingestuft werden.
-Tabelle~\ref{tab:eval_openworld} fasst die Resultate über alle vier Padding-Modi zusammen.
-
-\begin{table}[H]
-    \centering
-    \caption{Open-World-Resultate für 80 überwachte Seiten in einem Topf von 280 Quellseiten. Quelle: \texttt{ExperimentLogs.csv}.}
-    \label{tab:eval_openworld}
-    \begin{tabular}{lrrrr}
-        \hline
-        Padding & Accuracy & Precision & Recall & F1-Wert \\
-        \hline
-        OFF     & 68.3\,\% & 67.9\,\% & 74.6\,\% & 69.8\,\% \\
-        ON      & 70.7\,\% & 72.5\,\% & 75.6\,\% & 72.5\,\% \\
-        Reduced & 71.9\,\% & 73.3\,\% & 76.4\,\% & 73.6\,\% \\
-        Tamaraw & 28.0\,\% & 26.6\,\% & 21.4\,\% & 20.0\,\% \\
-        \hline
-    \end{tabular}
-\end{table}
-
-Zwei Beobachtungen verdienen eine Diskussion.
-Erstens fällt die Accuracy gegenüber dem Closed-World-Lauf mit 80 Klassen klar ab.
-Die Baseline sinkt von 82.4\,\% (Closed-World) auf 68.3\,\% (Open-World), was den höheren Schwierigkeitsgrad der Open-World-Aufgabe quantifiziert.
-Strukturell wirkt der Effekt im Open-World doppelt.
-Der Klassifikator entscheidet erst, ob ein Besuch zu einer der überwachten Seiten oder zur unüberwachten Sammelklasse gehört, und ordnet ihn im positiven Fall anschliessend einer konkreten überwachten Seite zu.
-Beide Stufen werden mit wachsender Anzahl überwachter Klassen schwieriger, da einerseits die Wahrscheinlichkeit zufälliger Ähnlichkeit zwischen einer überwachten Seite und einem Vertreter der Sammelklasse steigt und andererseits die Mehrklassen-Trennung innerhalb der überwachten Seiten dieselben Überlappungsprobleme wie im Closed-World-Lauf aufweist.
-Dies ist konsistent mit den Beobachtungen von Juarez et al., dass Open-World-Szenarien deutlich höhere Falsch-Positiv-Raten erzeugen und die in Closed-World-Studien gemeldeten Erkennungsraten in der Praxis nicht erreicht werden~\cite{juarez2014critical}.
-Zweitens liegen die Werte für ON (70.7\,\%) und Reduced (71.9\,\%) leicht oberhalb der OFF-Baseline (68.3\,\%).
-Dieses Resultat widerspricht der Erwartung aus dem Closed-World-Vergleich.
-Ein methodischer Grund ist denkbar: Mit nur einem Seed pro Konfiguration ist eine Streuung in der Grössenordnung von zwei bis vier Prozentpunkten plausibel, insbesondere bei stark unbalancierten Klassenverteilungen, wie sie das Open-World-Setup mit sich bringt.
-Die kleinen Unterschiede zwischen OFF, ON und Reduced im Open-World-Setup werden daher nicht als statistisch signifikante Schutzwirkungen oder Schutzeinbussen interpretiert.
-
-Tamaraw zeigt im Open-World-Szenario erneut den deutlichsten Effekt.
-Die Accuracy sinkt auf 28.0\,\%, der F1-Wert auf 20.0\,\%.
-Auch hier bleibt der Klassifikator über der Random-Basis, jedoch fällt insbesondere der Recall mit 21.4\,\% deutlich ab, was darauf hindeutet, dass Tamaraw besonders die zuverlässige Erkennung der überwachten Seiten erschwert und stattdessen viele überwachte Besuche fälschlich der unüberwachten Sammelklasse zuordnet.
-
-\section{Bandbreiten-Overhead}
+\section{Bandbreiten-Overhead und Kosten-Nutzen-Verhältnis}
 \label{sec:eval_bandwidth}
 
 Der durch die Verteidigungen verursachte Bandbreiten-Overhead wird aus den Monitor-\glspl{pcap} der Closed-World-80-Läufe mit dem Skript \texttt{pcap\_overhead.py} ermittelt.
 Pro Eintrag der \texttt{schedule.json} werden alle \gls{tcp}-Pakete innerhalb des 30-Sekunden-Visit-Fensters auf der eth0-Schnittstelle des Monitors aufsummiert, getrennt nach Up- (Client $\rightarrow$ Netzwerk) und Down-Richtung.
 Für die Läufe \texttt{exp-baseline-80}, \texttt{exp-padding-80} und \texttt{exp-reduced-80} fliessen je fünf Monitore in die Statistik ein (3000 Besuche pro Lauf), für \texttt{exp-tamaraw-80} aufgrund der etwa zwanzigfach grösseren \gls{pcap}-Dateien lediglich ein Monitor (600 Besuche).
-Da alle Monitore innerhalb eines Laufs identisch parametrisiert sind und denselben Tor-Daemon mit derselben Verteidigung verwenden, reicht diese Stichprobengrösse für eine stabile Schätzung des Mittelwerts pro Besuch aus.
 
 \begin{table}[h]
     \centering
@@ -228,15 +127,14 @@ Da alle Monitore innerhalb eines Laufs identisch parametrisiert sind und denselb
     \end{tabular}
 \end{table}
 
-Volles und Reduced Circuit Padding erhöhen den mittleren Datenverkehr pro Besuch um lediglich 3.0\,\% beziehungsweise 1.3\,\% in Bytes und um 6.0\,\% beziehungsweise 3.2\,\% in Paketen.
-Beide Verfahren liegen damit innerhalb der Streubreite einzelner Besuche und sind gegenüber dem Nutzverkehr im \gls{tor}-Netz praktisch vernachlässigbar.
-Tamaraw-Padding hingegen vervielfacht den Datenverkehr um den Faktor 11.6 in Bytes und 18.7 in Paketen, was den qualitativen Unterschied zwischen einem inhaltsabhängigen Padding-Schema und einem auf konstanter Senderate basierenden Traffic-Shaping sichtbar macht.
+Volles und Reduced Circuit Padding erhöhen den mittleren Datenverkehr pro Besuch um lediglich 3.0\,\% beziehungsweise 1.3\,\% in Bytes und liegen damit innerhalb der Streubreite einzelner Besuche.
+Tamaraw-Padding vervielfacht den Datenverkehr hingegen um den Faktor 11.6 in Bytes und 18.7 in Paketen.
 Auffällig ist zusätzlich, dass sich das Up-zu-Down-Verhältnis von etwa 1:4.3 in den ungeschützten Besuchen unter Tamaraw auf rund 2.7:1 umkehrt, da der Monitor unabhängig vom tatsächlichen Datenfluss in jedem Tick eine Dummy-Zelle in Richtung Bridge sendet.
 Die hier gemessenen Overhead-Werte liegen deutlich über den von Cai et al.\ ursprünglich angegebenen rund 199\,\%~\cite{cai2014systematic}, da \glspl{pcap} pro Tor-Zelle zusätzlich \gls{tcp}- und TLS-Framing erfassen und das gesamte 30-Sekunden-Visit-Fenster einschliessen, in dem Tamaraw auch nach Abschluss des Seitenabrufs weiterhin Dummy-Zellen emittiert.
 
 Setzt man die Bandbreiten-Kosten zur erzielten Schutzwirkung in Relation, ergibt sich für Circuit Padding ein Verhältnis von rund einem Prozentpunkt Accuracy-Reduktion pro Prozentpunkt Mehrverkehr im 20-Klassen-Setup.
 Für Tamaraw entfallen auf jeden Prozentpunkt Mehrverkehr lediglich rund 0.05~Prozentpunkte Accuracy-Reduktion.
-Tamaraw kauft seinen grossen Schutzeffekt also mit einem überproportional hohen Bandbreitenaufschlag ein.
+Tamaraw kauft seinen grossen Schutzeffekt also mit einem überproportional hohen Bandbreitenaufschlag ein, was die Verteidigung für den realen Tor-Betrieb derzeit nicht praktikabel macht~\cite{wfdefproxy}.
 Abbildung~\ref{fig:eval_defense_tradeoff} visualisiert diesen Kosten-Schutz-Vergleich für die drei Verteidigungen im 80-Klassen-Setup.
 
 \begin{figure}[H]
@@ -246,81 +144,20 @@ Abbildung~\ref{fig:eval_defense_tradeoff} visualisiert diesen Kosten-Schutz-Verg
     \label{fig:eval_defense_tradeoff}
 \end{figure}
 
-
 \section{Ressourcen und Performance}
 \label{sec:eval_performance}
 
 Ergänzend zu den klassifikationsbezogenen Resultaten wird der Ressourcenverbrauch des Simulationsservers \texttt{shadowsrv-001} während der Experimente protokolliert.
 Dazu wird das Skript \texttt{perfmon.py} verwendet, das im Intervall von fünf Sekunden Werte aus \texttt{/proc/stat}, \texttt{/proc/meminfo}, \texttt{statvfs} und \texttt{/proc/loadavg} ausliest und in eine tagesweise rotierte \texttt{CSV}-Datei schreibt.
 Ergänzend protokolliert der Wrapper \texttt{run\_sim.sh} pro Simulationslauf eine \texttt{dstat}-Spur innerhalb des Experimentordners.
-Betrachtet werden die drei zeitlich zusammenhängenden Tamaraw-Läufe \texttt{exp-tamaraw-80}, \texttt{exp-tamaraw-openworld} und \texttt{exp-tamaraw-20v2}, da sie unterschiedliche Skalen und damit unterschiedliche Engpässe abdecken.
-
-\subsection{Tamaraw, 80 Klassen}
-\label{sec:eval_performance_tamaraw80}
-
-Der Lauf \texttt{exp-tamaraw-80} umfasst 80 überwachte Seiten mit aktiviertem Tamaraw-Padding und dauert insgesamt rund 16 Stunden 48 Minuten.
-Das ausgewertete Messfenster der \texttt{perfmon}-Telemetrie deckt 11.8 Stunden mit 8513 Messpunkten ab, da \texttt{perfmon.py} erst nach Beginn des Laufs gestartet wurde.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.95\textwidth]{../../images/results/perfmon_tamaraw80.pdf}
-    \caption{Auslastung von CPU, Arbeitsspeicher und Disk auf \texttt{shadowsrv-001} während \texttt{exp-tamaraw-80}. Quelle: \texttt{perfmon-logs/perfmon-2026-05-16.csv} und \texttt{perfmon-2026-05-17.csv}.}
-    \label{fig:eval_perfmon_tamaraw80}
-\end{figure}
-
-Die CPU-Auslastung liegt im Mittel bei 99.8\,\% und steht damit über die gesamte Laufzeit am Anschlag.
-Der Arbeitsspeicher wächst linear von 35\,\% auf 90\,\% der verfügbaren 126 GB, was einem Endstand von 113 GB entspricht.
-Die Disk-Belegung steigt von 47\,\% auf 97\,\% (151 GB von 156 GB), kurz bevor die Simulation regulär endet.
-Der CPU-Anschlag und das parallele Wachstum von RAM und Disk zeigen, dass die gewählte Netzwerkgrösse von 0.01 die Rechenkapazität voll ausreizt, während Speicher- und Disk-Reserven gegen Ende des Laufs knapp werden.
-
-\subsection{Tamaraw, Open-World}
-\label{sec:eval_performance_openworld}
-
-Im anschliessend gestarteten Lauf \texttt{exp-tamaraw-openworld} werden 280 Quellseiten (davon 80 überwacht) mit Tamaraw-Padding simuliert.
-Die \texttt{perfmon}-Telemetrie deckt 16.2 Stunden und 11 650 Messpunkte ab, bis die Datenpartition vollständig belegt ist und \texttt{perfmon} mit \texttt{ENOSPC} terminiert.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.95\textwidth]{../../images/results/perfmon_openworld.pdf}
-    \caption{Auslastung von CPU, Arbeitsspeicher und Disk auf \texttt{shadowsrv-001} während \texttt{exp-tamaraw-openworld}. Die Disk erreicht gegen Ende des Fensters 100\,\%, woraufhin \texttt{perfmon} mit \texttt{ENOSPC} stoppt. Quelle: \texttt{perfmon-logs/perfmon-2026-05-17.csv} und \texttt{perfmon-2026-05-18.csv}.}
-    \label{fig:eval_perfmon_openworld}
-\end{figure}
-
-Die CPU-Auslastung bleibt erneut bei 99.8\,\% im Mittel.
-Der Arbeitsspeicher steigt deutlich steiler als beim 80-Klassen-Lauf und erreicht 96.8\,\% (122 GB), was an die 126 GB grosse Hauptspeicher-Obergrenze stösst.
-Die Disk-Belegung wächst von 25\,\% auf 100\,\% (156 GB), wodurch die Simulation faktisch terminiert wird, da Shadow keine \glspl{pcap} mehr schreiben kann und \texttt{perfmon} selbst beendet wird.
-Aus diesem Lauf wird abgeleitet, dass die Open-World-Skala unter Tamaraw-Padding sowohl an die RAM- als auch an die Disk-Obergrenze des verfügbaren Servers stösst und daher in dieser Form nicht reproduzierbar durchläuft.
-
-\subsection{Tamaraw, 20 Klassen (zweiter Lauf)}
-\label{sec:eval_performance_tamaraw20v2}
-
-Nach dem Aufräumen der Disk wird der Lauf \texttt{exp-tamaraw-20v2} gestartet, der nur 20 überwachte Seiten umfasst und in 8.2 Stunden abläuft.
-Da \texttt{perfmon} durch das vorangegangene \texttt{ENOSPC}-Ereignis terminiert war und nicht erneut gestartet wurde, stammt die Telemetrie aus der \texttt{dstat}-Spur im Experimentordner.
-\texttt{dstat} wurde mit \texttt{-cmstTy --fs} aufgerufen und protokolliert daher CPU und Arbeitsspeicher, nicht jedoch die Disk-Belegung.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.95\textwidth]{../../images/results/perfmon_tamaraw20v2.pdf}
-    \caption{Auslastung von CPU und Arbeitsspeicher auf \texttt{shadowsrv-001} während \texttt{exp-tamaraw-20v2}. Disk-Telemetrie fehlt, da \texttt{perfmon} zwischen den Läufen nicht erneut gestartet wurde. Quelle: \texttt{perfmon-logs/dstat-tamaraw-20v2.log}.}
-    \label{fig:eval_perfmon_tamaraw20v2}
-\end{figure}
-
-Auch in diesem Lauf liegt die CPU-Auslastung im Mittel bei 99.8\,\%.
-Der Arbeitsspeicher erreicht 78.7\,\% (99 GB) bei einer Laufzeit von 8.2 Stunden und damit eine ähnliche Wachstumsrate wie im 80-Klassen-Lauf.
-
-\subsection{Zusammenfassender Vergleich}
-\label{sec:eval_performance_vergleich}
-
-Abbildung~\ref{fig:eval_perfmon_comparison} stellt die drei Läufe auf einer gemeinsamen Zeitachse seit Experimentstart dar.
+Betrachtet werden die drei zeitlich zusammenhängenden Tamaraw-Läufe \texttt{exp-tamaraw-20v2}, \texttt{exp-tamaraw-80} und \texttt{exp-tamaraw-openworld}, da Tamaraw aufgrund seines hohen Daten- und Rechenaufwands die Engpässe am deutlichsten sichtbar macht.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{../../images/results/perfmon_comparison.pdf}
-    \caption{Serverauslastung im Vergleich der drei Tamaraw-Läufe, normiert auf die Laufzeit seit Experimentstart. Disk fehlt für \texttt{exp-tamaraw-20v2}, da \texttt{perfmon} während dieses Laufs nicht aktiv war. Eigene Darstellung.}
+    \caption{Auslastung von CPU, Arbeitsspeicher und Disk auf \texttt{shadowsrv-001} im Vergleich der drei Tamaraw-Läufe, normiert auf die Laufzeit seit Experimentstart. Disk fehlt für \texttt{exp-tamaraw-20v2}, da \texttt{perfmon} während dieses Laufs nicht aktiv war. Eigene Darstellung.}
     \label{fig:eval_perfmon_comparison}
 \end{figure}
-
-Tabelle~\ref{tab:eval_performance} fasst die wesentlichen Kennzahlen zusammen.
 
 \begin{table}[H]
     \centering
@@ -330,21 +167,19 @@ Tabelle~\ref{tab:eval_performance} fasst die wesentlichen Kennzahlen zusammen.
         \hline
         Experiment & Dauer [h] & CPU $\varnothing$ [\%] & RAM max [\%] & RAM max [GB] & Disk max [\%] \\
         \hline
+        exp-tamaraw-20v2      &  8.2 & 99.8 & 78.7 &  98.9 & n.\,v. \\
         exp-tamaraw-80        & 11.8 & 99.8 & 89.9 & 113.1 & 97.5 \\
         exp-tamaraw-openworld & 16.2 & 99.8 & 96.8 & 121.7 & 100.0 \\
-        exp-tamaraw-20v2      &  8.2 & 99.8 & 78.7 &  98.9 & n.\,v. \\
         \hline
     \end{tabular}
 \end{table}
 
-Über alle drei Läufe hinweg ergibt sich ein konsistentes Bild.
-Die CPU bildet den primären Engpass und bleibt unabhängig von der Klassenanzahl bei rund 99.8\,\%, was sich mit der Beobachtung aus Abschnitt~\ref{sec:eval_skalierung} deckt, dass die Wall-Clock-Laufzeit nahezu linear mit der Anzahl simulierter Seiten skaliert.
-Der Arbeitsspeicher und die Disk wachsen während des Laufs annähernd linear, da sowohl Shadow-Datenstrukturen als auch \gls{pcap}-Aufzeichnungen monoton anwachsen.
-Bei der grösseren Open-World-Konfiguration ist die Disk-Partition mit 156 GB die letztlich limitierende Ressource, was die Notwendigkeit motiviert, sämtliche Relay-\glspl{pcap} zu deaktivieren und die Aufzeichnung auf die Monitor-Hosts zu beschränken.
-
+Über alle drei Läufe hinweg bildet die CPU mit konstant rund 99.8\,\% Auslastung den primären Engpass und bleibt unabhängig von der Klassenanzahl am Anschlag.
+Arbeitsspeicher und Disk wachsen während der Laufzeit annähernd linear, da sowohl Shadow-Datenstrukturen als auch \gls{pcap}-Aufzeichnungen monoton anwachsen.
+Bei der grösseren Open-World-Konfiguration ist die Disk-Partition mit 156 GB die letztlich limitierende Ressource: \texttt{perfmon} und Shadow terminieren mit \texttt{ENOSPC}, bevor der Lauf regulär enden kann.
 Eine alternative Erfassungsmethode wäre die in der Arbeit von Jansen und Wails verwendete Tor-Instrumentierung, bei der jede Relay-Instanz die verarbeiteten Tor-Zellen direkt mit Richtung und Zeitstempel in ein kompaktes Cell-Trace-Log schreibt~\cite{jansen2023data}.
 Dieser Ansatz vermeidet die Ethernet-, IP-, \gls{tcp}- und TLS-Header, die in einer \gls{pcap}-Aufzeichnung pro Paket anfallen, blendet reine \gls{tcp}-Bestätigungspakete, Retransmissionen und TLS-Handshake-Bytes aus und beschränkt sich von vornherein auf die Zellen der überwachten Schaltkreise.
-Gegenüber dem hier gewählten \gls{pcap}-basierten Vorgehen liesse sich der Speicherbedarf damit um eine bis zwei Grössenordnungen reduzieren und gerade die Open-World-Skala unter Tamaraw-Padding wieder unterhalb der vorhandenen 156 GB betreiben.
+Der Speicherbedarf liesse sich damit um eine bis zwei Grössenordnungen reduzieren und gerade die Open-World-Skala unter Tamaraw wieder unterhalb der vorhandenen 156 GB betreiben.
 In der vorliegenden Arbeit wird dennoch an den \glspl{pcap} festgehalten, da sie dem in Abschnitt~\ref{sec:realisierung_monitore} beschriebenen Bedrohungsmodell eines lokalen Beobachters entsprechen und ohne Eingriffe in den Tor-Quellcode unterstützt werden.
 
 \section{Einordnung und Limitationen}
@@ -388,6 +223,6 @@ Pro Konfiguration wird genau ein Shadow-Lauf mit einem festen Seed durchgeführt
 Differenzen in der Grössenordnung weniger Prozentpunkte sind daher mit Vorsicht zu interpretieren, insbesondere im Open-World-Setup mit stark unbalancierten Klassen.
 Die qualitativen Schlüsse (Tamaraw $\gg$ Circuit Padding bezüglich Schutzwirkung, Tamaraw $\gg$ Circuit Padding bezüglich Bandbreitenkosten, Open-World schwieriger als Closed-World) sind aufgrund ihrer Grössenordnung jedoch belastbar.
 
-Insgesamt zeigt die Auswertung, dass das produktiv ausgelieferte Circuit Padding im untersuchten Laborkontext einen messbaren, aber kleinen Beitrag zur Verteidigung gegen \gls{df}-Angriffe leistet (zwischen 3.8 und 9.4 Prozentpunkte Accuracy-Reduktion), bei einem praktisch vernachlässigbaren Bandbreitenaufschlag von unter 5\,\%.
+Insgesamt zeigt die Auswertung, dass das produktiv ausgelieferte Circuit Padding im untersuchten Laborkontext einen messbaren, aber kleinen Beitrag zur Verteidigung gegen \gls{df}-Angriffe leistet (zwischen 3.8 und 9.4 Prozentpunkte Accuracy-Reduktion im Closed-World), bei einem praktisch vernachlässigbaren Bandbreitenaufschlag von unter 5\,\%.
 Tamaraw erreicht in derselben Umgebung eine um eine Grössenordnung stärkere Schutzwirkung, erkauft sich diese aber mit einem Bandbreiten-Overhead von rund 1000\,\% und ist damit in seiner heutigen Form nicht für den breiten Einsatz im Tor-Netzwerk geeignet.
 Die genannten Limitationen, insbesondere das Single-Tab-Modell und die kleine Skalierung, legen nahe, dass beide Verteidigungen unter realistischeren Bedingungen tendenziell stärker wirken, da der Klassifikator bereits in der Baseline mit höherem Rauschen rechnen müsste.

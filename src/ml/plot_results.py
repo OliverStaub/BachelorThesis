@@ -259,6 +259,75 @@ def plot_padding_vs_tamaraw(rows, output_dir):
     print("  Saved padding_vs_tamaraw")
 
 
+def plot_results_overview(rows, output_dir):
+    """Bar chart: Accuracy across OFF / Reduced / ON / Tamaraw for 20, 80 and open-world."""
+    fig, ax = plt.subplots(figsize=(11, 6))
+
+    groups = {"20": {}, "80": {}, "OW": {}}
+    for row in rows:
+        name = row.get("Experiment", "")
+        pages = row.get("Pages (classes)", "")
+        padding = row.get("Circuit Padding", "")
+        acc = parse_pct(row.get("Accuracy", ""))
+        visits = row.get("Visits per page", "")
+        if acc is None:
+            continue
+        # Pick the open-world runs (any padding mode); they are tagged with "openworld"
+        if "openworld" in name:
+            key = "OW"
+        elif pages in ("20", "80") and visits == "150":
+            key = pages
+        else:
+            continue
+        if "tamaraw" in name:
+            mode = "Tamaraw"
+        elif padding in ("OFF", "ON", "Reduced"):
+            mode = padding
+        else:
+            continue
+        # Prefer the latest run (e.g. -v2) by overwriting
+        groups[key][mode] = acc
+
+    modes = ["OFF", "Reduced", "ON", "Tamaraw"]
+    colors = ["#2196F3", "#4CAF50", "#FF9800", "#9C27B0"]
+    page_labels = ["20", "80", "OW"]
+    display_labels = ["20 classes", "80 classes", "Open-World (80/280)"]
+    # Random baselines: 1/20, 1/80, 1/80 for OW
+    random_bases = [5.0, 1.25, 1.25]
+
+    x = np.arange(len(page_labels))
+    width = 0.2
+    for i, (mode, color) in enumerate(zip(modes, colors)):
+        vals = [groups[p].get(mode, 0) for p in page_labels]
+        offset = (i - 1.5) * width
+        bars = ax.bar(x + offset, vals, width, label=mode, color=color,
+                      edgecolor="white", linewidth=0.5)
+        for bar, val in zip(bars, vals):
+            if val > 0:
+                ax.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 0.5,
+                        f"{val:.1f}%", ha="center", va="bottom", fontsize=9)
+
+    for i, base in enumerate(random_bases):
+        ax.hlines(base, x[i] - 2.2*width, x[i] + 2.2*width,
+                  colors="gray", linestyles="--", linewidth=1)
+    ax.plot([], [], "--", color="gray", linewidth=1, label="Random baseline")
+
+    ax.set_xlabel("Scenario")
+    ax.set_ylabel("Accuracy (%)")
+    ax.set_title("DF Accuracy across padding modes and scenarios")
+    ax.set_xticks(x)
+    ax.set_xticklabels(display_labels)
+    ax.legend(loc="upper right")
+    ax.set_ylim(0, 105)
+    ax.grid(axis="y", alpha=0.3)
+
+    plt.tight_layout()
+    for ext in [".pdf", ".svg", ".png"]:
+        plt.savefig(output_dir / f"results_overview{ext}", dpi=300, bbox_inches="tight")
+    plt.close()
+    print("  Saved results_overview")
+
+
 def plot_defense_tradeoff(rows, output_dir):
     """Scatter: bandwidth overhead vs accuracy drop at 80 classes."""
     fig, ax = plt.subplots(figsize=(8, 6))
@@ -384,6 +453,7 @@ def main():
     plot_f1_comparison(rows, out)
     plot_padding_delta(rows, out)
     plot_padding_vs_tamaraw(rows, out)
+    plot_results_overview(rows, out)
     plot_defense_tradeoff(rows, out)
     print(f"All plots saved to {out}/")
 

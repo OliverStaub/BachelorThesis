@@ -226,8 +226,13 @@ Tik-Tok~\cite{rahman2019tik} verwendet die DF-Architektur, ergänzt die Eingabe 
 \subsection{Closed-World- und Open-World-Szenarien}
 \label{sec:closed_open_world}
 
+Vorab werden die in dieser Arbeit verwendeten Begriffe abgegrenzt.
+\emph{Webseite} bezeichnet das im Datensatz enthaltene Untersuchungsobjekt, also eine konkrete URL beziehungsweise einen Wikipedia-Artikel.
+\emph{Klasse} bezeichnet das vom Klassifikator unterschiedene Label.
+Im Closed-World fällt beides zusammen, im Open-World werden $K$ überwachte Webseiten als eigene Klassen geführt und alle übrigen Webseiten in einer Sammelklasse zusammengefasst, sodass der Klassifikator effektiv $K+1$ Klassen unterscheidet.
+
 In der Website-Fingerprinting-Literatur werden zwei grundlegende
-Evaluationsszenarien unterschieden: das Closed-World- und das 
+Evaluationsszenarien unterschieden: das Closed-World- und das
 Open-World-Szenario \cite{wang2016realistically, jansen2023data}.
 
 Im Closed-World-Szenario wird angenommen, dass der Nutzer 
