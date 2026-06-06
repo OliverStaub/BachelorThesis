@@ -230,7 +230,7 @@ def plot_padding_vs_tamaraw(rows, output_dir):
     for i, (mode, color) in enumerate(zip(modes, colors)):
         vals = [groups[p].get(mode, 0) for p in page_labels]
         offset = (i - 1.5) * width
-        bars = ax.bar(x + offset, vals, width, label=mode, color=color,
+        bars = ax.bar(x + offset, vals, width, color=color,
                       edgecolor="white", linewidth=0.5)
         for bar, val in zip(bars, vals):
             if val > 0:
@@ -241,14 +241,19 @@ def plot_padding_vs_tamaraw(rows, output_dir):
         baseline = 100.0 / int(p)
         ax.hlines(baseline, x[i] - 2.2*width, x[i] + 2.2*width,
                   colors="gray", linestyles="--", linewidth=1)
-    ax.plot([], [], "--", color="gray", linewidth=1, label="Random baseline")
+
+    from matplotlib.patches import Patch
+    from matplotlib.lines import Line2D
+    legend_handles = [Patch(facecolor=c, label=m) for m, c in zip(modes, colors)]
+    legend_handles.append(Line2D([0], [0], linestyle="--", color="gray",
+                                 linewidth=1, label="Random baseline"))
 
     ax.set_xlabel("Number of Classes")
     ax.set_ylabel("Accuracy (%)")
     ax.set_title("DF Accuracy: Circuit Padding vs Tamaraw")
     ax.set_xticks(x)
     ax.set_xticklabels([f"{p} classes" for p in page_labels])
-    ax.legend(loc="upper right")
+    ax.legend(handles=legend_handles, loc="upper right")
     ax.set_ylim(0, 105)
     ax.grid(axis="y", alpha=0.3)
 
@@ -300,7 +305,7 @@ def plot_results_overview(rows, output_dir):
     for i, (mode, color) in enumerate(zip(modes, colors)):
         vals = [groups[p].get(mode, 0) for p in page_labels]
         offset = (i - 1.5) * width
-        bars = ax.bar(x + offset, vals, width, label=mode, color=color,
+        bars = ax.bar(x + offset, vals, width, color=color,
                       edgecolor="white", linewidth=0.5)
         for bar, val in zip(bars, vals):
             if val > 0:
@@ -310,14 +315,19 @@ def plot_results_overview(rows, output_dir):
     for i, base in enumerate(random_bases):
         ax.hlines(base, x[i] - 2.2*width, x[i] + 2.2*width,
                   colors="gray", linestyles="--", linewidth=1)
-    ax.plot([], [], "--", color="gray", linewidth=1, label="Random baseline")
+
+    from matplotlib.patches import Patch
+    from matplotlib.lines import Line2D
+    legend_handles = [Patch(facecolor=c, label=m) for m, c in zip(modes, colors)]
+    legend_handles.append(Line2D([0], [0], linestyle="--", color="gray",
+                                 linewidth=1, label="Random baseline"))
 
     ax.set_xlabel("Scenario")
     ax.set_ylabel("Accuracy (%)")
     ax.set_title("DF Accuracy across padding modes and scenarios")
     ax.set_xticks(x)
     ax.set_xticklabels(display_labels)
-    ax.legend(loc="upper right")
+    ax.legend(handles=legend_handles, loc="upper right")
     ax.set_ylim(0, 105)
     ax.grid(axis="y", alpha=0.3)
 
