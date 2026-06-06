@@ -131,3 +131,32 @@ Fail\,\% beziffert den Anteil der durch \texttt{wget2} abgebrochenen Seitenabruf
 Pkt/Sample ist die mittlere Anzahl Pakete pro Aufzeichnung über die ersten 5000 Werte des direction-Vektors.
 Acc., Prec., Rec.\ und F1 stammen aus dem WFlib-Testlauf des \gls{df}-Modells.
 Rand.\ ist die theoretische Zufallsbasis $1/K$ mit $K$ effektiv vom Klassifikator unterschiedenen Klassen (Open-World: 81 = 80 überwachte + 1 Sammelklasse, daher 1.2\,\%).
+
+\section{Verteilung der Sequenzlänge pro Besuch}
+\label{app:seqlen}
+
+Tabelle~\ref{tab:eval_seqlen} ergänzt die in Abschnitt~\ref{sec:eval_validierung} herangezogenen Sanity-Kontrollen um die empirische Verteilung der Sequenzlänge pro Besuch und dokumentiert, in welchem Umfang die in Abschnitt~\ref{sec:konzepte_features} festgelegte Obergrenze von 5000~Werten greift.
+
+\begin{table}[H]
+    \centering
+    \caption{Verteilung der Sequenzlänge pro Besuch nach der Konvertierung mit \texttt{pcap\_to\_npz.py}. Eigene Auswertung über alle Samples des jeweiligen Datensatzes.}
+    \label{tab:eval_seqlen}
+    \begin{tabular}{lrrrrr}
+        \hline
+        Experiment & N & Median & p90 & Max & Saturiert ($\geq$5000) \\
+        \hline
+        exp-baseline-20       &  3\,000 &    623 &    854 & 1\,270 &   0.0\,\% \\
+        exp-padding-20        &  3\,000 &    623 &    832 & 1\,247 &   0.0\,\% \\
+        exp-reduced-20        &  3\,000 &    596 &    827 & 1\,224 &   0.0\,\% \\
+        exp-tamaraw-20v2      &  3\,000 & 5\,000 & 5\,000 & 5\,000 & 100.0\,\% \\
+        exp-baseline-80       & 12\,000 &    581 &    733 & 2\,303 &   0.0\,\% \\
+        exp-padding-80        & 12\,000 &    601 &    734 & 2\,253 &   0.0\,\% \\
+        exp-reduced-80        & 12\,000 &    591 &    736 & 2\,311 &   0.0\,\% \\
+        exp-tamaraw-80        & 12\,000 & 5\,000 & 5\,000 & 5\,000 & 100.0\,\% \\
+        exp-openworld         & 13\,740 &    597 &    747 & 2\,399 &   0.0\,\% \\
+        exp-openworld-on      & 13\,680 &    599 &    732 & 2\,270 &   0.0\,\% \\
+        exp-openworld-reduced & 13\,680 &    588 &    734 & 2\,454 &   0.0\,\% \\
+        exp-tamaraw-openworld & 12\,620 & 5\,000 & 5\,000 & 5\,000 &  99.8\,\% \\
+        \hline
+    \end{tabular}
+\end{table}

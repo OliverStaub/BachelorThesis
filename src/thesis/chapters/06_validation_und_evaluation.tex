@@ -12,71 +12,16 @@ Die berichteten Differenzen sind daher Punktschätzungen und keine über mehrere
 \section{Validierung des Versuchsaufbaus}
 \label{sec:eval_validierung}
 
-Tabelle~\ref{tab:eval_sanity} fasst die Sanity-Kennzahlen der Hauptexperimente zusammen.
-Drei Kontrollen werden geprüft: der Anteil fehlgeschlagener Seitenabrufe, die mittlere Paketanzahl pro Aufzeichnung und das Verhältnis der erreichten Accuracy zur Random-Basis.
+Zur Validierung werden drei Sanity-Kontrollen herangezogen, deren Kennzahlen in Tabelle~\ref{tab:experimentlogs} im Anhang dokumentiert sind.
+Erstens liegt der Anteil fehlgeschlagener Seitenabrufe in allen Closed-World-Läufen unter 5\,\% und ist innerhalb einer Klassenanzahl zwischen den Padding-Modi vergleichbar.
+Dass die Fehlerquote mit der Klassenanzahl leicht steigt, ist erwartbar, da bei mehr Seiten auch mehr seltene Wikipedia-Artikel auftreten, deren ZIM-Auflösung oder URL-Encoding gelegentlich fehlschlägt.
+Zweitens liegt die mittlere Paketanzahl pro Sample für die Circuit-Padding-Modi konsistent zwischen 580 und 640, was dafür spricht, dass die Seitenabrufe vergleichbar gross sind und sich nicht systematisch zwischen den Vergleichsgruppen unterscheiden, während Tamaraw die Sequenz erwartungsgemäss bis zur 5000-Werte-Grenze füllt.
+Drittens erreichen alle Modelle Klassifikationsraten deutlich über der Random-Basis (vergleiche Tabelle~\ref{tab:eval_closedworld}), lernen also tatsächlich Merkmale des Verkehrs und reagieren nicht zufällig.
 
-\begin{table}[H]
-    \centering
-    \caption{Sanity-Kennzahlen der Hauptexperimente. Quelle: \texttt{ExperimentLogs.csv}.}
-    \label{tab:eval_sanity}
-    \begin{tabular}{lrrrrr}
-        \hline
-        Experiment & Klassen & Padding & Random-Basis & Failed (\%) & Pakete/Sample \\
-        \hline
-        exp-baseline-20      & 20  & OFF     & 5.0\,\%  & 1.7 & 635 \\
-        exp-padding-20       & 20  & ON      & 5.0\,\%  & 1.5 & 638 \\
-        exp-reduced-20       & 20  & Reduced & 5.0\,\%  & 1.9 & 611 \\
-        exp-tamaraw-20v2     & 20  & Tamaraw & 5.0\,\%  & 1.6 & 5000 \\
-        exp-baseline-80      & 80  & OFF     & 1.2\,\%  & 4.4 & 583 \\
-        exp-padding-80       & 80  & ON      & 1.2\,\%  & 4.5 & 601 \\
-        exp-reduced-80       & 80  & Reduced & 1.2\,\%  & 4.1 & 591 \\
-        exp-tamaraw-80       & 80  & Tamaraw & 1.2\,\%  & 2.9 & 5000 \\
-        exp-openworld        & 280 & OFF     & 1.2\,\%  & 3.1 & 601 \\
-        exp-openworld-on     & 280 & ON      & 1.2\,\%  & 3.3 & 604 \\
-        exp-openworld-reduced & 280 & Reduced & 1.2\,\%  & 3.1 & 592 \\
-        exp-tamaraw-openworld & 280 & Tamaraw & 1.2\,\%  & 3.2 & 4994 \\
-        \hline
-    \end{tabular}
-\end{table}
-
-Die Fehlerquote liegt in allen Closed-World-Läufen unter 5\,\% und ist innerhalb einer Klassenanzahl zwischen den Padding-Modi vergleichbar.
-Dass die Werte mit der Klassenanzahl steigen, ist erwartbar, weil bei mehr verschiedenen Seiten auch mehr seltene Wikipedia-Artikel auftreten, deren ZIM-Auflösung oder URL-Encoding gelegentlich fehlschlägt.
-Die mittlere Paketanzahl pro Sample liegt für die Circuit-Padding-Modi konsistent zwischen 580 und 640, was dafür spricht, dass die zugrunde liegenden Seitenabrufe vergleichbar gross sind und sich nicht systematisch zwischen den Vergleichsgruppen unterscheiden.
-Unter Tamaraw liegt die mittlere Paketanzahl pro Sample bei rund 5000, was unmittelbar widerspiegelt, dass die Aufzeichnung über das gesamte 30-Sekunden-Visit-Fenster mit konstanter Senderate gefüllt wird, unabhängig vom tatsächlichen Nutzverkehr.
-Alle Modelle erreichen Klassifikationsraten deutlich über der Random-Basis (vergleiche Tabelle~\ref{tab:eval_closedworld}).
-Damit lernen sie tatsächlich Merkmale des Verkehrs und reagieren nicht zufällig.
-Der Versuchsaufbau wird auf Basis dieser drei Kontrollen als valide angesehen.
-
-Tabelle~\ref{tab:eval_seqlen} ergänzt die mittlere Paketanzahl um die empirische Verteilung der Sequenzlänge pro Besuch und prüft, ob die in Abschnitt~\ref{sec:konzepte_features} festgelegte Obergrenze von 5000~Werten greift.
-
-\begin{table}[H]
-    \centering
-    \caption{Verteilung der Sequenzlänge pro Besuch nach der Konvertierung mit \texttt{pcap\_to\_npz.py}. Eigene Auswertung über alle Samples des jeweiligen Datensatzes.}
-    \label{tab:eval_seqlen}
-    \begin{tabular}{lrrrrr}
-        \hline
-        Experiment & N & Median & p90 & Max & Saturiert ($\geq$5000) \\
-        \hline
-        exp-baseline-20       &  3\,000 &    623 &    854 & 1\,270 &   0.0\,\% \\
-        exp-padding-20        &  3\,000 &    623 &    832 & 1\,247 &   0.0\,\% \\
-        exp-reduced-20        &  3\,000 &    596 &    827 & 1\,224 &   0.0\,\% \\
-        exp-tamaraw-20v2      &  3\,000 & 5\,000 & 5\,000 & 5\,000 & 100.0\,\% \\
-        exp-baseline-80       & 12\,000 &    581 &    733 & 2\,303 &   0.0\,\% \\
-        exp-padding-80        & 12\,000 &    601 &    734 & 2\,253 &   0.0\,\% \\
-        exp-reduced-80        & 12\,000 &    591 &    736 & 2\,311 &   0.0\,\% \\
-        exp-tamaraw-80        & 12\,000 & 5\,000 & 5\,000 & 5\,000 & 100.0\,\% \\
-        exp-openworld         & 13\,740 &    597 &    747 & 2\,399 &   0.0\,\% \\
-        exp-openworld-on      & 13\,680 &    599 &    732 & 2\,270 &   0.0\,\% \\
-        exp-openworld-reduced & 13\,680 &    588 &    734 & 2\,454 &   0.0\,\% \\
-        exp-tamaraw-openworld & 12\,620 & 5\,000 & 5\,000 & 5\,000 &  99.8\,\% \\
-        \hline
-    \end{tabular}
-\end{table}
-
-In allen Circuit-Padding-Läufen liegt das beobachtete Maximum bei 2454~Paketen und damit deutlich unterhalb des Caps.
-Die Trunkierung greift in diesen Läufen also nie, sämtliche Sequenzen werden am Ende mit Nullen aufgefüllt.
-Bei Tamaraw ist die Lage genau umgekehrt: die konstante Senderate füllt das 30-Sekunden-Visit-Fenster bis zur Grenze, weshalb praktisch jede Sequenz die 5000-Werte-Marke erreicht.
-Die Wahl von 5000 ist somit für die Circuit-Padding-Experimente ein grosszügiger Puffer ohne Datenverlust und für Tamaraw die effektive Aufzeichnungslänge.
+Ergänzend prüft Tabelle~\ref{tab:eval_seqlen} im Anhang, ob die in Abschnitt~\ref{sec:konzepte_features} festgelegte Obergrenze von 5000~Werten greift.
+In allen Circuit-Padding-Läufen liegt das beobachtete Maximum bei 2454~Paketen und damit klar unterhalb des Caps, sodass die Trunkierung nie greift und die Sequenzen am Ende mit Nullen aufgefüllt werden.
+Unter Tamaraw erreicht praktisch jede Sequenz die 5000-Werte-Marke, da die konstante Senderate das 30-Sekunden-Visit-Fenster bis zur Grenze füllt.
+Der Versuchsaufbau wird auf Basis dieser Kontrollen als valide angesehen.
 
 \section{Closed-World-Resultate}
 \label{sec:eval_closedworld}
