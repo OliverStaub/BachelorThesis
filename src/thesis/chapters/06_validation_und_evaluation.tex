@@ -7,9 +7,9 @@ Die Resultate sind in Tabelle~\ref{tab:experimentlogs} im Anhang zusammengefasst
 \label{sec:eval_validierung}
 
 Um den Versuchsaufbau zu validieren werden drei Kennzahlen betrachtet.
-Erstens liegt der Anteil fehlgeschlagener Seitenabrufe in allen Closed-World-Läufen unter 5\,\% und ist innerhalb einer Klasse zwischen den Padding-Modi vergleichbar.
+Erstens liegt der Anteil fehlgeschlagener Seitenabrufe in allen Durchführungen unter 5\,\% und ist innerhalb einer Klasse zwischen den Padding-Modi vergleichbar.
 
-Zweitens liegt die mittlere Paketanzahl pro Sample für die Circuit-Padding-Modi konsistent zwischen 580 und 640, was dafür spricht, dass die Seitenabrufe vergleichbar gross sind und sich nicht systematisch zwischen den Vergleichsgruppen unterscheiden, während Tamaraw die Sequenz erwartungsgemäss bis zur 5000-Werte-Grenze füllt.
+Zweitens liegt die mittlere Paketanzahl pro Sample für die Circuit-Padding-Modi relativ konsistent, was dafür spricht, dass die Seitenabrufe vergleichbar gross sind und sich nicht systematisch zwischen den Vergleichsgruppen unterscheiden.
 
 Drittens erreichen alle Modelle Klassifikationsraten deutlich über der Random-Basis (vergleiche Tabelle~\ref{tab:eval_closedworld}), lernen also tatsächlich Merkmale des Verkehrs und reagieren nicht zufällig.
 
@@ -19,7 +19,7 @@ Der Versuchsaufbau wird auf Basis dieser Kontrollen als valide angesehen.
 \label{sec:eval_closedworld}
 
 Tabelle~\ref{tab:eval_closedworld} stellt die wichtigsten Closed-World-Resultate gegenüber.
-Die Spalten $\Delta$ Acc. und $\Delta$ F1 vergleichen jede Variante mit der ungeschützten Baseline derselben Klassenanzahl.
+Die Spalten Acc. und F1 vergleichen jede Variante mit der ungeschützten Baseline derselben Klassenanzahl.
 
 \begin{table}[H]
     \centering
