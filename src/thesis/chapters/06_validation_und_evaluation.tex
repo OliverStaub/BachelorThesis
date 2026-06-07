@@ -8,11 +8,7 @@ Die Resultate sind in Tabelle~\ref{tab:experimentlogs} im Anhang vollständig au
 
 Um den Versuchsaufbau zu validieren werden drei Kennzahlen betrachtet.
 Erstens liegt der Anteil fehlgeschlagener Seitenabrufe in allen Closed-World-Läufen unter 5\,\% und ist innerhalb einer Klasse zwischen den Padding-Modi vergleichbar.
-
-
 Zweitens liegt die mittlere Paketanzahl pro Sample für die Circuit-Padding-Modi konsistent zwischen 580 und 640, was dafür spricht, dass die Seitenabrufe vergleichbar gross sind und sich nicht systematisch zwischen den Vergleichsgruppen unterscheiden, während Tamaraw die Sequenz erwartungsgemäss bis zur 5000-Werte-Grenze füllt.
-
-
 Drittens erreichen alle Modelle Klassifikationsraten deutlich über der Random-Basis (vergleiche Tabelle~\ref{tab:experimentlogs}), lernen also tatsächlich Merkmale des Verkehrs und reagieren nicht zufällig.
 Der Versuchsaufbau wird auf Basis dieser Kontrollen als valide angesehen.
 
@@ -61,22 +57,13 @@ Der Versuchsaufbau wird auf Basis dieser Kontrollen als valide angesehen.
 Über alle Padding-Modi hinweg sinkt die Accuracy mit wachsender Klassenanzahl.
 Die ungeschützte Baseline fällt von 92.7\,\% bei 20 Klassen auf 82.4\,\% bei 80 Klassen und weiter auf 68.3\,\% im Open-World.
 
-
-Mit jeder zusätzlichen Klasse wachsen die paarweisen Überlappungen im Merkmalsraum, sodass das Erkenn schwerer wird.
-
-
+Mit jeder zusätzlichen Klasse wachsen die paarweisen Überlappungen im Merkmalsraum, sodass das Erkennen schwerer wird.
 Zusätzlich muss der Klassifikator viele feinere Trennflächen statt weniger breiter Entscheidungsregionen lernen, was bei vergleichbarer Trainingsmenge pro Klasse die effektive Trennschärfe senkt.
 
-
 Im Open-World tritt ein struktureller Effekt hinzu: Der Klassifikator entscheidet erst, ob ein Besuch zu einer überwachten Seite oder zur unüberwachten Sammelklasse gehört, und ordnet ihn im positiven Fall anschliessend einer konkreten überwachten Seite zu, was beide Stufen schwieriger macht.
-
-
 Diese Beobachtung ist konsistent mit Juarez et al., die für Open-World-Szenarien deutlich höhere Falsch-Positiv-Raten berichten und betonen, dass die in Closed-World-Studien gemeldeten Erkennungsraten in der Praxis nicht erreicht werden~\cite{juarez2014critical}.
 
-
 Der Vorsprung gegenüber der Random-Basis (5.0\,\% bei 20 Klassen, 1.2\,\% bei 80 und Open-World) wächst dabei, was zeigt, dass der Klassifikator die zusätzlichen Klassen nutzt und nicht systematisch versagt.
-
-
 Die hier erzielten Werte liegen unterhalb der von Sirinam et al.\ ursprünglich gemeldeten 98\,\% bei 95 Klassen~\cite{sirinam2018deep}, jedoch in der Grössenordnung, die Jansen und Wails für ähnlich kleine Shadow-Datensätze berichten~\cite{jansen2023data}.
 
 \subsection{Effekt von Circuit Padding}
@@ -94,9 +81,8 @@ Der Reduced-Modus ist als sparsamere Variante des Circuit Paddings ausgelegt und
 Bei 20 Klassen liegt seine Accuracy mit 86.7\,\% wie erwartet zwischen Baseline (92.7\,\%) und voll aktiviertem Padding (83.3\,\%).
 Bei 80 Klassen kehrt sich die Reihenfolge um: Mit 77.5\,\% liegt Reduced minimal unterhalb von ON (78.6\,\%).
 Im Open-World tritt ein verwandtes Phänomen auf: Sowohl ON (70.7\,\%) als auch Reduced (71.9\,\%) liegen leicht oberhalb der OFF-Baseline (68.3\,\%), was der aus dem Closed-World abgeleiteten Erwartung widerspricht.
-Beide Beobachtungen stammen aus jeweils einem einzigen Shadow-Lauf pro Konfiguration, und die Unterschiede liegen in der Grössenordnung von zwei bis vier Prozentpunkten, was bei stark unbalancierten Klassenverteilungen wie im Open-World im Bereich der zu erwartenden Streuung liegt.
-Die kleinen Unterschiede zwischen OFF, ON und Reduced bei 80 Klassen und im Open-World werden daher nicht als statistisch signifikante Schutz- oder Schadenswirkungen interpretiert.
-Festzuhalten bleibt, dass der absolute Schutzbeitrag von Circuit Padding und Reduced Padding im untersuchten Bereich klein genug ist, dass die natürliche Streuung einzelner Läufe ihn überdecken oder sogar umkehren kann.
+Beide Beobachtungen stammen aus jeweils einem einzigen Shadow-Lauf pro Konfiguration, und die Unterschiede von zwei bis vier Prozentpunkten liegen bei stark unbalancierten Klassenverteilungen wie im Open-World im Bereich der zu erwartenden Streuung.
+Sie werden daher nicht als signifikante Schutz- oder Schadenswirkungen interpretiert, denn der absolute Schutzbeitrag von Circuit Padding ist im untersuchten Bereich klein genug, dass die natürliche Streuung einzelner Läufe ihn überdecken oder umkehren kann.
 Abbildung~\ref{fig:eval_openworld_pr} ergänzt das reine Accuracy-Bild um Precision, Recall und F1 im Open-World-Setup und zeigt, dass die kleinen Unterschiede zwischen OFF, Reduced und ON auch auf Ebene der einzelnen Kennzahlen klein bleiben, während Tamaraw qualitativ anders abschneidet.
 
 \begin{figure}[H]
@@ -297,10 +283,9 @@ Betrachtet werden die drei zeitlich zusammenhängenden Tamaraw-Läufe \texttt{ex
 Über alle drei Läufe hinweg bildet die CPU mit konstant rund 99.8\,\% Auslastung den primären Engpass und bleibt unabhängig von der Klassenanzahl am Anschlag.
 Arbeitsspeicher und Disk wachsen während der Laufzeit annähernd linear, da sowohl Shadow-Datenstrukturen als auch \gls{pcap}-Aufzeichnungen monoton anwachsen.
 Bei der grösseren Open-World-Konfiguration ist die Disk-Partition mit 156 GB die letztlich limitierende Ressource: \texttt{perfmon} und Shadow terminieren mit \texttt{ENOSPC}, bevor der Lauf regulär enden kann.
-Eine alternative Erfassungsmethode wäre die in der Arbeit von Jansen und Wails verwendete Tor-Instrumentierung, bei der jede Relay-Instanz die verarbeiteten Tor-Zellen direkt mit Richtung und Zeitstempel in ein kompaktes Cell-Trace-Log schreibt~\cite{jansen2023data}.
-Dieser Ansatz vermeidet die Ethernet-, IP-, \gls{tcp}- und TLS-Header, die in einer \gls{pcap}-Aufzeichnung pro Paket anfallen, blendet reine \gls{tcp}-Bestätigungspakete, Retransmissionen und TLS-Handshake-Bytes aus und beschränkt sich von vornherein auf die Zellen der überwachten Schaltkreise.
-Der Speicherbedarf liesse sich damit um eine bis zwei Grössenordnungen reduzieren und gerade die Open-World-Skala unter Tamaraw wieder unterhalb der vorhandenen 156 GB betreiben.
-In der vorliegenden Arbeit wird dennoch an den \glspl{pcap} festgehalten, da sie dem in Abschnitt~\ref{sec:realisierung_monitore} beschriebenen Bedrohungsmodell eines lokalen Beobachters entsprechen und ohne Eingriffe in den Tor-Quellcode unterstützt werden.
+Eine schlankere Aufzeichnung auf Tor-Zell-Ebene nach Jansen und Wails würde den Speicherbedarf um ein bis zwei Grössenordnungen reduzieren und die Open-World-Skala unter Tamaraw wieder unterhalb der 156-GB-Grenze halten~\cite{jansen2023data}.
+In der vorliegenden Arbeit wird dennoch an den \glspl{pcap} festgehalten, da sie dem in Abschnitt~\ref{sec:realisierung_monitore} beschriebenen Bedrohungsmodell eines lokalen Beobachters entsprechen.
+Die Umstellung auf Cell-Trace-Logs wird in Kapitel~\ref{cha:ausblick} als Folgearbeit aufgegriffen.
 
 \section{Einordnung und Limitationen}
 \label{sec:eval_einordnung}
