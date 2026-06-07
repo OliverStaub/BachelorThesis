@@ -78,6 +78,8 @@ Die Grössenordnung dieser Reduktion ist konsistent mit Sirinam et al., die für
 
 Der Reduced-Modus ist als sparsamere Variante des Circuit Paddings ausgelegt und wird in der torrc-Konfiguration zusätzlich zu \texttt{CircuitPadding 1} mit \texttt{ReducedCircuitPadding 1} aktiviert.
 Bei 20 Klassen liegt seine Accuracy mit 86.7\,\% wie erwartet zwischen Baseline (92.7\,\%) und voll aktiviertem Padding (83.3\,\%).
+
+
 Bei 80 Klassen kehrt sich die Reihenfolge um: Mit 77.5\,\% liegt Reduced minimal unterhalb von ON (78.6\,\%).
 Im Open-World tritt ein verwandtes Phänomen auf: Sowohl ON (70.7\,\%) als auch Reduced (71.9\,\%) liegen leicht oberhalb der OFF-Baseline (68.3\,\%), was der aus dem Closed-World abgeleiteten Erwartung widerspricht.
 Beide Beobachtungen stammen aus jeweils einem einzigen Shadow-Lauf pro Konfiguration, und die Unterschiede von zwei bis vier Prozentpunkten liegen bei stark unbalancierten Klassenverteilungen wie im Open-World im Bereich der zu erwartenden Streuung.
