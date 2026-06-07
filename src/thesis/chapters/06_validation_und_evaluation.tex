@@ -29,7 +29,7 @@ Die genauen Accuracy- und F1-Werte sind in Tabelle~\ref{tab:experimentlogs} im A
             ybar,
             width=0.95\textwidth,
             height=7.5cm,
-            bar width=9pt,
+            bar width=7pt,
             ymin=0, ymax=115,
             ylabel={Accuracy [\%]},
             symbolic x coords={20 Klassen, 80 Klassen, Open-World 80/280},
@@ -37,7 +37,7 @@ Die genauen Accuracy- und F1-Werte sind in Tabelle~\ref{tab:experimentlogs} im A
             enlarge x limits=0.28,
             ymajorgrids=true,
             grid style={dashed, gray!35},
-            legend style={at={(0.5,-0.18)}, anchor=north, legend columns=4, draw=none, /tikz/every even column/.append style={column sep=10pt}},
+            legend style={at={(0.5,-0.18)}, anchor=north, legend columns=5, draw=none, /tikz/every even column/.append style={column sep=10pt}},
             legend image code/.code={\draw[#1, draw=black!40, line width=0.3pt] (0cm,-0.08cm) rectangle (0.3cm,0.16cm);},
             nodes near coords,
             nodes near coords style={font=\tiny, rotate=90, anchor=west, inner sep=2pt, /pgf/number format/.cd, fixed, fixed zerofill, precision=1},
@@ -48,10 +48,11 @@ Die genauen Accuracy- und F1-Werte sind in Tabelle~\ref{tab:experimentlogs} im A
             \addplot[fill=green!55!black!60]  coordinates {(20 Klassen,86.7) (80 Klassen,77.5) (Open-World 80/280,71.9)};
             \addplot[fill=orange!75!black!50] coordinates {(20 Klassen,83.3) (80 Klassen,78.6) (Open-World 80/280,70.7)};
             \addplot[fill=violet!60!black!60] coordinates {(20 Klassen,39.3) (80 Klassen,31.6) (Open-World 80/280,28.0)};
-            \legend{OFF, Reduced, ON, Tamaraw}
+            \addplot[fill=gray!45]            coordinates {(20 Klassen,5.0)  (80 Klassen,1.25) (Open-World 80/280,1.25)};
+            \legend{OFF, Reduced, ON, Tamaraw, Random-Basis}
         \end{axis}
     \end{tikzpicture}
-    \caption{Accuracy des \gls{df}-Klassifikators für die vier untersuchten Verteidigungen (OFF, Reduced, ON, Tamaraw) über die drei Klassenstufen 20, 80 und Open-World (80 überwacht in einem Topf von 280). Random-Basis bei 5.0\,\% (20 Klassen) beziehungsweise 1.25\,\% (80 Klassen, Open-World), in der Darstellung am unteren Rand. Die genauen Accuracy- und F1-Werte sind in Tabelle~\ref{tab:experimentlogs} im Anhang aufgeführt. Eigene Darstellung aus \texttt{ExperimentLogs.csv}.}
+    \caption{Accuracy des \gls{df}-Klassifikators für die vier untersuchten Verteidigungen (OFF, Reduced, ON, Tamaraw) über die drei Klassenstufen 20, 80 und Open-World (80 überwacht in einem Topf von 280). Die Random-Basis (5.0\,\% bei 20 Klassen, 1.25\,\% bei 80 Klassen und Open-World) ist als grauer Balken pro Gruppe mit eingezeichnet. Die genauen Accuracy- und F1-Werte sind in Tabelle~\ref{tab:experimentlogs} im Anhang aufgeführt. Eigene Darstellung aus \texttt{ExperimentLogs.csv}.}
     \label{fig:eval_results_overview}
 \end{figure}
 
