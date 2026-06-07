@@ -19,9 +19,6 @@ Der Versuchsaufbau wird auf Basis dieser Kontrollen als valide angesehen.
 \section{Klassifikationsresultate}
 \label{sec:eval_results}
 
-Abbildung~\ref{fig:eval_results_overview} fasst die Accuracy-Werte über die drei Klassenstufen und vier Padding-Modi zusammen.
-Die genauen Accuracy- und F1-Werte sind in Tabelle~\ref{tab:experimentlogs} im Anhang aufgeführt.
-
 \begin{figure}[H]
     \centering
     \begin{tikzpicture}
@@ -54,7 +51,7 @@ Die genauen Accuracy- und F1-Werte sind in Tabelle~\ref{tab:experimentlogs} im A
             \legend{OFF, Reduced, ON, Tamaraw, Random-Basis}
         \end{axis}
     \end{tikzpicture}
-    \caption{Accuracy des \gls{df}-Klassifikators für die vier untersuchten Verteidigungen (OFF, Reduced, ON, Tamaraw) über die drei Klassenstufen 20, 80 und Open-World (80 überwacht in einem Topf von 280). Die Random-Basis (5.0\,\% bei 20 Klassen, 1.25\,\% bei 80 Klassen und Open-World) ist als grauer Balken pro Gruppe mit eingezeichnet. Die genauen Accuracy- und F1-Werte sind in Tabelle~\ref{tab:experimentlogs} im Anhang aufgeführt. Eigene Darstellung aus \texttt{ExperimentLogs.csv}.}
+    \caption{Accuracy des \gls{df}-Klassifikators für die vier untersuchten Verteidigungen (OFF, Reduced, ON, Tamaraw). Die genauen Accuracy- und F1-Werte sind in Tabelle~\ref{tab:experimentlogs} im Anhang aufgeführt.}
     \label{fig:eval_results_overview}
 \end{figure}
 
@@ -63,11 +60,23 @@ Die genauen Accuracy- und F1-Werte sind in Tabelle~\ref{tab:experimentlogs} im A
 
 Über alle Padding-Modi hinweg sinkt die Accuracy mit wachsender Klassenanzahl.
 Die ungeschützte Baseline fällt von 92.7\,\% bei 20 Klassen auf 82.4\,\% bei 80 Klassen und weiter auf 68.3\,\% im Open-World.
-Mit jeder zusätzlichen Klasse wachsen die paarweisen Überlappungen im Merkmalsraum, sodass einzelne Seiten mit ähnlichen Burst-Mustern, Paketzahlen oder Übertragungsgrössen verwechselbar werden.
+
+
+Mit jeder zusätzlichen Klasse wachsen die paarweisen Überlappungen im Merkmalsraum, sodass das Erkenn schwerer wird.
+
+
 Zusätzlich muss der Klassifikator viele feinere Trennflächen statt weniger breiter Entscheidungsregionen lernen, was bei vergleichbarer Trainingsmenge pro Klasse die effektive Trennschärfe senkt.
+
+
 Im Open-World tritt ein struktureller Effekt hinzu: Der Klassifikator entscheidet erst, ob ein Besuch zu einer überwachten Seite oder zur unüberwachten Sammelklasse gehört, und ordnet ihn im positiven Fall anschliessend einer konkreten überwachten Seite zu, was beide Stufen schwieriger macht.
+
+
 Diese Beobachtung ist konsistent mit Juarez et al., die für Open-World-Szenarien deutlich höhere Falsch-Positiv-Raten berichten und betonen, dass die in Closed-World-Studien gemeldeten Erkennungsraten in der Praxis nicht erreicht werden~\cite{juarez2014critical}.
+
+
 Der Vorsprung gegenüber der Random-Basis (5.0\,\% bei 20 Klassen, 1.2\,\% bei 80 und Open-World) wächst dabei, was zeigt, dass der Klassifikator die zusätzlichen Klassen nutzt und nicht systematisch versagt.
+
+
 Die hier erzielten Werte liegen unterhalb der von Sirinam et al.\ ursprünglich gemeldeten 98\,\% bei 95 Klassen~\cite{sirinam2018deep}, jedoch in der Grössenordnung, die Jansen und Wails für ähnlich kleine Shadow-Datensätze berichten~\cite{jansen2023data}.
 
 \subsection{Effekt von Circuit Padding}
