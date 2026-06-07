@@ -73,16 +73,17 @@ Eine eigene Verkehrsmodellierung wird nicht entwickelt, da die bestehenden Model
 \label{sec:konzepte_inhaltsquelle}
 
 Als Inhalt für die zu klassifizierenden Webseiten wird die Simple-English-Wikipedia verwendet.
-Wikipedia liefert pro Artikel eine eigenständige HTML-Seite, was eine saubere Eins-zu-eins-Zuordnung zwischen Klasse und Inhalt ermöglicht. Da in Shadow kein Internetzugriff möglich ist wird ein lokaler Spiegel eingerichtet.
+Wikipedia liefert pro Artikel eine eigenständige HTML-Seite, was eine saubere Eins-zu-eins-Zuordnung zwischen Klasse und Inhalt ermöglicht.
+Da in Shadow kein Internetzugriff möglich ist, wird ein lokaler Spiegel eingerichtet.
 
 
-\section{Methodische Vereinfachung: Pcap statt Cell-Trace}
+\section{Methodische Vereinfachung: \gls{pcap} statt Cell-Trace}
 \label{sec:konzepte_pcap}
 
 Jansen und Wails verwenden eine gepatchte Tor-Version, die pro Zelle einen beschrifteten Eintrag mit Circuit-Zuordnung in einen Cell-Trace schreibt~\cite{jansen2023data}.
 Diese Variante ist nicht öffentlich verfügbar.
 
-Stattdessen wird in dieser Arbeit am Monitor eine fortlaufende \gls{pcap} Datei mit allen TCP-Paketen aufgezeichnet und im Nachgang in beschriftete Richtungssequenzen pro Seitenbesuch zerlegt.
+Stattdessen wird in dieser Arbeit am Monitor eine fortlaufende \gls{pcap}-Datei mit allen TCP-Paketen aufgezeichnet und im Nachgang in beschriftete Richtungssequenzen pro Seitenbesuch zerlegt.
 
 Während ein Cell-Trace die Pakete bereits zellgenau und mit Circuit-Information versehen liefert, ist das \gls{pcap} ein einziger unbeschrifteter Paketstrom, der erst nachträglich den einzelnen Besuchen zugeordnet werden muss.
 Diese Zerlegung übernimmt ein eigens für die vorliegende Arbeit entwickeltes Python-Skript (vgl.\ Abschnitt~\ref{sec:realisierung_pcap_to_npz}), das die Pakete anhand der in der \texttt{schedule.json} protokollierten Besuchsfenster und Labels (Abschnitt~\ref{sec:konzepte_port_class}) den jeweiligen Seiten zuweist.
@@ -111,8 +112,8 @@ Dazu muss jeder Seitenbesuch zweifach identifiziert werden: zeitlich, um die Bes
 Die zeitliche Trennung folgt aus dem festen Visit-Intervall (vgl.\ Abschnitt~\ref{sec:konzepte_roundrobin}).
 Jeder Monitor startet pro Intervall genau einen Seitenabruf, sodass jedem Zeitfenster genau ein Besuch entspricht.
 
-Die inhaltliche Zuordnung ist aus dem Monitor-Pcap allein nicht rekonstruierbar.
-Das Pcap zeichnet ausschliesslich den verschlüsselten Verkehr zum Tor-Guard auf, weder Ziel-IP noch Zielport des angesprochenen Webservers sind sichtbar.
+Die inhaltliche Zuordnung ist aus dem Monitor-\gls{pcap} allein nicht rekonstruierbar.
+Das \gls{pcap} zeichnet ausschliesslich den verschlüsselten Verkehr zum Tor-Guard auf, weder Ziel-IP noch Zielport des angesprochenen Webservers sind sichtbar.
 Genau dieser Umstand entspricht dem realistischen Angreifermodell: dem passiven Beobachter zwischen Monitor und Guard fehlt eben jene Information.
 Sie wird deshalb beim Aufbau der Simulation in einer Plandatei \texttt{schedule.json} (vgl.\ Abschnitt~\ref{sec:realisierung_schedule}) festgehalten, die pro Monitor und Besuch die Startzeit und die abgerufene Seite enthält.
 Bei der Auswertung wird der \gls{pcap}-Strom an den Zeitgrenzen der Plandatei zerlegt und das hinterlegte Label übernommen.

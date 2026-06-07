@@ -5,7 +5,7 @@
 \label{sec:realisierung_uebersicht}
 
 Der Versuchsaufbau besteht aus drei aufeinander aufbauenden Teilsystemen.
-Zuerst wird mit dem Shadow-Netzwerksimulator~\cite{netsim-atc2022} ein realitätsnahes \gls{tor}-Netzwerk auf einem einzelnen Server simuliert.
+Zuerst wird mit dem Shadow-Simulator~\cite{netsim-atc2022} ein realitätsnahes \gls{tor}-Netzwerk auf einem einzelnen Server simuliert.
 Innerhalb dieses simulierten Netzwerks führt eine Anzahl von Monitor-Knoten automatisierte Webseitenbesuche über \gls{tor} durch.
 Der dabei anfallende Netzwerkverkehr wird auf den Monitor-Knoten als \gls{pcap}-Datei mitgeschnitten.
 In einer zweiten Stufe werden diese Aufzeichnungen exportiert und in ein passendes Dateiformat konvertiert.
@@ -15,12 +15,12 @@ In der dritten Stufe wird auf den Daten ein \gls{df}-Klassifikator trainiert und
 \centering
 \includegraphics[width=\textwidth]{../../images/ShadowSetup.png}
 \caption{Innerhalb der Simulation existiert ein vollständiges \gls{tor}-Netzwerk mit Eingangs-, Mittel- sowie Ausgangsknoten.
-Daneben laufen die für diese Arbeit eigens hinzugefügten Monitor-Clients (jeweils mit lokalem Tor-Daemon, gepatchtem \texttt{wget2} und Pcap-Aufzeichnung), ein Zim-Server für die Wikipedia-Inhalte sowie die von Tornettools generierten TGEN- und Markov-Hintergrund-Clients, deren Verkehr das Verhalten realer Tor-Nutzerinnen und -Nutzer nachbildet~\cite{neverenough-sec2021}.}
+Daneben laufen die für diese Arbeit eigens hinzugefügten Monitor-Clients (jeweils mit lokalem Tor-Daemon, gepatchtem \texttt{wget2} und \gls{pcap}-Aufzeichnung), ein Zim-Server für die Wikipedia-Inhalte sowie die von Tornettools generierten TGEN- und Markov-Hintergrund-Clients, deren Verkehr das Verhalten realer Tor-Nutzerinnen und -Nutzer nachbildet~\cite{neverenough-sec2021}.}
 \label{fig:shadowsetup}
 \end{figure}
 
 Der gesamte Ablauf wird von dem zentralen Steuerungsskript \texttt{shadowctl.py} orchestriert, das per \gls{ssh} auf den Simulationsserver zugreift, dort die Simulation startet, ihren Fortschritt überwacht und nach dem Lauf die Ergebnisdateien zurück auf die Arbeitsstation des Autors überträgt.
-Diese Trennung zwischen Steuerung (lokal) und Ausführung (remote) erlaubt eine benutzerfreundliche Steuerung Simulationen.
+Diese Trennung zwischen Steuerung (lokal) und Ausführung (remote) erlaubt eine benutzerfreundliche Steuerung der Simulationen.
 
 \section{Versuchsumgebung}
 \label{sec:realisierung_umgebung}
@@ -28,7 +28,7 @@ Diese Trennung zwischen Steuerung (lokal) und Ausführung (remote) erlaubt eine 
 \subsection{Server}
 
 Sämtliche Simulationen laufen auf einer dedizierten virtuellen Maschine mit dem Hostnamen \texttt{shadowsrv-001.prod.projects.ls.eee.intern}, die von HSLU Lab Services für die Dauer dieser Arbeit bereitgestellt wurde.
-Die VM verfügt über 32~vCPU-Kerne, 128~GB Arbeitsspeicher und ein 156~GB grossen Speicher.
+Die VM verfügt über 32~vCPU-Kerne, 128~GB Arbeitsspeicher und einen 156~GB grossen Speicher.
 Eine ausführliche Auflistung der bereitgestellten Ressourcen sowie der eingerichteten Software-Umgebung findet sich in Anhang~\ref{app:serverumgebung}.
 
 Der Zugriff auf die VM ist nur aus dem HSLU-Netzwerk (Campus-WLAN oder VPN) über \gls{ssh} möglich, ein direkter Zugriff aus dem Internet ist administrativ unterbunden.
@@ -102,7 +102,7 @@ Listing~\ref{lst:shadow_monitor} zeigt einen verkürzten Ausschnitt eines Monito
     frame=single,
     captionpos=b,
     label={lst:shadow_monitor},
-    caption={Auszug aus \texttt{shadow.config.yaml} für \texttt{monitor0}: aktivierte Pcap-Aufzeichnung sowie die Prozessabfolge Tor-Daemon, \texttt{wget2}-Aufruf und \texttt{newnym.py} (gekürzt auf zwei aufeinanderfolgende Besuche).}
+    caption={Auszug aus \texttt{shadow.config.yaml} für \texttt{monitor0}: aktivierte \gls{pcap}-Aufzeichnung sowie die Prozessabfolge Tor-Daemon, \texttt{wget2}-Aufruf und \texttt{newnym.py} (gekürzt auf zwei aufeinanderfolgende Besuche).}
 ]
 monitor0:
   bandwidth_down: 100 megabit
@@ -238,7 +238,7 @@ Die so aufgezeichneten Pcaps werden im Anschluss an die Simulation per \texttt{s
 \label{sec:realisierung_tamaraw}
 
 Für die ergänzende Messreihe gegen das Tamaraw-Verfahren (Abschnitt~\ref{sec:wf_defenses_tamaraw}) muss der bisher beschriebene Versuchsaufbau um einen zusätzlichen Bridge-Knoten erweitert werden. 
-Die übrigen Bestandteile, also Tor-Netzwerk aus Tornettools, Monitor-Clients, Zim-Server und Pcap-Aufzeichnung, bleiben unverändert.
+Die übrigen Bestandteile, also Tor-Netzwerk aus Tornettools, Monitor-Clients, Zim-Server und \gls{pcap}-Aufzeichnung, bleiben unverändert.
 Abbildung~\ref{fig:tamarawsetup} zeigt die so erweiterte Topologie.
 
 \begin{figure}[H]
@@ -319,7 +319,7 @@ Pro Experiment entstehen eine \texttt{.npz}-Datei mit den Richtungssequenzen sow
 \label{fig:datapipeline}
 \end{figure}
 
-Für jeden Eintrag der \texttt{schedule.json} wird das Zeitintervall des Besuchs aus dem Pcap geschnitten, Pakete mit der Client-IP als Quelle gelten als ausgehend ($+1$), Pakete mit der Client-IP als Ziel als eingehend ($-1$).
+Für jeden Eintrag der \texttt{schedule.json} wird das Zeitintervall des Besuchs aus dem \gls{pcap} geschnitten, Pakete mit der Client-IP als Quelle gelten als ausgehend ($+1$), Pakete mit der Client-IP als Ziel als eingehend ($-1$).
 Die Klassen-Labels werden aus der \texttt{schedule.json} übernommen und zusammen mit der Umkehrabbildung und der Anzahl der Klassen als \texttt{labels.json} neben der \texttt{.npz}-Datei abgelegt, damit die Ergebnisse später eindeutig den ursprünglichen Wikipedia-Seiten zugeordnet werden können.
 
 \subsection{Aufteilung in Trainings-, Validierungs- und Testdatensatz}
@@ -337,7 +337,8 @@ WFlib hat sich in mehreren neueren Veröffentlichungen als Vergleichsplattform e
 
 \subsection{Hyperparameter}
 
-Diese Trainingsbedingungen bleiben über alle Experimente hinweg identisch, beobachtete Genauigkeitsunterschiede sind ausschliesslich auf die unabhängigen Variablen (Padding-Modus und Klassenanzahl) zurückzuführen, nicht auf abweichende Modelleinstellungen.
+Diese Trainingsbedingungen bleiben über alle Experimente hinweg identisch.
+Beobachtete Genauigkeitsunterschiede sind ausschliesslich auf die unabhängigen Variablen (Padding-Modus und Klassenanzahl) zurückzuführen, nicht auf abweichende Modelleinstellungen.
 Die Werte sind in Tabelle~\ref{tab:hyperparameter} zusammengefasst.
 
 \begin{table}[H]

@@ -63,7 +63,7 @@ Im Open-World tritt ein struktureller Effekt hinzu: Der Klassifikator entscheide
 Diese Beobachtung ist konsistent mit Juarez et al., die für Open-World-Szenarien deutlich höhere Falsch-Positiv-Raten berichten und betonen, dass die in Closed-World-Studien gemeldeten Erkennungsraten in der Praxis nicht erreicht werden~\cite{juarez2014critical}.
 
 
-Die hier erzielten Werte liegen unterhalb der von Sirinam et al.\ ursprünglich gemeldeten 98.3\,\% bei 95 Klassen~\cite{sirinam2018deep}, was sich neben der grösseren Skala des Live-Tor-Netzwerks auch durch die mit 1000 statt 150 Traces pro Klasse rund siebenfach grössere Trainingsmenge von Sirinam et al. erklären lässt.
+Die hier erzielten Werte liegen unterhalb der von Sirinam et al.\ ursprünglich gemeldeten 98.3\,\% bei 95 Klassen~\cite{sirinam2018deep}, was sich neben der grösseren Skala des Live-Tor-Netzwerks auch durch die mit 1000 statt 150 Traces pro Klasse rund sechseinhalbfach grössere Trainingsmenge von Sirinam et al.\ erklären lässt.
 
 \subsection{Effekt von Circuit Padding}
 \label{sec:eval_padding_effekt}
@@ -315,7 +315,8 @@ Im vorliegenden Versuchsaufbau ist concept drift ausgeschlossen, alle Besuche de
 
 \paragraph{Hintergrundrauschen.}
 Tornettools erzeugt zwar TGEN- und Markov-Hintergrund-Clients, deren Verkehr eine Schätzung des realen Tor-Verkehrsmodells nachbildet~\cite{neverenough-sec2021}.
-Im Vergleich zum Live-Netzwerk mit täglich rund zwei Millionen verbundenen Nutzerinnen und Nutzern~\cite{tormetricsabout} ist die hier reproduzierte Last jedoch klein.
+Im Vergleich zum Live-Netzwerk mit aktuell rund zwei Millionen täglich verbundenen Nutzerinnen und Nutzern (Stand 2026, gemessen anhand gleichzeitig verbundener Clients)~\cite{tormetricsabout} ist die hier reproduzierte Last jedoch klein.
+Der in Abschnitt~\ref{cha:stand_der_technik} genannte historische Spitzenwert von bis zu acht Millionen Personen pro Tag~\cite{mani2018understanding} bezieht sich auf eine andere Metrik (geschätzte Anzahl einzelner Personen statt gleichzeitiger Verbindungen) und ist daher nicht direkt mit dem heutigen Wert vergleichbar.
 Mehr Hintergrundverkehr bedeutet einerseits mehr Streuung der Latenzen pro Schaltkreis und andererseits mehr unbeabsichtigte Tor-Zell-Sequenzen, die mit echten Padding-Mustern verwechselt werden können.
 Beide Effekte würden die Erkennungsrate gegenüber den hier berichteten Werten weiter senken.
 

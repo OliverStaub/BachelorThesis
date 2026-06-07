@@ -4,7 +4,7 @@
 \section{Tor}
 
 \gls{tor} ist ein verteiltes Overlay-Netzwerk mit niedriger Latenz, das TCP-basierte Anwendungen wie Web-Browsing, SSH oder Instant Messaging anonymisiert~\cite{dingledine2004tor}.
-Das Netzwerk verspricht seinen Nutzern Schutz vor Verfolgung, Zensur und Überwachung\footnote{\url{https://www.torproject.org/de/}, abgerufen am 08.04.2026.} und wurde im Spitzenwert 2018 von bis zu acht Millionen Personen täglich verwendet~\cite{mani2018understanding}.
+Das Netzwerk verspricht seinen Nutzern Schutz vor Verfolgung, Zensur und Überwachung\footnote{\url{https://www.torproject.org/de/} (Zugriff: 2026-04-08).} und wurde im Spitzenwert 2018 von bis zu acht Millionen Personen täglich verwendet~\cite{mani2018understanding}.
 Diese hohe Verbreitung macht \gls{tor} zu einem attraktiven Ziel für unterschiedliche Klassen von Deanonymisierungsangriffen, wie Timing-Angriffe, Traffic-Correlation oder \gls{wf}, die jeweils unterschiedliche Beobachtungspositionen und Annahmen voraussetzen.
 
 Das aktuelle \gls{tor}-Design wurde 2004 von Dingledine, Mathewson und Syverson als zweite Generation des Onion-Routings vorgestellt und seither stetig weiterentwickelt ~\cite{dingledine2004tor}.
@@ -101,7 +101,7 @@ Genau in diese Lücke setzen spätere Arbeiten zum Circuit Padding an, das in de
 
 \subsection{Tor Browser}
 
-Das Tor-Projekt stellt mit dem Tor Browser eine modifizierte Variante von Firefox bereit, die für die Nutzung mit Tor optimiert ist und zusätzlich Browser-Fingerprinting erschwert\footnote{\url{https://www.torproject.org/de/}, abgerufen am 08.04.2026.}.
+Das Tor-Projekt stellt mit dem Tor Browser eine modifizierte Variante von Firefox bereit, die für die Nutzung mit Tor optimiert ist und zusätzlich Browser-Fingerprinting erschwert\footnote{\url{https://www.torproject.org/de/} (Zugriff: 2026-04-08).}.
 Der Browser greift via SOCKS auf den lokalen Tor-Daemon zu, welcher den Internetverkehr in Form von Tor-Zellen über das Tor-Netzwerk weiterleitet~\cite{jansen2023data}.
 
 \section{Angriffe auf Tor}
@@ -139,20 +139,20 @@ Genau diesem Muster begegnet der Tor Browser durch eine konsequente Isolation de
 
 \textbf{Sybil-Operationen} bestehen darin, eine grosse Zahl bösartiger Relais unter einer Identität zu betreiben, um durch gleichzeitige Kontrolle von Guard- und Exit-Positionen End-zu-End-Traffic-Correlation zu ermöglichen, wie der Relay-Early-Angriff der Carnegie Mellon University 2014~\cite{torproject2014advisory} und die seit 2017 dokumentierte KAX17-Operation mit über 900~Relais~\cite{nusenu2021kax17} zeigen.
 
-\section{Website Fingerprinting}
+\section{Website-Fingerprinting}
 \label{sec:website_fingerprinting}
 
-\gls{wf} Angriffe können herausfinden welche Webseite ein Nutzer aufgerufen hat, trotz \gls{tor}-Verschlüsselung.
+\gls{wf} Angriffe können herausfinden, welche Webseite ein Nutzer aufgerufen hat, trotz \gls{tor}-Verschlüsselung.
 Der Angreifer zeichnet dazu den Datenverkehr zwischen Client und Eingangsknoten auf, entweder als Betreiber des Eingangsknotens~\cite{jansen2023data} oder als passiver lokaler Beobachter~\cite{wang2016realistically}.
 Aus Anzahl und Richtung der Tor-Zellen, optional ergänzt um Zeitstempel, leitet ein \gls{ml}-Klassifikator ein Verkehrsmuster pro Webseite ab.
 
 Der Angreifer definiert eine Menge überwachter Seiten, alle übrigen gelten als nicht-überwacht.
 Der Klassifikator wird zweistufig trainiert: Zuerst entscheidet er binär, ob eine beobachtete Zellsequenz zu einer überwachten Seite gehört, anschliessend bestimmt eine Multiclass-Klassifikation die konkrete Seite~\cite{jansen2023data}.
 Pro beobachteter Sequenz ergeben sich die vier üblichen Ausgänge: True Positive, True Negative, False Positive und False Negative.
-Welche Metriken daraus gebildet werden wird im Abschnitt~\ref{sec:closed_open_world} (Closed- und Open-World) behandelt.
+Welche Metriken daraus gebildet werden, wird im Abschnitt~\ref{sec:closed_open_world} (Closed- und Open-World) behandelt.
 
 
-\subsection{Website Fingerprinting in der Praxis}
+\subsection{Website-Fingerprinting in der Praxis}
 \label{sec:wf_in_der_praxis}
 
 Eine für die vorliegende Arbeit zentrale Einordnung ergibt sich aus einem Blick auf öffentlich bekannte Tor-Deanonymisierungen.
@@ -175,19 +175,19 @@ Sie evaluiert eine präventive Massnahme gegen ein dokumentiert mögliches, in d
 
 
 
-\section{Shadow Netzwerk Simulator}
+\section{Shadow-Simulator}
 
-\subsection{Shadow Simulator}
+\subsection{Shadow-Simulator}
 
-Shadow ist ein Ereignissimulator, der unmodifizierte Netzwerkanwendungen wie den realen \gls{tor} Daemon, den Verkehrsgenerator TGen oder auch wget2 innerhalb einer Simulation ausführen kann~\cite{jansen2011shadow}.
+Shadow ist ein Ereignissimulator, der unmodifizierte Netzwerkanwendungen wie den realen \gls{tor}-Daemon, den Verkehrsgenerator TGen oder auch wget2 innerhalb einer Simulation ausführen kann~\cite{jansen2011shadow}.
 
 
 Shadow fängt netzwerk- und zeitbezogene Aufrufe ab und beantwortet sie aus dem simulierten Netzwerk heraus, während alle übrigen Syscalls nativ ausgeführt werden~\cite{jansen2011shadow}.
 Da die Simulationszeit explizit verwaltet und von der Wanduhrzeit entkoppelt ist, skaliert Shadow unabhängig von der Hardware-Geschwindigkeit, wobei die Laufzeit grosser Simulationen je nach Versuch von wenigen Stunden bis zu mehreren Wochen reichen kann~\cite{neverenough-sec2021}.
 
 Jansen und Wails zeigen, dass ein vollständig in Shadow trainierter \gls{df}-Klassifikator auf Live-Tor-Daten 82\,\% der Aufrufe korrekt klassifiziert~\cite{jansen2023data}.
-Im Live Tor Netzwerk verändern unkontrollierte Faktoren wie laufende Denial-of-Service-Attacken oder überlastete Relais die Verkehrsmuster und erschweren so die Reproduzierbarkeit, was in der deterministischen Shadow Umgebung nicht auftritt~\cite{jansen2023data}.
-Shadow eignet sich damit nicht nur für isolierte Vergleichsstudien, sondern auch für das Training produktiv einsetzbarer \gls{wf} Klassifikatoren.
+Im Live-Tor-Netzwerk verändern unkontrollierte Faktoren wie laufende Denial-of-Service-Attacken oder überlastete Relais die Verkehrsmuster und erschweren so die Reproduzierbarkeit, was in der deterministischen Shadow-Umgebung nicht auftritt~\cite{jansen2023data}.
+Shadow eignet sich damit nicht nur für isolierte Vergleichsstudien, sondern auch für das Training produktiv einsetzbarer \gls{wf}-Klassifikatoren.
 
 
 

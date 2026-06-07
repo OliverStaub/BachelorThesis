@@ -29,7 +29,7 @@ Die einzelnen Stufen werden im Folgenden zusammengefasst.
 \label{sec:literaturrecherche_strategie}
 
 Ausgangspunkt der Recherche ist das in Kapitel~1 formulierte Forschungsthema rund um den Einfluss von Circuit Padding auf Website-Fingerprinting in Shadow.
-Aus dem Themenfeld werden vier inhaltliche Suchrichtungen abgeleitet: das Tor-Netzwerk und sein Bedrohungsmodell, Website-Fingerprinting-Klassifikatoren, Circuit Padding als Verteidigung sowie der Shadow-Netzwerksimulator und die zugehörige Werkzeugkette tornettools.
+Aus dem Themenfeld werden vier inhaltliche Suchrichtungen abgeleitet: das Tor-Netzwerk und sein Bedrohungsmodell, Website-Fingerprinting-Klassifikatoren, Circuit Padding als Verteidigung sowie der Shadow-Simulator und die zugehörige Werkzeugkette tornettools.
 
 \subsection{Genutzte Quellen, Datenbanken und Suchmaschinen}
 \label{sec:literaturrecherche_quellen}
@@ -114,7 +114,7 @@ In einer ersten Stufe wird die Werkzeugkette mit den kleinen Closed-World-Experi
 In einer zweiten Stufe werden dieselben Padding-Modi auf die grössere Closed-World übertragen, um den Effekt unter realistischeren Bedingungen zu prüfen.
 In einer dritten Stufe wird das Open-World-Szenario gemessen, ebenfalls über alle drei Padding-Modi, um den Padding-Effekt auch mit nicht überwachten Webseiten zu prüfen.
 In einer vierten Stufe wird ergänzend Tamaraw als alternatives, nicht implementiertes Verteidigungsverfahren über die drei Konfigurationen 20, 80 und Open-World (80 überwachte Webseiten aus 280 Quellseiten) gemessen.
-Jeder Durchlauf besteht aus den Schritten Simulation in Shadow, Konvertierung der pcap-Aufzeichnungen in das WFlib-Format und Training sowie Test des \gls{df}-Klassifikators auf einer festen Datenaufteilung.
+Jeder Durchlauf besteht aus den Schritten Simulation in Shadow, Konvertierung der \gls{pcap}-Aufzeichnungen in das WFlib-Format und Training sowie Test des \gls{df}-Klassifikators auf einer festen Datenaufteilung.
 
 \subsection{Grenzen der gewählten Methode}
 \label{sec:experiment_grenzen}
