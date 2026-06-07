@@ -13,35 +13,17 @@ Erstens liegt der Anteil fehlgeschlagener Seitenabrufe in allen Closed-World-Lä
 Zweitens liegt die mittlere Paketanzahl pro Sample für die Circuit-Padding-Modi konsistent zwischen 580 und 640, was dafür spricht, dass die Seitenabrufe vergleichbar gross sind und sich nicht systematisch zwischen den Vergleichsgruppen unterscheiden, während Tamaraw die Sequenz erwartungsgemäss bis zur 5000-Werte-Grenze füllt.
 
 
-Drittens erreichen alle Modelle Klassifikationsraten deutlich über der Random-Basis (vergleiche Tabelle~\ref{tab:eval_results}), lernen also tatsächlich Merkmale des Verkehrs und reagieren nicht zufällig.
+Drittens erreichen alle Modelle Klassifikationsraten deutlich über der Random-Basis (vergleiche Tabelle~\ref{tab:experimentlogs}), lernen also tatsächlich Merkmale des Verkehrs und reagieren nicht zufällig.
 Der Versuchsaufbau wird auf Basis dieser Kontrollen als valide angesehen.
 
 \section{Klassifikationsresultate}
 \label{sec:eval_results}
 
-In der Tabelle~\ref{tab:eval_results} werden die Accuracy und F1-Werte über die drei Klassenstufen und vier Padding-Modi zusammengefasst.
+Abbildung~\ref{fig:eval_results_overview} fasst die Accuracy-Werte über die drei Klassenstufen und vier Padding-Modi zusammen.
+Die genauen Accuracy- und F1-Werte sind in Tabelle~\ref{tab:experimentlogs} im Anhang aufgeführt.
 
 
 Die nachfolgenden Unterabschnitte diskutieren die Resultate entlang von vier Achsen: dem Effekt der Klassenanzahl, dem Schutzbeitrag von Circuit Padding, der Sonderrolle von Reduced Padding inklusive einer im Open-World beobachteten Inversion, und Tamaraw als Referenzpunkt einer schweren Verteidigung.
-
-\begin{table}[H]
-    \centering
-    \caption{Accuracy und F1-Wert der vier Padding-Modi für die drei Klassenstufen. Open-World bezieht sich auf 80 überwachte Seiten in einem Topf von 280 Quellseiten. Quelle: \texttt{ExperimentLogs.csv}.}
-    \label{tab:eval_results}
-    \begin{tabular}{lrrrrrr}
-        \hline
-         & \multicolumn{2}{c}{Closed-World 20} & \multicolumn{2}{c}{Closed-World 80} & \multicolumn{2}{c}{Open-World 80/280} \\
-        Padding & Acc.\,[\%] & F1\,[\%] & Acc.\,[\%] & F1\,[\%] & Acc.\,[\%] & F1\,[\%] \\
-        \hline
-        OFF     & 92.7 & 92.7 & 82.4 & 81.4 & 68.3 & 69.8 \\
-        Reduced & 86.7 & 86.3 & 77.5 & 76.2 & 71.9 & 73.6 \\
-        ON      & 83.3 & 82.8 & 78.6 & 76.9 & 70.7 & 72.5 \\
-        Tamaraw & 39.3 & 38.6 & 31.6 & 29.2 & 28.0 & 20.0 \\
-        \hline
-        Random-Basis & \multicolumn{2}{c}{5.0\,\%} & \multicolumn{2}{c}{1.2\,\%} & \multicolumn{2}{c}{1.2\,\%} \\
-        \hline
-    \end{tabular}
-\end{table}
 
 \begin{figure}[H]
     \centering
@@ -72,7 +54,7 @@ Die nachfolgenden Unterabschnitte diskutieren die Resultate entlang von vier Ach
             \legend{OFF, Reduced, ON, Tamaraw}
         \end{axis}
     \end{tikzpicture}
-    \caption{Accuracy des \gls{df}-Klassifikators für die vier untersuchten Verteidigungen (OFF, Reduced, ON, Tamaraw) über die drei Klassenstufen 20, 80 und Open-World (80 überwacht in einem Topf von 280). Random-Basis bei 5.0\,\% (20 Klassen) beziehungsweise 1.25\,\% (80 Klassen, Open-World), in der Darstellung am unteren Rand. Eigene Darstellung aus \texttt{ExperimentLogs.csv}.}
+    \caption{Accuracy des \gls{df}-Klassifikators für die vier untersuchten Verteidigungen (OFF, Reduced, ON, Tamaraw) über die drei Klassenstufen 20, 80 und Open-World (80 überwacht in einem Topf von 280). Random-Basis bei 5.0\,\% (20 Klassen) beziehungsweise 1.25\,\% (80 Klassen, Open-World), in der Darstellung am unteren Rand. Die genauen Accuracy- und F1-Werte sind in Tabelle~\ref{tab:experimentlogs} im Anhang aufgeführt. Eigene Darstellung aus \texttt{ExperimentLogs.csv}.}
     \label{fig:eval_results_overview}
 \end{figure}
 
