@@ -95,6 +95,7 @@ Pro besuchter Seite wird ein eigener Port auf dem Webserver verwendet.
 
 Listing~\ref{lst:shadow_monitor} zeigt einen verkürzten Ausschnitt eines Monitor-Hosts aus der generierten \texttt{shadow.config.yaml}.
 
+\noindent\begin{minipage}{\linewidth}
 \begin{lstlisting}[
     basicstyle=\ttfamily\footnotesize,
     breaklines=true,
@@ -126,6 +127,7 @@ monitor0:
           http://129.114.108.192:8010/Ionizing_radiation
     start_time: 1230
 \end{lstlisting}
+\end{minipage}
 
 \paragraph{Schedule}
 Zusätzlich erzeugt \texttt{generate-wf-config.py} eine Datei \texttt{schedule.json}, in der für jeden Monitor festgehalten ist, wann er welche Seite besucht.
