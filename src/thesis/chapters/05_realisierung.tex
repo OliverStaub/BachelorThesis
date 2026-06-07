@@ -5,7 +5,7 @@
 \label{sec:realisierung_uebersicht}
 
 Der Versuchsaufbau besteht aus drei aufeinander aufbauenden Teilsystemen.
-Zuerst wird mit dem Shadow-Simulator~\cite{netsim-atc2022} ein realitätsnahes \gls{tor}-Netzwerk auf einem einzelnen Server simuliert.
+Zuerst wird mit dem \gls{shadow}-Simulator~\cite{netsim-atc2022} ein realitätsnahes \gls{tor}-Netzwerk auf einem einzelnen Server simuliert.
 Innerhalb dieses simulierten Netzwerks führt eine Anzahl von Monitor-Knoten automatisierte Webseitenbesuche über \gls{tor} durch.
 Der dabei anfallende Netzwerkverkehr wird auf den Monitor-Knoten als \gls{pcap}-Datei mitgeschnitten.
 In einer zweiten Stufe werden diese Aufzeichnungen exportiert und in ein passendes Dateiformat konvertiert.
@@ -15,11 +15,11 @@ In der dritten Stufe wird auf den Daten ein \gls{df}-Klassifikator trainiert und
 \centering
 \includegraphics[width=\textwidth]{../../images/ShadowSetup.png}
 \caption{Innerhalb der Simulation existiert ein vollständiges \gls{tor}-Netzwerk mit Eingangs-, Mittel- sowie Ausgangsknoten.
-Daneben laufen die für diese Arbeit eigens hinzugefügten Monitor-Clients (jeweils mit lokalem Tor-Daemon, gepatchtem \texttt{wget2} und \gls{pcap}-Aufzeichnung), ein Zim-Server für die Wikipedia-Inhalte sowie die von Tornettools generierten TGEN- und Markov-Hintergrund-Clients, deren Verkehr das Verhalten realer Tor-Nutzerinnen und -Nutzer nachbildet~\cite{neverenough-sec2021}.}
+Daneben laufen die für diese Arbeit eigens hinzugefügten Monitor-Clients (jeweils mit lokalem Tor-Daemon, gepatchtem \texttt{wget2} und \gls{pcap}-Aufzeichnung), ein Zim-Server für die Wikipedia-Inhalte sowie die von Tornettools generierten TGEN- und Markov-Hintergrund-Clients, deren Verkehr das Verhalten realer Tor-Nutzender nachbildet~\cite{neverenough-sec2021}.}
 \label{fig:shadowsetup}
 \end{figure}
 
-Der gesamte Ablauf wird von dem zentralen Steuerungsskript \texttt{shadowctl.py} orchestriert, das per \gls{ssh} auf den Simulationsserver zugreift, dort die Simulation startet, ihren Fortschritt überwacht und nach dem Lauf die Ergebnisdateien zurück auf die Arbeitsstation des Autors überträgt.
+Der gesamte Ablauf wird von dem zentralen Steuerungsskript \texttt{shadowctl.py} orchestriert, das per \gls{ssh} auf den Simulationsserver zugreift, dort die Simulation startet, ihren Fortschritt überwacht und nach dem Lauf die Ergebnisdateien zurück auf die lokale Arbeitsstation überträgt.
 Diese Trennung zwischen Steuerung (lokal) und Ausführung (remote) erlaubt eine benutzerfreundliche Steuerung der Simulationen.
 
 \section{Versuchsumgebung}
@@ -43,7 +43,7 @@ Als externe Komponenten kommen zum Einsatz:
 \begin{itemize}
     \item Shadow~\cite{jansen2011shadow,netsim-atc2022} simuliert das \gls{tor}-Netzwerk.
     \item Tornettools~\cite{neverenough-sec2021} erzeugt aus den öffentlichen Tor-Metrik-Daten eine repräsentative Shadow-Konfiguration.
-    \item Der Wikipedia-ZIM-Dump dient als Inhalt für die zu klassifizierenden Webseiten.
+    \item Der Wikipedia-\gls{zim}-Dump dient als Inhalt für die zu klassifizierenden Webseiten.
     \item \texttt{wget2} mit dem \gls{socks}-Patch von Jansen und Wails~\cite{jansen2023data} lädt im Inneren der Simulation die Webseiten über \gls{tor} herunter.
     \item WFlib\footnote{\url{https://github.com/Xinhao-Deng/Website-Fingerprinting-Library}} stellt eine Implementierung des \gls{df}-Klassifikators in PyTorch bereit und steuert Training, Validierung und Test.
 \end{itemize}
@@ -93,7 +93,7 @@ Beides wird in dieser Arbeit von dem Skript \texttt{generate-wf-config.py} ergä
 \texttt{generate-wf-config.py} fügt der \texttt{shadow.config.yaml} einen \texttt{zimserverN}-Host und eine konfigurierbare Anzahl \texttt{monitorN}-Hosts hinzu.
 Pro besuchter Seite wird ein eigener Port auf dem Webserver verwendet.
 
-Listing~\ref{lst:shadow_monitor} zeigt einen verkürzten Ausschnitt eines Monitor-Hosts aus der generierten \texttt{shadow.config.yaml}.
+Listing~\ref{lst:shadow_monitor} zeigt einen verkürzten Ausschnitt eines \gls{monitorhost}s aus der generierten \texttt{shadow.config.yaml}.
 
 \noindent\begin{minipage}{\linewidth}
 \begin{lstlisting}[
@@ -161,8 +161,8 @@ Die Begründung der Wahl genau dieser drei Modi ist in Abschnitt~\ref{sec:konzep
 
 \subsection{Wikipedia als Datenquelle}
 
-Für die Webseiten wird die einfache englische Variante von Wikipedia in einer ZIM-Datei verwendet.
-ZIM ist ein offenes, vom Kiwix-Projekt definiertes Containerformat, das eine vollständige Webseiten-Sammlung in einer einzigen Datei zusammenfasst und Offline-Zugriff erlaubt\footnote{\url{https://kiwix.org} (Zugriff: 2026-06-05).}.
+Für die Webseiten wird die einfache englische Variante von Wikipedia in einer \gls{zim}-Datei verwendet.
+\gls{zim} ist ein offenes, vom Kiwix-Projekt definiertes Containerformat, das eine vollständige Webseiten-Sammlung in einer einzigen Datei zusammenfasst und Offline-Zugriff erlaubt\footnote{\url{https://kiwix.org} (Zugriff: 2026-06-05).}.
 
 Verwendet wird in dieser Arbeit ausschliesslich \texttt{wikipedia\_en\_simple\_all\_maxi}\footnote{ZIM-Dateien: \url{https://download.kiwix.org/zim/wikipedia/} (Zugriff: 2026-04-05).}.
 Diese Variante enthält Bilder und damit deutlich vielfältigere Webseiten als die bildlose Version, ist aber gleichzeitig klein genug, um vollständig in den Speicher des Servers zu passen.
@@ -188,7 +188,7 @@ Datei & Grösse & Bemerkung \\
 Für den Webserver wurden mehrere Varianten geprüft.
 
 \paragraph{ZIMply}
-In der Arbeit von Jansen und Wails wird \texttt{ZIMply} als Webserver für ZIM-Dateien verwendet~\cite{jansen2023data}.
+In der Arbeit von Jansen und Wails wird \texttt{ZIMply} als Webserver für \gls{zim}-Dateien verwendet~\cite{jansen2023data}.
 Die Bibliothek wurde schon länger nicht mehr aktualisiert und funktionierte in der Simulation nicht zuverlässig.
 
 \paragraph{kiwix-serve}
@@ -237,7 +237,7 @@ Die so aufgezeichneten Pcaps werden im Anschluss an die Simulation per \texttt{s
 \section{Tamaraw-Variante des Versuchsaufbaus}
 \label{sec:realisierung_tamaraw}
 
-Für die ergänzende Messreihe gegen das Tamaraw-Verfahren (Abschnitt~\ref{sec:wf_defenses_tamaraw}) muss der bisher beschriebene Versuchsaufbau um einen zusätzlichen Bridge-Knoten erweitert werden. 
+Für die ergänzende Messreihe gegen das \gls{tamaraw}-Verfahren (Abschnitt~\ref{sec:wf_defenses_tamaraw}) muss der bisher beschriebene Versuchsaufbau um einen zusätzlichen Bridge-Knoten erweitert werden.
 Die übrigen Bestandteile, also Tor-Netzwerk aus Tornettools, Monitor-Clients, Zim-Server und \gls{pcap}-Aufzeichnung, bleiben unverändert.
 Abbildung~\ref{fig:tamarawsetup} zeigt die so erweiterte Topologie.
 
@@ -251,19 +251,19 @@ Abbildung~\ref{fig:tamarawsetup} zeigt die so erweiterte Topologie.
 \subsection{Bridge-Knoten}
 \label{sec:realisierung_tamaraw_bridge}
 
-Wie in Abschnitt~\ref{sec:konzepte_tamaraw_integration} begründet, wird Tamaraw als \gls{pt} realisiert.
+Wie in Abschnitt~\ref{sec:konzepte_tamaraw_integration} begründet, wird \gls{tamaraw} als \gls{pt} realisiert.
 Dazu wird der Topologie ein zusätzlicher Bridge-Host hinzugefügt, auf dem zwei Prozesse parallel laufen.
-Der \gls{pt} formt den Zellfluss in Richtung Monitor nach dem Tamaraw-Regelwerk.
+Der \gls{pt} formt den Zellfluss in Richtung Monitor nach dem \gls{tamaraw}-Regelwerk.
 Der lokal mitlaufende Tor-Daemon übernimmt die Guard-Rolle für den Monitor-Circuit und leitet die geformten Zellen anschliessend regulär in das simulierte Tor-Netzwerk weiter.
 
 \subsection{Implementierung: obfs4proxy\_tamaraw}
 \label{sec:realisierung_tamaraw_obfs4}
 
-Als konkrete Tamaraw-Implementierung wird die obfs4-Erweiterung WFDefProxy aus dem öffentlichen Artefakt-Repository\footnote{\url{https://github.com/websitefingerprinting/wfdef}} verwendet, Branch \texttt{v2}~\cite{wfdefproxy}.
-WFDefProxy ist ein in Go geschriebener Fork von \texttt{obfs4proxy} und implementiert mehrere Website-Fingerprinting-Verteidigungen, darunter Tamaraw.
+Als konkrete \gls{tamaraw}-Implementierung wird die obfs4-Erweiterung WFDefProxy aus dem öffentlichen Artefakt-Repository\footnote{\url{https://github.com/websitefingerprinting/wfdef}} verwendet, Branch \texttt{v2}~\cite{wfdefproxy}.
+WFDefProxy ist ein in Go geschriebener Fork von \texttt{obfs4proxy} und implementiert mehrere Website-Fingerprinting-Verteidigungen, darunter \gls{tamaraw}.
 Das resultierende Binary wird im Verlauf von \texttt{setup-wf-server.sh} aus den Quellen gebaut und unter dem Namen \texttt{obfs4proxy\_tamaraw} im Server-Arbeitsverzeichnis abgelegt.
 
-Die in dieser Arbeit verwendeten Tamaraw-Parameter entsprechen den Voreinstellungen von WFDefProxy.
+Die in dieser Arbeit verwendeten \gls{tamaraw}-Parameter entsprechen den Voreinstellungen von WFDefProxy.
 
 \subsection{Einbindung in die Shadow-Konfiguration}
 \label{sec:realisierung_tamaraw_shadow}
@@ -279,7 +279,7 @@ Zweitens wird in der torrc der Monitor-Hosts die Direktive \texttt{ClientTranspo
 Der monitor-seitige Tor-Daemon verwendet damit als ersten Hop nicht direkt einen Guard aus dem simulierten Konsens, sondern den lokal definierten Bridge-Knoten, dessen Verbindung der \gls{pt}-Plugin formt.
 
 Drittens wird das Padding-Maschinen-Framework des Tor-Daemons auf den Monitor-Hosts deaktiviert (\texttt{CircuitPadding 0}), damit kein zweites, sich überlagerndes Verteidigungsverfahren auf denselben Zellfluss wirkt.
-Die Tamaraw-Variante steht so in direkter Vergleichsposition zu den drei Circuit-Padding-Modi aus Tabelle~\ref{tab:padding_modi}.
+Die \gls{tamaraw}-Variante steht so in direkter Vergleichsposition zu den drei Circuit-Padding-Modi aus Tabelle~\ref{tab:padding_modi}.
 
 \section{Aufbereitung der Daten für die Klassifikation}
 \label{sec:realisierung_aufbereitung}

@@ -1,7 +1,7 @@
 \chapter{Ideen und Konzepte}
 \label{cha:ideen_und_konzepte}
 
-Dieses Kapitel begründet, wie die in Kapitel~\ref{cha:stand_der_technik} beschriebenen Bausteine Tor, Website-Fingerprinting, Circuit Padding und Shadow zu einem Versuchsaufbau zusammengeführt werden.
+Dieses Kapitel begründet, wie die in Kapitel~\ref{cha:stand_der_technik} beschriebenen Bausteine Tor, Website-Fingerprinting, \gls{circuitpadding} und \gls{shadow} zu einem Versuchsaufbau zusammengeführt werden.
 Die technische Umsetzung folgt in Kapitel~\ref{cha:realisierung}.
 
 \section{Bewertung des Stands der Forschung}
@@ -16,7 +16,7 @@ Die vorliegende Arbeit füllt diese Lücke, indem sie die drei in Tor angebotene
 \label{sec:konzepte_versuchsaufbau}
 
 Der Versuchsaufbau folgt einem kontrollierten Laborexperiment, in dem der Padding-Modus gezielt variiert und alle übrigen Parameter konstant gehalten werden.
-Die primäre Untersuchung erfolgt im Closed-World, ergänzt um ein einzelnes Open-World-Experiment als Realitätsanker.
+Die primäre Untersuchung erfolgt im \gls{closedworld}, ergänzt um ein einzelnes \gls{openworld}-Experiment als Realitätsanker.
 Die formale Einordnung der Variablen und Messgrössen steht in Kapitel~\ref{cha:methoden}.
 
 \section{Wahl des Simulators}
@@ -32,15 +32,15 @@ Shadow mit Tornettools erfüllt alle Anforderungen: unmodifizierter Tor-Code und
 
 Aus den in Kapitel~\ref{cha:stand_der_technik} verglichenen Klassifikatoren wird \gls{df} gewählt.
 \gls{df} arbeitet zeitunabhängig, weshalb simulationsbedingte Timing-Variationen die Ergebnisse nicht verfälschen.
-Circuit Padding wirkt zudem direkt auf die von \gls{df} genutzten Richtungsfeatures, was den Padding-Effekt besonders sichtbar macht.
+\gls{circuitpadding} wirkt zudem direkt auf die von \gls{df} genutzten Richtungsfeatures, was den Padding-Effekt besonders sichtbar macht.
 Die Validierung von \gls{df} in Shadow durch Jansen und Wails (82\,\% Accuracy auf Live-Tor) sichert die Vergleichbarkeit mit bestehender Literatur~\cite{jansen2023data}.
 
 \section{Wahl des Szenarios}
 \label{sec:konzepte_szenario}
 
-Die primäre Untersuchung erfolgt im Closed-World, weil der Fokus auf dem isolierten Padding-Effekt liegt und nicht auf der Robustheit gegenüber unbekannten Seiten.
-Die Closed-World-Accuracy ist zudem deutlich stabiler als die Open-World-Kennzahlen~\cite{jansen2023data}, was beobachtete Effekte klarer dem Padding zuordnen lässt.
-Ergänzend wird ein Open-World-Experiment als Realitätsanker durchgeführt, ohne den Padding-Modus dort systematisch zu variieren.
+Die primäre Untersuchung erfolgt im \gls{closedworld}, weil der Fokus auf dem isolierten Padding-Effekt liegt und nicht auf der Robustheit gegenüber unbekannten Seiten.
+Die \gls{closedworld}-Accuracy ist zudem deutlich stabiler als die \gls{openworld}-Kennzahlen~\cite{jansen2023data}, was beobachtete Effekte klarer dem Padding zuordnen lässt.
+Ergänzend wird ein \gls{openworld}-Experiment als Realitätsanker durchgeführt, ohne den Padding-Modus dort systematisch zu variieren.
 
 \section{Wahl der Padding-Konfigurationen}
 \label{sec:konzepte_padding_modi}
@@ -52,12 +52,12 @@ Eine eigene Padding-Maschine wird nicht entwickelt, da das Ziel die Evaluation d
 \section{Wahl der Tamaraw-Integration}
 \label{sec:konzepte_tamaraw_integration}
 
-Tamaraw ist nicht Bestandteil des regulären Tor-Daemons.
-Im Gegensatz zum produktiv ausgerollten Circuit Padding plant das Tor-Projekt auch keine native Implementierung.
-Tamaraw verzögert reale Zellen systematisch und erreicht in der ursprünglichen Auswertung rund 199\,\% Bandbreiten-Overhead bei zusätzlichem Latenz-Overhead~\cite{cai2014systematic}.
+\gls{tamaraw} ist nicht Bestandteil des regulären Tor-Daemons.
+Im Gegensatz zum produktiv ausgerollten \gls{circuitpadding} plant das Tor-Projekt auch keine native Implementierung.
+\gls{tamaraw} verzögert reale Zellen systematisch und erreicht in der ursprünglichen Auswertung rund 199\,\% Bandbreiten-Overhead bei zusätzlichem Latenz-Overhead~\cite{cai2014systematic}.
 Beides widerspricht dem expliziten low-latency-Designziel von Tor, das eine Verzögerung realer Anwendungs-Zellen ausschliesst~\cite{kadianakis2021tor}.
 
-Um Tamaraw dennoch in einem Tor-Kontext zu untersuchen, wird das Verfahren als externes Hilfsprogramm zwischen Monitor und Bridge realisiert, das den Zellfluss vor dem Versand abfängt, gemäss Tamaraw-Regelwerk formt und anschliessend wieder an Tor übergibt.
+Um \gls{tamaraw} dennoch in einem Tor-Kontext zu untersuchen, wird das Verfahren als externes Hilfsprogramm zwischen Monitor und Bridge realisiert, das den Zellfluss vor dem Versand abfängt, gemäss \gls{tamaraw}-Regelwerk formt und anschliessend wieder an Tor übergibt.
 Die Einbindung erfolgt über Tors Pluggable-Transport-Schnittstelle\footnote{\url{https://spec.torproject.org/pt-spec/}}.
 Ein \gls{pt} ist ein eigenständiges Hilfsprogramm, das der Tor-Daemon vor sich schaltet.
 Jede Tor-Verbindung wird durch das Programm geleitet, das die Bytes vor dem Versand transformieren und beim Empfang zurücktransformieren kann.
@@ -101,7 +101,7 @@ Aufzeichnungen mit mehr als 5000 Paketen werden am Ende abgeschnitten, kürzere 
 \label{sec:konzepte_features}
 
 Als Eingangsmerkmal werden ausschliesslich die Paketrichtungen verwendet (ausgehend $+1$, eingehend $-1$), keine Zeitstempel.
-Circuit Padding wirkt direkt auf die Richtungsabfolge, weshalb der Effekt im Richtungssignal am deutlichsten sichtbar wird.
+\gls{circuitpadding} wirkt direkt auf die Richtungsabfolge, weshalb der Effekt im Richtungssignal am deutlichsten sichtbar wird.
 
 \section{Zuordnung von Verkehr zu Webseiten}
 \label{sec:konzepte_port_class}
@@ -114,7 +114,7 @@ Jeder Monitor startet pro Intervall genau einen Seitenabruf, sodass jedem Zeitfe
 
 Die inhaltliche Zuordnung ist aus dem Monitor-\gls{pcap} allein nicht rekonstruierbar.
 Das \gls{pcap} zeichnet ausschliesslich den verschlüsselten Verkehr zum Tor-Guard auf, weder Ziel-IP noch Zielport des angesprochenen Webservers sind sichtbar.
-Genau dieser Umstand entspricht dem realistischen Angreifermodell: dem passiven Beobachter zwischen Monitor und Guard fehlt eben jene Information.
+Genau dieser Umstand entspricht dem realistischen Angriffsmodell: der passiven beobachtenden Instanz zwischen Monitor und Guard fehlt eben jene Information.
 Sie wird deshalb beim Aufbau der Simulation in einer Plandatei \texttt{schedule.json} (vgl.\ Abschnitt~\ref{sec:realisierung_schedule}) festgehalten, die pro Monitor und Besuch die Startzeit und die abgerufene Seite enthält.
 Bei der Auswertung wird der \gls{pcap}-Strom an den Zeitgrenzen der Plandatei zerlegt und das hinterlegte Label übernommen.
 Eine Markierung im Tor-Datenstrom selbst oder eine gepatchte Tor-Version, wie sie Jansen und Wails einsetzen~\cite{jansen2023data}, wird damit umgangen.

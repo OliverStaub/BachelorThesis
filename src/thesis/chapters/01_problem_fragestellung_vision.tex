@@ -4,29 +4,29 @@
 \section{Problemstellung}
 
 Das \gls{tor}-Netzwerk anonymisiert Verbindungen, indem Pakete über mehrere verschlüsselte Relays geleitet werden.
-Trotz dieses Schutzes zeigen \gls{wf}-Angriffe, dass ein passiver Beobachter zwischen Client und Eingangsknoten besuchte Webseiten allein anhand der Paketrichtungen und Zeitverläufe zuordnen kann.
+Trotz dieses Schutzes zeigen \gls{wf}-Angriffe, dass eine passive beobachtende Instanz zwischen Client und Eingangsknoten besuchte Webseiten allein anhand der Paketrichtungen und Zeitverläufe zuordnen kann.
 Mit dem \gls{df}-Klassifikator werden in einer \gls{closedworld}-Umgebung Erkennungsraten von über 95\,\% berichtet~\cite{sirinam2018deep}.
 
-Als Gegenmassnahme hat das Tor-Netzwerk das Circuit-Padding-Framework eingeführt, welches zusätzliche Zellen in den Verkehrsstrom einfügt\footnote{\url{https://spec.torproject.org/padding-spec/circuit-level-padding.html}}.
+Als Gegenmassnahme hat das Tor-Netzwerk das \gls{circuitpadding}-Framework eingeführt, welches zusätzliche Zellen in den Verkehrsstrom einfügt\footnote{\url{https://spec.torproject.org/padding-spec/circuit-level-padding.html}}.
 
-Experimente zu Website-Fingerprinting lassen sich mit dem 2011 eingeführten Shadow-Simulator durchführen.
+Experimente zu Website-Fingerprinting lassen sich mit dem 2011 eingeführten \gls{shadow}-Simulator durchführen.
 Dieser ermöglicht es, ein vollständiges, deterministisches \gls{tor}-Netzwerk zu simulieren \cite{jansen2011shadow}.
 In der Forschung erwähnte Shadow-Simulationen stellen jedoch hohe Anforderungen an die Hardware und nutzen proprietär gepatchte Tor-Versionen zur Cell-Trace-Entnahme \cite{jansen2023data}.
 
-Die vorliegende Arbeit prüft, ob sich eine Simulation mit moderater Hardware und einer unmodifizierten Tor-Version durchführen lässt. Als Ziel soll der Effekt von Circuit Padding in der aufgebauten Simulationsumgebung beobachtet werden.
+Die vorliegende Arbeit prüft, ob sich eine Simulation mit moderater Hardware und einer unmodifizierten Tor-Version durchführen lässt. Als Ziel soll der Effekt von \gls{circuitpadding} in der aufgebauten Simulationsumgebung beobachtet werden.
 
 \section{Fragestellung}
-Daraus ergeben sich die folgenden Forschungsfragen.\footnote{Die ursprüngliche Aufgabenstellung (Anhang~\ref{app:aufgabenstellung}) listet zwei Forschungsfragen, die dritte zur Tamaraw-Verteidigung wurde im Verlauf der Arbeit ergänzt.}
+Daraus ergeben sich die folgenden Forschungsfragen.\footnote{Die ursprüngliche Aufgabenstellung (Anhang~\ref{app:aufgabenstellung}) listet zwei Forschungsfragen, die dritte zur \gls{tamaraw}-Verteidigung wurde im Verlauf der Arbeit ergänzt.}
 
 \begin{enumerate}
     \item Wie verändert sich die Erkennungsrate eines \gls{wf}-Angriffs mit unterschiedlichen Circuit-Padding-Einstellungen?
     \item Welche bekannten Limitationen simulierter und laborbasierter \gls{wf}-Angriffe sind in der Literatur dokumentiert, und wie sind die experimentellen Ergebnisse dieser Arbeit einzuordnen?
-    \item Welche zusätzliche Schutzwirkung gegen \gls{df}-Angriffe lässt sich mit dem neueren Tamaraw-Verfahren erzielen?
+    \item Welche zusätzliche Schutzwirkung gegen \gls{df}-Angriffe lässt sich mit dem neueren \gls{tamaraw}-Verfahren erzielen?
 \end{enumerate}
 
 \section{Vision und erwartete Resultate}
 
-Ziel der Arbeit ist es, den Einfluss von Circuit Padding auf \gls{wf}-Angriffe unter kontrollierten Laborbedingungen empirisch zu evaluieren und die Ergebnisse in den Stand der Forschung einzuordnen.
+Ziel der Arbeit ist es, den Einfluss von \gls{circuitpadding} auf \gls{wf}-Angriffe unter kontrollierten Laborbedingungen empirisch zu evaluieren und die Ergebnisse in den Stand der Forschung einzuordnen.
 Im Einzelnen werden folgende Resultate angestrebt.
 
 \begin{itemize}
@@ -37,5 +37,5 @@ Im Einzelnen werden folgende Resultate angestrebt.
 
 \section{Aufgabenstellung}
 
-Die vollständige, vom Auftraggeber unterzeichnete Aufgabenstellung findet sich in Anhang~\ref{app:aufgabenstellung}.
-Sie umfasst den Aufbau der Shadow-Simulation und die Auswertung des Circuit Padding.
+Die vollständige, von der auftraggebenden Stelle unterzeichnete Aufgabenstellung findet sich in Anhang~\ref{app:aufgabenstellung}.
+Sie umfasst den Aufbau der Shadow-Simulation und die Auswertung des \gls{circuitpadding}.

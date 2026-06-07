@@ -3,7 +3,7 @@
 
 In diesem Kapitel wird beschrieben, mit welchen wissenschaftlichen Methoden die in Kapitel~\ref{cha:stand_der_technik} aufgeworfenen Fragen bearbeitet werden.
 Zwei Methoden werden eingesetzt.
-Die Literaturrecherche dient dazu, den aktuellen Stand der Forschung zu Tor, Website-Fingerprinting und Circuit Padding aufzuarbeiten und daraus die Forschungslücke abzuleiten.
+Die Literaturrecherche dient dazu, den aktuellen Stand der Forschung zu Tor, Website-Fingerprinting und \gls{circuitpadding} aufzuarbeiten und daraus die Forschungslücke abzuleiten.
 Das anschliessende Laborexperiment im Shadow-Simulator dient dazu, die aus dieser Literatur motivierten Forschungsfragen quantitativ zu beantworten.
 Die konkrete Umsetzung dieses Versuchsaufbaus wird in Kapitel~\ref{cha:realisierung} beschrieben.
 Das vorliegende Kapitel beschränkt sich auf die methodische Begründung der Vorgehensweise.
@@ -28,8 +28,8 @@ Die einzelnen Stufen werden im Folgenden zusammengefasst.
 \subsection{Such\-strategie und Abgrenzung des Themenfelds}
 \label{sec:literaturrecherche_strategie}
 
-Ausgangspunkt der Recherche ist das in Kapitel~1 formulierte Forschungsthema rund um den Einfluss von Circuit Padding auf Website-Fingerprinting in Shadow.
-Aus dem Themenfeld werden vier inhaltliche Suchrichtungen abgeleitet: das Tor-Netzwerk und sein Bedrohungsmodell, Website-Fingerprinting-Klassifikatoren, Circuit Padding als Verteidigung sowie der Shadow-Simulator und die zugehörige Werkzeugkette tornettools.
+Ausgangspunkt der Recherche ist das in Kapitel~1 formulierte Forschungsthema rund um den Einfluss von \gls{circuitpadding} auf Website-Fingerprinting in Shadow.
+Aus dem Themenfeld werden vier inhaltliche Suchrichtungen abgeleitet: das Tor-Netzwerk und sein Bedrohungsmodell, Website-Fingerprinting-Klassifikatoren, \gls{circuitpadding} als Verteidigung sowie der Shadow-Simulator und die zugehörige Werkzeugkette tornettools.
 
 \subsection{Genutzte Quellen, Datenbanken und Suchmaschinen}
 \label{sec:literaturrecherche_quellen}
@@ -56,7 +56,7 @@ Primärquellen werden gegenüber Sekundärquellen bevorzugt, weshalb beispielswe
 \label{sec:literaturrecherche_verwaltung}
 
 Sämtliche während der Recherche ermittelten Quellen werden in einem zentralen BibTeX-Verzeichnis (\texttt{src/thesis/references.bib}) gepflegt.
-Pro Quelle werden Autor, Titel, Erscheinungsjahr, Verlag oder Konferenz, \gls{doi} oder URL und das Zugriffsdatum erfasst.
+Pro Quelle werden Autorenschaft, Titel, Erscheinungsjahr, Verlag oder Konferenz, \gls{doi} oder URL und das Zugriffsdatum erfasst.
 Im Text wird nach IEEE-Zitierstil mit Seitenangabe nach deutscher Konvention zitiert (\verb|\cite{key}|).
 
 \section{Experimentelles Vorgehen}
@@ -81,9 +81,9 @@ Das Experiment unterscheidet zwischen unabhängigen und abhängigen Variablen, w
 
 \paragraph{Unabhängige Variablen}
 Drei Variablen werden gezielt variiert.
-Erstens das Verteidigungsverfahren mit den drei in Tor angebotenen Padding-Modi OFF, ON und Reduced (vgl.\ Tabelle~\ref{tab:padding_modi}, Kapitel~\ref{cha:realisierung}) sowie Tamaraw als ergänzendes, alternatives Schema.
-Zweitens die Anzahl überwachter Webseiten mit den Ausprägungen 20, 80 und Open-World (80 überwachte Webseiten in einem Pool von 280 Quellseiten, entsprechend 81 effektiven Klassen).
-Drittens das Welt-Szenario mit den Ausprägungen Closed-World und Open-World.
+Erstens das Verteidigungsverfahren mit den drei in Tor angebotenen Padding-Modi OFF, ON und Reduced (vgl.\ Tabelle~\ref{tab:padding_modi}, Kapitel~\ref{cha:realisierung}) sowie \gls{tamaraw} als ergänzendes, alternatives Schema.
+Zweitens die Anzahl überwachter Webseiten mit den Ausprägungen 20, 80 und \gls{openworld} (80 überwachte Webseiten in einem Pool von 280 Quellseiten, entsprechend 81 effektiven Klassen).
+Drittens das Welt-Szenario mit den Ausprägungen \gls{closedworld} und \gls{openworld}.
 
 \paragraph{Abhängige Variablen}
 Gemessen werden Accuracy, Precision, Recall und F1-Wert auf einer zurückgehaltenen Testmenge.
@@ -97,10 +97,10 @@ Sie werden aus den vier Grundgrössen True Positive (TP, korrekt als überwacht 
 \mathrm{F1}        &= 2 \cdot \frac{\mathrm{Precision} \cdot \mathrm{Recall}}{\mathrm{Precision} + \mathrm{Recall}}
 \end{align}
 
-Accuracy gibt den Anteil korrekt klassifizierter Beispiele an und ist bei balancierten Klassen aussagekräftig, was dem Closed-World-Szenario dieser Arbeit entspricht.
-Precision misst den Anteil tatsächlich überwachter Seiten unter den als überwacht klassifizierten und ist im Open-World-Szenario relevant, weil dort eine niedrige False-Positive-Rate gefordert ist.
-Recall misst den Anteil der erkannten überwachten Seiten an allen tatsächlich überwachten und beschreibt die Erfassungsrate des Angreifers.
-Der F1-Wert ist das harmonische Mittel aus Precision und Recall und bleibt auch bei stark unbalancierten Klassen wie im Open-World-Szenario ein robustes Mass.
+Accuracy gibt den Anteil korrekt klassifizierter Beispiele an und ist bei balancierten Klassen aussagekräftig, was dem \gls{closedworld}-Szenario dieser Arbeit entspricht.
+Precision misst den Anteil tatsächlich überwachter Seiten unter den als überwacht klassifizierten und ist im \gls{openworld}-Szenario relevant, weil dort eine niedrige False-Positive-Rate gefordert ist.
+Recall misst den Anteil der erkannten überwachten Seiten an allen tatsächlich überwachten und beschreibt die Erfassungsrate der angreifenden Partei.
+Der F1-Wert ist das harmonische Mittel aus Precision und Recall und bleibt auch bei stark unbalancierten Klassen wie im \gls{openworld}-Szenario ein robustes Mass.
 
 \paragraph{Konstant gehaltene Rahmenbedingungen}
 Alle übrigen Parameter bleiben über die Experimente einer Vergleichsgruppe konstant.
@@ -110,10 +110,10 @@ Dazu zählen die Skalierung des simulierten Netzwerks (1\,\%), der Simulator-See
 \label{sec:experiment_plan}
 
 Die Durchführung erfolgt in vier aufeinander aufbauenden Stufen.
-In einer ersten Stufe wird die Werkzeugkette mit den kleinen Closed-World-Experimenten validiert, weil deren kurze Laufzeit ein schnelles Feedback zu Fehlern in Simulation, Datenkonvertierung und Klassifikator-Anbindung erlaubt.
-In einer zweiten Stufe werden dieselben Padding-Modi auf die grössere Closed-World übertragen, um den Effekt unter realistischeren Bedingungen zu prüfen.
-In einer dritten Stufe wird das Open-World-Szenario gemessen, ebenfalls über alle drei Padding-Modi, um den Padding-Effekt auch mit nicht überwachten Webseiten zu prüfen.
-In einer vierten Stufe wird ergänzend Tamaraw als alternatives, nicht implementiertes Verteidigungsverfahren über die drei Konfigurationen 20, 80 und Open-World (80 überwachte Webseiten aus 280 Quellseiten) gemessen.
+In einer ersten Stufe wird die Werkzeugkette mit den kleinen \gls{closedworld}-Experimenten validiert, weil deren kurze Laufzeit ein schnelles Feedback zu Fehlern in Simulation, Datenkonvertierung und Klassifikator-Anbindung erlaubt.
+In einer zweiten Stufe werden dieselben Padding-Modi auf die grössere \gls{closedworld} übertragen, um den Effekt unter realistischeren Bedingungen zu prüfen.
+In einer dritten Stufe wird das \gls{openworld}-Szenario gemessen, ebenfalls über alle drei Padding-Modi, um den Padding-Effekt auch mit nicht überwachten Webseiten zu prüfen.
+In einer vierten Stufe wird ergänzend \gls{tamaraw} als alternatives, nicht implementiertes Verteidigungsverfahren über die drei Konfigurationen 20, 80 und \gls{openworld} (80 überwachte Webseiten aus 280 Quellseiten) gemessen.
 Jeder Durchlauf besteht aus den Schritten Simulation in Shadow, Konvertierung der \gls{pcap}-Aufzeichnungen in das WFlib-Format und Training sowie Test des \gls{df}-Klassifikators auf einer festen Datenaufteilung.
 
 \subsection{Grenzen der gewählten Methode}
@@ -127,7 +127,7 @@ Beide Einschränkungen werden bei der Interpretation der Resultate in Kapitel~\r
 \section{Einsatz von KI-Werkzeugen}
 \label{sec:ki_werkzeuge}
 
-Dieser Abschnitt dokumentiert offen, welche KI-gestützten Werkzeuge im Rahmen dieser Arbeit eingesetzt wurden, wofür sie verwendet wurden und wie die fachliche Verantwortung des Autors gewahrt bleibt.
+Dieser Abschnitt dokumentiert offen, welche KI-gestützten Werkzeuge im Rahmen dieser Arbeit eingesetzt wurden, wofür sie verwendet wurden und wie die fachliche Verantwortung für die vorliegende Arbeit gewahrt bleibt.
 Die Darstellung ist als Ergänzung zur Selbstständigkeitserklärung im Frontmatter dieser Arbeit zu verstehen.
 
 \subsection{Eingesetzte Werkzeuge}
@@ -154,7 +154,9 @@ Claude Desktop & Opus 4.5, Opus 4.6, Opus 4.7, Opus 4.8 & Sprachliche Politur, V
 
 \paragraph{Code}
 Die Skripte wurden nicht in einem einzigen Schritt von einer KI generiert, sondern in einem iterativen Dialog entwickelt.
-Der Autor formulierte die fachliche Anforderung (Eingabe, Ausgabe, Bibliotheken, Constraints), Claude Code generierte daraufhin einen Implementierungsentwurf, der Autor las, prüfte und korrigierte den Entwurf, führte das Skript aus und validierte es gegen die erwarteten Resultate.
+Zunächst wurde die fachliche Anforderung formuliert (Eingabe, Ausgabe, Bibliotheken, Constraints).
+Claude Code generierte daraufhin einen Implementierungsentwurf, der anschliessend gelesen, geprüft und korrigiert wurde.
+Danach wurde das Skript ausgeführt und gegen die erwarteten Resultate validiert.
 Als hilfreich hat sich die Planungsfunktion erwiesen, bei welcher die KI einen Plan erstellt, bevor sie Code schreibt.
 So können Fehler und Abweichungen früh korrigiert werden.
 

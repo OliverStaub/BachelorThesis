@@ -7,8 +7,8 @@ Die Resultate sind in Tabelle~\ref{tab:experimentlogs} im Anhang vollständig au
 \label{sec:eval_validierung}
 
 Um den Versuchsaufbau zu validieren werden drei Kennzahlen betrachtet.
-Erstens liegt der Anteil fehlgeschlagener Seitenabrufe in allen Closed-World-Läufen unter 5\,\% und ist innerhalb einer Klasse zwischen den Padding-Modi vergleichbar.
-Zweitens liegt die mittlere Paketanzahl pro Sample für die Circuit-Padding-Modi konsistent zwischen 580 und 640, was dafür spricht, dass die Seitenabrufe vergleichbar gross sind und sich nicht systematisch zwischen den Vergleichsgruppen unterscheiden, während Tamaraw die Sequenz erwartungsgemäss bis zur 5000-Werte-Grenze füllt.
+Erstens liegt der Anteil fehlgeschlagener Seitenabrufe in allen \gls{closedworld}-Läufen unter 5\,\% und ist innerhalb einer Klasse zwischen den Padding-Modi vergleichbar.
+Zweitens liegt die mittlere Paketanzahl pro Sample für die Circuit-Padding-Modi konsistent zwischen 580 und 640, was dafür spricht, dass die Seitenabrufe vergleichbar gross sind und sich nicht systematisch zwischen den Vergleichsgruppen unterscheiden, während \gls{tamaraw} die Sequenz erwartungsgemäss bis zur 5000-Werte-Grenze füllt.
 Drittens erreichen alle Modelle Klassifikationsraten deutlich über der Random-Basis (vergleiche Tabelle~\ref{tab:experimentlogs}), lernen also tatsächlich Merkmale des Verkehrs und reagieren nicht zufällig.
 Der Versuchsaufbau wird auf Basis dieser Kontrollen als valide angesehen.
 
@@ -55,12 +55,12 @@ Der Versuchsaufbau wird auf Basis dieser Kontrollen als valide angesehen.
 \label{sec:eval_skalierung}
 
 Über alle Padding-Modi hinweg sinkt die Accuracy mit wachsender Klassenanzahl.
-Die ungeschützte Baseline fällt von 92.7\,\% bei 20 Klassen auf 82.4\,\% bei 80 Klassen und weiter auf 68.3\,\% im Open-World.
+Die ungeschützte Baseline fällt von 92.7\,\% bei 20 Klassen auf 82.4\,\% bei 80 Klassen und weiter auf 68.3\,\% im \gls{openworld}.
 
 Mit jeder zusätzlichen Klasse muss der Klassifikator viele feinere Trennflächen statt weniger breiter Entscheidungsregionen lernen, was bei vergleichbarer Trainingsmenge pro Klasse die effektive Trennschärfe senkt.
 
-Im Open-World tritt ein struktureller Effekt hinzu: Der Klassifikator entscheidet erst, ob ein Besuch zu einer überwachten Seite oder zur unüberwachten Sammelklasse gehört, und ordnet ihn im positiven Fall anschliessend einer konkreten überwachten Seite zu, was beide Stufen schwieriger macht.
-Diese Beobachtung ist konsistent mit Juarez et al., die für Open-World-Szenarien deutlich höhere Falsch-Positiv-Raten berichten und betonen, dass die in Closed-World-Studien gemeldeten Erkennungsraten in der Praxis nicht erreicht werden~\cite{juarez2014critical}.
+Im \gls{openworld} tritt ein struktureller Effekt hinzu: Der Klassifikator entscheidet erst, ob ein Besuch zu einer überwachten Seite oder zur unüberwachten Sammelklasse gehört, und ordnet ihn im positiven Fall anschliessend einer konkreten überwachten Seite zu, was beide Stufen schwieriger macht.
+Diese Beobachtung ist konsistent mit Juarez et al., die für \gls{openworld}-Szenarien deutlich höhere Falsch-Positiv-Raten berichten und betonen, dass die in \gls{closedworld}-Studien gemeldeten Erkennungsraten in der Praxis nicht erreicht werden~\cite{juarez2014critical}.
 
 
 Die hier erzielten Werte liegen unterhalb der von Sirinam et al.\ ursprünglich gemeldeten 98.3\,\% bei 95 Klassen~\cite{sirinam2018deep}, was sich neben der grösseren Skala des Live-Tor-Netzwerks auch durch die mit 1000 statt 150 Traces pro Klasse rund sechseinhalbfach grössere Trainingsmenge von Sirinam et al.\ erklären lässt.
@@ -68,7 +68,7 @@ Die hier erzielten Werte liegen unterhalb der von Sirinam et al.\ ursprünglich 
 \subsection{Effekt von Circuit Padding}
 \label{sec:eval_padding_effekt}
 
-Die Aktivierung des produktiv im Tor-Netzwerk eingesetzten Circuit Paddings (ON) senkt die Accuracy bei 20 Klassen von 92.7\,\% auf 83.3\,\%, was einer Reduktion um 9.4~Prozentpunkte entspricht.
+Die Aktivierung des produktiv im Tor-Netzwerk eingesetzten \gls{circuitpadding}s (ON) senkt die Accuracy bei 20 Klassen von 92.7\,\% auf 83.3\,\%, was einer Reduktion um 9.4~Prozentpunkte entspricht.
 Bei 80 Klassen ist der Effekt deutlich kleiner: Die Accuracy sinkt um 3.8~Prozentpunkte von 82.4\,\% auf 78.6\,\%.
 Eine plausible Interpretation ist, dass das Klassifikationsproblem mit wachsender Klassenanzahl bereits ohne Padding fordernder wird, sodass das zusätzliche Rauschen durch Padding-Zellen relativ weniger ins Gewicht fällt.
 Die Grössenordnung dieser Reduktion ist konsistent mit Sirinam et al., die für die ebenfalls auf Adaptive Padding basierende Verteidigung WTF-PAD einen Rückgang des \gls{df}-Angriffs von 98.3\,\% auf 90.7\,\% berichten~\cite{sirinam2018deep}.
@@ -76,16 +76,16 @@ Die Grössenordnung dieser Reduktion ist konsistent mit Sirinam et al., die für
 \subsection{Reduced Padding und Open-World-Inversion}
 \label{sec:eval_reduced}
 
-Der Reduced-Modus ist als sparsamere Variante des Circuit Paddings ausgelegt und wird in der torrc-Konfiguration zusätzlich zu \texttt{CircuitPadding 1} mit \texttt{ReducedCircuitPadding 1} aktiviert.
+Der Reduced-Modus ist als sparsamere Variante des \gls{circuitpadding}s ausgelegt und wird in der torrc-Konfiguration zusätzlich zu \texttt{CircuitPadding 1} mit \texttt{ReducedCircuitPadding 1} aktiviert.
 Bei 20 Klassen liegt seine Accuracy mit 86.7\,\% wie erwartet zwischen Baseline (92.7\,\%) und voll aktiviertem Padding (83.3\,\%).
 
 
 Bei 80 Klassen kehrt sich die Reihenfolge um: Mit 77.5\,\% liegt Reduced minimal unterhalb von ON (78.6\,\%).
-Im Open-World tritt ein verwandtes Phänomen auf: Sowohl ON (70.7\,\%) als auch Reduced (71.9\,\%) liegen leicht oberhalb der OFF-Baseline (68.3\,\%), was der aus dem Closed-World abgeleiteten Erwartung widerspricht.
-Beide Beobachtungen stammen aus jeweils einem einzigen Shadow-Lauf pro Konfiguration.
+Im \gls{openworld} tritt ein verwandtes Phänomen auf: Sowohl ON (70.7\,\%) als auch Reduced (71.9\,\%) liegen leicht oberhalb der OFF-Baseline (68.3\,\%), was der aus dem \gls{closedworld} abgeleiteten Erwartung widerspricht.
+Beide Beobachtungen stammen aus jeweils einem einzigen \gls{shadow}-Lauf pro Konfiguration.
 Mit einer Messung pro Konfiguration lässt sich nicht beurteilen, ob die Differenzen von zwei bis vier Prozentpunkten über der Lauf-zu-Lauf-Streuung des Simulators liegen oder durch sie verursacht werden (vergleiche Abschnitt~\ref{sec:eval_einordnung}).
 Sie werden daher in dieser Arbeit nicht als Schutz- oder Schadenswirkungen interpretiert.
-Abbildung~\ref{fig:eval_openworld_pr} ergänzt das reine Accuracy-Bild um Precision, Recall und F1 im Open-World-Setup und zeigt, dass die kleinen Unterschiede zwischen OFF, Reduced und ON auch auf Ebene der einzelnen Kennzahlen klein bleiben, während Tamaraw qualitativ anders abschneidet.\footnote{WFlib berichtet macro-F1 als ungewichtetes Mittel der per-Klasse-F1-Werte. Bei vielen schlecht klassifizierten Klassen weicht dieser Wert vom harmonischen Mittel der Makro-Precision und Makro-Recall ab. Im Tamaraw-Open-World-Lauf liegt F1 mit 20.0\,\% daher unter Precision (26.6\,\%) und Recall (21.4\,\%).}
+Abbildung~\ref{fig:eval_openworld_pr} ergänzt das reine Accuracy-Bild um Precision, Recall und F1 im \gls{openworld}-Setup und zeigt, dass die kleinen Unterschiede zwischen OFF, Reduced und ON auch auf Ebene der einzelnen Kennzahlen klein bleiben, während \gls{tamaraw} qualitativ anders abschneidet.\footnote{WFlib berichtet macro-F1 als ungewichtetes Mittel der per-Klasse-F1-Werte. Bei vielen schlecht klassifizierten Klassen weicht dieser Wert vom harmonischen Mittel der Makro-Precision und Makro-Recall ab. Im \gls{tamaraw}-\gls{openworld}-Lauf liegt F1 mit 20.0\,\% daher unter Precision (26.6\,\%) und Recall (21.4\,\%).}
 
 \begin{figure}[H]
     \centering
@@ -124,15 +124,15 @@ Abbildung~\ref{fig:eval_openworld_pr} ergänzt das reine Accuracy-Bild um Precis
 \subsection{Tamaraw als Referenzpunkt}
 \label{sec:eval_tamaraw}
 
-Tamaraw wurde als zweite Verteidigung in einer exploratorischen Messreihe untersucht, um den im produktiv ausgelieferten Circuit Padding gemessenen Effekt einzuordnen.
-Im Closed-World mit 20 Klassen sinkt die Accuracy unter Tamaraw auf 39.3\,\%, bei 80 Klassen auf 31.6\,\% und im Open-World auf 28.0\,\%.
+\gls{tamaraw} wurde als zweite Verteidigung in einer exploratorischen Messreihe untersucht, um den im produktiv ausgelieferten \gls{circuitpadding} gemessenen Effekt einzuordnen.
+Im \gls{closedworld} mit 20 Klassen sinkt die Accuracy unter \gls{tamaraw} auf 39.3\,\%, bei 80 Klassen auf 31.6\,\% und im \gls{openworld} auf 28.0\,\%.
 Damit verliert der \gls{df}-Klassifikator gegenüber der jeweiligen Baseline 53.4, 50.8 beziehungsweise 40.3~Prozentpunkte.
-Tamaraw bleibt jedoch deutlich über der Random-Basis von 5.0\,\% beziehungsweise 1.2\,\%, das heisst die konstante Senderate alleine reicht nicht aus, um den Verkehr vollständig in Rauschen aufzulösen.
+\gls{tamaraw} bleibt jedoch deutlich über der Random-Basis von 5.0\,\% beziehungsweise 1.2\,\%, das heisst die konstante Senderate alleine reicht nicht aus, um den Verkehr vollständig in Rauschen aufzulösen.
 Der Klassifikator nutzt offensichtlich noch verbleibende, padding-resistente Merkmale wie etwa Dauer des Nutzverkehrs oder Verteilung der Paketgrössen ausserhalb der Tor-Zellen aus.
-Im Open-World fällt insbesondere der Recall mit 21.4\,\% deutlich ab (vergleiche Abbildung~\ref{fig:eval_openworld_pr}), was darauf hindeutet, dass Tamaraw vor allem die zuverlässige Erkennung der überwachten Seiten erschwert und stattdessen viele überwachte Besuche fälschlich der unüberwachten Sammelklasse zuordnet.
-Im Vergleich zu Circuit Padding ergibt sich ein deutlicher qualitativer Unterschied: Circuit Padding senkt die Accuracy um wenige Prozentpunkte, während Tamaraw sie um eine ganze Grössenordnung reduziert.
-Diese Beobachtung deckt sich mit den ursprünglich von Cai et al.\ für Tamaraw berichteten starken Schutzwirkungen~\cite{cai2014systematic} und mit der Einordnung von Circuit Padding als low-overhead-Verteidigung durch Kadianakis et al.~\cite{kadianakis2021tor}.
-Abbildung~\ref{fig:eval_confusion_off_tamaraw_80} macht den Unterschied auf Ebene der Konfusionsmatrix sichtbar: Unter Tamaraw löst sich die Diagonale weitgehend auf und die Vorhersagen verteilen sich breit über viele Klassen.
+Im \gls{openworld} fällt insbesondere der Recall mit 21.4\,\% deutlich ab (vergleiche Abbildung~\ref{fig:eval_openworld_pr}), was darauf hindeutet, dass \gls{tamaraw} vor allem die zuverlässige Erkennung der überwachten Seiten erschwert und stattdessen viele überwachte Besuche fälschlich der unüberwachten Sammelklasse zuordnet.
+Im Vergleich zu \gls{circuitpadding} ergibt sich ein deutlicher qualitativer Unterschied: \gls{circuitpadding} senkt die Accuracy um wenige Prozentpunkte, während \gls{tamaraw} sie um eine ganze Grössenordnung reduziert.
+Diese Beobachtung deckt sich mit den ursprünglich von Cai et al.\ für \gls{tamaraw} berichteten starken Schutzwirkungen~\cite{cai2014systematic} und mit der Einordnung von \gls{circuitpadding} als low-overhead-Verteidigung durch Kadianakis et al.~\cite{kadianakis2021tor}.
+Abbildung~\ref{fig:eval_confusion_off_tamaraw_80} macht den Unterschied auf Ebene der Konfusionsmatrix sichtbar: Unter \gls{tamaraw} löst sich die Diagonale weitgehend auf und die Vorhersagen verteilen sich breit über viele Klassen.
 
 \begin{figure}[H]
     \centering
@@ -144,7 +144,7 @@ Abbildung~\ref{fig:eval_confusion_off_tamaraw_80} macht den Unterschied auf Eben
 \section{Bandbreiten-Overhead und Kosten-Nutzen-Verhältnis}
 \label{sec:eval_bandwidth}
 
-Der durch die Verteidigungen verursachte Bandbreiten-Overhead wird aus den Monitor-\glspl{pcap} der Closed-World-80-Läufe mit dem Skript \texttt{pcap\_overhead.py} ermittelt.
+Der durch die Verteidigungen verursachte Bandbreiten-Overhead wird aus den Monitor-\glspl{pcap} der \gls{closedworld}-80-Läufe mit dem Skript \texttt{pcap\_overhead.py} ermittelt.
 Pro Eintrag der \texttt{schedule.json} werden alle \gls{tcp}-Pakete innerhalb des 30-Sekunden-Visit-Fensters auf der eth0-Schnittstelle des Monitors aufsummiert, getrennt nach Up- (Client $\rightarrow$ Netzwerk) und Down-Richtung.
 Für die Läufe \texttt{exp-baseline-80}, \texttt{exp-padding-80} und \texttt{exp-reduced-80} fliessen je fünf Monitore in die Statistik ein (3000 Besuche pro Lauf), für \texttt{exp-tamaraw-80} aufgrund der etwa zwanzigfach grösseren \gls{pcap}-Dateien lediglich ein Monitor (600 Besuche).
 
@@ -164,14 +164,14 @@ Für die Läufe \texttt{exp-baseline-80}, \texttt{exp-padding-80} und \texttt{ex
     \end{tabular}
 \end{table}
 
-Volles und Reduced Circuit Padding erhöhen den mittleren Datenverkehr pro Besuch um lediglich 3.0\,\% beziehungsweise 1.3\,\% in Bytes und liegen damit innerhalb der Streubreite einzelner Besuche.
-Tamaraw-Padding vervielfacht den Datenverkehr hingegen um den Faktor 11.6 in Bytes und 18.7 in Paketen.
-Auffällig ist zusätzlich, dass sich das Up-zu-Down-Verhältnis von etwa 1:4.3 in den ungeschützten Besuchen unter Tamaraw auf rund 2.7:1 umkehrt, da der Monitor unabhängig vom tatsächlichen Datenfluss in jedem Tick eine Dummy-Zelle in Richtung Bridge sendet.
-Die hier gemessenen Overhead-Werte liegen deutlich über den von Cai et al.\ ursprünglich angegebenen rund 199\,\%~\cite{cai2014systematic}, da \glspl{pcap} pro Tor-Zelle zusätzlich \gls{tcp}- und TLS-Framing erfassen und das gesamte 30-Sekunden-Visit-Fenster einschliessen, in dem Tamaraw auch nach Abschluss des Seitenabrufs weiterhin Dummy-Zellen emittiert.
+Volles und Reduced \gls{circuitpadding} erhöhen den mittleren Datenverkehr pro Besuch um lediglich 3.0\,\% beziehungsweise 1.3\,\% in Bytes und liegen damit innerhalb der Streubreite einzelner Besuche.
+\gls{tamaraw}-Padding vervielfacht den Datenverkehr hingegen um den Faktor 11.6 in Bytes und 18.7 in Paketen.
+Auffällig ist zusätzlich, dass sich das Up-zu-Down-Verhältnis von etwa 1:4.3 in den ungeschützten Besuchen unter \gls{tamaraw} auf rund 2.7:1 umkehrt, da der Monitor unabhängig vom tatsächlichen Datenfluss in jedem Tick eine Dummy-Zelle in Richtung Bridge sendet.
+Die hier gemessenen Overhead-Werte liegen deutlich über den von Cai et al.\ ursprünglich angegebenen rund 199\,\%~\cite{cai2014systematic}, da \glspl{pcap} pro Tor-Zelle zusätzlich \gls{tcp}- und TLS-Framing erfassen und das gesamte 30-Sekunden-Visit-Fenster einschliessen, in dem \gls{tamaraw} auch nach Abschluss des Seitenabrufs weiterhin Dummy-Zellen emittiert.
 
-Setzt man die Bandbreiten-Kosten zur erzielten Schutzwirkung in Relation, ergibt sich für Circuit Padding ein Verhältnis von rund einem Prozentpunkt Accuracy-Reduktion pro Prozentpunkt Mehrverkehr im 20-Klassen-Setup.
-Für Tamaraw entfallen auf jeden Prozentpunkt Mehrverkehr lediglich rund 0.05~Prozentpunkte Accuracy-Reduktion.
-Tamaraw kauft seinen grossen Schutzeffekt also mit einem überproportional hohen Bandbreitenaufschlag ein, was die Verteidigung für den realen Tor-Betrieb derzeit nicht praktikabel macht~\cite{wfdefproxy}.
+Setzt man die Bandbreiten-Kosten zur erzielten Schutzwirkung in Relation, ergibt sich für \gls{circuitpadding} ein Verhältnis von rund einem Prozentpunkt Accuracy-Reduktion pro Prozentpunkt Mehrverkehr im 20-Klassen-Setup.
+Für \gls{tamaraw} entfallen auf jeden Prozentpunkt Mehrverkehr lediglich rund 0.05~Prozentpunkte Accuracy-Reduktion.
+\gls{tamaraw} kauft seinen grossen Schutzeffekt also mit einem überproportional hohen Bandbreitenaufschlag ein, was die Verteidigung für den realen Tor-Betrieb derzeit nicht praktikabel macht~\cite{wfdefproxy}.
 Abbildung~\ref{fig:eval_defense_tradeoff} visualisiert diesen Kosten-Schutz-Vergleich für die drei Verteidigungen im 80-Klassen-Setup.
 
 \begin{figure}[H]
@@ -208,7 +208,7 @@ Abbildung~\ref{fig:eval_defense_tradeoff} visualisiert diesen Kosten-Schutz-Verg
 Ergänzend zu den klassifikationsbezogenen Resultaten wird der Ressourcenverbrauch des Simulationsservers \texttt{shadowsrv-001} während der Experimente protokolliert.
 Dazu wird das Skript \texttt{perfmon.py} verwendet, das im Intervall von fünf Sekunden Werte aus \texttt{/proc/stat}, \texttt{/proc/meminfo}, \texttt{statvfs} und \texttt{/proc/loadavg} ausliest und in eine tagesweise rotierte \texttt{CSV}-Datei schreibt.
 Ergänzend protokolliert der Wrapper \texttt{run\_sim.sh} pro Simulationslauf eine \texttt{dstat}-Spur innerhalb des Experimentordners.
-Betrachtet werden die drei zeitlich zusammenhängenden Tamaraw-Läufe \texttt{exp-tamaraw-20v2}, \texttt{exp-tamaraw-80} und \texttt{exp-tamaraw-openworld}, da Tamaraw aufgrund seines hohen Daten- und Rechenaufwands die Engpässe am deutlichsten sichtbar macht.
+Betrachtet werden die drei zeitlich zusammenhängenden \gls{tamaraw}-Läufe \texttt{exp-tamaraw-20v2}, \texttt{exp-tamaraw-80} und \texttt{exp-tamaraw-openworld}, da \gls{tamaraw} aufgrund seines hohen Daten- und Rechenaufwands die Engpässe am deutlichsten sichtbar macht.
 
 \begin{figure}[H]
     \centering
@@ -284,8 +284,8 @@ Betrachtet werden die drei zeitlich zusammenhängenden Tamaraw-Läufe \texttt{ex
 
 Über alle drei Läufe hinweg bildet die CPU mit konstant rund 99.8\,\% Auslastung den primären Engpass und bleibt unabhängig von der Klassenanzahl am Anschlag.
 Arbeitsspeicher und Disk wachsen während der Laufzeit annähernd linear, da sowohl Shadow-Datenstrukturen als auch \gls{pcap}-Aufzeichnungen monoton anwachsen.
-Bei der grösseren Open-World-Konfiguration ist die Disk-Partition mit 156 GB die letztlich limitierende Ressource: \texttt{perfmon} und Shadow terminieren mit \texttt{ENOSPC}, bevor der Lauf regulär enden kann.
-Eine schlankere Aufzeichnung auf Tor-Zell-Ebene nach Jansen und Wails würde den Speicherbedarf um ein bis zwei Grössenordnungen reduzieren und die Open-World-Skala unter Tamaraw wieder unterhalb der 156-GB-Grenze halten~\cite{jansen2023data}.
+Bei der grösseren \gls{openworld}-Konfiguration ist die Disk-Partition mit 156 GB die letztlich limitierende Ressource: \texttt{perfmon} und Shadow terminieren mit \texttt{ENOSPC}, bevor der Lauf regulär enden kann.
+Eine schlankere Aufzeichnung auf Tor-Zell-Ebene nach Jansen und Wails würde den Speicherbedarf um ein bis zwei Grössenordnungen reduzieren und die \gls{openworld}-Skala unter \gls{tamaraw} wieder unterhalb der 156-GB-Grenze halten~\cite{jansen2023data}.
 In der vorliegenden Arbeit wird dennoch an den \glspl{pcap} festgehalten, da sie dem in Abschnitt~\ref{sec:realisierung_monitore} beschriebenen Bedrohungsmodell eines lokalen Beobachters entsprechen.
 Die Umstellung auf Cell-Trace-Logs wird in Kapitel~\ref{cha:ausblick} als Folgearbeit aufgegriffen.
 
@@ -304,34 +304,34 @@ Die untersuchten Differenzen zwischen den Padding-Modi sind dagegen weniger anf�
 \paragraph{Browser und Single-Tab-Modell.}
 Anstelle eines vollwertigen Tor Browser wird ein gepatchter \texttt{wget2}-Client eingesetzt, der pro Besuch genau eine Seite mit allen referenzierten Ressourcen über \gls{tor} herunterlädt.
 \texttt{wget2} verarbeitet weder JavaScript noch dynamische DOM-Effekte und teilt Ressourcen-Requests anders auf parallele Verbindungen auf als ein realer Browser.
-Wang und Goldberg zeigen, dass bereits parallel offene Browser-Tabs die Erkennungsrate eines Closed-World-Klassifikators erheblich senken, da die resultierenden Verkehrsmuster Überlagerungen mehrerer Seiten darstellen~\cite{wang2016realistically}.
+Wang und Goldberg zeigen, dass bereits parallel offene Browser-Tabs die Erkennungsrate eines \gls{closedworld}-Klassifikators erheblich senken, da die resultierenden Verkehrsmuster Überlagerungen mehrerer Seiten darstellen~\cite{wang2016realistically}.
 Im realen Tor-Browser-Betrieb ist Multi-Tab-Verkehr die Regel und nicht die Ausnahme, weshalb die hier gemessenen Erkennungsraten den im Live-Netz erreichbaren Wert klar überschätzen dürften.
 
 \paragraph{Statisches Inhaltsmodell.}
 Die Monitor-Clients beziehen ihre Inhalte aus einem statischen Snapshot der Simple English Wikipedia, ausgeliefert über den eigens gebauten \texttt{zimsrv.py}.
 Damit fehlen reale Dynamiken wie sich verändernde Werbeflächen, A/B-Tests, Drittanbieter-Tracker, CDN-Lastverteilung oder personalisierte Inhalte, die im Live-Web jede Seite über die Zeit nicht-trivial variieren lassen.
-Juarez et al.\ benennen genau diese Inhaltsveränderungen über die Zeit (concept drift) als einen Hauptgrund dafür, dass Closed-World-Resultate im realen Tor-Browser-Betrieb nicht reproduzierbar sind~\cite{juarez2014critical}.
+Juarez et al.\ benennen genau diese Inhaltsveränderungen über die Zeit (concept drift) als einen Hauptgrund dafür, dass \gls{closedworld}-Resultate im realen Tor-Browser-Betrieb nicht reproduzierbar sind~\cite{juarez2014critical}.
 Im vorliegenden Versuchsaufbau ist concept drift ausgeschlossen, alle Besuche derselben Seite liefern bis auf Tor-bedingte Streuung dieselben Bytes.
 
 \paragraph{Hintergrundrauschen.}
 Tornettools erzeugt zwar TGEN- und Markov-Hintergrund-Clients, deren Verkehr eine Schätzung des realen Tor-Verkehrsmodells nachbildet~\cite{neverenough-sec2021}.
-Im Vergleich zum Live-Netzwerk mit aktuell rund zwei Millionen täglich verbundenen Nutzerinnen und Nutzern (Stand 2026, gemessen anhand gleichzeitig verbundener Clients)~\cite{tormetricsabout} ist die hier reproduzierte Last jedoch klein.
+Im Vergleich zum Live-Netzwerk mit aktuell rund zwei Millionen täglich verbundenen Nutzenden (Stand 2026, gemessen anhand gleichzeitig verbundener Clients)~\cite{tormetricsabout} ist die hier reproduzierte Last jedoch klein.
 Der in Abschnitt~\ref{cha:stand_der_technik} genannte historische Spitzenwert von bis zu acht Millionen Personen pro Tag~\cite{mani2018understanding} bezieht sich auf eine andere Metrik (geschätzte Anzahl einzelner Personen statt gleichzeitiger Verbindungen) und ist daher nicht direkt mit dem heutigen Wert vergleichbar.
 Mehr Hintergrundverkehr bedeutet einerseits mehr Streuung der Latenzen pro Schaltkreis und andererseits mehr unbeabsichtigte Tor-Zell-Sequenzen, die mit echten Padding-Mustern verwechselt werden können.
 Beide Effekte würden die Erkennungsrate gegenüber den hier berichteten Werten weiter senken.
 
 \paragraph{Bedrohungsmodell und Korrelationsangriff.}
-Der \gls{df}-Angriff geht von einem passiven Beobachter zwischen Client und Eingangsknoten aus.
+Der \gls{df}-Angriff geht von einer passiven beobachtenden Instanz zwischen Client und Eingangsknoten aus.
 Wer demgegenüber sowohl an Eingangs- als auch an Ausgangsknoten zuhört, kann den Verkehr mit einem Korrelationsangriff direkt zuordnen, ohne pro Webseite ein Klassifikationsmodell zu lernen~\cite{nasr2018deepcorr}.
 Eine erste Implementierung eines solchen Korrelationsangriffs (\texttt{correlation.py}) wurde in dieser Arbeit aufgebaut, jedoch nicht über alle Experimente hinweg ausgewertet.
 Der entsprechende Auswertungsschritt bleibt damit als Ausblick offen und wird in Kapitel~\ref{cha:ausblick} aufgenommen.
 
 \paragraph{Anzahl Wiederholungen.}
 Pro Konfiguration wird genau ein Shadow-Lauf mit einem festen Seed durchgeführt.
-Differenzen in der Grössenordnung weniger Prozentpunkte sind daher mit Vorsicht zu interpretieren, insbesondere im Open-World-Setup mit stark unbalancierten Klassen.
+Differenzen in der Grössenordnung weniger Prozentpunkte sind daher mit Vorsicht zu interpretieren, insbesondere im \gls{openworld}-Setup mit stark unbalancierten Klassen.
 Zusätzlich liegen pro Klasse nur 150 Visits vor, wovon bei einem 10\,\%-Test-Split lediglich rund 15 Samples in die Accuracy einfliessen, sodass einzelne Fehlklassifikationen die berichteten Werte sichtbar bewegen können.
-Die qualitativen Schlüsse (Tamaraw $\gg$ Circuit Padding bezüglich Schutzwirkung, Tamaraw $\gg$ Circuit Padding bezüglich Bandbreitenkosten, Open-World schwieriger als Closed-World) sind aufgrund ihrer Grössenordnung jedoch belastbar.
+Die qualitativen Schlüsse (\gls{tamaraw} $\gg$ \gls{circuitpadding} bezüglich Schutzwirkung, \gls{tamaraw} $\gg$ \gls{circuitpadding} bezüglich Bandbreitenkosten, \gls{openworld} schwieriger als \gls{closedworld}) sind aufgrund ihrer Grössenordnung jedoch belastbar.
 
-Insgesamt zeigt die Auswertung, dass das produktiv ausgelieferte Circuit Padding im untersuchten Laborkontext einen messbaren, aber kleinen Beitrag zur Verteidigung gegen \gls{df}-Angriffe leistet (zwischen 3.8 und 9.4 Prozentpunkte Accuracy-Reduktion im Closed-World), bei einem praktisch vernachlässigbaren Bandbreitenaufschlag von unter 5\,\%.
-Tamaraw erreicht in derselben Umgebung eine um eine Grössenordnung stärkere Schutzwirkung, erkauft sich diese aber mit einem Bandbreiten-Overhead von rund 1000\,\% und ist damit in seiner heutigen Form nicht für den breiten Einsatz im Tor-Netzwerk geeignet.
+Insgesamt zeigt die Auswertung, dass das produktiv ausgelieferte \gls{circuitpadding} im untersuchten Laborkontext einen messbaren, aber kleinen Beitrag zur Verteidigung gegen \gls{df}-Angriffe leistet (zwischen 3.8 und 9.4 Prozentpunkte Accuracy-Reduktion im \gls{closedworld}), bei einem praktisch vernachlässigbaren Bandbreitenaufschlag von unter 5\,\%.
+\gls{tamaraw} erreicht in derselben Umgebung eine um eine Grössenordnung stärkere Schutzwirkung, erkauft sich diese aber mit einem Bandbreiten-Overhead von rund 1000\,\% und ist damit in seiner heutigen Form nicht für den breiten Einsatz im Tor-Netzwerk geeignet.
 Die genannten Limitationen, insbesondere das Single-Tab-Modell und die kleine Skalierung, legen nahe, dass beide Verteidigungen unter realistischeren Bedingungen tendenziell stärker wirken, da der Klassifikator bereits in der Baseline mit höherem Rauschen rechnen müsste.

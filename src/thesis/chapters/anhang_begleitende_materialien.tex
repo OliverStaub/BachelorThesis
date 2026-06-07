@@ -63,7 +63,7 @@ LaTeX-Hilfsdateien (\texttt{*.aux}, \texttt{*.log}, \texttt{*.toc}) & Werden bei
 \section{Reproduktion eines Resultats}
 \label{app:begleitmaterial_reproduktion}
 
-Zur Veranschaulichung wird hier exemplarisch die Reproduktion des Closed-World-Laufs \texttt{exp-baseline-80} skizziert, dessen Ergebnis in Tabelle~\ref{tab:experimentlogs} dokumentiert ist.
+Zur Veranschaulichung wird hier exemplarisch die Reproduktion des \gls{closedworld}-Laufs \texttt{exp-baseline-80} skizziert, dessen Ergebnis in Tabelle~\ref{tab:experimentlogs} dokumentiert ist.
 
 \begin{enumerate}
     \item Simulation starten und Pcaps erzeugen: aus \texttt{src/simulation/} den Befehl
@@ -84,8 +84,8 @@ Damit lassen sich Accuracy, Precision, Recall und F1-Wert ohne erneutes Training
 
 Tabelle~\ref{tab:experimentlogs} fasst die in Kapitel~\ref{cha:diskussion} ausgewerteten zwölf Hauptexperimente in einer einzigen Übersicht zusammen.
 Die Werte entsprechen direkt der Datei \texttt{ExperimentLogs.csv} im Hauptverzeichnis des begleitenden Repositoriums und sind auf die in dieser Arbeit ausgewerteten Spalten reduziert.
-Konstante Spalten wie Netzwerk-Skala, Seed, ZIM-Datei oder Trainings-Epochen werden weggelassen, da sie für alle Hauptexperimente identisch sind (Network Scale 0.010, Seed 1, ZIM \texttt{simple\_en\_maxi\_2026-02}, 30 Trainings-Epochen, Visit-Interval 30~s, Visits pro Seite 150).
-Explorative Läufe (Smoketests, frühe Korrelations- und Tamaraw-Vorversuche) sind nicht enthalten, sind in der vollständigen CSV-Datei aber dokumentiert.
+Konstante Spalten wie Netzwerk-Skala, Seed, \gls{zim}-Datei oder Trainings-Epochen werden weggelassen, da sie für alle Hauptexperimente identisch sind (Network Scale 0.010, Seed 1, \gls{zim} \texttt{simple\_en\_maxi\_2026-02}, 30 Trainings-Epochen, Visit-Interval 30~s, Visits pro Seite 150).
+Explorative Läufe (Smoketests, frühe Korrelations- und \gls{tamaraw}-Vorversuche) sind nicht enthalten, sind in der vollständigen CSV-Datei aber dokumentiert.
 
 \begin{landscape}
 \footnotesize
@@ -123,14 +123,14 @@ exp-tamaraw-openworld & 280 & Tamaraw & 16:45 & 12\,620 & 132 & 3.2 & 4\,994 & 2
 \end{landscape}
 
 Die Spalten haben folgende Bedeutung.
-Klassen entspricht der Anzahl der vom Klassifikator unterschiedenen Seiten (Closed-World) beziehungsweise der Anzahl Quellseiten (Open-World: 280 Quellseiten, davon 80 überwachte Klassen plus eine Sammelklasse).
-Padding bezeichnet die im Tor-Daemon der Monitor-Hosts gesetzte Verteidigung (OFF, ON, Reduced) beziehungsweise das auf den Bridge-Hosts aktivierte Tamaraw.
-Wall-Clock ist die Laufzeit der Shadow-Simulation in Stunden:Minuten.
+Klassen entspricht der Anzahl der vom Klassifikator unterschiedenen Seiten (\gls{closedworld}) beziehungsweise der Anzahl Quellseiten (\gls{openworld}: 280 Quellseiten, davon 80 überwachte Klassen plus eine Sammelklasse).
+Padding bezeichnet die im Tor-Daemon der \gls{monitorhost}s gesetzte Verteidigung (OFF, ON, Reduced) beziehungsweise das auf den Bridge-Hosts aktivierte \gls{tamaraw}.
+Wall-Clock ist die Laufzeit der \gls{shadow}-Simulation in Stunden:Minuten.
 Samples und /Klasse geben die nach Konvertierung mit \texttt{pcap\_to\_npz.py} verfügbaren Aufzeichnungen wieder.
 Fail\,\% beziffert den Anteil der durch \texttt{wget2} abgebrochenen Seitenabrufe.
 Pkt/Sample ist die mittlere Anzahl Pakete pro Aufzeichnung über die ersten 5000 Werte des direction-Vektors.
 Acc., Prec., Rec.\ und F1 stammen aus dem WFlib-Testlauf des \gls{df}-Modells.
-Rand.\ ist die theoretische Zufallsbasis $1/K$ mit $K$ effektiv vom Klassifikator unterschiedenen Klassen (Open-World: 81 = 80 überwachte + 1 Sammelklasse, daher 1.2\,\%).
+Rand.\ ist die theoretische Zufallsbasis $1/K$ mit $K$ effektiv vom Klassifikator unterschiedenen Klassen (\gls{openworld}: 81 = 80 überwachte + 1 Sammelklasse, daher 1.2\,\%).
 
 \section{Verteilung der Sequenzlänge pro Besuch}
 \label{app:seqlen}

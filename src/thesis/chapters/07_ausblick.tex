@@ -11,22 +11,22 @@ Dieses Kapitel fasst die wichtigsten dieser Folgearbeiten zusammen und ordnet si
 Im Rahmen der Realisierung wurde mit \texttt{correlation.py} ein Werkzeug aufgebaut, das die in den Monitor- und Exit-Relay-\glspl{pcap} aufgezeichneten Paketzeitreihen einliest, Timing-Korrelationen pro Schaltkreis berechnet und daraus \gls{roc}-Kurven sowie Score-Verteilungen erzeugt.
 Der Datenpfad wurde an einzelnen Läufen geprüft, eine systematische Auswertung über alle in dieser Arbeit erzeugten Datensätze fehlt jedoch.
 Eine konsequente Anwendung des Werkzeugs auf die bestehenden Experimentordner würde es erlauben, das in Abschnitt~\ref{sec:eval_einordnung} skizzierte alternative Bedrohungsmodell des globalen passiven Beobachters quantitativ einzuordnen.
-Besonders aufschlussreich wäre der direkte Vergleich der Korrelations-\gls{auc} zwischen den vier Padding-Modi, da Circuit Padding und Tamaraw gemäss Literatur unterschiedliche Wirkungen auf zeitliche Merkmale entfalten und ein Vergleich zwischen \gls{df}- und Korrelationsangriff so erst möglich würde~\cite{nasr2018deepcorr}.
+Besonders aufschlussreich wäre der direkte Vergleich der Korrelations-\gls{auc} zwischen den vier Padding-Modi, da \gls{circuitpadding} und \gls{tamaraw} gemäss Literatur unterschiedliche Wirkungen auf zeitliche Merkmale entfalten und ein Vergleich zwischen \gls{df}- und Korrelationsangriff so erst möglich würde~\cite{nasr2018deepcorr}.
 Der Aufwand ist gering, da Tor-Quellcode nicht verändert werden muss und die benötigten Relay-\glspl{pcap} bereits aus den Läufen mit der Option \texttt{-{}-correlation} vorliegen.
 
 \section{Mehrere Seeds und statistische Streuung}
 \label{sec:ausblick_seeds}
 
-Jede in dieser Arbeit berichtete Kennzahl stammt aus genau einem Shadow-Lauf mit festem Seed.
-Die Folge ist, dass Differenzen in der Grössenordnung weniger Prozentpunkte, wie die Differenz zwischen ON und Reduced bei 80 Klassen oder die Inversion der Padding-Wirkung im Open-World-Setup, nicht von der Streuung des Simulators unterschieden werden können.
+Jede in dieser Arbeit berichtete Kennzahl stammt aus genau einem \gls{shadow}-Lauf mit festem Seed.
+Die Folge ist, dass Differenzen in der Grössenordnung weniger Prozentpunkte, wie die Differenz zwischen ON und Reduced bei 80 Klassen oder die Inversion der Padding-Wirkung im \gls{openworld}-Setup, nicht von der Streuung des Simulators unterschieden werden können.
 Eine Wiederholung jedes Hauptexperiments mit mindestens drei unabhängigen Seeds würde es ermöglichen, Mittelwerte und Standardabweichungen pro Konfiguration zu berichten und damit Konfidenzintervalle für die Padding-Effekte anzugeben.
-Da die Wall-Clock-Laufzeit linear mit der Anzahl Seeds wächst und insbesondere die Tamaraw-Open-World-Läufe bereits an die Disk-Obergrenze des Servers stiessen, müsste zugleich auf das in Abschnitt~\ref{sec:eval_performance} skizzierte Cell-Trace-Logging umgestellt werden.
+Da die Wall-Clock-Laufzeit linear mit der Anzahl Seeds wächst und insbesondere die \gls{tamaraw}-\gls{openworld}-Läufe bereits an die Disk-Obergrenze des Servers stiessen, müsste zugleich auf das in Abschnitt~\ref{sec:eval_performance} skizzierte Cell-Trace-Logging umgestellt werden.
 
 \section{Realistischeres Browser-Modell}
 \label{sec:ausblick_browser}
 
 Der in dieser Arbeit eingesetzte \texttt{wget2}-Client bildet die wichtigste Vereinfachung gegenüber dem realen Tor-Browser-Betrieb.
-Wang und Goldberg zeigen, dass Multi-Tab-Verkehr und überlappende Seitenaufrufe die Erkennungsrate eines Closed-World-Klassifikators erheblich senken~\cite{wang2016realistically}.
+Wang und Goldberg zeigen, dass Multi-Tab-Verkehr und überlappende Seitenaufrufe die Erkennungsrate eines \gls{closedworld}-Klassifikators erheblich senken~\cite{wang2016realistically}.
 Eine Folgearbeit könnte den Monitor-Client durch einen headless betriebenen Tor-Browser ersetzen, der über eine Steuerschnittstelle (zum Beispiel das Marionette-Protokoll) deterministisch eine vorgegebene Sequenz von Seiten lädt.
 Damit liessen sich JavaScript-Ausführung, dynamisches Nachladen von Ressourcen und parallele Tab-Sitzungen abbilden und die in Abschnitt~\ref{sec:eval_einordnung} dokumentierte Überschätzung der Baseline-Accuracy quantitativ überprüfen.
 Der Aufwand ist erheblich, da ein vollständiger Browser im Shadow-Kontext eingebettet werden muss und der Ressourcenverbrauch pro Monitor deutlich über dem von \texttt{wget2} liegt.
@@ -34,9 +34,9 @@ Der Aufwand ist erheblich, da ein vollständiger Browser im Shadow-Kontext einge
 \section{Dynamische Inhalte und zeitliche Drift}
 \label{sec:ausblick_drift}
 
-Das im Versuchsaufbau eingesetzte statische ZIM-Snapshot-Modell schliesst zeitliche Drift der Inhalte vollständig aus, was in der gewählten Laborkonfiguration erwünscht ist, aber den Abstand zu produktiven Verhältnissen vergrössert.
-Juarez et al.\ benennen die Drift der Inhalte als einen der zentralen Gründe, weshalb Closed-World-Resultate aus Laborbedingungen im Live-Web nicht reproduzierbar sind~\cite{juarez2014critical}.
-Eine Folgearbeit könnte das ZIM-Modell um eine kontrollierte Variation der ausgelieferten Bytes ergänzen, etwa durch zufällige Veränderung der Reihenfolge von Ressourcen, durch das Einblenden simulierter Werbeflächen oder durch eine künstlich erzeugte Aktualisierung der Inhalte zwischen Trainings- und Testfenster.
+Das im Versuchsaufbau eingesetzte statische \gls{zim}-Snapshot-Modell schliesst zeitliche Drift der Inhalte vollständig aus, was in der gewählten Laborkonfiguration erwünscht ist, aber den Abstand zu produktiven Verhältnissen vergrössert.
+Juarez et al.\ benennen die Drift der Inhalte als einen der zentralen Gründe, weshalb \gls{closedworld}-Resultate aus Laborbedingungen im Live-Web nicht reproduzierbar sind~\cite{juarez2014critical}.
+Eine Folgearbeit könnte das \gls{zim}-Modell um eine kontrollierte Variation der ausgelieferten Bytes ergänzen, etwa durch zufällige Veränderung der Reihenfolge von Ressourcen, durch das Einblenden simulierter Werbeflächen oder durch eine künstlich erzeugte Aktualisierung der Inhalte zwischen Trainings- und Testfenster.
 So liessen sich die Auswirkungen zeitlicher Drift auf die Padding-Wirkung in einer reproduzierbaren Umgebung untersuchen, ohne die Vorteile der Shadow-Simulation aufzugeben.
 
 \section{Grössere Netzwerk-Skalierung}
@@ -45,24 +45,24 @@ So liessen sich die Auswirkungen zeitlicher Drift auf die Padding-Wirkung in ein
 Die Netzwerkgrösse von 0.01 entspricht rund einem Hundertstel des Live-Tor-Netzwerks und reduziert nach Jansen und Wails systematisch die Pfaddiversität~\cite{jansen2023data}.
 Eine Skalierung auf 0.05 oder 0.1 würde die Anzahl Relays in den Bereich mehrerer Hundert bis Tausend bringen und damit dem in Abschnitt~\ref{sec:realisierung_umgebung} skizzierten Strukturmerkmal des realen Tor-Netzwerks deutlich näher kommen.
 Voraussetzung dafür ist die in Abschnitt~\ref{sec:eval_performance} angeregte Umstellung der Verkehrsaufzeichnung auf Cell-Trace-Logs auf Tor-Ebene, ohne die der Speicherbedarf bereits bei der derzeitigen Skalierung an die 156-GB-Grenze stösst.
-Mit beiden Massnahmen zusammen liesse sich erstmals untersuchen, ob die hier gemessene Schutzwirkung von Circuit Padding mit wachsender Pfaddiversität abnimmt, gleich bleibt oder sich sogar invertiert.
+Mit beiden Massnahmen zusammen liesse sich erstmals untersuchen, ob die hier gemessene Schutzwirkung von \gls{circuitpadding} mit wachsender Pfaddiversität abnimmt, gleich bleibt oder sich sogar invertiert.
 
 \section{Weitere Verteidigungen}
 \label{sec:ausblick_defenses}
 
-Die Arbeit vergleicht Circuit Padding gegen die historisch bedeutsame Tamaraw-Verteidigung.
-Seit der ursprünglichen Tamaraw-Veröffentlichung sind weitere Schutzansätze publiziert worden, die einen günstigeren Kosten-Schutz-Punkt im in Abschnitt~\ref{sec:eval_bandwidth} aufgespannten Trade-off-Diagramm versprechen.
+Die Arbeit vergleicht \gls{circuitpadding} gegen die historisch bedeutsame \gls{tamaraw}-Verteidigung.
+Seit der ursprünglichen \gls{tamaraw}-Veröffentlichung sind weitere Schutzansätze publiziert worden, die einen günstigeren Kosten-Schutz-Punkt im in Abschnitt~\ref{sec:eval_bandwidth} aufgespannten Trade-off-Diagramm versprechen.
 Zu nennen sind insbesondere RegulaTor mit lastabhängiger Senderate und FRONT mit zufallsbasierter Padding-Verteilung am Anfang einer Sitzung.
 Eine Folgearbeit könnte die in dieser Arbeit aufgebaute Pipeline (\texttt{shadowctl.py}, \texttt{pcap\_to\_npz.py}, WFlib-Training) ohne grosse Änderungen auf diese Verteidigungen anwenden, sofern eine Referenzimplementierung als Tor-Patch oder als wfdefproxy-Plugin vorliegt~\cite{wfdefproxy}.
-Damit liesse sich der in Tabelle~\ref{tab:eval_bandwidth} aufgespannte Vergleich um zusätzliche Punkte ergänzen und die Einordnung von Circuit Padding gegenüber dem aktuellen Stand der Schutzverfahren schärfen.
+Damit liesse sich der in Tabelle~\ref{tab:eval_bandwidth} aufgespannte Vergleich um zusätzliche Punkte ergänzen und die Einordnung von \gls{circuitpadding} gegenüber dem aktuellen Stand der Schutzverfahren schärfen.
 
 \section{Übergang ins Live-Tor-Netzwerk}
 \label{sec:ausblick_live}
 
-Alle in dieser Arbeit berichteten Resultate stammen aus dem Shadow-Simulator und sind daher reproduzierbar, aber auf den simulierten Kontext beschränkt.
+Alle in dieser Arbeit berichteten Resultate stammen aus dem \gls{shadow}-Simulator und sind daher reproduzierbar, aber auf den simulierten Kontext beschränkt.
 Eine perspektivische Erweiterung wäre die Übertragung des Versuchsaufbaus auf das Live-Tor-Netzwerk unter Beibehaltung der bestehenden Pipeline.
 Dazu müssten der Monitor-Client und die zugehörige Verkehrsaufzeichnung in einer abgeschirmten Umgebung betrieben werden, etwa auf einer einzelnen Forschungs-VM mit eigenem Tor-Daemon, wobei sämtliche aufgezeichneten Inhalte aus einer eigens kontrollierten Quelle stammen müssen.
-Auf diese Weise liesse sich messen, in welchem Umfang die in Abschnitt~\ref{sec:eval_einordnung} benannten Limitationen die Schutzwirkung von Circuit Padding tatsächlich überschätzen oder unterschätzen, ohne dass dabei Verkehr realer Nutzerinnen und Nutzer einbezogen wird.
+Auf diese Weise liesse sich messen, in welchem Umfang die in Abschnitt~\ref{sec:eval_einordnung} benannten Limitationen die Schutzwirkung von \gls{circuitpadding} tatsächlich überschätzen oder unterschätzen, ohne dass dabei Verkehr realer Nutzender einbezogen wird.
 Aus ethischer Sicht ist eine solche Erweiterung sorgfältig zu planen, da bereits passive Messungen im Live-Netzwerk die Anonymität anderer Beteiligter berühren können.
 
 \section{Zusammenfassung der offenen Punkte}
