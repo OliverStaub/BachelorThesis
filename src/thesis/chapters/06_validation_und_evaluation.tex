@@ -63,7 +63,7 @@ Im Open-World tritt ein struktureller Effekt hinzu: Der Klassifikator entscheide
 Diese Beobachtung ist konsistent mit Juarez et al., die für Open-World-Szenarien deutlich höhere Falsch-Positiv-Raten berichten und betonen, dass die in Closed-World-Studien gemeldeten Erkennungsraten in der Praxis nicht erreicht werden~\cite{juarez2014critical}.
 
 
-Die hier erzielten Werte liegen unterhalb der von Sirinam et al.\ ursprünglich gemeldeten 98\,\% bei 95 Klassen~\cite{sirinam2018deep}, jedoch in einer vergleichbaren Grössenordnung.
+Die hier erzielten Werte liegen unterhalb der von Sirinam et al.\ ursprünglich gemeldeten 98.3\,\% bei 95 Klassen~\cite{sirinam2018deep}, was sich neben der grösseren Skala des Live-Tor-Netzwerks auch durch die mit 1000 statt 150 Traces pro Klasse rund siebenfach grössere Trainingsmenge erklären lässt.
 
 \subsection{Effekt von Circuit Padding}
 \label{sec:eval_padding_effekt}
@@ -325,6 +325,7 @@ Der entsprechende Auswertungsschritt bleibt damit als Ausblick offen und wird in
 \paragraph{Anzahl Wiederholungen.}
 Pro Konfiguration wird genau ein Shadow-Lauf mit einem festen Seed durchgeführt.
 Differenzen in der Grössenordnung weniger Prozentpunkte sind daher mit Vorsicht zu interpretieren, insbesondere im Open-World-Setup mit stark unbalancierten Klassen.
+Zusätzlich liegen pro Klasse nur 150 Visits vor, wovon bei einem 10\,\%-Test-Split lediglich rund 15 Samples in die Accuracy einfliessen, sodass einzelne Fehlklassifikationen die berichteten Werte sichtbar bewegen können.
 Die qualitativen Schlüsse (Tamaraw $\gg$ Circuit Padding bezüglich Schutzwirkung, Tamaraw $\gg$ Circuit Padding bezüglich Bandbreitenkosten, Open-World schwieriger als Closed-World) sind aufgrund ihrer Grössenordnung jedoch belastbar.
 
 Insgesamt zeigt die Auswertung, dass das produktiv ausgelieferte Circuit Padding im untersuchten Laborkontext einen messbaren, aber kleinen Beitrag zur Verteidigung gegen \gls{df}-Angriffe leistet (zwischen 3.8 und 9.4 Prozentpunkte Accuracy-Reduktion im Closed-World), bei einem praktisch vernachlässigbaren Bandbreitenaufschlag von unter 5\,\%.
