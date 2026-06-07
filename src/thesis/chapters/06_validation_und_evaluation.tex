@@ -249,8 +249,9 @@ Betrachtet werden die drei zeitlich zusammenhängenden Tamaraw-Läufe \texttt{ex
             \nextgroupplot[ylabel={CPU [\%]},
                 title={Ressourcenauslastung der Tamaraw-Läufe auf \texttt{shadowsrv-001}},
                 title style={font=\small\bfseries, yshift=-2pt},
-                legend style={at={(0.5,1.18)}, anchor=south, legend columns=5, draw=none,
-                              /tikz/every even column/.append style={column sep=8pt}},
+                legend to name=perfmonlegend,
+                legend style={legend columns=3, draw=none,
+                              /tikz/every even column/.append style={column sep=12pt}},
                 legend image code/.code={\draw[#1, draw=black!40, line width=0.3pt] (0cm,-0.06cm) rectangle (0.3cm,0.14cm);}]
                 \addplot[draw=green!55!black, fill=green!55!black, fill opacity=0.22] table[col sep=comma, x=hours, y=cpu] {data/perfmon_tamaraw20v2.csv} \closedcycle;
                 \addlegendentry{20 Klassen}
@@ -258,12 +259,8 @@ Betrachtet werden die drei zeitlich zusammenhängenden Tamaraw-Läufe \texttt{ex
                 \addlegendentry{80 Klassen}
                 \addplot[draw=orange!80!black, fill=orange!80!black, fill opacity=0.22] table[col sep=comma, x=hours, y=cpu] {data/perfmon_openworld.csv} \closedcycle;
                 \addlegendentry{Open-World}
-                \addplot[only marks, mark=*, mark size=1.8pt, draw=black!70, fill=black!70, forget plot] coordinates {(8.12,99.91) (11.77,99.85)};
-                \addlegendimage{only marks, mark=*, mark size=1.8pt, draw=black!70, fill=black!70}
-                \addlegendentry{regul\"arer Abschluss}
-                \addplot[only marks, mark=x, mark size=3pt, mark options={line width=1.2pt}, draw=red!75!black, forget plot] coordinates {(16.10,99.80)};
-                \addlegendimage{only marks, mark=x, mark size=3pt, mark options={line width=1.2pt}, draw=red!75!black}
-                \addlegendentry{ENOSPC}
+                \addplot[only marks, mark=*, mark size=1.8pt, draw=black!70, fill=black!70] coordinates {(8.12,99.91) (11.77,99.85)};
+                \addplot[only marks, mark=x, mark size=3pt, mark options={line width=1.2pt}, draw=red!75!black] coordinates {(16.10,99.80)};
             \nextgroupplot[ylabel={RAM [\%]}]
                 \addplot[draw=green!55!black, fill=green!55!black, fill opacity=0.22] table[col sep=comma, x=hours, y=mem] {data/perfmon_tamaraw20v2.csv} \closedcycle;
                 \addplot[draw=blue!60!black, fill=blue!60!black, fill opacity=0.22] table[col sep=comma, x=hours, y=mem] {data/perfmon_tamaraw80.csv} \closedcycle;
@@ -276,8 +273,9 @@ Betrachtet werden die drei zeitlich zusammenhängenden Tamaraw-Läufe \texttt{ex
                 \addplot[only marks, mark=*, mark size=1.8pt, draw=black!70, fill=black!70] coordinates {(11.77,97.35)};
                 \addplot[only marks, mark=x, mark size=3pt, mark options={line width=1.2pt}, draw=red!75!black] coordinates {(16.10,99.79)};
         \end{groupplot}
+        \node[anchor=north, yshift=-0.4cm] at (current bounding box.south) {\pgfplotslegendfromname{perfmonlegend}};
     \end{tikzpicture}
-    \caption{Auslastung von CPU, Arbeitsspeicher und Disk auf \texttt{shadowsrv-001} im Vergleich der drei Tamaraw-Läufe, normiert auf die Laufzeit seit Experimentstart. Gefüllte Flächen zeigen die jeweilige Auslastung, schwarze Punktmarker den regulären Abschluss, rote Kreuze den durch \texttt{ENOSPC} erzwungenen Abbruch unter Open-World. Disk fehlt für \texttt{exp-tamaraw-20v2}, da \texttt{perfmon} während dieses Laufs nicht aktiv war. Eigene Darstellung aus den \texttt{perfmon}- und \texttt{dstat}-Logs.}
+    \caption{Auslastung von CPU, Arbeitsspeicher und Disk auf \texttt{shadowsrv-001} im Vergleich der drei Tamaraw-Läufe, normiert auf die Laufzeit seit Experimentstart. Gefüllte Flächen zeigen die jeweilige Auslastung, schwarze Punktmarker den regulären Abschluss, rote Kreuze den durch \texttt{ENOSPC} erzwungenen Abbruch unter Open-World. Disk fehlt für \texttt{exp-tamaraw-20v2}, da \texttt{perfmon} während dieses Laufs nicht aktiv war. Die zugrunde liegenden Stichproben im Zwei-Stunden-Raster sind in Anhang~\ref{app:serverumgebung_perfmon} aufgeführt. Eigene Darstellung aus den \texttt{perfmon}- und \texttt{dstat}-Logs.}
     \label{fig:eval_perfmon_comparison}
 \end{figure}
 

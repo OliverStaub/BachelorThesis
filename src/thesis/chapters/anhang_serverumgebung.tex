@@ -111,3 +111,70 @@ Pfad & Inhalt \\
 
 Beim Pull der Resultate auf die Arbeitsstation des Autors wird pro Experiment dasselbe Unterverzeichnisschema gespiegelt, sodass lokal und auf der VM dieselbe Struktur vorliegt.
 Damit ist die manuelle Nachverfolgung von Resultaten zu ihren ursprünglichen Konfigurationen ohne zusätzliche Werkzeuge möglich.
+
+\section{Ressourcenauslastung der Tamaraw-Läufe}
+\label{app:serverumgebung_perfmon}
+
+Die in Abschnitt~\ref{sec:eval_performance} gezeigte Abbildung~\ref{fig:eval_perfmon_comparison} fasst den Ressourcenverlauf der drei Tamaraw-Läufe grafisch zusammen.
+Tabellen~\ref{tab:app_perfmon_tamaraw20v2} bis~\ref{tab:app_perfmon_openworld} dokumentieren die zugrunde liegenden Stichproben im Zwei-Stunden-Raster sowie den jeweils letzten von \texttt{perfmon.py} geschriebenen Wert.
+Die Werte stammen aus den \texttt{CSV}-Dateien \texttt{perfmon\_tamaraw20v2.csv}, \texttt{perfmon\_tamaraw80.csv} und \texttt{perfmon\_openworld.csv}, die im Quellverzeichnis \texttt{src/thesis/data/} der Arbeit abgelegt sind.
+Für \texttt{exp-tamaraw-20v2} liegt keine Disk-Telemetrie vor, da \texttt{perfmon.py} während dieses Laufs noch nicht aktiv war.
+
+\begin{table}[H]
+\centering
+\caption{\texttt{exp-tamaraw-20v2}: CPU- und RAM-Auslastung der virtuellen Maschine zum jeweiligen Zeitpunkt seit Experimentstart.}
+\label{tab:app_perfmon_tamaraw20v2}
+\begin{tabular}{rrr}
+\hline
+Zeit [h] & CPU [\%] & RAM [\%] \\
+\hline
+ 0.00 &   3.20 &  0.82 \\
+ 2.00 &  99.81 & 24.71 \\
+ 4.00 &  99.91 & 42.53 \\
+ 6.00 &  99.78 & 59.93 \\
+ 8.00 &  99.91 & 77.47 \\
+ 8.12 &  99.91 & 78.42 \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{\texttt{exp-tamaraw-80}: CPU-, RAM- und Disk-Auslastung der virtuellen Maschine zum jeweiligen Zeitpunkt seit Experimentstart.}
+\label{tab:app_perfmon_tamaraw80}
+\begin{tabular}{rrrr}
+\hline
+Zeit [h] & CPU [\%] & RAM [\%] & Disk [\%] \\
+\hline
+  0.00 & 99.89 & 34.92 & 46.76 \\
+  2.01 & 99.87 & 44.68 & 55.63 \\
+  4.02 & 99.86 & 54.10 & 64.28 \\
+  5.97 & 99.87 & 63.13 & 72.74 \\
+  7.98 & 99.88 & 72.34 & 81.35 \\
+  9.99 & 99.84 & 81.52 & 89.90 \\
+ 11.77 & 99.85 & 89.76 & 97.35 \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{\texttt{exp-tamaraw-openworld}: CPU-, RAM- und Disk-Auslastung der virtuellen Maschine zum jeweiligen Zeitpunkt seit Experimentstart. Der Lauf wird bei 16.10 Stunden durch \texttt{ENOSPC} abgebrochen, als die Disk die volle Belegung von 156\,GB erreicht.}
+\label{tab:app_perfmon_openworld}
+\begin{tabular}{rrrr}
+\hline
+Zeit [h] & CPU [\%] & RAM [\%] & Disk [\%] \\
+\hline
+  0.00 &  5.68 &  1.81 & 24.73 \\
+  2.02 & 99.86 & 24.61 & 34.16 \\
+  3.97 & 99.86 & 34.75 & 43.41 \\
+  5.99 & 99.86 & 45.34 & 52.93 \\
+  8.01 & 99.82 & 55.62 & 62.41 \\
+ 10.03 & 99.84 & 65.84 & 71.79 \\
+ 11.98 & 99.81 & 75.72 & 80.74 \\
+ 14.00 & 99.84 & 85.87 & 90.08 \\
+ 16.02 & 99.82 & 95.94 & 99.41 \\
+ 16.10 & 99.80 & 96.41 & 99.79 \\
+\hline
+\end{tabular}
+\end{table}
