@@ -14,7 +14,7 @@ Die wesentlichen Eckdaten der Bereitstellung sind in Tabelle~\ref{tab:serverumge
 \centering
 \caption{Eckdaten der bereitgestellten virtuellen Maschine.}
 \label{tab:serverumgebung_provisionierung}
-\begin{tabular}{ll}
+\begin{tabularx}{\textwidth}{l>{\raggedright\arraybackslash}X}
 \hline
 Attribut & Wert \\
 \hline
@@ -23,7 +23,7 @@ Hostname & \texttt{shadowsrv-001.prod.projects.ls.eee.intern} \\
 Zugriff & \gls{ssh}, ausschliesslich aus dem HSLU-Netzwerk (Campus-WLAN oder VPN) \\
 Ausserbetriebnahme & 1.~August~2026 \\
 \hline
-\end{tabular}
+\end{tabularx}
 \end{table}
 
 Beim ersten Login auf der VM wurde das initiale Passwort des Administratorkontos in ein nur dem Autor bekanntes Passwort geändert.
@@ -68,7 +68,7 @@ Tabelle~\ref{tab:serverumgebung_software} listet die für die Experimente releva
 \centering
 \caption{Software-Komponenten auf der virtuellen Maschine.}
 \label{tab:serverumgebung_software}
-\begin{tabular}{lll}
+\begin{tabularx}{\textwidth}{l>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X}
 \hline
 Komponente & Quelle & Verwendung \\
 \hline
@@ -81,7 +81,7 @@ Tornettools & GitHub \texttt{shadow/tornettools} & Generierung der Shadow-Konfig
 \texttt{zimsrv.py} & Eigene Entwicklung & Webserver in der Simulation \\
 Python (Toolsenv) & Bereitstellung über \texttt{toolsenv} & Laufzeit für die Hilfsskripte \\
 \hline
-\end{tabular}
+\end{tabularx}
 \end{table}
 
 Die einmalige Einrichtung der genannten Komponenten erfolgt über das Skript \texttt{setup-wf-server.sh}, das die Abhängigkeiten installiert, \texttt{wget2} mit dem \gls{socks}-Patch baut und die Hilfsskripte (\texttt{newnym.py}, \texttt{zimsrv.py}, \texttt{generate-urls.py}) auf die VM kopiert.
@@ -96,7 +96,7 @@ Die genauen Pfade sind in den Hilfsskripten als Konstanten hinterlegt und könne
 \centering
 \caption{Verzeichnisstruktur auf der VM.}
 \label{tab:serverumgebung_struktur}
-\begin{tabular}{ll}
+\begin{tabularx}{\textwidth}{l>{\raggedright\arraybackslash}X}
 \hline
 Pfad & Inhalt \\
 \hline
@@ -106,7 +106,7 @@ Pfad & Inhalt \\
 \texttt{\textasciitilde/wget2\_noinstall} & Mit \gls{socks}-Patch gebautes \texttt{wget2} \\
 \texttt{\textasciitilde/exp-*} & Pro Experiment ein Unterverzeichnis mit \texttt{shadow.config.yaml}, \texttt{schedule.json}, Logs und Pcaps \\
 \hline
-\end{tabular}
+\end{tabularx}
 \end{table}
 
 Beim Pull der Resultate auf die Arbeitsstation des Autors wird pro Experiment dasselbe Unterverzeichnisschema gespiegelt, sodass lokal und auf der VM dieselbe Struktur vorliegt.
