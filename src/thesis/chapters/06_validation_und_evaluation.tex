@@ -8,15 +8,20 @@ Die Resultate sind in Tabelle~\ref{tab:experimentlogs} im Anhang vollständig au
 
 Um den Versuchsaufbau zu validieren werden drei Kennzahlen betrachtet.
 Erstens liegt der Anteil fehlgeschlagener Seitenabrufe in allen Closed-World-Läufen unter 5\,\% und ist innerhalb einer Klasse zwischen den Padding-Modi vergleichbar.
+
+
 Zweitens liegt die mittlere Paketanzahl pro Sample für die Circuit-Padding-Modi konsistent zwischen 580 und 640, was dafür spricht, dass die Seitenabrufe vergleichbar gross sind und sich nicht systematisch zwischen den Vergleichsgruppen unterscheiden, während Tamaraw die Sequenz erwartungsgemäss bis zur 5000-Werte-Grenze füllt.
+
+
 Drittens erreichen alle Modelle Klassifikationsraten deutlich über der Random-Basis (vergleiche Tabelle~\ref{tab:eval_results}), lernen also tatsächlich Merkmale des Verkehrs und reagieren nicht zufällig.
 Der Versuchsaufbau wird auf Basis dieser Kontrollen als valide angesehen.
 
 \section{Klassifikationsresultate}
 \label{sec:eval_results}
 
-Tabelle~\ref{tab:eval_results} fasst Accuracy und F1-Wert über die drei Klassenstufen und vier Padding-Modi zusammen.
-Abbildung~\ref{fig:eval_results_overview} stellt dieselben Daten grafisch gegenüber.
+In der Tabelle~\ref{tab:eval_results} werden die Accuracy und F1-Werte über die drei Klassenstufen und vier Padding-Modi zusammengefasst.
+
+
 Die nachfolgenden Unterabschnitte diskutieren die Resultate entlang von vier Achsen: dem Effekt der Klassenanzahl, dem Schutzbeitrag von Circuit Padding, der Sonderrolle von Reduced Padding inklusive einer im Open-World beobachteten Inversion, und Tamaraw als Referenzpunkt einer schweren Verteidigung.
 
 \begin{table}[H]
