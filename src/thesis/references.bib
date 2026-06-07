@@ -255,12 +255,21 @@ title = "Wissenschaftliches Arbeiten - Ethik, Inhalt \& Form wiss. Arbeiten, Han
 year = 2022,
 doi = "10.18420/LB-WissArbeiten",
 }
-@phdthesis{crombe2016correlation,
-  title={Correlation attacks on the tor network},
-  author={CROMB{\'E}, Henri and DECLERCQ, Mallory and PEREIRA, Olivier and CANINI, Marco and ROCHET, Florentin},
+@mastersthesis{crombe2016correlation,
+  title={Correlation attacks on the {Tor} network},
+  author={Cromb{\'e}, Henri and Declercq, Mallory},
+  school={{\'E}cole polytechnique de Louvain (EPL), Universit{\'e} catholique de Louvain},
   year={2016},
-  school={Master’s thesis, {\'E}cole polytechnique de Louvain (EPL)},
+  note={Supervisor: Olivier Pereira; Readers: Marco Canini, Florentin Rochet},
   url={https://thesis.dial.uclouvain.be/server/api/core/bitstreams/85a56966-a488-4cb7-a88e-20024148bc7b/content}
+}
+@inproceedings{murdoch2005low,
+  title={Low-cost traffic analysis of {Tor}},
+  author={Murdoch, Steven J. and Danezis, George},
+  booktitle={2005 IEEE Symposium on Security and Privacy (S\&P'05)},
+  pages={183--195},
+  year={2005},
+  organization={IEEE}
 }
 @inproceedings{nasr2018deepcorr,
   title={Deepcorr: Strong flow correlation attacks on tor using deep learning},
@@ -278,14 +287,10 @@ doi = "10.18420/LB-WissArbeiten",
   year={2014},
   url={https://dl.acm.org/doi/10.1145/2660267.2660362}
 }
-% TODO: fill in. Candidate: Gong, Zhang, Zhang, Wang — "Surakav: Generating Realistic Traces
-% for a Strong Website Fingerprinting Defense", IEEE S&P 2022. This is the paper behind
-% WFDefProxy (github.com/websitefingerprinting/wfdef, branch v2), the obfs4 fork used in
-% setup-wf-server.sh to provide the Tamaraw pluggable transport.
 @misc{wfdefproxy,
-  author = {},
-  title = {},
-  year = {},
+  title={{WFDefProxy}: Pluggable transport implementation of website fingerprinting defenses (Tamaraw, Front, RegulaTor, Surakav)},
+  howpublished={\url{https://github.com/websitefingerprinting/wfdef}},
+  note={Branch v2, accessed 2026-06-07}
 }
 
 % Dokumentierte Angriffe in der Praxis (Kapitel 2.2.3)

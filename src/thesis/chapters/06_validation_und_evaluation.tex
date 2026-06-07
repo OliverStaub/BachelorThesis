@@ -43,7 +43,7 @@ Der Versuchsaufbau wird auf Basis dieser Kontrollen als valide angesehen.
             \addplot[fill=green!55!black!60]  coordinates {(20 Klassen,86.7) (80 Klassen,77.5) (Open-World 80/280,71.9)};
             \addplot[fill=orange!75!black!50] coordinates {(20 Klassen,83.3) (80 Klassen,78.6) (Open-World 80/280,70.7)};
             \addplot[fill=violet!60!black!60] coordinates {(20 Klassen,39.3) (80 Klassen,31.6) (Open-World 80/280,28.0)};
-            \addplot[fill=gray!45]            coordinates {(20 Klassen,5.0)  (80 Klassen,1.25) (Open-World 80/280,1.25)};
+            \addplot[fill=gray!45]            coordinates {(20 Klassen,5.0)  (80 Klassen,1.2)  (Open-World 80/280,1.2)};
             \legend{OFF, Reduced, ON, Tamaraw, Random-Basis}
         \end{axis}
     \end{tikzpicture}
@@ -82,9 +82,10 @@ Bei 20 Klassen liegt seine Accuracy mit 86.7\,\% wie erwartet zwischen Baseline 
 
 Bei 80 Klassen kehrt sich die Reihenfolge um: Mit 77.5\,\% liegt Reduced minimal unterhalb von ON (78.6\,\%).
 Im Open-World tritt ein verwandtes Phänomen auf: Sowohl ON (70.7\,\%) als auch Reduced (71.9\,\%) liegen leicht oberhalb der OFF-Baseline (68.3\,\%), was der aus dem Closed-World abgeleiteten Erwartung widerspricht.
-Beide Beobachtungen stammen aus jeweils einem einzigen Shadow-Lauf pro Konfiguration, und die Unterschiede von zwei bis vier Prozentpunkten liegen bei stark unbalancierten Klassenverteilungen wie im Open-World im Bereich der zu erwartenden Streuung.
-Sie werden daher nicht als signifikante Schutz- oder Schadenswirkungen interpretiert, denn der absolute Schutzbeitrag von Circuit Padding ist im untersuchten Bereich klein genug, dass die natürliche Streuung einzelner Läufe ihn überdecken oder umkehren kann.
-Abbildung~\ref{fig:eval_openworld_pr} ergänzt das reine Accuracy-Bild um Precision, Recall und F1 im Open-World-Setup und zeigt, dass die kleinen Unterschiede zwischen OFF, Reduced und ON auch auf Ebene der einzelnen Kennzahlen klein bleiben, während Tamaraw qualitativ anders abschneidet.
+Beide Beobachtungen stammen aus jeweils einem einzigen Shadow-Lauf pro Konfiguration.
+Mit einer Messung pro Konfiguration lässt sich nicht beurteilen, ob die Differenzen von zwei bis vier Prozentpunkten über der Lauf-zu-Lauf-Streuung des Simulators liegen oder durch sie verursacht werden (vergleiche Abschnitt~\ref{sec:eval_einordnung}).
+Sie werden daher in dieser Arbeit nicht als Schutz- oder Schadenswirkungen interpretiert.
+Abbildung~\ref{fig:eval_openworld_pr} ergänzt das reine Accuracy-Bild um Precision, Recall und F1 im Open-World-Setup und zeigt, dass die kleinen Unterschiede zwischen OFF, Reduced und ON auch auf Ebene der einzelnen Kennzahlen klein bleiben, während Tamaraw qualitativ anders abschneidet.\footnote{WFlib berichtet macro-F1 als ungewichtetes Mittel der per-Klasse-F1-Werte. Bei vielen schlecht klassifizierten Klassen weicht dieser Wert vom harmonischen Mittel der Makro-Precision und Makro-Recall ab. Im Tamaraw-Open-World-Lauf liegt F1 mit 20.0\,\% daher unter Precision (26.6\,\%) und Recall (21.4\,\%).}
 
 \begin{figure}[H]
     \centering
@@ -116,7 +117,7 @@ Abbildung~\ref{fig:eval_openworld_pr} ergänzt das reine Accuracy-Bild um Precis
             \legend{Precision, Recall, F1}
         \end{axis}
     \end{tikzpicture}
-    \caption{Precision, Recall und F1-Wert im Open-World-Setup (80 überwachte Seiten in einem Topf von 280) für die vier Padding-Modi. Bei OFF, Reduced und ON liegt der Recall jeweils oberhalb der Precision, was auf eine leichte Tendenz zur Über-Vorhersage überwachter Seiten hindeutet. Unter Tamaraw kehrt sich das Verhältnis um, der Recall fällt unter Precision und F1. Eigene Darstellung aus \texttt{ExperimentLogs.csv}.}
+    \caption{Precision, Recall und F1-Wert im Open-World-Setup (80 überwachte Seiten in einem Topf von 280) für die vier Padding-Modi. Bei OFF, Reduced und ON liegt der Recall jeweils oberhalb der Precision, was auf eine leichte Tendenz zur Über-Vorhersage überwachter Seiten hindeutet. Unter Tamaraw kehrt sich das Verhältnis um, F1 fällt unter Precision und Recall. Eigene Darstellung aus \texttt{ExperimentLogs.csv}.}
     \label{fig:eval_openworld_pr}
 \end{figure}
 

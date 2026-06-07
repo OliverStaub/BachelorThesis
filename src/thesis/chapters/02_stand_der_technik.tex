@@ -4,7 +4,7 @@
 \section{Tor}
 
 \gls{tor} ist ein verteiltes Overlay-Netzwerk mit niedriger Latenz, das TCP-basierte Anwendungen wie Web-Browsing, SSH oder Instant Messaging anonymisiert~\cite{dingledine2004tor}.
-Das Netzwerk verspricht seinen Nutzern Schutz vor Verfolgung, Zensur und Überwachung\footnote{\url{https://www.torproject.org/de/}, abgerufen am 08.04.2026.} und wird täglich von bis zu acht Millionen Personen verwendet~\cite{mani2018understanding}.
+Das Netzwerk verspricht seinen Nutzern Schutz vor Verfolgung, Zensur und Überwachung\footnote{\url{https://www.torproject.org/de/}, abgerufen am 08.04.2026.} und wurde im Spitzenwert 2018 von bis zu acht Millionen Personen täglich verwendet~\cite{mani2018understanding}.
 Diese hohe Verbreitung macht \gls{tor} zu einem attraktiven Ziel für unterschiedliche Klassen von Deanonymisierungsangriffen, wie Timing-Angriffe, Traffic-Correlation oder \gls{wf}, die jeweils unterschiedliche Beobachtungspositionen und Annahmen voraussetzen.
 
 Das aktuelle \gls{tor}-Design wurde 2004 von Dingledine, Mathewson und Syverson als zweite Generation des Onion-Routings vorgestellt und seither stetig weiterentwickelt ~\cite{dingledine2004tor}.
@@ -122,7 +122,7 @@ Da die Aussage nicht über eine bekannte Inhaltsmenge, sondern über eine Identi
 
 Eine dritte Klasse bilden \textbf{Seitenkanal- und Latenzangriffe}.
 Anstatt den Tor-Verkehr direkt aufzuzeichnen, leitet ein solcher Angriff Information aus indirekt beobachtbaren Grössen wie Reaktionszeiten, Auslastungsschwankungen einzelner Relais oder Pfad-Entscheidungen ab und benötigt damit eine schwächere Beobachtungsposition als die beiden zuvor genannten Klassen.
-Murdoch und Danezis zeigten bereits 2005, dass ein einzelner kompromittierter Tor-Knoten zusammen mit aktiven Latenzproben genügen kann, um die Auslastung anderer Relais zu schätzen und so wahrscheinliche Pfade zu rekonstruieren~\cite{crombe2016correlation}.
+Murdoch und Danezis zeigten bereits 2005, dass ein einzelner kompromittierter Tor-Knoten zusammen mit aktiven Latenzproben genügen kann, um die Auslastung anderer Relais zu schätzen und so wahrscheinliche Pfade zu rekonstruieren~\cite{murdoch2005low}.
 
 Im Rahmen dieser Arbeit wird ausschliesslich \gls{wf} experimentell untersucht.
 Die übrigen Klassen werden hier nur abgegrenzt, da sie für die Einordnung der Schutzwirkung von Circuit Padding wichtig sind: Padding fügt Schein-Verkehr ausschliesslich auf den Tor-internen Verbindungen ein und adressiert damit primär den einseitig beobachtenden \gls{wf}-Angreifer, nicht jedoch einen Angreifer, der beide Endpunkte beobachtet oder Seitenkanäle ausnutzt~\cite{cai2014systematic}.
@@ -148,7 +148,7 @@ Aus Anzahl und Richtung der Tor-Zellen, optional ergänzt um Zeitstempel, leitet
 
 Der Angreifer definiert eine Menge überwachter Seiten, alle übrigen gelten als nicht-überwacht.
 Der Klassifikator wird zweistufig trainiert: Zuerst entscheidet er binär, ob eine beobachtete Zellsequenz zu einer überwachten Seite gehört, anschliessend bestimmt eine Multiclass-Klassifikation die konkrete Seite~\cite{jansen2023data}.
-Pro beobachteter Sequenz ergeben sich die vier üblichen Ausgänge:a True Positive, True Negative, False Positive und False Negative.
+Pro beobachteter Sequenz ergeben sich die vier üblichen Ausgänge: True Positive, True Negative, False Positive und False Negative.
 Welche Metriken daraus gebildet werden wird im Abschnitt~\ref{sec:closed_open_world} (Closed- und Open-World) behandelt.
 
 
@@ -185,7 +185,7 @@ Shadow ist ein Ereignissimulator, der unmodifizierte Netzwerkanwendungen wie den
 Shadow fängt netzwerk- und zeitbezogene Aufrufe ab und beantwortet sie aus dem simulierten Netzwerk heraus, während alle übrigen Syscalls nativ ausgeführt werden~\cite{jansen2011shadow}.
 Da die Simulationszeit explizit verwaltet und von der Wanduhrzeit entkoppelt ist, skaliert Shadow unabhängig von der Hardware-Geschwindigkeit, wobei die Laufzeit grosser Simulationen je nach Versuch von wenigen Stunden bis zu mehreren Wochen reichen kann~\cite{neverenough-sec2021}.
 
-Jansen und Wails zeigen, dass ein vollständig in Shadow trainierter \gls{wf} Klassifikator auf Live Tor Daten über 80\,\% der Aufrufe korrekt klassifiziert~\cite{jansen2023data}.
+Jansen und Wails zeigen, dass ein vollständig in Shadow trainierter \gls{df}-Klassifikator auf Live-Tor-Daten 82\,\% der Aufrufe korrekt klassifiziert~\cite{jansen2023data}.
 Im Live Tor Netzwerk verändern unkontrollierte Faktoren wie laufende Denial-of-Service-Attacken oder überlastete Relais die Verkehrsmuster und erschweren so die Reproduzierbarkeit, was in der deterministischen Shadow Umgebung nicht auftritt~\cite{jansen2023data}.
 Shadow eignet sich damit nicht nur für isolierte Vergleichsstudien, sondern auch für das Training produktiv einsetzbarer \gls{wf} Klassifikatoren.
 
@@ -193,15 +193,9 @@ Shadow eignet sich damit nicht nur für isolierte Vergleichsstudien, sondern auc
 
 \subsection{Tornettools}
 
-Tornettools ist ein Tool welches Shadow für realistische Tor-Experimente konfiguriert, und wurde 2021 von Jansen, Tracey und Goldberg veröffentlicht~\cite{neverenough-sec2021}.
-Aus Tor-Konsensdokumenten und Server-Deskriptoren des CollecTor-Archivs~\cite{tormetricsabout} sowie aus PrivCount-Verkehrsmessungen an Live-Tor-Exit-Relais~\cite{mani2018understanding} erzeugt es in einer zweistufigen Pipeline (Staging-Phase und Generation-Phase) eine skalierbare Shadow-Konfiguration~\cite{neverenough-sec2021}.
-Den Anwendungs-Verkehr der Hintergrund-Clients modelliert der Generator TGen über drei Markov-Modelle, deren Parameter aus PrivCount stammen und damit Volumen sowie zeitliche Struktur realer Tor-Nutzung nachbilden~\cite{neverenough-sec2021}.
-
 Tornettools ist der Modellierungsbaustein, der Shadow für realistische Tor-Experimente konfiguriert, und wurde 2021 von Jansen, Tracey und Goldberg veröffentlicht~\cite{neverenough-sec2021}.
-Aus Tor-Konsensdokumenten und Server-Deskriptoren des CollecTor-Archivs~\cite{tormetricsabout} sowie aus den Verkehrsmessungen an Live-Tor-Exit-Relais~\cite{mani2018understanding} erzeugt es in einer zweistufigen Pipeline (rechenintensive Staging-Phase, rechengünstige Generation-Phase) eine skalierbare Shadow-Konfiguration~\cite{neverenough-sec2021}.
-
-
-Den Anwendungs-Verkehr der Hintergrund-Clients modelliert der Generator TGen über Markov-Modelle, welche das Volumen sowie zeitliche Struktur realer Tor-Nutzung nachbilden~\cite{neverenough-sec2021}.
+Aus Tor-Konsensdokumenten und Server-Deskriptoren des CollecTor-Archivs~\cite{tormetricsabout} sowie aus PrivCount-Verkehrsmessungen an Live-Tor-Exit-Relais~\cite{mani2018understanding} erzeugt es in einer zweistufigen Pipeline (rechenintensive Staging-Phase, rechengünstige Generation-Phase) eine skalierbare Shadow-Konfiguration~\cite{neverenough-sec2021}.
+Den Anwendungs-Verkehr der Hintergrund-Clients modelliert der Generator TGen über drei Markov-Modelle, deren Parameter aus PrivCount stammen und damit Volumen sowie zeitliche Struktur realer Tor-Nutzung nachbilden~\cite{neverenough-sec2021}.
 
 Die konkrete Werkzeugkette und die in dieser Arbeit gewählten Parameter werden im Abschnitt~\ref{sec:realisierung_umgebung} beschrieben.
 
@@ -263,8 +257,8 @@ sensitiver Seitenbesuche selbst eine scheinbar kleine FPR zu einer
 grossen Anzahl falsch-positiver Alarme führen kann
 \cite{wang2016realistically}.
 
-Wang und Goldberg betonen, dass frühere WF-Arbeiten häufig unter 
-ttvereinfachenden Closed-World-Annahmen evaluiert wurden, was die 
+Wang und Goldberg betonen, dass frühere WF-Arbeiten häufig unter
+vereinfachenden Closed-World-Annahmen evaluiert wurden, was die
 tatsächliche Bedrohung durch WF-Angriffe nur unzureichend 
 widerspiegelt \cite{wang2016realistically}. Jansen und Wails haben 
 jedoch gezeigt, dass die Closed-World-Accuracy selbst bei 

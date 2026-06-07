@@ -224,7 +224,7 @@
         \begin{todolist}
             \item \cons@public
             \vspace{-2mm}
-            \item \cons@confidential
+            \item[$\boxtimes$] \cons@confidential
         \end{todolist}
         \vspace{-4mm}
          
