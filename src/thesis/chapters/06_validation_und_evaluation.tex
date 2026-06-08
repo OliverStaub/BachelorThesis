@@ -77,17 +77,13 @@ Die Grössenordnung dieser Werte ist vergleichbar mit Sirinam et al., die für d
 \subsection{Reduced Padding und Open-World-Inversion}
 \label{sec:eval_reduced}
 
-Etwas unituitivere Resultate zeigen sich beim Reduced Padding. Der Reduced-Modus ist als sparsamere Variante des \gls{circuitpadding}s ausgelegt und wird in der torrc-Konfiguration zusätzlich zu \texttt{CircuitPadding 1} mit \texttt{ReducedCircuitPadding 1} aktiviert.
-Bei 20 Klassen liegt seine Accuracy mit 86.7\,\% wie erwartet zwischen Baseline und voll aktiviertem Padding.
+Der Reduced-Modus wird in der torrc-Konfiguration zusätzlich zu \texttt{CircuitPadding 1} mit \texttt{ReducedCircuitPadding 1} aktiviert und ist als sparsamere Variante des \gls{circuitpadding}s ausgelegt.
+Die intuitive Erwartung ist daher, dass seine Accuracy zwischen OFF und voll aktiviertem Padding (ON) liegt.
 
-
-Bei 80 Klassen kehrt sich die Reihenfolge um: Mit 77.5\,\% liegt Reduced minimal unterhalb von ON.
-Im \gls{openworld} Szenario verhält es sich ähnlich: Sowohl ON als auch Reduced liegen oberhalb der OFF-Baseline, was der Erwartung widerspricht.
-
-Beide Beobachtungen stammen aus jeweils einem einzigen \gls{shadow}-Lauf pro Konfiguration.
-Mit einer Messung pro Konfiguration lässt sich nicht beurteilen, ob die Differenzen von zwei bis vier Prozentpunkten über der Lauf-zu-Lauf-Streuung des Simulators liegen oder durch sie verursacht werden (vergleiche Abschnitt~\ref{sec:eval_einordnung}).
-Sie werden daher in dieser Arbeit nicht als Schutz- oder Schadenswirkungen interpretiert.
-Abbildung~\ref{fig:eval_openworld_pr} ergänzt das reine Accuracy-Bild um Precision, Recall und F1 im \gls{openworld}-Setup und zeigt, dass die kleinen Unterschiede zwischen OFF, Reduced und ON auch auf Ebene der einzelnen Kennzahlen klein bleiben, während \gls{tamaraw} qualitativ anders abschneidet.\footnote{WFlib berichtet macro-F1 als ungewichtetes Mittel der per-Klasse-F1-Werte. Bei vielen schlecht klassifizierten Klassen weicht dieser Wert vom harmonischen Mittel der Makro-Precision und Makro-Recall ab. Im \gls{tamaraw}-\gls{openworld}-Lauf liegt F1 mit 20.0\,\% daher unter Precision (26.6\,\%) und Recall (21.4\,\%).}
+Bei 20 Klassen erfüllen die gemessenen 86.7\,\% diese Erwartung und liegen zwischen OFF (92.7\,\%) und ON (83.3\,\%).
+Bei 80 Klassen kehrt sich die Reihenfolge um: Reduced erreicht 77.5\,\% und damit rund einen Prozentpunkt unter ON mit 78.6\,\%.
+Im \gls{openworld}-Szenario ist die Umkehr noch deutlicher, sowohl Reduced (71.9\,\%) als auch ON (70.7\,\%) liegen oberhalb der OFF-Baseline (68.3\,\%).
+Abbildung~\ref{fig:eval_openworld_pr} ergänzt das Bild um Precision, Recall und F1 im \gls{openworld}-Setup und zeigt, dass die Unterschiede zwischen OFF, Reduced und ON auf allen drei Kennzahlen klein bleiben, während \gls{tamaraw} qualitativ abweicht.\footnote{WFlib berichtet macro-F1 als ungewichtetes Mittel der per-Klasse-F1-Werte. Bei vielen schlecht klassifizierten Klassen weicht dieser Wert vom harmonischen Mittel der Makro-Precision und Makro-Recall ab. Im \gls{tamaraw}-\gls{openworld}-Lauf liegt F1 mit 20.0\,\% daher unter Precision (26.6\,\%) und Recall (21.4\,\%).}
 
 \begin{figure}[H]
     \centering
@@ -123,18 +119,31 @@ Abbildung~\ref{fig:eval_openworld_pr} ergänzt das reine Accuracy-Bild um Precis
     \label{fig:eval_openworld_pr}
 \end{figure}
 
+\subsection{Mögliche Erklärungen der Inversion}
+\label{sec:eval_reduced_diskussion}
+
+Für die beschriebene Umkehr lassen sich mehrere Erklärungen vermuten, die sich mit dem vorliegenden Datenmaterial nicht trennscharf prüfen lassen.
+
+Eine erste Vermutung ist, dass die Differenzen aus der Lauf-zu-Lauf-Streuung des Simulators stammen.
+Aus Zeitgründen wurde pro Konfiguration nur ein einziger \gls{shadow}-Lauf mit fest gewähltem Seed durchgeführt.
+Die zufälligen Anteile der Simulation, vor allem die Auswahl der Tor-Pfade und die Streuung des Hintergrundverkehrs, erzeugen aber auch innerhalb derselben Konfiguration Schwankungen.
+Differenzen von zwei bis vier Prozentpunkten könnten daher rein aus dieser Streuung resultieren, ohne dass die Verteidigung selbst die Beobachtung verursacht.
+
+Eine zweite Vermutung ist, dass das \gls{circuitpadding} bei wachsender Klassenanzahl selbst zu einem klassentrennenden Merkmal werden könnte.
+Padding-Zustandsmaschinen senden je nach beobachtetem Verkehr unterschiedliche Burst-Muster, die in einer einzelnen Klasse als Rauschen wirken, über viele Klassen hinweg aber ein zusätzliches Signal liefern könnten.
+Der \gls{df}-Klassifikator würde dann die Padding-Muster lernen, statt sie zu ignorieren, und im \gls{openworld}-Setup mit vielen Klassen geringfügig höhere Accuracy auf gepaddetem als auf ungepaddetem Verkehr erreichen.
+
+Beide Erklärungen sind ausdrücklich als Vermutungen zu lesen.
+Eine belastbare Aussage setzt voraus, dass jede Konfiguration mit mehreren Seeds wiederholt wird, was in Abschnitt~\ref{sec:ausblick_seeds} als Folgearbeit aufgenommen ist.
+Die hier gemessenen Differenzen zwischen OFF, Reduced und ON bei 80 Klassen und im \gls{openworld} werden in dieser Arbeit deshalb nicht als gezielte Schutz- oder Schadenswirkung der Verteidigungen interpretiert.
+
 \subsection{Tamaraw als Referenzpunkt}
 \label{sec:eval_tamaraw}
 
 \gls{tamaraw} wurde als zweite Verteidigung in einer exploratorischen Messreihe untersucht, um den im produktiv ausgelieferten \gls{circuitpadding} gemessenen Effekt einzuordnen.
 Im \gls{closedworld} mit 20 Klassen sinkt die Accuracy unter \gls{tamaraw} auf 39.3\,\%, bei 80 Klassen auf 31.6\,\% und im \gls{openworld} auf 28.0\,\%.
 Damit verliert der \gls{df}-Klassifikator gegenüber der jeweiligen Baseline 53.4, 50.8 beziehungsweise 40.3~Prozentpunkte.
-\gls{tamaraw} bleibt jedoch deutlich über der Random-Basis von 5.0\,\% beziehungsweise 1.2\,\%, das heisst die konstante Senderate alleine reicht nicht aus, um den Verkehr vollständig in Rauschen aufzulösen.
-Der Klassifikator nutzt offensichtlich noch verbleibende, padding-resistente Merkmale wie etwa Dauer des Nutzverkehrs oder Verteilung der Paketgrössen ausserhalb der Tor-Zellen aus.
-Im \gls{openworld} fällt insbesondere der Recall mit 21.4\,\% deutlich ab (vergleiche Abbildung~\ref{fig:eval_openworld_pr}), was darauf hindeutet, dass \gls{tamaraw} vor allem die zuverlässige Erkennung der überwachten Seiten erschwert und stattdessen viele überwachte Besuche fälschlich der unüberwachten Sammelklasse zuordnet.
-Im Vergleich zu \gls{circuitpadding} ergibt sich ein deutlicher qualitativer Unterschied: \gls{circuitpadding} senkt die Accuracy um wenige Prozentpunkte, während \gls{tamaraw} sie um eine ganze Grössenordnung reduziert.
-Diese Beobachtung deckt sich mit den ursprünglich von Cai et al.\ für \gls{tamaraw} berichteten starken Schutzwirkungen~\cite{cai2014systematic} und mit der Einordnung von \gls{circuitpadding} als low-overhead-Verteidigung durch Kadianakis et al.~\cite{kadianakis2021tor}.
-Abbildung~\ref{fig:eval_confusion_off_tamaraw_80} macht den Unterschied auf Ebene der Konfusionsmatrix sichtbar: Unter \gls{tamaraw} löst sich die Diagonale weitgehend auf und die Vorhersagen verteilen sich breit über viele Klassen.
+Im \gls{openworld} fällt insbesondere der Recall mit 21.4\,\% deutlich ab (vergleiche Abbildung~\ref{fig:eval_openworld_pr}).
 
 \begin{figure}[H]
     \centering
@@ -142,6 +151,26 @@ Abbildung~\ref{fig:eval_confusion_off_tamaraw_80} macht den Unterschied auf Eben
     \caption{Konfusionsmatrizen OFF (links) und Tamaraw (rechts) bei 80 Klassen. Eigene Darstellung.}
     \label{fig:eval_confusion_off_tamaraw_80}
 \end{figure}
+
+Abbildung~\ref{fig:eval_confusion_off_tamaraw_80} macht den Unterschied auf Ebene der Konfusionsmatrix sichtbar.
+Unter \gls{tamaraw} löst sich die Diagonale weitgehend auf und die Vorhersagen verteilen sich breit über viele Klassen.
+
+\subsection{Einordnung von Tamaraw}
+\label{sec:eval_tamaraw_diskussion}
+
+Drei Beobachtungen ordnen das Tamaraw-Ergebnis ein.
+
+Erstens bleibt \gls{tamaraw} deutlich über der Random-Basis von 5.0\,\% beziehungsweise 1.2\,\%.
+Die konstante Senderate alleine reicht also nicht aus, um den Verkehr vollständig in Rauschen aufzulösen.
+Der Klassifikator nutzt verbleibende, padding-resistente Merkmale wie etwa die Dauer des Nutzverkehrs oder die Verteilung der Paketgrössen ausserhalb der Tor-Zellen.
+
+Zweitens deutet der Recall-Einbruch im \gls{openworld} darauf hin, dass \gls{tamaraw} vor allem die zuverlässige Erkennung der überwachten Seiten erschwert.
+Viele überwachte Besuche werden fälschlich der unüberwachten Sammelklasse zugeordnet, statt einer anderen überwachten Seite.
+
+Drittens ergibt sich im Vergleich zu \gls{circuitpadding} ein qualitativer Unterschied.
+\gls{circuitpadding} senkt die Accuracy um wenige Prozentpunkte, während \gls{tamaraw} sie um eine ganze Grössenordnung reduziert.
+Diese Beobachtung deckt sich mit den ursprünglich von Cai et al.\ für \gls{tamaraw} berichteten starken Schutzwirkungen~\cite{cai2014systematic} und mit der Einordnung von \gls{circuitpadding} als low-overhead-Verteidigung durch Kadianakis et al.~\cite{kadianakis2021tor}.
+Der zugehörige Preis für die deutlich stärkere Schutzwirkung von \gls{tamaraw} wird im folgenden Abschnitt~\ref{sec:eval_bandwidth} sichtbar.
 
 \section{Bandbreiten-Overhead und Kosten-Nutzen-Verhältnis}
 \label{sec:eval_bandwidth}
