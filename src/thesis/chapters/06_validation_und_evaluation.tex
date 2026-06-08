@@ -188,7 +188,10 @@ Für die Läufe \texttt{exp-baseline-80}, \texttt{exp-padding-80} und \texttt{ex
 Volles und Reduced \gls{circuitpadding} erhöhen den mittleren Datenverkehr pro Besuch um lediglich 3.0\,\% beziehungsweise 1.3\,\% in Bytes und liegen damit innerhalb der Streubreite einzelner Besuche.
 \gls{tamaraw}-Padding vervielfacht den Datenverkehr hingegen um den Faktor 11.6 in Bytes und 18.7 in Paketen.
 
-Die gemessenen Werte liegen deutlich über den von Cai et al.\ ursprünglich angegebenen rund 199\,\%~\cite{cai2014systematic}, da die \glspl{pcap} zusätzliches \gls{tcp}- und TLS-Framing erfassen und das gesamte Visit-Fenster einschliessen, in dem \gls{tamaraw} auch nach dem Seitenabruf weiter Dummy-Zellen sendet.
+Die gemessenen Werte liegen deutlich über den von Cai et al.\ ursprünglich angegebenen rund 199\,\%~\cite{cai2014systematic}.
+Die eigene Messung erfasst jedoch nicht die protokollnahen Tor-Zellen, sondern \gls{tcp}- und TLS-Pakete inklusive Framing auf der Monitor-Schnittstelle.
+Sie summiert zudem über das gesamte 30-Sekunden-Visit-Fenster, in dem \gls{tamaraw} auch nach abgeschlossenem Seitenabruf weiter Dummy-Zellen sendet, und beruht für \gls{tamaraw} nur auf einem einzelnen Monitor mit 600 Besuchen statt auf fünf Monitoren wie bei den übrigen Modi.
+Der absolute Wert von rund 1000\,\% ist daher nur eingeschränkt aussagekräftig und nicht direkt mit dem in der Literatur berichteten Overhead vergleichbar, er belegt aber die Grössenordnung der Mehrkosten von \gls{tamaraw} gegenüber dem \gls{circuitpadding}.
 
 Im Verhältnis von Kosten zu Schutzwirkung steht \gls{circuitpadding} bei rund einem Prozentpunkt Accuracy-Reduktion pro Prozentpunkt Mehrverkehr im 20-Klassen-Setup, \gls{tamaraw} dagegen nur bei rund 0.05~Prozentpunkten.
 \gls{tamaraw} erkauft seinen Schutz also mit einem überproportional hohen Bandbreitenaufschlag, der bereits in der ursprünglichen Auswertung von Cai et al.\ mit rund 199\,\% beziffert wird~\cite{cai2014systematic} und die Verteidigung für den realen Tor-Betrieb wenig praktikabel erscheinen lässt.
@@ -321,10 +324,13 @@ Damit fehlen reale Dynamiken wie sich verändernde Werbeflächen, A/B-Tests, Dri
 Juarez et al.\ benennen genau diese Inhaltsveränderungen über die Zeit (concept drift) als einen Hauptgrund dafür, dass \gls{closedworld}-Resultate im realen Tor-Browser-Betrieb nicht reproduzierbar sind~\cite{juarez2014critical}.
 Im vorliegenden Versuchsaufbau ist concept drift ausgeschlossen, alle Besuche derselben Seite liefern bis auf Tor-bedingte Streuung dieselben Bytes.
 
-\paragraph{Trainingsmenge und Inhaltskorpus.}
+\paragraph{Trainingsmenge, Inhaltskorpus und Eingangsgranularität.}
 Pro \gls{klasse} fliessen in dieser Arbeit 150 Visits in die Trainings-, Validierungs- und Testaufteilung ein, was rund einem Siebtel der Stichprobe entspricht, mit der Sirinam et al.\ ihre 98.3\,\% Baseline-Accuracy auf 95 Klassen erreichten~\cite{sirinam2018deep}.
 Daneben unterscheidet sich auch der Inhaltskorpus: Sirinam et al.\ beobachten heterogene Live-Webseiten aus den Top 100 von Alexa mit unterschiedlichen Frameworks, CDNs und Ressourcenprofilen, während im vorliegenden Aufbau ausschliesslich Artikel aus der Simple English Wikipedia über denselben \texttt{zimsrv} ausgeliefert werden, deren HTML-Gerüst und Ressourcenstruktur sich nur in den eigentlichen Inhalten unterscheiden.
-Beide Faktoren wirken in dieselbe Richtung und erschweren die Klassentrennung, sodass die im Vergleich zu Sirinam et al.\ tiefere Baseline-Accuracy (92.7\,\% bei 20 Klassen, 82.4\,\% bei 80 Klassen) plausibel wird.
+Hinzu kommt die in Abschnitt~\ref{sec:konzepte_pcap} beschriebene gröbere Granularität der Eingangsdaten.
+Jeder der 5000 Werte des Richtungsvektors entspricht in der vorliegenden Pipeline einem \gls{tcp}-Paket, bei Sirinam et al.\ dagegen einer feineren Tor-Zelle~\cite{sirinam2018deep}.
+Da eine Aufzeichnung im Median nur rund 600 Pakete umfasst (Tabelle~\ref{tab:eval_seqlen}), besteht der Eingangsvektor überwiegend aus Nullpadding und trägt weniger feinkörnige Sequenzinformation als ein zellgenauer Trace.
+Diese Faktoren wirken in dieselbe Richtung und erschweren die Klassentrennung, sodass die im Vergleich zu Sirinam et al.\ tiefere Baseline-Accuracy (92.7\,\% bei 20 Klassen, 82.4\,\% bei 80 Klassen) plausibel wird.
 
 \paragraph{Anzahl Wiederholungen.}
 Pro Konfiguration wird genau ein Shadow-Lauf mit einem festen Seed durchgeführt.
@@ -332,7 +338,9 @@ Differenzen in der Grössenordnung weniger Prozentpunkte sind daher mit Vorsicht
 Zusätzlich liegen pro Klasse nur 150 Visits vor, wovon bei einem 10\,\%-Test-Split lediglich rund 15 Samples in die Accuracy einfliessen, sodass einzelne Fehlklassifikationen die berichteten Werte merkbar bewegen können.
 
 Insgesamt zeigt die Auswertung, dass das produktiv ausgelieferte \gls{circuitpadding} im untersuchten Laborkontext einen messbaren, aber kleinen Beitrag zur Verteidigung gegen \gls{df}-Angriffe leistet (zwischen 3.8 und 9.4 Prozentpunkte Accuracy-Reduktion im \gls{closedworld}), bei einem praktisch vernachlässigbaren Bandbreitenaufschlag von unter 5\,\%.
-\gls{tamaraw} erreicht in derselben Umgebung eine um eine Grössenordnung stärkere Schutzwirkung, erkauft sich diese aber mit einem Bandbreiten-Overhead von rund 1000\,\% und ist damit in seiner heutigen Form nicht für den breiten Einsatz im Tor-Netzwerk geeignet.
+\gls{tamaraw} erreicht in derselben Umgebung eine um eine Grössenordnung stärkere Schutzwirkung, erkauft sich diese aber mit einem erheblichen Bandbreiten-Overhead.
+Cai et al.\ beziffern diesen in ihrer ursprünglichen Auswertung mit rund 199\,\%~\cite{cai2014systematic}, und auch die eigene, methodisch gröbere \gls{pcap}-Messung weist ihn als Vielfaches des Circuit-Padding-Aufwands aus.
+\gls{tamaraw} ist damit in seiner heutigen Form nicht für den breiten Einsatz im Tor-Netzwerk geeignet.
 Die genannten Limitationen, insbesondere das Single-Tab-Modell und die kleine Skalierung, legen nahe, dass beide Verteidigungen unter realistischeren Bedingungen tendenziell stärker wirken, da der Klassifikator bereits in der Baseline mit höherem Rauschen rechnen müsste.
 
 \section{Erreichung der Ziele und Forschungsfragen}
@@ -347,6 +355,6 @@ In dieser Umgebung wurde ein \gls{wf}-Datenset erzeugt, und der \gls{df}-Angriff
 Auch die drei Forschungsfragen lassen sich im Rahmen des Laboraufbaus beantworten.
 Die erste Frage nach der Veränderung der Erkennungsrate unter verschiedenen Circuit-Padding-Einstellungen wird in den Abschnitten~\ref{sec:eval_padding_effekt} und~\ref{sec:eval_reduced} beantwortet, wonach produktiv ausgeliefertes \gls{circuitpadding} die Accuracy im \gls{closedworld} um 3.8 bis 9.4~Prozentpunkte senkt.
 Die zweite Frage nach den dokumentierten Limitationen simulierter \gls{wf}-Angriffe und der Einordnung der eigenen Ergebnisse wird in Abschnitt~\ref{sec:eval_einordnung} behandelt.
-Die dritte, im Verlauf der Arbeit ergänzte Frage nach der zusätzlichen Schutzwirkung von \gls{tamaraw} wird in den Abschnitten~\ref{sec:eval_tamaraw} und~\ref{sec:eval_bandwidth} beantwortet, wonach \gls{tamaraw} eine um eine Grössenordnung stärkere, aber mit rund 1000\,\% Bandbreiten-Overhead erkaufte Schutzwirkung erzielt.
+Die dritte, im Verlauf der Arbeit ergänzte Frage nach der zusätzlichen Schutzwirkung von \gls{tamaraw} wird in den Abschnitten~\ref{sec:eval_tamaraw} und~\ref{sec:eval_bandwidth} beantwortet, wonach \gls{tamaraw} eine um eine Grössenordnung stärkere, aber mit einem hohen Bandbreiten-Overhead von rund 199\,\%~\cite{cai2014systematic} erkaufte Schutzwirkung erzielt.
 
 Die ursprüngliche Zielsetzung, eine \gls{shadow}-basierte \gls{wf}-Simulation auf moderater Hardware mit einer unmodifizierten Tor-Version aufzubauen und den Effekt von \gls{circuitpadding} darin zu beobachten, wird damit erfüllt.
