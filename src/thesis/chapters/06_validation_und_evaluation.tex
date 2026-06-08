@@ -188,11 +188,10 @@ Für die Läufe \texttt{exp-baseline-80}, \texttt{exp-padding-80} und \texttt{ex
 Volles und Reduced \gls{circuitpadding} erhöhen den mittleren Datenverkehr pro Besuch um lediglich 3.0\,\% beziehungsweise 1.3\,\% in Bytes und liegen damit innerhalb der Streubreite einzelner Besuche.
 \gls{tamaraw}-Padding vervielfacht den Datenverkehr hingegen um den Faktor 11.6 in Bytes und 18.7 in Paketen.
 Auffällig ist zusätzlich, dass sich das Up-zu-Down-Verhältnis von etwa 1:4.3 in den ungeschützten Besuchen unter \gls{tamaraw} auf rund 2.7:1 umkehrt, da der Monitor unabhängig vom tatsächlichen Datenfluss in jedem Tick eine Dummy-Zelle in Richtung Bridge sendet.
-Die hier gemessenen Overhead-Werte liegen deutlich über den von Cai et al.\ ursprünglich angegebenen rund 199\,\%~\cite{cai2014systematic}, da \glspl{pcap} pro Tor-Zelle zusätzlich \gls{tcp}- und TLS-Framing erfassen und das gesamte 30-Sekunden-Visit-Fenster einschliessen, in dem \gls{tamaraw} auch nach Abschluss des Seitenabrufs weiterhin Dummy-Zellen emittiert.
+Die gemessenen Werte liegen deutlich über den von Cai et al.\ ursprünglich angegebenen rund 199\,\%~\cite{cai2014systematic}, da die \glspl{pcap} zusätzliches \gls{tcp}- und TLS-Framing erfassen und das gesamte Visit-Fenster einschliessen, in dem \gls{tamaraw} auch nach dem Seitenabruf weiter Dummy-Zellen sendet.
 
-Setzt man die Bandbreiten-Kosten zur erzielten Schutzwirkung in Relation, ergibt sich für \gls{circuitpadding} ein Verhältnis von rund einem Prozentpunkt Accuracy-Reduktion pro Prozentpunkt Mehrverkehr im 20-Klassen-Setup.
-Für \gls{tamaraw} entfallen auf jeden Prozentpunkt Mehrverkehr lediglich rund 0.05~Prozentpunkte Accuracy-Reduktion.
-\gls{tamaraw} kauft seinen grossen Schutzeffekt also mit einem überproportional hohen Bandbreitenaufschlag ein, was die Verteidigung für den realen Tor-Betrieb derzeit nicht praktikabel macht~\cite{wfdefproxy}.
+Im Verhältnis von Kosten zu Schutzwirkung steht \gls{circuitpadding} bei rund einem Prozentpunkt Accuracy-Reduktion pro Prozentpunkt Mehrverkehr im 20-Klassen-Setup, \gls{tamaraw} dagegen nur bei rund 0.05~Prozentpunkten.
+\gls{tamaraw} erkauft seinen Schutz also mit einem überproportional hohen Bandbreitenaufschlag, was die Verteidigung für den realen Tor-Betrieb derzeit nicht praktikabel macht~\cite{wfdefproxy}.
 Abbildung~\ref{fig:eval_defense_tradeoff} visualisiert diesen Kosten-Schutz-Vergleich für die drei Verteidigungen im 80-Klassen-Setup.
 
 \begin{figure}[H]
