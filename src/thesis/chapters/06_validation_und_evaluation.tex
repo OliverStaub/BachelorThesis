@@ -133,8 +133,14 @@ Eine zweite Vermutung ist, dass das \gls{circuitpadding} bei wachsender Klassena
 Padding-Zustandsmaschinen senden je nach beobachtetem Verkehr unterschiedliche Burst-Muster, die in einer einzelnen Klasse als Rauschen wirken, über viele Klassen hinweg aber ein zusätzliches Signal liefern könnten.
 Der \gls{df}-Klassifikator würde dann die Padding-Muster lernen, statt sie zu ignorieren, und im \gls{openworld}-Setup mit vielen Klassen geringfügig höhere Accuracy auf gepaddetem als auf ungepaddetem Verkehr erreichen.
 
-Beide Erklärungen sind ausdrücklich als Vermutungen zu lesen.
-Eine belastbare Aussage setzt voraus, dass jede Konfiguration mit mehreren Seeds wiederholt wird, was in Abschnitt~\ref{sec:ausblick_seeds} als Folgearbeit aufgenommen ist.
+Eine dritte Vermutung verbindet die Inversion mit Eigenschaften des Versuchsaufbaus selbst.
+Die simulierte Netzwerkgrösse von 0.01 reduziert die Pfaddiversität gegenüber dem Live-Tor-Netzwerk und macht die pro Klasse gesehenen Schaltkreise wiederholbarer, sodass Padding-Burst-Muster über die Visits hinweg konsistenter ausfallen könnten als in einem grösseren Netzwerk.
+Hinzu kommen die mit 150 Visits pro Klasse knappe Stichprobe und der strukturell homogene Simple-English-Wikipedia-Korpus, bei dem Markup, Pfadschema und Ressourcenprofil zwischen den Klassen nur wenig variieren.
+Beide Faktoren engen den nutzbaren Merkmalsraum ein, was den vom Klassifikator getragenen Beitrag von Padding-Bursts relativ erhöhen könnte.
+Diese Punkte überschneiden sich mit den in Abschnitt~\ref{sec:eval_einordnung} dokumentierten Limitationen, treten dort aber als allgemeine Übertragbarkeits-Vorbehalte auf und nicht als spezifische Ursache der hier beobachteten Inversion.
+
+Alle drei Erklärungen sind ausdrücklich als Vermutungen zu lesen.
+Eine belastbare Aussage setzt voraus, dass jede Konfiguration mit mehreren Seeds wiederholt und in einem grösseren Netzwerk sowie auf einem heterogeneren Korpus reproduziert wird, was in den Abschnitten~\ref{sec:ausblick_seeds}, \ref{sec:ausblick_urlsets} und~\ref{sec:ausblick_scale} als Folgearbeit aufgenommen ist.
 Die hier gemessenen Differenzen zwischen OFF, Reduced und ON bei 80 Klassen und im \gls{openworld} werden in dieser Arbeit deshalb nicht als gezielte Schutz- oder Schadenswirkung der Verteidigungen interpretiert.
 
 \subsection{Tamaraw als Referenzpunkt}
