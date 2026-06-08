@@ -10,9 +10,8 @@ Dieses Kapitel fasst die wichtigsten dieser Folgearbeiten zusammen und ordnet si
 
 Jede in dieser Arbeit berichtete Kennzahl stammt aus genau einem \gls{shadow}-Lauf mit festem Seed.
 Damit lassen sich Differenzen in der Grössenordnung weniger Prozentpunkte, wie jene zwischen ON und Reduced bei 80 Klassen oder die Inversion der Padding-Wirkung im \gls{openworld}-Setup, nicht von der Streuung des Simulators unterscheiden.
-Eine Wiederholung jedes Hauptexperiments mit mindestens drei unabhängigen Seeds würde Mittelwerte, Standardabweichungen und Konfidenzintervalle pro Konfiguration ermöglichen.
+Eine Wiederholung jedes Hauptexperiments mit mehreren Seeds würde Mittelwerte, Standardabweichungen und Konfidenzintervalle pro Konfiguration ermöglichen.
 Ergänzend liessen sich die in Abschnitt~\ref{sec:eval_einordnung} als knapp benannten 150 Visits pro \gls{klasse} erhöhen, da bei einem 10\,\%-Test-Split nur rund 15 Samples in die Accuracy einfliessen und einzelne Fehlklassifikationen die Werte merkbar bewegen.
-Da die Laufzeit linear mit Seeds und Visits wächst und insbesondere die \gls{tamaraw}-\gls{openworld}-Läufe bereits an die Disk-Obergrenze stiessen, müsste zugleich auf das in Abschnitt~\ref{sec:eval_performance} skizzierte Cell-Trace-Logging umgestellt werden.
 
 \section{Realistischere Inhalte}
 \label{sec:ausblick_inhalte}
@@ -23,14 +22,6 @@ Beides erhöht die Reproduzierbarkeit, vergrössert aber den Abstand zu produkti
 Eine Folgearbeit könnte statt der Wikipedia andere Websites in den \gls{shadow}-Container spiegeln, etwa das 100-URL-Set von Jansen und Wails~\cite{jansen2023data} oder einen statisch gespiegelten Auszug einer Alexa-Top-N-Liste.
 Da \gls{shadow}-Knoten keinen externen Netzzugang besitzen, ist dafür ein vorgelagerter Spiegel- oder Caching-Schritt nötig, der die Inhalte als eingefrorene Momentaufnahme bereitstellt.
 Ergänzend liesse sich diese Momentaufnahme kontrolliert variieren, etwa durch veränderte Ressourcenreihenfolge oder eine künstliche Aktualisierung zwischen Trainings- und Testfenster, um die Auswirkung zeitlicher Drift auf die Padding-Wirkung reproduzierbar zu untersuchen.
-
-\section{Realistischeres Browser-Modell}
-\label{sec:ausblick_browser}
-
-Der eingesetzte \texttt{wget2}-Client bildet die wichtigste Vereinfachung gegenüber dem realen Tor-Browser-Betrieb.
-Wang und Goldberg zeigen, dass Multi-Tab-Verkehr und überlappende Seitenaufrufe die Erkennungsrate eines \gls{closedworld}-Klassifikators erheblich senken~\cite{wang2016realistically}.
-Eine Folgearbeit könnte den Monitor-Client durch einen headless betriebenen Tor-Browser ersetzen, der über eine Steuerschnittstelle deterministisch eine vorgegebene Seitensequenz lädt, und damit JavaScript-Ausführung, dynamisches Nachladen und parallele Tabs abbilden.
-Der Aufwand ist erheblich, da ein vollständiger Browser im Shadow-Kontext eingebettet werden muss und der Ressourcenverbrauch pro Monitor deutlich über dem von \texttt{wget2} liegt.
 
 \section{Grössere Netzwerk-Skalierung und Speicher}
 \label{sec:ausblick_scale}
@@ -103,7 +94,6 @@ Die übrigen Punkte erfordern strukturelle Erweiterungen, eröffnen aber einen P
         Realistischere Inhalte                & mittel   & mittel \\
         Cell-Trace-Logging und grössere Skala & mittel   & mittel \\
         Fingerprinting von Onion-Services     & mittel   & offen  \\
-        Realistisches Browser-Modell          & hoch     & hoch   \\
         Übergang ins Live-Tor-Netzwerk        & hoch     & hoch   \\
         \hline
     \end{tabular}
