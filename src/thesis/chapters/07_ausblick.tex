@@ -39,6 +39,16 @@ Juarez et al.\ benennen die Drift der Inhalte als einen der zentralen Gründe, w
 Eine Folgearbeit könnte das \gls{zim}-Modell um eine kontrollierte Variation der ausgelieferten Bytes ergänzen, etwa durch zufällige Veränderung der Reihenfolge von Ressourcen, durch das Einblenden simulierter Werbeflächen oder durch eine künstlich erzeugte Aktualisierung der Inhalte zwischen Trainings- und Testfenster.
 So liessen sich die Auswirkungen zeitlicher Drift auf die Padding-Wirkung in einer reproduzierbaren Umgebung untersuchen, ohne die Vorteile der Shadow-Simulation aufzugeben.
 
+\section{Alternative URL-Korpora und Vergleichbarkeit mit der Literatur}
+\label{sec:ausblick_urlsets}
+
+Die in dieser Arbeit verwendeten \glspl{klasse} stammen aus einem Zufalls-Sample der Simple English Wikipedia und sind untereinander strukturell sehr homogen, da Markup, Pfadschema und Ressourcenprofil pro Artikel weitgehend identisch sind.
+Damit lässt sich die hier gemessene Baseline-Accuracy nur eingeschränkt direkt mit Literatur-Resultaten vergleichen, die wie Sirinam et al.\ auf heterogenen Live-Korpora wie Alexa Top 100 beruhen~\cite{sirinam2018deep}.
+Eine Folgearbeit könnte das in \texttt{generate-urls.py} erzeugte URL-Set durch alternative Korpora ersetzen, zum Beispiel das in \texttt{explainwf-popets2023/data/urls.txt} hinterlegte 100-URL-Set von Jansen und Wails~\cite{jansen2023data} oder einen statisch gespiegelten Auszug einer Alexa-Top-N-Liste, und denselben Versuchsaufbau auf diesen Korpora wiederholen.
+So liesse sich quantifizieren, wie stark die gemessene Baseline auf der Homogenität der Wikipedia-Inhalte beruht und ob die Effektgrösse von \gls{circuitpadding} auf heterogeneren Inhalten erhalten bleibt.
+Der Aufwand liegt im mittleren Bereich, da der bestehende Versuchsaufbau weitgehend unverändert bleibt und lediglich die Bereitstellung der Inhalte im \gls{shadow}-Container angepasst werden muss.
+Bei Live-Inhalten ist zusätzlich ein vorgelagerter Spiegel- oder Caching-Schritt nötig, weil \gls{shadow}-Knoten keinen externen Netzzugang besitzen und Reproduzierbarkeit nur auf einer eingefrorenen Inhalts-Momentaufnahme gegeben ist.
+
 \section{Grössere Netzwerk-Skalierung}
 \label{sec:ausblick_scale}
 
@@ -86,6 +96,7 @@ Die übrigen Punkte erfordern strukturelle Erweiterungen des Versuchsaufbaus, er
         Weitere Verteidigungen (RegulaTor, FRONT) & mittel   & hoch   \\
         Cell-Trace-Logging und grössere Skala & mittel   & mittel \\
         Dynamische Inhalte und Drift         & mittel   & mittel \\
+        Alternative URL-Korpora              & mittel   & mittel \\
         Realistisches Browser-Modell         & hoch     & hoch   \\
         Übergang ins Live-Tor-Netzwerk       & hoch     & hoch   \\
         \hline
