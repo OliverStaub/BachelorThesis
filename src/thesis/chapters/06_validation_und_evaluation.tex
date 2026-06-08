@@ -122,25 +122,28 @@ Abbildung~\ref{fig:eval_openworld_pr} ergänzt das Bild um Precision, Recall und
 \subsection{Mögliche Erklärungen der Inversion}
 \label{sec:eval_reduced_diskussion}
 
-Warum das Padding hier "negativ" wirkt, lässt sich aus dem vorliegenden Datenmaterial nicht eindeutig beantworten.
+Warum das Padding hier negativ wirkt, lässt sich aus dem vorliegenden Datenmaterial nicht eindeutig beantworten.
 Mehrere Effekte kommen als Ursache in Frage und müssten in weiteren Läufen gezielt überprüft werden.
 
 Da pro Konfiguration nur ein einziger \gls{shadow}-Lauf mit festem Seed vorliegt, kann ein Teil der Differenz schlicht aus der Lauf-zu-Lauf-Streuung des Simulators stammen.
 Zufällige Anteile wie die Auswahl der Tor-Pfade oder die Streuung des Hintergrundverkehrs könnten zu Schwankungen führen.
 
 Ebenso kommen Eigenschaften des Versuchsaufbaus selbst in Frage.
-Die Netzwerkgrösse von 0.01, die mit 150 Visits pro Klasse knappe Stichprobe und der strukturell homogene Simple-English-Wikipedia-Korpus engen den Merkmalsraum ein, sodass Padding-Bursts relativ stärker ins Gewicht fallen könnten.
+Die Netzwerkgrösse von 0.01, die mit 150 Visits pro Klasse knappe Stichprobe und der strukturell homogene Simple-English-Wikipedia-Korpus engen den Merkmalsraum ein, sodass welches die Ergebnisse unberechenbarer machen könnten.
 
-Welcher dieser Effekte tatsächlich überwiegt, lässt sich nur klären, wenn jede Konfiguration mit mehreren Seeds, einem grösseren Netzwerk und einem heterogeneren Korpus wiederholt wird (siehe Abschnitte~\ref{sec:ausblick_seeds}, \ref{sec:ausblick_urlsets} und~\ref{sec:ausblick_scale}).
-Die Differenzen zwischen OFF, Reduced und ON bei 80 Klassen und im \gls{openworld} werden deshalb nicht als gezielte Schutz- oder Schadenswirkung der Verteidigungen interpretiert.
+Welcher dieser Effekte tatsächlich zum Tragen kommt, lässt sich klären, wenn jede Konfiguration mit mehreren Seeds, einem grösseren Netzwerk und einem heterogeneren Korpus wiederholt wird (siehe Abschnitte~\ref{sec:ausblick_seeds}, \ref{sec:ausblick_urlsets} und~\ref{sec:ausblick_scale}).
 
 \subsection{Tamaraw als Referenzpunkt}
 \label{sec:eval_tamaraw}
 
-\gls{tamaraw} wurde als zweite Verteidigung in einer exploratorischen Messreihe untersucht, um den im produktiv ausgelieferten \gls{circuitpadding} gemessenen Effekt einzuordnen.
+\gls{tamaraw} wurde als alternative Verteidigung in einer separaten Messreihe untersucht, um den im produktiv ausgelieferten \gls{circuitpadding} gemessenen Effekt zu vergleichen.
+
+
 Im \gls{closedworld} mit 20 Klassen sinkt die Accuracy unter \gls{tamaraw} auf 39.3\,\%, bei 80 Klassen auf 31.6\,\% und im \gls{openworld} auf 28.0\,\%.
-Damit verliert der \gls{df}-Klassifikator gegenüber der jeweiligen Baseline 53.4, 50.8 beziehungsweise 40.3~Prozentpunkte.
-Im \gls{openworld} fällt insbesondere der Recall mit 21.4\,\% deutlich ab (vergleiche Abbildung~\ref{fig:eval_openworld_pr}).
+Damit fällt der Effekt deutlich stärker aus als beim \gls{circuitpadding} 
+
+Abbildung~\ref{fig:eval_confusion_off_tamaraw_80} macht den Unterschied auf Ebene der Konfusionsmatrix sichtbar.
+Unter \gls{tamaraw} löst sich die Diagonale weitgehend auf und die Vorhersagen verteilen sich breit über viele Klassen.
 
 \begin{figure}[H]
     \centering
@@ -148,9 +151,6 @@ Im \gls{openworld} fällt insbesondere der Recall mit 21.4\,\% deutlich ab (verg
     \caption{Konfusionsmatrizen OFF (links) und Tamaraw (rechts) bei 80 Klassen. Eigene Darstellung.}
     \label{fig:eval_confusion_off_tamaraw_80}
 \end{figure}
-
-Abbildung~\ref{fig:eval_confusion_off_tamaraw_80} macht den Unterschied auf Ebene der Konfusionsmatrix sichtbar.
-Unter \gls{tamaraw} löst sich die Diagonale weitgehend auf und die Vorhersagen verteilen sich breit über viele Klassen.
 
 \subsection{Einordnung von Tamaraw}
 \label{sec:eval_tamaraw_diskussion}
