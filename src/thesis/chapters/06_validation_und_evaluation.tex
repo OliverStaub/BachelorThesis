@@ -316,7 +316,7 @@ Anstelle eines vollwertigen Tor Browser wird ein gepatchter \texttt{wget2}-Clien
 Wang und Goldberg zeigen, dass bereits parallel offene Browser-Tabs die Erkennungsrate eines \gls{closedworld}-Klassifikators erheblich senken, da die resultierenden Verkehrsmuster Überlagerungen mehrerer Seiten darstellen~\cite{wang2016realistically}.
 Im realen Tor-Browser-Betrieb ist Multi-Tab-Verkehr die Regel und nicht die Ausnahme, weshalb die hier gemessenen Erkennungsraten den im Live-Netz erreichbaren Wert klar überschätzen dürften.
 
-\paragraph{Statisches Inhaltsmodell.}
+\paragraph{Statisches Inhalte.}
 Die Monitor-Clients beziehen ihre Inhalte aus einem statischen Snapshot der Simple English Wikipedia, ausgeliefert über den eigens gebauten \texttt{zimsrv.py}.
 Damit fehlen reale Dynamiken wie sich verändernde Werbeflächen, A/B-Tests, Drittanbieter-Tracker, CDN-Lastverteilung oder personalisierte Inhalte, die im Live-Web jede Seite über die Zeit verändern.
 Juarez et al.\ benennen genau diese Inhaltsveränderungen über die Zeit (concept drift) als einen Hauptgrund dafür, dass \gls{closedworld}-Resultate im realen Tor-Browser-Betrieb nicht reproduzierbar sind~\cite{juarez2014critical}.
@@ -329,9 +329,8 @@ Beide Faktoren wirken in dieselbe Richtung und erschweren die Klassentrennung, s
 
 \paragraph{Anzahl Wiederholungen.}
 Pro Konfiguration wird genau ein Shadow-Lauf mit einem festen Seed durchgeführt.
-Differenzen in der Grössenordnung weniger Prozentpunkte sind daher mit Vorsicht zu interpretieren, insbesondere im \gls{openworld}-Setup mit stark unbalancierten Klassen.
-Zusätzlich liegen pro Klasse nur 150 Visits vor, wovon bei einem 10\,\%-Test-Split lediglich rund 15 Samples in die Accuracy einfliessen, sodass einzelne Fehlklassifikationen die berichteten Werte sichtbar bewegen können.
-Die qualitativen Schlüsse (\gls{tamaraw} $\gg$ \gls{circuitpadding} bezüglich Schutzwirkung, \gls{tamaraw} $\gg$ \gls{circuitpadding} bezüglich Bandbreitenkosten, \gls{openworld} schwieriger als \gls{closedworld}) sind aufgrund ihrer Grössenordnung jedoch belastbar.
+Differenzen in der Grössenordnung weniger Prozentpunkte sind daher mit Vorsicht zu interpretieren.
+Zusätzlich liegen pro Klasse nur 150 Visits vor, wovon bei einem 10\,\%-Test-Split lediglich rund 15 Samples in die Accuracy einfliessen, sodass einzelne Fehlklassifikationen die berichteten Werte merkbar bewegen können.
 
 Insgesamt zeigt die Auswertung, dass das produktiv ausgelieferte \gls{circuitpadding} im untersuchten Laborkontext einen messbaren, aber kleinen Beitrag zur Verteidigung gegen \gls{df}-Angriffe leistet (zwischen 3.8 und 9.4 Prozentpunkte Accuracy-Reduktion im \gls{closedworld}), bei einem praktisch vernachlässigbaren Bandbreitenaufschlag von unter 5\,\%.
 \gls{tamaraw} erreicht in derselben Umgebung eine um eine Grössenordnung stärkere Schutzwirkung, erkauft sich diese aber mit einem Bandbreiten-Overhead von rund 1000\,\% und ist damit in seiner heutigen Form nicht für den breiten Einsatz im Tor-Netzwerk geeignet.
