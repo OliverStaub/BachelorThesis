@@ -131,7 +131,7 @@ Zufällige Anteile wie die Auswahl der Tor-Pfade oder die Streuung des Hintergru
 Ebenso kommen Eigenschaften des Versuchsaufbaus selbst in Frage.
 Die Netzwerkgrösse von 0.01, die mit 150 Visits pro Klasse knappe Stichprobe und der strukturell homogene Simple-English-Wikipedia-Korpus engen den Merkmalsraum ein, sodass welches die Ergebnisse unberechenbarer machen könnten.
 
-Welcher dieser Effekte tatsächlich zum Tragen kommt, lässt sich klären, wenn jede Konfiguration mit mehreren Seeds, einem grösseren Netzwerk und einem heterogeneren Korpus wiederholt wird (siehe Abschnitte~\ref{sec:ausblick_seeds}, \ref{sec:ausblick_urlsets} und~\ref{sec:ausblick_scale}).
+Welcher dieser Effekte tatsächlich zum Tragen kommt, lässt sich klären, wenn jede Konfiguration mit mehreren Seeds, einem grösseren Netzwerk und einem heterogeneren Korpus wiederholt wird (siehe Abschnitte~\ref{sec:ausblick_seeds}, \ref{sec:ausblick_inhalte} und~\ref{sec:ausblick_scale}).
 
 \subsection{Vergleich mit Tamaraw}
 \label{sec:eval_tamaraw}
@@ -334,3 +334,19 @@ Zusätzlich liegen pro Klasse nur 150 Visits vor, wovon bei einem 10\,\%-Test-Sp
 Insgesamt zeigt die Auswertung, dass das produktiv ausgelieferte \gls{circuitpadding} im untersuchten Laborkontext einen messbaren, aber kleinen Beitrag zur Verteidigung gegen \gls{df}-Angriffe leistet (zwischen 3.8 und 9.4 Prozentpunkte Accuracy-Reduktion im \gls{closedworld}), bei einem praktisch vernachlässigbaren Bandbreitenaufschlag von unter 5\,\%.
 \gls{tamaraw} erreicht in derselben Umgebung eine um eine Grössenordnung stärkere Schutzwirkung, erkauft sich diese aber mit einem Bandbreiten-Overhead von rund 1000\,\% und ist damit in seiner heutigen Form nicht für den breiten Einsatz im Tor-Netzwerk geeignet.
 Die genannten Limitationen, insbesondere das Single-Tab-Modell und die kleine Skalierung, legen nahe, dass beide Verteidigungen unter realistischeren Bedingungen tendenziell stärker wirken, da der Klassifikator bereits in der Baseline mit höherem Rauschen rechnen müsste.
+
+\section{Erreichung der Ziele und Forschungsfragen}
+\label{sec:eval_zielerreichung}
+
+Abschliessend werden die in der Aufgabenstellung (Anhang~\ref{app:aufgabenstellung}) vereinbarten Ziele und die in Kapitel~\ref{cha:problem_fragestellung_vision} formulierten Forschungsfragen den erzielten Resultaten gegenübergestellt.
+
+Die drei in Kapitel~\ref{cha:problem_fragestellung_vision} angestrebten Resultate liegen vor.
+Eine \gls{shadow}-Simulationsumgebung wurde auf einer Virtuellen Maschine aufgebaut und über die in Kapitel~\ref{cha:realisierung} beschriebene Werkzeugkette steuerbar gemacht.
+In dieser Umgebung wurde ein \gls{wf}-Datenset erzeugt, und der \gls{df}-Angriff wurde mit WFlib über alle untersuchten Konfigurationen durchgeführt.
+
+Auch die drei Forschungsfragen lassen sich im Rahmen des Laboraufbaus beantworten.
+Die erste Frage nach der Veränderung der Erkennungsrate unter verschiedenen Circuit-Padding-Einstellungen wird in den Abschnitten~\ref{sec:eval_padding_effekt} und~\ref{sec:eval_reduced} beantwortet, wonach produktiv ausgeliefertes \gls{circuitpadding} die Accuracy im \gls{closedworld} um 3.8 bis 9.4~Prozentpunkte senkt.
+Die zweite Frage nach den dokumentierten Limitationen simulierter \gls{wf}-Angriffe und der Einordnung der eigenen Ergebnisse wird in Abschnitt~\ref{sec:eval_einordnung} behandelt.
+Die dritte, im Verlauf der Arbeit ergänzte Frage nach der zusätzlichen Schutzwirkung von \gls{tamaraw} wird in den Abschnitten~\ref{sec:eval_tamaraw} und~\ref{sec:eval_bandwidth} beantwortet, wonach \gls{tamaraw} eine um eine Grössenordnung stärkere, aber mit rund 1000\,\% Bandbreiten-Overhead erkaufte Schutzwirkung erzielt.
+
+Die ursprüngliche Zielsetzung, eine \gls{shadow}-basierte \gls{wf}-Simulation auf moderater Hardware mit einer unmodifizierten Tor-Version aufzubauen und den Effekt von \gls{circuitpadding} darin zu beobachten, wird damit erfüllt.

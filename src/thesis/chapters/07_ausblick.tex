@@ -3,9 +3,17 @@
 
 Die in Kapitel~\ref{cha:diskussion} berichteten Resultate beantworten die in Kapitel~\ref{cha:problem_fragestellung_vision} gestellten Forschungsfragen im Rahmen des gewählten Laboraufbaus.
 Sie lassen jedoch eine Reihe von Fragen offen, die innerhalb der verfügbaren Bearbeitungszeit nicht mehr abgedeckt werden konnten.
-Dieses Kapitel fasst die wichtigsten dieser Folgearbeiten zusammen und ordnet sie nach Aufwand und erwartetem Erkenntnisgewinn.
+Dieses Kapitel ordnet die wichtigsten Folgearbeiten in zwei Gruppen.
+Abschnitt~\ref{sec:ausblick_wf} beschreibt Erweiterungen, die unmittelbar auf dem aufgebauten \gls{wf}-Versuch aufsetzen, Abschnitt~\ref{sec:ausblick_alternativen} skizziert alternative Untersuchungsszenarien, die das Bedrohungsmodell wechseln oder die Infrastruktur für andere Fragestellungen nutzen.
+Abschnitt~\ref{sec:ausblick_reflexion} schliesst mit einer Reflexion über die erreichten Ziele und den Nutzen der aufgebauten Werkzeugkette für künftige Arbeiten.
 
-\section{Grössere Datenbasis: mehrere Seeds und mehr Visits}
+\section{Weiterentwicklung der Website-Fingerprinting-Experimente}
+\label{sec:ausblick_wf}
+
+Die folgenden Erweiterungen bauen direkt auf dem in dieser Arbeit aufgebauten Versuch auf und liessen sich mit der bestehenden Pipeline ohne grundlegende Umbauten umsetzen.
+Sie adressieren primär die in Kapitel~\ref{cha:diskussion} benannten methodischen Limitationen und zielen darauf, die gemessene Schutzwirkung von \gls{circuitpadding} unter realistischeren Bedingungen abzusichern.
+
+\subsection{Grössere Datenbasis: mehrere Seeds und mehr Visits}
 \label{sec:ausblick_seeds}
 
 Jede in dieser Arbeit berichtete Kennzahl stammt aus genau einem \gls{shadow}-Lauf mit festem Seed.
@@ -13,7 +21,7 @@ Damit lassen sich Differenzen in der Grössenordnung weniger Prozentpunkte, wie 
 Eine Wiederholung jedes Hauptexperiments mit mehreren Seeds würde Mittelwerte, Standardabweichungen und Konfidenzintervalle pro Konfiguration ermöglichen.
 Ergänzend liessen sich die in Abschnitt~\ref{sec:eval_einordnung} als knapp benannten 150 Visits pro \gls{klasse} erhöhen, da bei einem 10\,\%-Test-Split nur rund 15 Samples in die Accuracy einfliessen und einzelne Fehlklassifikationen die Werte merkbar bewegen.
 
-\section{Realistischere Inhalte}
+\subsection{Realistischere Inhalte}
 \label{sec:ausblick_inhalte}
 
 Die in dieser Arbeit verwendeten \glspl{klasse} stammen aus einem Zufalls-Sample der Simple English Wikipedia und sind strukturell sehr homogen, da Markup, Pfadschema und Ressourcenprofil pro Artikel weitgehend identisch sind.
@@ -23,7 +31,7 @@ Eine Folgearbeit könnte statt der Wikipedia andere Websites in den \gls{shadow}
 Da \gls{shadow}-Knoten keinen externen Netzzugang besitzen, ist dafür ein vorgelagerter Spiegel- oder Caching-Schritt nötig, der die Inhalte als eingefrorene Momentaufnahme bereitstellt.
 Ergänzend liesse sich diese Momentaufnahme kontrolliert variieren, etwa durch veränderte Ressourcenreihenfolge oder eine künstliche Aktualisierung zwischen Trainings- und Testfenster, um die Auswirkung zeitlicher Drift auf die Padding-Wirkung reproduzierbar zu untersuchen.
 
-\section{Grössere Netzwerk-Skalierung und Speicher}
+\subsection{Grössere Netzwerk-Skalierung und Speicher}
 \label{sec:ausblick_scale}
 
 Die Netzwerkgrösse von 0.01 entspricht rund einem Hundertstel des Live-Tor-Netzwerks.
@@ -32,14 +40,28 @@ Voraussetzung ist die in Abschnitt~\ref{sec:eval_performance} angeregte Umstellu
 Wird am \gls{pcap}-Verfahren festgehalten, wäre für künftige Läufe eine deutlich grössere Disk von Vorteil, da die Paketmitschnitte den Speicher schneller füllen als alle übrigen Artefakte zusammen.
 Mit beiden Massnahmen liesse sich erstmals untersuchen, ob die hier gemessene Schutzwirkung von \gls{circuitpadding} mit wachsender Netzwerkgrösse abnimmt, gleich bleibt oder sich invertiert.
 
-\section{Weitere Verteidigungen}
+\subsection{Weitere Verteidigungen}
 \label{sec:ausblick_defenses}
 
 Die Arbeit vergleicht \gls{circuitpadding} gegen die historisch bedeutsame \gls{tamaraw}-Verteidigung.
 Seit deren Veröffentlichung sind weitere Schutzansätze publiziert worden, die einen günstigeren Kosten-Schutz-Punkt im in Abschnitt~\ref{sec:eval_bandwidth} aufgespannten Trade-off versprechen, insbesondere RegulaTor mit lastabhängiger Senderate und FRONT mit zufallsbasierter Padding-Verteilung am Sitzungsanfang.
 Eine Folgearbeit könnte die aufgebaute Pipeline ohne grosse Änderungen auf diese Verteidigungen anwenden, sofern eine Referenzimplementierung als Tor-Patch oder als wfdefproxy-Plugin vorliegt~\cite{wfdefproxy}, und so den in Tabelle~\ref{tab:eval_bandwidth} aufgespannten Vergleich erweitern.
 
-\section{Simulation von Korrelationsangriffen}
+\subsection{Übergang ins Live-Tor-Netzwerk}
+\label{sec:ausblick_live}
+
+Alle berichteten Resultate stammen aus dem \gls{shadow}-Simulator und sind daher reproduzierbar, aber auf den simulierten Kontext beschränkt.
+Eine perspektivische Erweiterung wäre die Übertragung des Versuchsaufbaus auf das Live-Tor-Netzwerk unter Beibehaltung der bestehenden Pipeline, wobei Monitor-Client und Verkehrsaufzeichnung in einer abgeschirmten Umgebung mit eigenem Tor-Daemon betrieben würden und sämtliche Inhalte aus einer eigens kontrollierten Quelle stammen müssten.
+So liesse sich messen, in welchem Umfang die in Abschnitt~\ref{sec:eval_einordnung} benannten Limitationen die Schutzwirkung von \gls{circuitpadding} über- oder unterschätzen, ohne Verkehr realer Nutzender einzubeziehen.
+Aus ethischer Sicht ist eine solche Erweiterung sorgfältig zu planen, da bereits passive Messungen im Live-Netzwerk die Anonymität anderer Beteiligter berühren können.
+
+\section{Alternative Untersuchungsszenarien}
+\label{sec:ausblick_alternativen}
+
+Über die unmittelbare Fortführung des \gls{wf}-Versuchs hinaus eröffnet die aufgebaute \gls{shadow}-Umgebung weitere Untersuchungsrichtungen.
+Diese wechseln entweder das Bedrohungsmodell oder nutzen die Infrastruktur für verwandte Fragestellungen, die im Rahmen dieser Arbeit nicht mehr bearbeitet werden konnten.
+
+\subsection{Simulation von Korrelationsangriffen}
 \label{sec:ausblick_correlation}
 
 Die aus Sicht des Autors wertvollste Erweiterung wäre, die aufgebaute Simulationsumgebung so weiterzuentwickeln, dass sich Korrelationsangriffe untersuchen lassen.
@@ -48,7 +70,7 @@ Dieses Bedrohungsmodell ist besonders praxisrelevant, da entsprechende Angriffe 
 \gls{shadow} bietet dafür eine günstige Ausgangslage, weil der Verkehr an beiden Enden eines Schaltkreises in einer kontrollierten, reproduzierbaren Umgebung aufgezeichnet werden kann, ohne den Verkehr realer Nutzender einzubeziehen.
 Eine solche Erweiterung würde es erlauben, das alternative Bedrohungsmodell des globalen passiven Beobachters quantitativ einzuordnen und der Wirkung der untersuchten Padding-Modi gegenüberzustellen, da \gls{circuitpadding} und \gls{tamaraw} primär auf andere Merkmale zielen als zeitliche Korrelation.
 
-\section{Erkennung von Tor-Verkehr}
+\subsection{Erkennung von Tor-Verkehr}
 \label{sec:ausblick_detection}
 
 Eng verwandt mit \gls{wf}, aber mit eigenständigem praktischem Wert, ist die Frage, ob sich Tor-Verkehr mit einem fingerprinting-ähnlichen Verfahren überhaupt von gewöhnlichem Verkehr unterscheiden lässt~\cite{saputra2016detecting}.
@@ -56,20 +78,12 @@ Diese Unterscheidung ist die Grundlage staatlicher Zensur, etwa durch die Great 
 Eine Folgearbeit könnte im \gls{shadow}-Aufbau sowohl Tor- als auch Nicht-Tor-Verkehr erzeugen und prüfen, wie zuverlässig ein Klassifikator beide trennt und wie stark obfs4 diese Trennung erschwert.
 Der praktische Nutzen liegt höher als beim reinen \gls{wf}, da Verkehrserkennung der erste Schritt jeder Blockade ist und damit unmittelbar die Erreichbarkeit von Tor in zensierten Netzen betrifft.
 
-\section{Fingerprinting von Onion-Services}
+\subsection{Fingerprinting von Onion-Services}
 \label{sec:ausblick_onion}
 
 Nicht betrachtet wurde, ob sich auch Onion-Services fingerprinten lassen, deren Schaltkreise sich durch die zusätzlichen Hops strukturell von gewöhnlichem Tor-Verkehr unterscheiden.
 Kwon et al.\ zeigen, dass sich Verbindungen zu Onion-Services bereits anhand des Schaltkreisaufbaus passiv erkennen lassen~\cite{kwon2015circuit}, und neuere Arbeiten dokumentieren weitergehende Deanonymisierungsangriffe~\cite{tippe2024onion}.
 Ob ein \gls{df}-ähnlicher Ansatz auf diesem Szenario einen Mehrwert gegenüber den bestehenden Verfahren liefert, ist offen und müsste zunächst gegen diese spezialisierten Angriffe abgegrenzt werden, bevor sich der Aufwand einer eigenen Untersuchung beurteilen lässt.
-
-\section{Übergang ins Live-Tor-Netzwerk}
-\label{sec:ausblick_live}
-
-Alle berichteten Resultate stammen aus dem \gls{shadow}-Simulator und sind daher reproduzierbar, aber auf den simulierten Kontext beschränkt.
-Eine perspektivische Erweiterung wäre die Übertragung des Versuchsaufbaus auf das Live-Tor-Netzwerk unter Beibehaltung der bestehenden Pipeline, wobei Monitor-Client und Verkehrsaufzeichnung in einer abgeschirmten Umgebung mit eigenem Tor-Daemon betrieben würden und sämtliche Inhalte aus einer eigens kontrollierten Quelle stammen müssten.
-So liesse sich messen, in welchem Umfang die in Abschnitt~\ref{sec:eval_einordnung} benannten Limitationen die Schutzwirkung von \gls{circuitpadding} über- oder unterschätzen, ohne Verkehr realer Nutzender einzubeziehen.
-Aus ethischer Sicht ist eine solche Erweiterung sorgfältig zu planen, da bereits passive Messungen im Live-Netzwerk die Anonymität anderer Beteiligter berühren können.
 
 \section{Zusammenfassung der offenen Punkte}
 \label{sec:ausblick_summary}
@@ -78,3 +92,17 @@ Die genannten Folgearbeiten lassen sich nach Aufwand und erwartetem Erkenntnisge
 Mit überschaubarem Aufwand und hohem Erkenntnisgewinn lässt sich die Datenbasis durch mehrere Seeds und mehr Visits verbreitern, was die in Kapitel~\ref{cha:diskussion} benannten methodischen Lücken unmittelbar adressiert.
 Den grössten Erkenntnisgewinn versprechen die Erweiterung der Umgebung um Korrelationsangriffe und die Erkennung von Tor-Verkehr, da beide ein praxisrelevantes und real bereits beobachtetes Bedrohungsmodell adressieren.
 Die übrigen Punkte erfordern strukturelle Erweiterungen, eröffnen aber einen Pfad, auf dem die aufgebaute Infrastruktur schrittweise an realistischere Bedingungen herangeführt werden kann.
+
+\section{Reflexion}
+\label{sec:ausblick_reflexion}
+
+Rückblickend bestätigt sich die in Abschnitt~\ref{sec:eval_einordnung} getroffene Einordnung, wonach der zeitliche Schwerpunkt der Arbeit auf dem konstruktiven Teil lag.
+Der Aufbau einer reproduzierbaren \gls{wf}-Pipeline im \gls{shadow}-Simulator erwies sich als deutlich aufwändiger als zu Projektbeginn angenommen.
+Mehrere Komponenten mussten erst aufeinander abgestimmt werden, bevor ein vollständiger Lauf von der Konfiguration bis zum trainierten Klassifikator gelang, darunter die Generierung der Shadow-Konfiguration, ein eigener \gls{zim}-basierter Webserver als Ersatz für nicht kompatible Standardlösungen und die Aufbereitung der \glspl{pcap} in das von WFlib erwartete Format.
+
+Als bleibendes Ergebnis dieses Aufwands steht eine Sammlung von Python-Werkzeugen zur Verfügung, die den gesamten Ablauf von der Simulation bis zur Auswertung kapselt und über \texttt{shadowctl.py} mit wenigen Parametern steuerbar macht.
+Damit lässt sich eine \gls{wf}-Simulation mit unterschiedlicher Klassenanzahl, Besuchsanzahl und Padding-Konfiguration künftig mit erheblich geringerem manuellem Aufwand wiederholen, als es für die vorliegende Arbeit nötig war.
+Diese Werkzeugkette versteht der Autor als eigenständigen Beitrag der Arbeit, da sie die Einstiegshürde für vergleichbare Experimente senkt und als Grundlage für die in den vorangehenden Abschnitten skizzierten Folgearbeiten dient.
+
+Die in der Aufgabenstellung (Anhang~\ref{app:aufgabenstellung}) vereinbarten Ziele und die daraus abgeleiteten Forschungsfragen wurden im Rahmen des gewählten Laboraufbaus erreicht, wie in Abschnitt~\ref{sec:eval_zielerreichung} im Einzelnen dargelegt wird.
+Auf dieser Grundlage können künftige Arbeiten unmittelbar aufsetzen und den Versuch entlang der genannten Richtungen vertiefen, ohne die Infrastruktur erneut von Grund auf aufbauen zu müssen.
