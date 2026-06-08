@@ -173,14 +173,14 @@ Für die Läufe \texttt{exp-baseline-80}, \texttt{exp-padding-80} und \texttt{ex
     \centering
     \caption{Mittlerer Datenverkehr pro Besuch auf der Monitor-Schnittstelle und relativer Overhead gegenüber \texttt{exp-baseline-80}. Eigene Messung aus den Monitor-\glspl{pcap} mit \texttt{pcap\_overhead.py}.}
     \label{tab:eval_bandwidth}
-    \begin{tabular}{lrrrrr}
+    \begin{tabular}{lrrrr}
         \hline
-        Lauf & Bytes Up & Bytes Down & Bytes Gesamt & Pakete Gesamt & $\Delta$ Bytes \\
+        Lauf & Bytes Up & Bytes Down & Pakete Gesamt & $\Delta$ Bytes \\
         \hline
-        exp-baseline-80 &      81\,003 &     349\,677 &     430\,680 &       602 & Basis \\
-        exp-padding-80  &      87\,398 &     356\,150 &     443\,549 &       638 & $+3.0\,\%$ \\
-        exp-reduced-80  &      83\,942 &     352\,416 &     436\,359 &       621 & $+1.3\,\%$ \\
-        exp-tamaraw-80  & 3\,662\,162 & 1\,347\,325 & 5\,009\,486 &  11\,256 & $+1063.1\,\%$ \\
+        exp-baseline-80 &      81\,003 &     349\,677 &       602 & Basis \\
+        exp-padding-80  &      87\,398 &     356\,150 &       638 & $+3.0\,\%$ \\
+        exp-reduced-80  &      83\,942 &     352\,416 &       621 & $+1.3\,\%$ \\
+        exp-tamaraw-80  & 3\,662\,162 & 1\,347\,325 &  11\,256 & $+1063.1\,\%$ \\
         \hline
     \end{tabular}
 \end{table}
