@@ -122,26 +122,20 @@ Abbildung~\ref{fig:eval_openworld_pr} ergänzt das Bild um Precision, Recall und
 \subsection{Mögliche Erklärungen der Inversion}
 \label{sec:eval_reduced_diskussion}
 
-Für die beschriebene Umkehr lassen sich mehrere Erklärungen vermuten, die sich mit dem vorliegenden Datenmaterial nicht trennscharf prüfen lassen.
+Warum sich die Reihenfolge umkehrt, lässt sich aus dem vorliegenden Datenmaterial nicht eindeutig beantworten.
+Mehrere Effekte kommen als Ursache in Frage und müssten in weiteren Läufen gezielt überprüft werden.
 
-Eine erste Vermutung ist, dass die Differenzen aus der Lauf-zu-Lauf-Streuung des Simulators stammen.
-Aus Zeitgründen wurde pro Konfiguration nur ein einziger \gls{shadow}-Lauf mit fest gewähltem Seed durchgeführt.
-Die zufälligen Anteile der Simulation, vor allem die Auswahl der Tor-Pfade und die Streuung des Hintergrundverkehrs, erzeugen aber auch innerhalb derselben Konfiguration Schwankungen.
-Differenzen von zwei bis vier Prozentpunkten könnten daher rein aus dieser Streuung resultieren, ohne dass die Verteidigung selbst die Beobachtung verursacht.
+Da pro Konfiguration nur ein einziger \gls{shadow}-Lauf mit festem Seed vorliegt, kann ein Teil der Differenz schlicht aus der Lauf-zu-Lauf-Streuung des Simulators stammen.
+Zufällige Anteile wie die Auswahl der Tor-Pfade oder die Streuung des Hintergrundverkehrs lassen bereits Schwankungen von wenigen Prozentpunkten erwarten.
 
-Eine zweite Vermutung ist, dass das \gls{circuitpadding} bei wachsender Klassenanzahl selbst zu einem klassentrennenden Merkmal werden könnte.
-Padding-Zustandsmaschinen senden je nach beobachtetem Verkehr unterschiedliche Burst-Muster, die in einer einzelnen Klasse als Rauschen wirken, über viele Klassen hinweg aber ein zusätzliches Signal liefern könnten.
-Der \gls{df}-Klassifikator würde dann die Padding-Muster lernen, statt sie zu ignorieren, und im \gls{openworld}-Setup mit vielen Klassen geringfügig höhere Accuracy auf gepaddetem als auf ungepaddetem Verkehr erreichen.
+Denkbar ist auch, dass das \gls{circuitpadding} bei vielen Klassen selbst zu einem Merkmal wird.
+Padding-Zustandsmaschinen erzeugen je nach Verkehr unterschiedliche Burst-Muster, die in einer einzelnen Klasse wie Rauschen wirken, über viele Klassen hinweg aber zusätzliche Trennschärfe liefern könnten.
 
-Eine dritte Vermutung verbindet die Inversion mit Eigenschaften des Versuchsaufbaus selbst.
-Die simulierte Netzwerkgrösse von 0.01 reduziert die Pfaddiversität gegenüber dem Live-Tor-Netzwerk und macht die pro Klasse gesehenen Schaltkreise wiederholbarer, sodass Padding-Burst-Muster über die Visits hinweg konsistenter ausfallen könnten als in einem grösseren Netzwerk.
-Hinzu kommen die mit 150 Visits pro Klasse knappe Stichprobe und der strukturell homogene Simple-English-Wikipedia-Korpus, bei dem Markup, Pfadschema und Ressourcenprofil zwischen den Klassen nur wenig variieren.
-Beide Faktoren engen den nutzbaren Merkmalsraum ein, was den vom Klassifikator getragenen Beitrag von Padding-Bursts relativ erhöhen könnte.
-Diese Punkte überschneiden sich mit den in Abschnitt~\ref{sec:eval_einordnung} dokumentierten Limitationen, treten dort aber als allgemeine Übertragbarkeits-Vorbehalte auf und nicht als spezifische Ursache der hier beobachteten Inversion.
+Ebenso kommen Eigenschaften des Versuchsaufbaus selbst in Frage.
+Die Netzwerkgrösse von 0.01, die mit 150 Visits pro Klasse knappe Stichprobe und der strukturell homogene Simple-English-Wikipedia-Korpus engen den Merkmalsraum ein, sodass Padding-Bursts relativ stärker ins Gewicht fallen könnten.
 
-Alle drei Erklärungen sind ausdrücklich als Vermutungen zu lesen.
-Eine belastbare Aussage setzt voraus, dass jede Konfiguration mit mehreren Seeds wiederholt und in einem grösseren Netzwerk sowie auf einem heterogeneren Korpus reproduziert wird, was in den Abschnitten~\ref{sec:ausblick_seeds}, \ref{sec:ausblick_urlsets} und~\ref{sec:ausblick_scale} als Folgearbeit aufgenommen ist.
-Die hier gemessenen Differenzen zwischen OFF, Reduced und ON bei 80 Klassen und im \gls{openworld} werden in dieser Arbeit deshalb nicht als gezielte Schutz- oder Schadenswirkung der Verteidigungen interpretiert.
+Welcher dieser Effekte tatsächlich überwiegt, lässt sich nur klären, wenn jede Konfiguration mit mehreren Seeds, einem grösseren Netzwerk und einem heterogeneren Korpus wiederholt wird (siehe Abschnitte~\ref{sec:ausblick_seeds}, \ref{sec:ausblick_urlsets} und~\ref{sec:ausblick_scale}).
+Die Differenzen zwischen OFF, Reduced und ON bei 80 Klassen und im \gls{openworld} werden deshalb nicht als gezielte Schutz- oder Schadenswirkung der Verteidigungen interpretiert.
 
 \subsection{Tamaraw als Referenzpunkt}
 \label{sec:eval_tamaraw}
