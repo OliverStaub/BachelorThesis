@@ -67,8 +67,12 @@ Diese Beobachtung ist konsistent mit Juarez et al., die für \gls{openworld}-Sze
 
 Die Aktivierung des produktiv im Tor-Netzwerk eingesetzten \gls{circuitpadding}s (ON) senkt die Accuracy bei 20 Klassen von 92.7\,\% auf 83.3\,\%, was einer Reduktion um 9.4~Prozentpunkte entspricht.
 Bei 80 Klassen ist der Effekt deutlich kleiner: Die Accuracy sinkt um 3.8~Prozentpunkte von 82.4\,\% auf 78.6\,\%.
-Eine plausible Interpretation ist, dass das Klassifikationsproblem mit wachsender Klassenanzahl bereits ohne Padding fordernder wird, sodass das zusätzliche Rauschen durch Padding-Zellen relativ weniger ins Gewicht fällt.
-Die Grössenordnung dieser Reduktion ist konsistent mit Sirinam et al., die für die ebenfalls auf Adaptive Padding basierende Verteidigung WTF-PAD im gleichen \gls{closedworld}-Setup mit 95 Klassen einen Rückgang des \gls{df}-Angriffs von 98.3\,\% auf 90.7\,\% berichten~\cite{sirinam2018deep}.
+
+
+Eine mögliche Interpretation ist, dass das Klassifikationsproblem mit wachsender Klassenanzahl bereits ohne Padding fordernder wird, sodass das zusätzliche Rauschen durch Padding-Zellen relativ weniger ins Gewicht fällt.
+
+
+Die Grössenordnung dieser Werte ist vergleichbar mit Sirinam et al., die für die ebenfalls auf Adaptive Padding basierende Verteidigung WTF-PAD in einem \gls{closedworld}-Setup mit 95 Klassen einen Rückgang des \gls{df}-Angriffs von 98.3\,\% auf 90.7\,\% berichten~\cite{sirinam2018deep}.
 
 \subsection{Reduced Padding und Open-World-Inversion}
 \label{sec:eval_reduced}
@@ -78,7 +82,8 @@ Bei 20 Klassen liegt seine Accuracy mit 86.7\,\% wie erwartet zwischen Baseline 
 
 
 Bei 80 Klassen kehrt sich die Reihenfolge um: Mit 77.5\,\% liegt Reduced minimal unterhalb von ON.
-Im \gls{openworld} tritt ein verwandtes Phänomen auf: Sowohl ON als auch Reduced liegen leicht oberhalb der OFF-Baseline, was der Erwartung widerspricht.
+Im \gls{openworld} Szenario verhält es sich ähnlich: Sowohl ON als auch Reduced liegen oberhalb der OFF-Baseline, was der Erwartung widerspricht.
+
 Beide Beobachtungen stammen aus jeweils einem einzigen \gls{shadow}-Lauf pro Konfiguration.
 Mit einer Messung pro Konfiguration lässt sich nicht beurteilen, ob die Differenzen von zwei bis vier Prozentpunkten über der Lauf-zu-Lauf-Streuung des Simulators liegen oder durch sie verursacht werden (vergleiche Abschnitt~\ref{sec:eval_einordnung}).
 Sie werden daher in dieser Arbeit nicht als Schutz- oder Schadenswirkungen interpretiert.
