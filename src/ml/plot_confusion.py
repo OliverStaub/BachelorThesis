@@ -15,6 +15,12 @@ Usage:
     python3 plot_confusion.py --dataset ExpBaseline20 ExpPadding20 \
         --labels "Padding OFF" "Padding ON" --output confusion_comparison.pdf
 
+    # Three (or more) panels in a row:
+    python3 plot_confusion.py \
+        --dataset ExpBaseline80 ExpPadding80 ExpTamaraw80 \
+        --labels "OFF" "Padding ON" "Tamaraw" \
+        --output confusion_comparison_off_on_tamaraw_80.pdf
+
     # With difference matrix:
     python3 plot_confusion.py --dataset ExpBaseline20 ExpPadding20 \
         --labels "Padding OFF" "Padding ON" --diff --output confusion_diff.pdf
@@ -202,9 +208,10 @@ def main():
                          class_names, show_numbers)
         fig.colorbar(im, ax=ax, label="Recall", shrink=0.8)
 
-    elif len(datasets) == 2 and not args.diff:
-        # Side-by-side comparison
-        fig, axes = plt.subplots(1, 2, figsize=(22, 10), constrained_layout=True)
+    elif len(datasets) >= 2 and not args.diff:
+        # N panels in a row
+        n = len(datasets)
+        fig, axes = plt.subplots(1, n, figsize=(11 * n, 10), constrained_layout=True)
         for i, (ax, label) in enumerate(zip(axes, labels)):
             im = plot_single(results[i][1], label, ax, results[i][2],
                              class_names, show_numbers)
@@ -248,7 +255,7 @@ def main():
         fig.colorbar(im_diff, ax=axes[2], label="Δ Recall", shrink=0.8)
 
     else:
-        print("Provide 1 or 2 datasets", file=sys.stderr)
+        print("--diff requires exactly 2 datasets", file=sys.stderr)
         sys.exit(1)
 
     plt.savefig(args.output, dpi=300, bbox_inches="tight")

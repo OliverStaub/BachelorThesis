@@ -142,20 +142,15 @@ Welcher dieser Effekte tatsächlich zum Tragen kommt, lässt sich klären, wenn 
 Im \gls{closedworld} mit 20 Klassen sinkt die Accuracy unter \gls{tamaraw} auf 39.3\,\%, bei 80 Klassen auf 31.6\,\% und im \gls{openworld} auf 28.0\,\%.
 Damit fällt der Effekt deutlich stärker aus als beim \gls{circuitpadding}.
 
-Die Konfusionsmatrizen stellen diesen Unterschied visuell in den Abbildungen ~\ref{fig:eval_confusion_off_on_80} und ~\ref{fig:eval_confusion_off_tamaraw_80} dar.
+Auf Ebene der Konfusionsmatrix wird dieser qualitative Unterschied direkt sichtbar (Abbildung~\ref{fig:eval_confusion_off_on_tamaraw_80}).
+Unter aktivem \gls{circuitpadding} bleibt die Diagonale gegenüber OFF weitgehend erhalten und die Fehlklassifikationen verteilen sich nur leicht breiter um die Hauptdiagonale.
+Unter \gls{tamaraw} löst sich die Diagonale dagegen weitgehend auf und die Vorhersagen verteilen sich breit über viele Klassen.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{../../confusion_comparison_80.pdf}
-    \caption{Konfusionsmatrizen OFF (links) und Padding ON (rechts) bei 80 Klassen. Eigene Darstellung.}
-    \label{fig:eval_confusion_off_on_80}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=\textwidth]{../../confusion_comparison_tamaraw_80.pdf}
-    \caption{Konfusionsmatrizen OFF (links) und Tamaraw (rechts) bei 80 Klassen. Eigene Darstellung.}
-    \label{fig:eval_confusion_off_tamaraw_80}
+    \includegraphics[width=\textwidth]{../../confusion_comparison_off_on_tamaraw_80.pdf}
+    \caption{Konfusionsmatrizen im Closed-World-Setup mit 80 Klassen, normiert pro Zeile (Recall). Links die ungeschützte Baseline (OFF), Mitte mit aktivem Circuit Padding (ON), rechts mit Tamaraw. Eigene Darstellung.}
+    \label{fig:eval_confusion_off_on_tamaraw_80}
 \end{figure}
 
 \subsection{Einordnung von Tamaraw}
@@ -328,6 +323,12 @@ Die Umstellung auf Cell-Trace-Logs wird in Kapitel~\ref{cha:ausblick} als Folgea
 
 Die in diesem Kapitel berichteten Resultate sind als laborinterne Vergleichsmessungen zu lesen, nicht als Vorhersagen für die Wirkung der untersuchten Verteidigungen im Live-\gls{tor}-Netzwerk.
 Mehrere Faktoren begrenzen die Übertragbarkeit auf reale Bedingungen und werden im Folgenden offen benannt.
+
+\paragraph{Schwerpunkt der Arbeit.}
+Gemäss der in Anhang~\ref{app:aufgabenstellung} dokumentierten Aufgabenstellung umfasst die vorliegende Arbeit sowohl den konstruktiven Aufbau einer Shadow-basierten \gls{wf}-Pipeline als auch die experimentelle Auswertung mehrerer Verteidigungen.
+Der zeitliche Schwerpunkt liegt deutlich auf dem konstruktiven Teil, also dem Aufbau und der Validierung der Werkzeugkette aus \texttt{shadowctl.py}, \texttt{generate-wf-config.py}, \texttt{zimsrv.py}, \texttt{pcap\_to\_npz.py} und \texttt{correlation.py} sowie deren Integration mit WFlib.
+Für die eigentliche Experimentphase verblieb entsprechend weniger Zeit als ursprünglich geplant, weshalb pro Konfiguration jeweils nur ein Shadow-Lauf mit festem Seed durchgeführt wurde und zusätzliche Variationen wie mehrere Seeds, grössere Netzwerkskalen oder ein heterogenerer Korpus nicht mehr untersucht werden konnten.
+Die entsprechenden Erweiterungen werden in Kapitel~\ref{cha:ausblick} als Folgearbeiten beschrieben.
 
 \paragraph{Skalierung des simulierten Netzwerks.}
 Die Experimente verwenden eine Netzwerkgrösse von 0.01, was rund 79 Relays und etwa 100 Hintergrund-Clients entspricht.
