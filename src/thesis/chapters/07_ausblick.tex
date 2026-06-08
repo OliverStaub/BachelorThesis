@@ -19,17 +19,7 @@ Der Aufwand ist gering, da Tor-Quellcode nicht verändert werden muss und die be
 
 Jede in dieser Arbeit berichtete Kennzahl stammt aus genau einem \gls{shadow}-Lauf mit festem Seed.
 Die Folge ist, dass Differenzen in der Grössenordnung weniger Prozentpunkte, wie die Differenz zwischen ON und Reduced bei 80 Klassen oder die Inversion der Padding-Wirkung im \gls{openworld}-Setup, nicht von der Streuung des Simulators unterschieden werden können.
-Eine Wiederholung jedes Hauptexperiments mit mindestens drei unabhängigen Seeds würde es ermöglichen, Mittelwerte und Standardabweichungen pro Konfiguration zu berichten und damit Konfidenzintervalle für die Padding-Effekte anzugeben.
-Da die Wall-Clock-Laufzeit linear mit der Anzahl Seeds wächst und insbesondere die \gls{tamaraw}-\gls{openworld}-Läufe bereits an die Disk-Obergrenze des Servers stiessen, müsste zugleich auf das in Abschnitt~\ref{sec:eval_performance} skizzierte Cell-Trace-Logging umgestellt werden.
-
-\section{Realistischeres Browser-Modell}
-\label{sec:ausblick_browser}
-
-Der in dieser Arbeit eingesetzte \texttt{wget2}-Client bildet die wichtigste Vereinfachung gegenüber dem realen Tor-Browser-Betrieb.
-Wang und Goldberg zeigen, dass Multi-Tab-Verkehr und überlappende Seitenaufrufe die Erkennungsrate eines \gls{closedworld}-Klassifikators erheblich senken~\cite{wang2016realistically}.
-Eine Folgearbeit könnte den Monitor-Client durch einen headless betriebenen Tor-Browser ersetzen, der über eine Steuerschnittstelle (zum Beispiel das Marionette-Protokoll) deterministisch eine vorgegebene Sequenz von Seiten lädt.
-Damit liessen sich JavaScript-Ausführung, dynamisches Nachladen von Ressourcen und parallele Tab-Sitzungen abbilden und die in Abschnitt~\ref{sec:eval_einordnung} dokumentierte Überschätzung der Baseline-Accuracy quantitativ überprüfen.
-Der Aufwand ist erheblich, da ein vollständiger Browser im Shadow-Kontext eingebettet werden muss und der Ressourcenverbrauch pro Monitor deutlich über dem von \texttt{wget2} liegt.
+Eine Wiederholung jedes Hauptexperiments mit mehreren Seeds würde es ermöglichen, Mittelwerte und Standardabweichungen pro Konfiguration zu berichten und damit Konfidenzintervalle für die Padding-Effekte anzugeben.
 
 \section{Dynamische Inhalte und zeitliche Drift}
 \label{sec:ausblick_drift}
