@@ -69,6 +69,16 @@ cp README.md "$OUT/"
 mkdir -p "$OUT/images" && rsync -a "${EXCLUDES[@]}" images/ "$OUT/images/"
 cp confusion_*.pdf "$OUT/" 2>/dev/null || true
 cp confusion_*.svg "$OUT/" 2>/dev/null || true
+cp confusion_*.png "$OUT/" 2>/dev/null || true
+
+echo ">> Copying Zwischenpräsentation (Slidev source, without node_modules)"
+PRES="$ROOT/presentations/zwischenpresentation/zwischenpraesentation"
+mkdir -p "$OUT/zwischenpraesentation"
+rsync -a "${EXCLUDES[@]}" \
+  --exclude='node_modules/' \
+  --exclude='dist/' \
+  --exclude='.npmrc' \
+  "$PRES/" "$OUT/zwischenpraesentation/"
 
 echo ">> Writing INHALT.md"
 cat > "$OUT/INHALT.md" <<'EOF'
@@ -92,8 +102,10 @@ Bachelorarbeit (`src/thesis/hslu_thesis.pdf`).
 | `src/ml/wflib/logs/` | Ergebnis-JSONs der Trainings- und Testläufe |
 | `ExperimentLogs.csv` / `.xlsx` | aggregierte Resultattabelle aller Läufe |
 | `documentation.md` | Gesamtbeschreibung der Pipeline |
-| `images/results/` | generierte Diagramme |
-| `confusion_*.pdf` / `.svg` | Confusion-Matrix-Visualisierungen |
+| `images/` | konzeptionelle Diagramme, Schemata, Screenshots (drawio-Quelle + Exporte) |
+| `images/results/` | generierte Ergebnis-Diagramme (png/pdf/svg) |
+| `confusion_*.pdf` / `.svg` / `.png` | Confusion-Matrix-Visualisierungen |
+| `zwischenpraesentation/` | Slides der Zwischenpräsentation (Slidev-Quelle: `slides.md` + Bilder; ansehen mit `npx slidev`) |
 
 ## Nicht enthalten
 

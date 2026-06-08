@@ -26,7 +26,9 @@
       "Bash(pdftoppm -r 100 -f 53 -l 53 -png /workspaces/BachelorThesis/src/thesis/hslu_thesis.pdf /tmp/perfmon_page)",
       "Bash(grep -rn \"Anhang C\\\\|Anhang D\\\\|Abschnitt\" /workspacesBachelorThesis/src/thesis/chapters/ 2>/dev/null | grep \"??\" | head -10)",
       "Read(//workspacesBachelorThesis/src/thesis/**)",
-      "Bash(grep -v \":0$\")"
+      "Bash(grep -v \":0$\")",
+      "Bash(git config *)",
+      "Bash(git stash *)"
     ]
   }
 }
