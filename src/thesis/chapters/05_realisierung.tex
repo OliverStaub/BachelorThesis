@@ -78,7 +78,7 @@ Die Aufteilung in mehrere kleine, voneinander unabhängige Skripte erlaubt es, e
 Die Shadow-Konfiguration wird mit Tornettools aus den Tor-Metriken (Konsensdokumente, Server-Deskriptoren, OnionPerf-Messungen, Bandbreitenwerte) eines frei wählbaren Monats erzeugt~\cite{neverenough-sec2021}.
 In der vorliegenden Arbeit wird durchgehend der Monat Januar 2025 verwendet, die Standardeinstellung der Steuerungsskripte.
 
-Die Tor-Netzwerkgrösse wird auf 1\,\% (\texttt{--network\_scale 0.01}) skaliert, was rund 79~Relais, drei Verzeichnisserver und ungefähr 100~Hintergrund-Clients ergibt~\cite{neverenough-sec2021,mani2018understanding}.
+Die Tor-Netzwerkgrösse wird mit Tornettools auf 1\,\% (\texttt{--network\_scale 0.01}) skaliert~\cite{neverenough-sec2021}, was in der verwendeten Januar-2025-Topologie 79~Relais, drei Verzeichnisserver und rund 100~Hintergrund-Clients ergibt.
 Die Begründung der Skalierung und ihre methodischen Konsequenzen sind in Abschnitt~\ref{sec:konzepte_skalierung} dargestellt.
 
 

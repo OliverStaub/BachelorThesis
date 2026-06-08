@@ -23,7 +23,7 @@ Die formale Einordnung der Variablen und Messgrössen steht in Kapitel~\ref{cha:
 \label{sec:konzepte_simulator}
 
 Die Umgebung muss vier Anforderungen erfüllen: realistische Verkehrsmuster, frei konfigurierbares Padding, exakte Reproduzierbarkeit und einen klar definierten Aufzeichnungspunkt.
-Chutney und NetMirage sind primär als Tor-Test-Harness konzipiert und modellieren keinen realistischen Hintergrundverkehr~\cite{neverenough-sec2021}.
+Emulationsbasierte Tor-Testumgebungen wie ExperimenTor und NetMirage verfolgen den Ansatz der Netzwerk-Emulation und nicht den für diese Arbeit benötigten Ansatz der reproduzierbaren, ereignisbasierten Simulation~\cite{neverenough-sec2021}.
 Live-Tor-Messungen sind nicht reproduzierbar~\cite{jansen2023data}.
 Shadow mit Tornettools erfüllt alle Anforderungen: unmodifizierter Tor-Code und deterministischer Ablauf~\cite{netsim-atc2022}, und Jansen und Wails belegen mit 86\,\% Cross-Dataset-Accuracy des CUMUL-Klassifikators die Eignung für \gls{wf}-Studien~\cite{jansen2023data}.
 
@@ -33,7 +33,7 @@ Shadow mit Tornettools erfüllt alle Anforderungen: unmodifizierter Tor-Code und
 Aus den in Kapitel~\ref{cha:stand_der_technik} verglichenen Klassifikatoren wird \gls{df} gewählt.
 \gls{df} arbeitet zeitunabhängig, weshalb simulationsbedingte Timing-Variationen die Ergebnisse nicht verfälschen.
 \gls{circuitpadding} wirkt zudem direkt auf die von \gls{df} genutzten Richtungsfeatures, was den Padding-Effekt besonders sichtbar macht.
-Die Validierung von \gls{df} in Shadow durch Jansen und Wails (82\,\% Accuracy auf Live-Tor) sichert die Vergleichbarkeit mit bestehender Literatur~\cite{jansen2023data}.
+Die Validierung von \gls{df} in Shadow durch Jansen und Wails (76\,\% bis 82\,\% Accuracy auf Live-Tor) sichert die Vergleichbarkeit mit bestehender Literatur~\cite{jansen2023data}.
 
 \section{Wahl des Szenarios}
 \label{sec:konzepte_szenario}
@@ -137,7 +137,7 @@ Zusätzlich bleibt die Klassen-Balance auch bei vorzeitigem Abbruch eines Laufs 
 \section{Skalierung der Topologie}
 \label{sec:konzepte_skalierung}
 
-Die Tor-Topologie wird auf 1\,\% des Live-Netzwerks skaliert, was rund 79~Relais ergibt~\cite{neverenough-sec2021}.
+Die Tor-Topologie wird mit Tornettools auf 1\,\% des Live-Netzwerks skaliert~\cite{neverenough-sec2021}, was in der verwendeten Januar-2025-Topologie 79~Relais ergibt.
 Eine Vollskalierung übersteigt den Arbeitsspeicher der bereitgestellten VM (128~GB) und macht die Simulationsdauer unpraktikabel für eine Bachelorarbeit.
-Die Reduktion verringert die Pfaddiversität und macht die Verkehrsmuster für einen \gls{wf}-Klassifikator tendenziell leichter erlernbar~\cite{jansen2023data}, weshalb die gemessenen Accuracy-Werte als optimistische obere Schranke gegenüber dem Live-Netzwerk zu lesen sind.
-Diese Limitation wird in Kapitel~\ref{cha:diskussion} wieder aufgegriffen.
+Die Reduktion bildet das Live-Netzwerk nur eingeschränkt ab, sodass sich das kleinere Netzwerk anders oder weniger realistisch verhalten kann und die absoluten Accuracy-Werte nicht unmittelbar auf das reale Netzwerk übertragbar sind.
+Die methodischen Konsequenzen dieser Reduktion werden in Kapitel~\ref{cha:diskussion} aufgegriffen.

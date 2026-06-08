@@ -69,7 +69,7 @@ Die konkrete technische Umsetzung folgt in Kapitel~\ref{cha:realisierung}.
 \subsection{Wahl des Experimenttyps}
 \label{sec:experiment_typ}
 
-Aus den von Balzert beschriebenen Experimenttypen Laborexperiment, Feldexperiment und Simulationsexperiment~\cite{book} fällt die Wahl auf das Laborexperiment in einer deterministischen Netzwerksimulation.
+Aus den von Balzert beschriebenen Experimenttypen Laborexperiment und Feldexperiment~\cite{book} fällt die Wahl auf das Laborexperiment in einer deterministischen Netzwerksimulation.
 Ein Feldexperiment im Live-Tor-Netzwerk scheidet aus, weil dort weder die Padding-Konfiguration der Relays kontrolliert variiert werden kann noch die Erzeugung grosser Mengen Trainingsverkehrs ethisch vertretbar wäre.
 Der Shadow-Simulator erlaubt im Gegensatz dazu, die unabhängige Variable Padding-Modus gezielt zu schalten, alle übrigen Parameter konstant zu halten und denselben Versuch über einen festen Seed reproduzierbar zu wiederholen.
 Damit erfüllt das Vorgehen die für ein Laborexperiment gegebenen Anforderungen an Kontrolle, Wiederholbarkeit und Variation einer Einflussgrösse~\cite{book}.
@@ -120,7 +120,7 @@ Jeder Durchlauf besteht aus den Schritten Simulation in Shadow, Konvertierung de
 \label{sec:experiment_grenzen}
 
 Die Methode hat zwei strukturelle Grenzen:
-Erstens reduziert die Skalierung des Netzwerks auf 1\,\% die Pfaddiversität gegenüber dem Live-Netzwerk, was die Verkehrsmuster einer Klasse homogener und damit leichter klassifizierbar macht~\cite{jansen2023data}.
+Erstens ist das simulierte Netzwerk mit 1\,\% der Live-Grösse deutlich kleiner als das reale Tor-Netzwerk und kann sich dadurch anders oder weniger realistisch verhalten, weshalb die absoluten Accuracy-Werte nicht unmittelbar auf das Live-Netzwerk übertragbar sind.
 Zweitens wird der Tor Browser durch ein gepatchtes \texttt{wget2} ersetzt, das zwar denselben Satz an Ressourcen abruft, jedoch JavaScript und Browser-spezifische Verkehrsmuster nicht reproduziert~\cite{jansen2023data}.
 Beide Einschränkungen werden bei der Interpretation der Resultate in Kapitel~\ref{cha:diskussion} berücksichtigt.
 

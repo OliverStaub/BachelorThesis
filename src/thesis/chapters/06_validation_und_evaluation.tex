@@ -191,7 +191,7 @@ Volles und Reduced \gls{circuitpadding} erhöhen den mittleren Datenverkehr pro 
 Die gemessenen Werte liegen deutlich über den von Cai et al.\ ursprünglich angegebenen rund 199\,\%~\cite{cai2014systematic}, da die \glspl{pcap} zusätzliches \gls{tcp}- und TLS-Framing erfassen und das gesamte Visit-Fenster einschliessen, in dem \gls{tamaraw} auch nach dem Seitenabruf weiter Dummy-Zellen sendet.
 
 Im Verhältnis von Kosten zu Schutzwirkung steht \gls{circuitpadding} bei rund einem Prozentpunkt Accuracy-Reduktion pro Prozentpunkt Mehrverkehr im 20-Klassen-Setup, \gls{tamaraw} dagegen nur bei rund 0.05~Prozentpunkten.
-\gls{tamaraw} erkauft seinen Schutz also mit einem überproportional hohen Bandbreitenaufschlag, was die Verteidigung für den realen Tor-Betrieb derzeit nicht praktikabel macht~\cite{wfdefproxy}.
+\gls{tamaraw} erkauft seinen Schutz also mit einem überproportional hohen Bandbreitenaufschlag, der bereits in der ursprünglichen Auswertung von Cai et al.\ mit rund 199\,\% beziffert wird~\cite{cai2014systematic} und die Verteidigung für den realen Tor-Betrieb wenig praktikabel erscheinen lässt.
 Abbildung~\ref{fig:eval_defense_tradeoff} visualisiert diesen Kosten-Schutz-Vergleich für die drei Verteidigungen im 80-Klassen-Setup.
 
 \begin{figure}[H]
@@ -307,8 +307,7 @@ Die entsprechenden Erweiterungen werden in Kapitel~\ref{cha:ausblick} als mögli
 
 \paragraph{Skalierung des simulierten Netzwerks.}
 Die Experimente verwenden eine Netzwerkgrösse von 0.01, was rund 79 Relays und etwa 100 Hintergrund-Clients entspricht.
-Jansen und Wails weisen explizit darauf hin, dass eine kleinere Skalierung die Pfaddiversität reduziert und damit Klassen homogener und leichter trennbar macht~\cite{jansen2023data}.
-Die hier berichtete Baseline-Accuracy ist also tendenziell ein oberer Schätzwert dessen, was im echten Tor-Netzwerk unter sonst gleichen Bedingungen erreicht würde.
+Da das simulierte Netzwerk mit dieser Skalierung deutlich kleiner ist als das Live-Tor-Netzwerk, kann es sich anders oder weniger realistisch verhalten, und die absoluten Accuracy-Werte sind nicht unmittelbar auf das reale Netzwerk übertragbar.
 
 \paragraph{Browser und Single-Tab-Modell.}
 Anstelle eines vollwertigen Tor Browser wird ein gepatchter \texttt{wget2}-Client eingesetzt, der pro Besuch genau eine Seite mit allen referenzierten Ressourcen über \gls{tor} herunterlädt.

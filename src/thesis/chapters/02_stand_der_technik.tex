@@ -125,7 +125,7 @@ Anstatt den Tor-Verkehr direkt aufzuzeichnen, leitet ein solcher Angriff Informa
 Murdoch und Danezis zeigten bereits 2005, dass ein einzelner kompromittierter Tor-Knoten zusammen mit aktiven Latenzproben genügen kann, um die Auslastung anderer Relais zu schätzen und so wahrscheinliche Pfade zu rekonstruieren~\cite{murdoch2005low}.
 
 Im Rahmen dieser Arbeit wird ausschliesslich \gls{wf} experimentell untersucht.
-Die übrigen Klassen werden hier nur abgegrenzt, da sie für die Einordnung der Schutzwirkung von \gls{circuitpadding} wichtig sind: Padding fügt Schein-Verkehr ausschliesslich auf den Tor-internen Verbindungen ein und adressiert damit primär den einseitig beobachtenden \gls{wf}-Angriff, nicht jedoch eine angreifende Partei, die beide Endpunkte beobachtet oder Seitenkanäle ausnutzt~\cite{cai2014systematic}.
+Die übrigen Klassen werden hier nur abgegrenzt, da sie für die Einordnung der Schutzwirkung von \gls{circuitpadding} wichtig sind: Padding fügt Schein-Verkehr ausschliesslich auf den Tor-internen Verbindungen ein und adressiert damit primär den einseitig beobachtenden \gls{wf}-Angriff, nicht jedoch eine angreifende Partei, die beide Endpunkte beobachtet oder Seitenkanäle ausnutzt.
 
 \subsection{Angriffe in der Praxis}
 \label{sec:angriffe_praxis}
@@ -135,9 +135,9 @@ Konkret nutzt das Cookie-Tracking aus, dass persistente Web-Cookies, etwa von We
 Wird derselbe Browser oder dasselbe Browser-Profil für Tor- und Nicht-Tor-Verkehr verwendet, lässt sich derselbe Cookie-Wert sowohl im beobachteten Exit-Traffic als auch im Direkt-Verkehr mit bekannter IP-Adresse wiederfinden, womit eine Tor-Sitzung an eine reale Identität rückgebunden wird~\cite{gchq2012torstinks}.
 Genau diesem Muster begegnet der Tor Browser durch eine konsequente Isolation der Cookies pro First-Party-Domain und durch das automatische Verwerfen von Browser-Zuständen zwischen Sitzungen.
 
-\textbf{Browser-Exploits} nutzen Schwachstellen im Tor Browser aus, um nach erfolgreicher Code-Ausführung die reale IP-Adresse des Clients direkt am Tor-Kanal vorbei zu exfiltrieren, wie beim FBI-Zugriff auf Freedom Hosting 2013~\cite{torproject2013freedom} oder bei der Operation Pacifier gegen den Hidden Service Playpen 2015~\cite{eff_playpen}.
+\textbf{Browser-Exploits} nutzen Schwachstellen im Tor Browser aus, um nach erfolgreicher Code-Ausführung identifizierende Informationen wie die reale IP-Adresse direkt am Tor-Kanal vorbei zu exfiltrieren, wie beim Browser-Exploit gegen Freedom Hosting 2013~\cite{torproject2013freedom} oder beim FBI-Einsatz gegen den Hidden Service Playpen~\cite{eff_playpen}.
 
-\textbf{Sybil-Operationen} bestehen darin, eine grosse Zahl bösartiger Relais unter einer Identität zu betreiben, um durch gleichzeitige Kontrolle von Guard- und Exit-Positionen End-zu-End-Traffic-Correlation zu ermöglichen, wie der Relay-Early-Angriff der Carnegie Mellon University 2014~\cite{torproject2014advisory} und die seit 2017 dokumentierte KAX17-Operation mit über 900~Relais~\cite{nusenu2021kax17} zeigen.
+\textbf{Sybil-Operationen} bestehen darin, eine grosse Zahl bösartiger Relais unter einer Identität zu betreiben, um durch gleichzeitige Kontrolle mehrerer Positionen eines Schaltkreises Traffic-Confirmation zu ermöglichen, wie der Relay-Early-Angriff von 2014~\cite{torproject2014advisory} und die seit 2017 dokumentierte KAX17-Operation mit über 900~Relais~\cite{nusenu2021kax17} zeigen.
 
 \section{Website-Fingerprinting}
 \label{sec:website_fingerprinting}
@@ -179,7 +179,7 @@ Sie evaluiert eine präventive Massnahme gegen ein dokumentiert mögliches, in d
 
 \subsection{Shadow-Simulator}
 
-\gls{shadow} ist ein Ereignissimulator, der unmodifizierte Netzwerkanwendungen wie den realen \gls{tor}-Daemon, den Verkehrsgenerator TGen oder auch wget2 innerhalb einer Simulation ausführen kann~\cite{jansen2011shadow}.
+\gls{shadow} ist ein Ereignissimulator, der unmodifizierte Netzwerkanwendungen wie den realen \gls{tor}-Daemon, den Verkehrsgenerator TGen oder auch wget2 innerhalb einer Simulation ausführen kann~\cite{netsim-atc2022}.
 
 
 Shadow fängt netzwerk- und zeitbezogene Aufrufe ab und beantwortet sie aus dem simulierten Netzwerk heraus, während alle übrigen Syscalls nativ ausgeführt werden~\cite{jansen2011shadow}.
@@ -201,7 +201,7 @@ Die konkrete Werkzeugkette und die in dieser Arbeit gewählten Parameter werden 
 
 \subsection{Validierung der Modellierung}
 
-Jansen et al.\ verglichen ihre Simulationen bei verschiedenen Netzwerkskalen mit Live-Tor-Metrics, wobei Median-Werte von Circuit Build Time, Round-Trip-Time und Time-to-Last-Byte weitgehend mit den realen Messwerten übereinstimmten~\cite{neverenough-sec2021}.
+Jansen et al.\ verglichen ihre Simulationen bei verschiedenen Netzwerkskalen mit Live-Tor-Metrics, wobei die Verteilungen von Circuit Build Time, Round-Trip-Time und Time-to-Last-Byte weitgehend mit den realen Messwerten übereinstimmten~\cite{neverenough-sec2021}.
 Eine spätere Cross-Dataset-Validierung zeigte zudem, dass ein ausschliesslich auf Shadow-Daten trainierter CUMUL-Klassifikator auf Live-Tor-Traces eine Accuracy von 86\,\% erreichte, was die Eignung der Modellierung speziell für \gls{wf}-Studien bestätigt~\cite{jansen2023data}.
 
 \subsection{Website-Fingerprinting-Klassifikatoren}
@@ -300,7 +300,7 @@ Konkrete Verteidigungen lassen sich anhand dieser Schranke entlang eines Spektru
 \subsection{WTF-PAD}
 \label{sec:wf_defenses_wtfpad}
 
-\gls{wtfpad} wurde 2015 von Juarez, Imani, Perry, Diaz und Wright vorgeschlagen und bildet die methodische Grundlage für die später in Tor deployten Padding-Mechanismen~\cite{juarez2015wtf}.
+\gls{wtfpad} wurde 2015 von Juarez, Imani, Perry, Diaz und Wright als effizientes Padding-Verfahren für Tor vorgeschlagen~\cite{juarez2015wtf} und bildet die konzeptionelle Grundlage des später in Tor integrierten Adaptive-Padding-Frameworks~\cite{kadianakis2021tor}.
 
 Das Ziel von \gls{wtfpad} ist es, die für \gls{wf}-Klassifikatoren auffälligen Pausen zwischen  Zellbursts zu maskieren, indem genau dort Dummy-Zellen eingestreut werden~\cite{juarez2015wtf}.
 Dafür beobachtet eine pro Endpunkt laufende Komponente den ausgehenden Zellstrom und unterscheidet zwei Phasen, die als Burst-Modus und Gap-Modus bezeichnet werden.
@@ -324,7 +324,7 @@ Damit liegt das Verfahren deutlich näher am Anforderungsprofil von Tor als die 
 
 \subsubsection{Adaptive-Padding-Framework}
 
-Den unmittelbaren Anlass für die Einführung von Padding in Tor lieferte 2015 ein \emph{Circuit-Fingerprinting}-Angriff von Kwon et al.~\cite{kwon2015circuit}.
+Einen wesentlichen Anlass für die Einführung von Padding in Tor lieferte 2015 ein \emph{Circuit-Fingerprinting}-Angriff von Kwon et al.~\cite{kwon2015circuit}.
 Sie zeigten, dass eine beobachtende Instanz am Eingangsknoten allein anhand der Zellsequenz des Circuit-Aufbaus die verschiedenen Circuit-Typen unterscheiden kann, also einen gewöhnlichen Browsing-Circuit von einem Introduction- oder Rendezvous-Circuit eines Onion Services.
 Damit liess sich erkennen, dass und wann eine Person einen Onion Service ansteuert oder betreibt, was die Anonymitätsmenge der Nutzenden und Betreibenden von Onion Services erheblich schwächte.
 Die ersten produktiv ausgerollten Padding-Maschinen adressieren genau dieses Muster, indem sie die Aufbau-Sequenzen von Onion-Service-Circuits durch eingestreute Dummy-Zellen den Mustern gewöhnlicher Verzeichnisabfragen angleichen~\cite{kadianakis2021tor}.

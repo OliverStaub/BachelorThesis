@@ -19,18 +19,18 @@ Ergänzend liessen sich die in Abschnitt~\ref{sec:eval_einordnung} als knapp ben
 Die in dieser Arbeit verwendeten \glspl{klasse} stammen aus einem Zufalls-Sample der Simple English Wikipedia und sind strukturell sehr homogen, da Markup, Pfadschema und Ressourcenprofil pro Artikel weitgehend identisch sind.
 Zudem schliesst das statische \gls{zim}-Snapshot-Modell jede zeitliche Drift der Inhalte aus, was Juarez et al.\ als einen der zentralen Gründe nennen, weshalb \gls{closedworld}-Resultate aus Laborbedingungen im Live-Web nicht reproduzierbar sind~\cite{juarez2014critical}.
 Beides erhöht die Reproduzierbarkeit, vergrössert aber den Abstand zu produktiven Verhältnissen und schränkt den direkten Vergleich mit Literatur-Resultaten ein, die wie Sirinam et al.\ auf heterogenen Live-Korpora wie Alexa Top 100 beruhen~\cite{sirinam2018deep}.
-Eine Folgearbeit könnte statt der Wikipedia andere Websites in den \gls{shadow}-Container spiegeln, etwa das 100-URL-Set von Jansen und Wails~\cite{jansen2023data} oder einen statisch gespiegelten Auszug einer Alexa-Top-N-Liste.
+Eine Folgearbeit könnte statt der Wikipedia andere Websites in den \gls{shadow}-Container spiegeln, etwa das rund 100 Seiten umfassende Set von Jansen und Wails~\cite{jansen2023data} oder einen statisch gespiegelten Auszug einer Alexa-Top-N-Liste.
 Da \gls{shadow}-Knoten keinen externen Netzzugang besitzen, ist dafür ein vorgelagerter Spiegel- oder Caching-Schritt nötig, der die Inhalte als eingefrorene Momentaufnahme bereitstellt.
 Ergänzend liesse sich diese Momentaufnahme kontrolliert variieren, etwa durch veränderte Ressourcenreihenfolge oder eine künstliche Aktualisierung zwischen Trainings- und Testfenster, um die Auswirkung zeitlicher Drift auf die Padding-Wirkung reproduzierbar zu untersuchen.
 
 \section{Grössere Netzwerk-Skalierung und Speicher}
 \label{sec:ausblick_scale}
 
-Die Netzwerkgrösse von 0.01 entspricht rund einem Hundertstel des Live-Tor-Netzwerks und reduziert nach Jansen und Wails systematisch die Pfaddiversität~\cite{jansen2023data}.
+Die Netzwerkgrösse von 0.01 entspricht rund einem Hundertstel des Live-Tor-Netzwerks.
 Eine Skalierung auf 0.05 oder 0.1 würde die Anzahl Relays in den Bereich mehrerer Hundert bis Tausend bringen und damit dem realen Netzwerk näher kommen.
 Voraussetzung ist die in Abschnitt~\ref{sec:eval_performance} angeregte Umstellung der Verkehrsaufzeichnung auf Cell-Trace-Logs, ohne die der Speicherbedarf bereits bei der derzeitigen Skalierung an die 156-GB-Grenze stösst.
 Wird am \gls{pcap}-Verfahren festgehalten, wäre für künftige Läufe eine deutlich grössere Disk von Vorteil, da die Paketmitschnitte den Speicher schneller füllen als alle übrigen Artefakte zusammen.
-Mit beiden Massnahmen liesse sich erstmals untersuchen, ob die hier gemessene Schutzwirkung von \gls{circuitpadding} mit wachsender Pfaddiversität abnimmt, gleich bleibt oder sich invertiert.
+Mit beiden Massnahmen liesse sich erstmals untersuchen, ob die hier gemessene Schutzwirkung von \gls{circuitpadding} mit wachsender Netzwerkgrösse abnimmt, gleich bleibt oder sich invertiert.
 
 \section{Weitere Verteidigungen}
 \label{sec:ausblick_defenses}
@@ -51,8 +51,8 @@ Eine solche Erweiterung würde es erlauben, das alternative Bedrohungsmodell des
 \section{Erkennung von Tor-Verkehr}
 \label{sec:ausblick_detection}
 
-Eng verwandt mit \gls{wf}, aber mit eigenständigem praktischem Wert, ist die Frage, ob sich Tor-Verkehr mit einem fingerprinting-ähnlichen Verfahren überhaupt von gewöhnlichem Verkehr unterscheiden lässt.
-Diese Unterscheidung ist die Grundlage staatlicher Zensur, etwa durch die Great Firewall in China, und der Grund, weshalb Tor pluggable transports wie obfs4 einsetzt, die den Verkehr verschleiern sollen~\cite{saputra2016detecting}.
+Eng verwandt mit \gls{wf}, aber mit eigenständigem praktischem Wert, ist die Frage, ob sich Tor-Verkehr mit einem fingerprinting-ähnlichen Verfahren überhaupt von gewöhnlichem Verkehr unterscheiden lässt~\cite{saputra2016detecting}.
+Diese Unterscheidung ist die Grundlage staatlicher Zensur, etwa durch die Great Firewall in China, und der Grund, weshalb Tor pluggable transports wie obfs4 einsetzt, die den Verkehr verschleiern sollen~\cite{winter2012china}.
 Eine Folgearbeit könnte im \gls{shadow}-Aufbau sowohl Tor- als auch Nicht-Tor-Verkehr erzeugen und prüfen, wie zuverlässig ein Klassifikator beide trennt und wie stark obfs4 diese Trennung erschwert.
 Der praktische Nutzen liegt höher als beim reinen \gls{wf}, da Verkehrserkennung der erste Schritt jeder Blockade ist und damit unmittelbar die Erreichbarkeit von Tor in zensierten Netzen betrifft.
 
