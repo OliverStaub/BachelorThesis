@@ -76,12 +76,12 @@ Die Grössenordnung dieser Reduktion ist konsistent mit Sirinam et al., die für
 \subsection{Reduced Padding und Open-World-Inversion}
 \label{sec:eval_reduced}
 
-Der Reduced-Modus ist als sparsamere Variante des \gls{circuitpadding}s ausgelegt und wird in der torrc-Konfiguration zusätzlich zu \texttt{CircuitPadding 1} mit \texttt{ReducedCircuitPadding 1} aktiviert.
-Bei 20 Klassen liegt seine Accuracy mit 86.7\,\% wie erwartet zwischen Baseline (92.7\,\%) und voll aktiviertem Padding (83.3\,\%).
+Etwas unituitivere Resultate zeigen sich beim Reduced Padding. Der Reduced-Modus ist als sparsamere Variante des \gls{circuitpadding}s ausgelegt und wird in der torrc-Konfiguration zusätzlich zu \texttt{CircuitPadding 1} mit \texttt{ReducedCircuitPadding 1} aktiviert.
+Bei 20 Klassen liegt seine Accuracy mit 86.7\,\% wie erwartet zwischen Baseline und voll aktiviertem Padding.
 
 
-Bei 80 Klassen kehrt sich die Reihenfolge um: Mit 77.5\,\% liegt Reduced minimal unterhalb von ON (78.6\,\%).
-Im \gls{openworld} tritt ein verwandtes Phänomen auf: Sowohl ON (70.7\,\%) als auch Reduced (71.9\,\%) liegen leicht oberhalb der OFF-Baseline (68.3\,\%), was der aus dem \gls{closedworld} abgeleiteten Erwartung widerspricht.
+Bei 80 Klassen kehrt sich die Reihenfolge um: Mit 77.5\,\% liegt Reduced minimal unterhalb von ON.
+Im \gls{openworld} tritt ein verwandtes Phänomen auf: Sowohl ON als auch Reduced liegen leicht oberhalb der OFF-Baseline, was der Erwartung widerspricht.
 Beide Beobachtungen stammen aus jeweils einem einzigen \gls{shadow}-Lauf pro Konfiguration.
 Mit einer Messung pro Konfiguration lässt sich nicht beurteilen, ob die Differenzen von zwei bis vier Prozentpunkten über der Lauf-zu-Lauf-Streuung des Simulators liegen oder durch sie verursacht werden (vergleiche Abschnitt~\ref{sec:eval_einordnung}).
 Sie werden daher in dieser Arbeit nicht als Schutz- oder Schadenswirkungen interpretiert.
