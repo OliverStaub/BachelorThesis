@@ -133,10 +133,10 @@ Die Netzwerkgrösse von 0.01, die mit 150 Visits pro Klasse knappe Stichprobe un
 
 Welcher dieser Effekte tatsächlich zum Tragen kommt, lässt sich klären, wenn jede Konfiguration mit mehreren Seeds, einem grösseren Netzwerk und einem heterogeneren Korpus wiederholt wird (siehe Abschnitte~\ref{sec:ausblick_seeds}, \ref{sec:ausblick_urlsets} und~\ref{sec:ausblick_scale}).
 
-\subsection{Tamaraw als Referenzpunkt}
+\subsection{Vergleich mit Tamaraw}
 \label{sec:eval_tamaraw}
 
-\gls{tamaraw} wurde als alternative Verteidigung in einer separaten Messreihe untersucht, um den im produktiv ausgelieferten \gls{circuitpadding} gemessenen Effekt zu vergleichen.
+\gls{tamaraw} wurde als alternative Verteidigung in einer separaten Messreihe untersucht, um den beim \gls{circuitpadding} gemessenen Effekt zu vergleichen.
 
 
 Im \gls{closedworld} mit 20 Klassen sinkt die Accuracy unter \gls{tamaraw} auf 39.3\,\%, bei 80 Klassen auf 31.6\,\% und im \gls{openworld} auf 28.0\,\%.
@@ -160,7 +160,6 @@ Drei Beobachtungen ordnen das Tamaraw-Ergebnis ein.
 
 Erstens bleibt \gls{tamaraw} deutlich über der Random-Basis von 5.0\,\% beziehungsweise 1.2\,\%.
 Die konstante Senderate alleine reicht also nicht aus, um den Verkehr vollständig in Rauschen aufzulösen.
-Der Klassifikator nutzt verbleibende, padding-resistente Merkmale wie etwa die Dauer des Nutzverkehrs oder die Verteilung der Paketgrössen ausserhalb der Tor-Zellen.
 
 Zweitens deutet der Recall-Einbruch im \gls{openworld} darauf hin, dass \gls{tamaraw} vor allem die zuverlässige Erkennung der überwachten Seiten erschwert.
 Viele überwachte Besuche werden fälschlich der unüberwachten Sammelklasse zugeordnet, statt einer anderen überwachten Seite.
