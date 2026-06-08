@@ -187,7 +187,7 @@ Für die Läufe \texttt{exp-baseline-80}, \texttt{exp-padding-80} und \texttt{ex
 
 Volles und Reduced \gls{circuitpadding} erhöhen den mittleren Datenverkehr pro Besuch um lediglich 3.0\,\% beziehungsweise 1.3\,\% in Bytes und liegen damit innerhalb der Streubreite einzelner Besuche.
 \gls{tamaraw}-Padding vervielfacht den Datenverkehr hingegen um den Faktor 11.6 in Bytes und 18.7 in Paketen.
-Auffällig ist zusätzlich, dass sich das Up-zu-Down-Verhältnis von etwa 1:4.3 in den ungeschützten Besuchen unter \gls{tamaraw} auf rund 2.7:1 umkehrt, da der Monitor unabhängig vom tatsächlichen Datenfluss in jedem Tick eine Dummy-Zelle in Richtung Bridge sendet.
+
 Die gemessenen Werte liegen deutlich über den von Cai et al.\ ursprünglich angegebenen rund 199\,\%~\cite{cai2014systematic}, da die \glspl{pcap} zusätzliches \gls{tcp}- und TLS-Framing erfassen und das gesamte Visit-Fenster einschliessen, in dem \gls{tamaraw} auch nach dem Seitenabruf weiter Dummy-Zellen sendet.
 
 Im Verhältnis von Kosten zu Schutzwirkung steht \gls{circuitpadding} bei rund einem Prozentpunkt Accuracy-Reduktion pro Prozentpunkt Mehrverkehr im 20-Klassen-Setup, \gls{tamaraw} dagegen nur bei rund 0.05~Prozentpunkten.
@@ -225,10 +225,10 @@ Abbildung~\ref{fig:eval_defense_tradeoff} visualisiert diesen Kosten-Schutz-Verg
 \section{Ressourcen und Performance}
 \label{sec:eval_performance}
 
-Ergänzend zu den klassifikationsbezogenen Resultaten wird der Ressourcenverbrauch des Simulationsservers \texttt{shadowsrv-001} während der Experimente protokolliert.
-Dazu wird das Skript \texttt{perfmon.py} verwendet, das im Intervall von fünf Sekunden Werte aus \texttt{/proc/stat}, \texttt{/proc/meminfo}, \texttt{statvfs} und \texttt{/proc/loadavg} ausliest und in eine tagesweise rotierte \texttt{CSV}-Datei schreibt.
-Ergänzend protokolliert der Wrapper \texttt{run\_sim.sh} pro Simulationslauf eine \texttt{dstat}-Spur innerhalb des Experimentordners.
-Betrachtet werden die drei zeitlich zusammenhängenden \gls{tamaraw}-Läufe \texttt{exp-tamaraw-20v2}, \texttt{exp-tamaraw-80} und \texttt{exp-tamaraw-openworld}, da \gls{tamaraw} aufgrund seines hohen Daten- und Rechenaufwands die Engpässe am deutlichsten sichtbar macht.
+Ergänzend zu den klassifikationsbezogenen Resultaten wird der Ressourcenverbrauch des Simulationsservers \texttt{shadowsrv-001} während einzelner Experimente protokolliert.
+Dazu wird das Skript \texttt{perfmon.py} verwendet, das im Intervall von fünf Sekunden Werte aus \texttt{/proc/stat}, \texttt{/proc/meminfo}, \texttt{statvfs} und \texttt{/proc/loadavg} ausliest und in \texttt{CSV}-Datei schreibt.
+
+Betrachtet werden die drei zeitlich nacheinander ausgeführten \gls{tamaraw}-Läufe \texttt{exp-tamaraw-20v2}, \texttt{exp-tamaraw-80} und \texttt{exp-tamaraw-openworld}.
 
 \begin{figure}[H]
     \centering
@@ -283,31 +283,15 @@ Betrachtet werden die drei zeitlich zusammenhängenden \gls{tamaraw}-Läufe \tex
         \end{groupplot}
         \node[anchor=north, yshift=-0.4cm] at (current bounding box.south) {\pgfplotslegendfromname{perfmonlegend}};
     \end{tikzpicture}
-    \caption{Auslastung von CPU, Arbeitsspeicher und Disk auf \texttt{shadowsrv-001} im Vergleich der drei Tamaraw-Läufe, normiert auf die Laufzeit seit Experimentstart. Gefüllte Flächen zeigen die jeweilige Auslastung, schwarze Punktmarker den regulären Abschluss, rote Kreuze den durch \texttt{ENOSPC} erzwungenen Abbruch unter Open-World. Disk fehlt für \texttt{exp-tamaraw-20v2}, da \texttt{perfmon} während dieses Laufs nicht aktiv war. Die zugrunde liegenden Stichproben im Zwei-Stunden-Raster sind in Anhang~\ref{app:serverumgebung_perfmon} aufgeführt. Eigene Darstellung aus den \texttt{perfmon}- und \texttt{dstat}-Logs.}
+    \caption{Auslastung von CPU, Arbeitsspeicher und Disk auf \texttt{shadowsrv-001} während den Tamaraw Simulationen. Eigene Darstellung aus den \texttt{perfmon}- und \texttt{dstat}-Logs.}
     \label{fig:eval_perfmon_comparison}
 \end{figure}
 
-\begin{table}[H]
-    \centering
-    \caption{Ressourcenverbrauch der drei Tamaraw-Läufe. CPU- und RAM-Werte als Mittel beziehungsweise Maximum aus der Telemetrie. Disk-Werte als Maximum aus \texttt{perfmon}; für \texttt{exp-tamaraw-20v2} liegt keine Disk-Telemetrie vor.}
-    \label{tab:eval_performance}
-    \begin{tabular}{lrrrrr}
-        \hline
-        Experiment & Dauer [h] & CPU $\varnothing$ [\%] & RAM max [\%] & RAM max [GB] & Disk max [\%] \\
-        \hline
-        exp-tamaraw-20v2      &  8.2 & 99.8 & 78.7 &  98.9 & n.\,v. \\
-        exp-tamaraw-80        & 11.8 & 99.8 & 89.9 & 113.1 & 97.5 \\
-        exp-tamaraw-openworld & 16.2 & 99.8 & 96.8 & 121.7 & 100.0 \\
-        \hline
-    \end{tabular}
-\end{table}
+Über alle drei Läufe hinweg bildet die CPU mit konstant rund 99.8\,\% Auslastung hoch ausgelastet und bleibt am Anschlag.
+Arbeitsspeicher und Disk wachsen während der Laufzeit annähernd linear, da sowohl Shadow-Datenstrukturen als auch die \gls{pcap}-Aufzeichnungen monoton anwachsen.
 
-Über alle drei Läufe hinweg bildet die CPU mit konstant rund 99.8\,\% Auslastung den primären Engpass und bleibt unabhängig von der Klassenanzahl am Anschlag.
-Arbeitsspeicher und Disk wachsen während der Laufzeit annähernd linear, da sowohl Shadow-Datenstrukturen als auch \gls{pcap}-Aufzeichnungen monoton anwachsen.
+
 Bei der grösseren \gls{openworld}-Konfiguration ist die Disk-Partition mit 156 GB die letztlich limitierende Ressource: \texttt{perfmon} und Shadow terminieren mit \texttt{ENOSPC}, bevor der Lauf regulär enden kann.
-Eine schlankere Aufzeichnung auf Tor-Zell-Ebene nach Jansen und Wails würde den Speicherbedarf um ein bis zwei Grössenordnungen reduzieren und die \gls{openworld}-Skala unter \gls{tamaraw} wieder unterhalb der 156-GB-Grenze halten~\cite{jansen2023data}.
-In der vorliegenden Arbeit wird dennoch an den \glspl{pcap} festgehalten, da sie dem in Abschnitt~\ref{sec:realisierung_monitore} beschriebenen Bedrohungsmodell eines lokalen Beobachters entsprechen.
-Die Umstellung auf Cell-Trace-Logs wird in Kapitel~\ref{cha:ausblick} als Folgearbeit aufgegriffen.
 
 \section{Einordnung und Limitationen}
 \label{sec:eval_einordnung}
@@ -317,15 +301,14 @@ Mehrere Faktoren begrenzen die Übertragbarkeit auf reale Bedingungen und werden
 
 \paragraph{Schwerpunkt der Arbeit.}
 Gemäss der in Anhang~\ref{app:aufgabenstellung} dokumentierten Aufgabenstellung umfasst die vorliegende Arbeit sowohl den konstruktiven Aufbau einer Shadow-basierten \gls{wf}-Pipeline als auch die experimentelle Auswertung mehrerer Verteidigungen.
-Der zeitliche Schwerpunkt liegt deutlich auf dem konstruktiven Teil, also dem Aufbau und der Validierung der Werkzeugkette aus \texttt{shadowctl.py}, \texttt{generate-wf-config.py}, \texttt{zimsrv.py}, \texttt{pcap\_to\_npz.py} und \texttt{correlation.py} sowie deren Integration mit WFlib.
-Für die eigentliche Experimentphase verblieb entsprechend weniger Zeit als ursprünglich geplant, weshalb pro Konfiguration jeweils nur ein Shadow-Lauf mit festem Seed durchgeführt wurde und zusätzliche Variationen wie mehrere Seeds, grössere Netzwerkskalen oder ein heterogenerer Korpus nicht mehr untersucht werden konnten.
-Die entsprechenden Erweiterungen werden in Kapitel~\ref{cha:ausblick} als Folgearbeiten beschrieben.
+Der zeitliche Schwerpunkt liegt damit auf dem konstruktiven Teil, also dem Aufbau und der Validierung der Werkzeugketten sowie deren Integration mit WFlib.
+Für die eigentliche Experimentphase verblieb entsprechend nur limitiert Zeit, weshalb pro Konfiguration jeweils nur ein Shadow-Lauf mit festem Seed durchgeführt wurde und zusätzliche Variationen wie mehrere Seeds, grössere Netzwerkskalen oder ein heterogenerer Korpus nicht mehr untersucht werden konnten.
+Die entsprechenden Erweiterungen werden in Kapitel~\ref{cha:ausblick} als mögliche Folgearbeiten beschrieben.
 
 \paragraph{Skalierung des simulierten Netzwerks.}
 Die Experimente verwenden eine Netzwerkgrösse von 0.01, was rund 79 Relays und etwa 100 Hintergrund-Clients entspricht.
 Jansen und Wails weisen explizit darauf hin, dass eine kleinere Skalierung die Pfaddiversität reduziert und damit Klassen homogener und leichter trennbar macht~\cite{jansen2023data}.
 Die hier berichtete Baseline-Accuracy ist also tendenziell ein oberer Schätzwert dessen, was im echten Tor-Netzwerk unter sonst gleichen Bedingungen erreicht würde.
-Die untersuchten Differenzen zwischen den Padding-Modi sind dagegen weniger anfällig für diese Verzerrung, da sie auf demselben simulierten Netzwerk gemessen werden und Skalen-Effekte sich im Vergleich der Modi grösstenteils herausheben.
 
 \paragraph{Browser und Single-Tab-Modell.}
 Anstelle eines vollwertigen Tor Browser wird ein gepatchter \texttt{wget2}-Client eingesetzt, der pro Besuch genau eine Seite mit allen referenzierten Ressourcen über \gls{tor} herunterlädt.
@@ -335,28 +318,14 @@ Im realen Tor-Browser-Betrieb ist Multi-Tab-Verkehr die Regel und nicht die Ausn
 
 \paragraph{Statisches Inhaltsmodell.}
 Die Monitor-Clients beziehen ihre Inhalte aus einem statischen Snapshot der Simple English Wikipedia, ausgeliefert über den eigens gebauten \texttt{zimsrv.py}.
-Damit fehlen reale Dynamiken wie sich verändernde Werbeflächen, A/B-Tests, Drittanbieter-Tracker, CDN-Lastverteilung oder personalisierte Inhalte, die im Live-Web jede Seite über die Zeit nicht-trivial variieren lassen.
+Damit fehlen reale Dynamiken wie sich verändernde Werbeflächen, A/B-Tests, Drittanbieter-Tracker, CDN-Lastverteilung oder personalisierte Inhalte, die im Live-Web jede Seite über die Zeit verändern.
 Juarez et al.\ benennen genau diese Inhaltsveränderungen über die Zeit (concept drift) als einen Hauptgrund dafür, dass \gls{closedworld}-Resultate im realen Tor-Browser-Betrieb nicht reproduzierbar sind~\cite{juarez2014critical}.
 Im vorliegenden Versuchsaufbau ist concept drift ausgeschlossen, alle Besuche derselben Seite liefern bis auf Tor-bedingte Streuung dieselben Bytes.
-
-\paragraph{Hintergrundrauschen.}
-Tornettools erzeugt zwar TGEN- und Markov-Hintergrund-Clients, deren Verkehr eine Schätzung des realen Tor-Verkehrsmodells nachbildet~\cite{neverenough-sec2021}.
-Im Vergleich zum Live-Netzwerk mit aktuell rund zwei Millionen täglich verbundenen Nutzenden (Stand 2026, gemessen anhand gleichzeitig verbundener Clients)~\cite{tormetricsabout} ist die hier reproduzierte Last jedoch klein.
-Der in Abschnitt~\ref{cha:stand_der_technik} genannte historische Spitzenwert von bis zu acht Millionen Personen pro Tag~\cite{mani2018understanding} bezieht sich auf eine andere Metrik (geschätzte Anzahl einzelner Personen statt gleichzeitiger Verbindungen) und ist daher nicht direkt mit dem heutigen Wert vergleichbar.
-Mehr Hintergrundverkehr bedeutet einerseits mehr Streuung der Latenzen pro Schaltkreis und andererseits mehr unbeabsichtigte Tor-Zell-Sequenzen, die mit echten Padding-Mustern verwechselt werden können.
-Beide Effekte würden die Erkennungsrate gegenüber den hier berichteten Werten weiter senken.
 
 \paragraph{Trainingsmenge und Inhaltskorpus.}
 Pro \gls{klasse} fliessen in dieser Arbeit 150 Visits in die Trainings-, Validierungs- und Testaufteilung ein, was rund einem Siebtel der Stichprobe entspricht, mit der Sirinam et al.\ ihre 98.3\,\% Baseline-Accuracy auf 95 Klassen erreichten~\cite{sirinam2018deep}.
 Daneben unterscheidet sich auch der Inhaltskorpus: Sirinam et al.\ beobachten heterogene Live-Webseiten aus den Top 100 von Alexa mit unterschiedlichen Frameworks, CDNs und Ressourcenprofilen, während im vorliegenden Aufbau ausschliesslich Artikel aus der Simple English Wikipedia über denselben \texttt{zimsrv} ausgeliefert werden, deren HTML-Gerüst und Ressourcenstruktur sich nur in den eigentlichen Inhalten unterscheiden.
 Beide Faktoren wirken in dieselbe Richtung und erschweren die Klassentrennung, sodass die im Vergleich zu Sirinam et al.\ tiefere Baseline-Accuracy (92.7\,\% bei 20 Klassen, 82.4\,\% bei 80 Klassen) plausibel wird.
-Die Folgerung, dass \gls{circuitpadding} im untersuchten Aufbau einen kleinen, aber messbaren Schutzbeitrag leistet, bleibt davon unberührt, da die Padding-Modi alle auf demselben Korpus und derselben Trainingsmenge gemessen werden.
-
-\paragraph{Bedrohungsmodell und Korrelationsangriff.}
-Der \gls{df}-Angriff geht von einer passiven beobachtenden Instanz zwischen Client und Eingangsknoten aus.
-Wer demgegenüber sowohl an Eingangs- als auch an Ausgangsknoten zuhört, kann den Verkehr mit einem Korrelationsangriff direkt zuordnen, ohne pro Webseite ein Klassifikationsmodell zu lernen~\cite{nasr2018deepcorr}.
-Eine erste Implementierung eines solchen Korrelationsangriffs (\texttt{correlation.py}) wurde in dieser Arbeit aufgebaut, jedoch nicht über alle Experimente hinweg ausgewertet.
-Der entsprechende Auswertungsschritt bleibt damit als Ausblick offen und wird in Kapitel~\ref{cha:ausblick} aufgenommen.
 
 \paragraph{Anzahl Wiederholungen.}
 Pro Konfiguration wird genau ein Shadow-Lauf mit einem festen Seed durchgeführt.
