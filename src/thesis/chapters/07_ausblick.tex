@@ -19,12 +19,12 @@ Sie adressieren primär die in Kapitel~\ref{cha:diskussion} benannten methodisch
 Jede in dieser Arbeit berichtete Kennzahl stammt aus genau einem \gls{shadow}-Lauf mit festem Seed.
 Damit lassen sich Differenzen in der Grössenordnung weniger Prozentpunkte, wie jene zwischen ON und Reduced bei 80 Klassen oder die Inversion der Padding-Wirkung im \gls{openworld}-Setup, nicht von der Streuung des Simulators unterscheiden.
 Eine Wiederholung jedes Hauptexperiments mit mehreren Seeds würde Mittelwerte, Standardabweichungen und Konfidenzintervalle pro Konfiguration ermöglichen.
-Ergänzend liessen sich die in Abschnitt~\ref{sec:eval_einordnung} als knapp benannten 150 Visits pro \gls{klasse} erhöhen, da bei einem 10\,\%-Test-Split nur rund 15 Samples in die Accuracy einfliessen und einzelne Fehlklassifikationen die Werte merkbar bewegen.
+Ergänzend liessen sich die in Abschnitt~\ref{sec:eval_einordnung} als knapp benannten 150 Visits pro \gls{klasse} erhöhen, da bei einem 10\,\%-Test-Split nur rund 15 Samples in die Accuracy einfliessen und einzelne Fehlklassifikationen die Werte merkbar bewegen können.
 
 \subsection{Realistischere Inhalte}
 \label{sec:ausblick_inhalte}
 
-Die in dieser Arbeit verwendeten \glspl{klasse} stammen aus einem Zufalls-Sample der Simple English Wikipedia und sind strukturell sehr homogen, da Markup, Pfadschema und Ressourcenprofil pro Artikel weitgehend identisch sind.
+Die in dieser Arbeit verwendeten Klassen stammen aus einem Zufalls-Sample der Simple English Wikipedia und sind strukturell sehr homogen, da Markup, Pfadschema und Ressourcenprofil pro Artikel weitgehend identisch sind.
 Zudem schliesst das statische \gls{zim}-Snapshot-Modell jede zeitliche Drift der Inhalte aus, was Juarez et al.\ als einen der zentralen Gründe nennen, weshalb \gls{closedworld}-Resultate aus Laborbedingungen im Live-Web nicht reproduzierbar sind~\cite{juarez2014critical}.
 Beides erhöht die Reproduzierbarkeit, vergrössert aber den Abstand zu produktiven Verhältnissen und schränkt den direkten Vergleich mit Literatur-Resultaten ein, die wie Sirinam et al.\ auf heterogenen Live-Korpora wie Alexa Top 100 beruhen~\cite{sirinam2018deep}.
 Eine Folgearbeit könnte statt der Wikipedia andere Websites in den \gls{shadow}-Container spiegeln, etwa das rund 100 Seiten umfassende Set von Jansen und Wails~\cite{jansen2023data} oder einen statisch gespiegelten Auszug einer Alexa-Top-N-Liste.
