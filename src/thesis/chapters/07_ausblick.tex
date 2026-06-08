@@ -5,83 +5,88 @@ Die in Kapitel~\ref{cha:diskussion} berichteten Resultate beantworten die in Kap
 Sie lassen jedoch eine Reihe von Fragen offen, die innerhalb der verfügbaren Bearbeitungszeit nicht mehr abgedeckt werden konnten.
 Dieses Kapitel fasst die wichtigsten dieser Folgearbeiten zusammen und ordnet sie nach Aufwand und erwartetem Erkenntnisgewinn.
 
-\section{Auswertung des Korrelationsangriffs}
-\label{sec:ausblick_correlation}
-
-Im Rahmen der Realisierung wurde mit \texttt{correlation.py} ein Werkzeug aufgebaut, das die in den Monitor- und Exit-Relay-\glspl{pcap} aufgezeichneten Paketzeitreihen einliest, Timing-Korrelationen pro Schaltkreis berechnet und daraus \gls{roc}-Kurven sowie Score-Verteilungen erzeugt.
-Der Datenpfad wurde an einzelnen Läufen geprüft, eine systematische Auswertung über alle in dieser Arbeit erzeugten Datensätze fehlt jedoch.
-Eine konsequente Anwendung des Werkzeugs auf die bestehenden Experimentordner würde es erlauben, das in Abschnitt~\ref{sec:eval_einordnung} skizzierte alternative Bedrohungsmodell des globalen passiven Beobachters quantitativ einzuordnen.
-Besonders aufschlussreich wäre der direkte Vergleich der Korrelations-\gls{auc} zwischen den vier Padding-Modi, da \gls{circuitpadding} und \gls{tamaraw} gemäss Literatur unterschiedliche Wirkungen auf zeitliche Merkmale entfalten und ein Vergleich zwischen \gls{df}- und Korrelationsangriff so erst möglich würde~\cite{nasr2018deepcorr}.
-Der Aufwand ist gering, da Tor-Quellcode nicht verändert werden muss und die benötigten Relay-\glspl{pcap} bereits aus den Läufen mit der Option \texttt{-{}-correlation} vorliegen.
-
-\section{Mehrere Seeds und statistische Streuung}
+\section{Grössere Datenbasis: mehrere Seeds und mehr Visits}
 \label{sec:ausblick_seeds}
 
 Jede in dieser Arbeit berichtete Kennzahl stammt aus genau einem \gls{shadow}-Lauf mit festem Seed.
-Die Folge ist, dass Differenzen in der Grössenordnung weniger Prozentpunkte, wie die Differenz zwischen ON und Reduced bei 80 Klassen oder die Inversion der Padding-Wirkung im \gls{openworld}-Setup, nicht von der Streuung des Simulators unterschieden werden können.
-Eine Wiederholung jedes Hauptexperiments mit mindestens drei unabhängigen Seeds würde es ermöglichen, Mittelwerte und Standardabweichungen pro Konfiguration zu berichten und damit Konfidenzintervalle für die Padding-Effekte anzugeben.
-Da die Wall-Clock-Laufzeit linear mit der Anzahl Seeds wächst und insbesondere die \gls{tamaraw}-\gls{openworld}-Läufe bereits an die Disk-Obergrenze des Servers stiessen, müsste zugleich auf das in Abschnitt~\ref{sec:eval_performance} skizzierte Cell-Trace-Logging umgestellt werden.
+Damit lassen sich Differenzen in der Grössenordnung weniger Prozentpunkte, wie jene zwischen ON und Reduced bei 80 Klassen oder die Inversion der Padding-Wirkung im \gls{openworld}-Setup, nicht von der Streuung des Simulators unterscheiden.
+Eine Wiederholung jedes Hauptexperiments mit mindestens drei unabhängigen Seeds würde Mittelwerte, Standardabweichungen und Konfidenzintervalle pro Konfiguration ermöglichen.
+Ergänzend liessen sich die in Abschnitt~\ref{sec:eval_einordnung} als knapp benannten 150 Visits pro \gls{klasse} erhöhen, da bei einem 10\,\%-Test-Split nur rund 15 Samples in die Accuracy einfliessen und einzelne Fehlklassifikationen die Werte merkbar bewegen.
+Da die Laufzeit linear mit Seeds und Visits wächst und insbesondere die \gls{tamaraw}-\gls{openworld}-Läufe bereits an die Disk-Obergrenze stiessen, müsste zugleich auf das in Abschnitt~\ref{sec:eval_performance} skizzierte Cell-Trace-Logging umgestellt werden.
+
+\section{Realistischere Inhalte}
+\label{sec:ausblick_inhalte}
+
+Die in dieser Arbeit verwendeten \glspl{klasse} stammen aus einem Zufalls-Sample der Simple English Wikipedia und sind strukturell sehr homogen, da Markup, Pfadschema und Ressourcenprofil pro Artikel weitgehend identisch sind.
+Zudem schliesst das statische \gls{zim}-Snapshot-Modell jede zeitliche Drift der Inhalte aus, was Juarez et al.\ als einen der zentralen Gründe nennen, weshalb \gls{closedworld}-Resultate aus Laborbedingungen im Live-Web nicht reproduzierbar sind~\cite{juarez2014critical}.
+Beides erhöht die Reproduzierbarkeit, vergrössert aber den Abstand zu produktiven Verhältnissen und schränkt den direkten Vergleich mit Literatur-Resultaten ein, die wie Sirinam et al.\ auf heterogenen Live-Korpora wie Alexa Top 100 beruhen~\cite{sirinam2018deep}.
+Eine Folgearbeit könnte statt der Wikipedia andere Websites in den \gls{shadow}-Container spiegeln, etwa das 100-URL-Set von Jansen und Wails~\cite{jansen2023data} oder einen statisch gespiegelten Auszug einer Alexa-Top-N-Liste.
+Da \gls{shadow}-Knoten keinen externen Netzzugang besitzen, ist dafür ein vorgelagerter Spiegel- oder Caching-Schritt nötig, der die Inhalte als eingefrorene Momentaufnahme bereitstellt.
+Ergänzend liesse sich diese Momentaufnahme kontrolliert variieren, etwa durch veränderte Ressourcenreihenfolge oder eine künstliche Aktualisierung zwischen Trainings- und Testfenster, um die Auswirkung zeitlicher Drift auf die Padding-Wirkung reproduzierbar zu untersuchen.
 
 \section{Realistischeres Browser-Modell}
 \label{sec:ausblick_browser}
 
-Der in dieser Arbeit eingesetzte \texttt{wget2}-Client bildet die wichtigste Vereinfachung gegenüber dem realen Tor-Browser-Betrieb.
+Der eingesetzte \texttt{wget2}-Client bildet die wichtigste Vereinfachung gegenüber dem realen Tor-Browser-Betrieb.
 Wang und Goldberg zeigen, dass Multi-Tab-Verkehr und überlappende Seitenaufrufe die Erkennungsrate eines \gls{closedworld}-Klassifikators erheblich senken~\cite{wang2016realistically}.
-Eine Folgearbeit könnte den Monitor-Client durch einen headless betriebenen Tor-Browser ersetzen, der über eine Steuerschnittstelle (zum Beispiel das Marionette-Protokoll) deterministisch eine vorgegebene Sequenz von Seiten lädt.
-Damit liessen sich JavaScript-Ausführung, dynamisches Nachladen von Ressourcen und parallele Tab-Sitzungen abbilden und die in Abschnitt~\ref{sec:eval_einordnung} dokumentierte Überschätzung der Baseline-Accuracy quantitativ überprüfen.
+Eine Folgearbeit könnte den Monitor-Client durch einen headless betriebenen Tor-Browser ersetzen, der über eine Steuerschnittstelle deterministisch eine vorgegebene Seitensequenz lädt, und damit JavaScript-Ausführung, dynamisches Nachladen und parallele Tabs abbilden.
 Der Aufwand ist erheblich, da ein vollständiger Browser im Shadow-Kontext eingebettet werden muss und der Ressourcenverbrauch pro Monitor deutlich über dem von \texttt{wget2} liegt.
 
-\section{Dynamische Inhalte und zeitliche Drift}
-\label{sec:ausblick_drift}
-
-Das im Versuchsaufbau eingesetzte statische \gls{zim}-Snapshot-Modell schliesst zeitliche Drift der Inhalte vollständig aus, was in der gewählten Laborkonfiguration erwünscht ist, aber den Abstand zu produktiven Verhältnissen vergrössert.
-Juarez et al.\ benennen die Drift der Inhalte als einen der zentralen Gründe, weshalb \gls{closedworld}-Resultate aus Laborbedingungen im Live-Web nicht reproduzierbar sind~\cite{juarez2014critical}.
-Eine Folgearbeit könnte das \gls{zim}-Modell um eine kontrollierte Variation der ausgelieferten Bytes ergänzen, etwa durch zufällige Veränderung der Reihenfolge von Ressourcen, durch das Einblenden simulierter Werbeflächen oder durch eine künstlich erzeugte Aktualisierung der Inhalte zwischen Trainings- und Testfenster.
-So liessen sich die Auswirkungen zeitlicher Drift auf die Padding-Wirkung in einer reproduzierbaren Umgebung untersuchen, ohne die Vorteile der Shadow-Simulation aufzugeben.
-
-\section{Alternative URL-Korpora und Vergleichbarkeit mit der Literatur}
-\label{sec:ausblick_urlsets}
-
-Die in dieser Arbeit verwendeten \glspl{klasse} stammen aus einem Zufalls-Sample der Simple English Wikipedia und sind untereinander strukturell sehr homogen, da Markup, Pfadschema und Ressourcenprofil pro Artikel weitgehend identisch sind.
-Damit lässt sich die hier gemessene Baseline-Accuracy nur eingeschränkt direkt mit Literatur-Resultaten vergleichen, die wie Sirinam et al.\ auf heterogenen Live-Korpora wie Alexa Top 100 beruhen~\cite{sirinam2018deep}.
-Eine Folgearbeit könnte das in \texttt{generate-urls.py} erzeugte URL-Set durch alternative Korpora ersetzen, zum Beispiel das in \texttt{explainwf-popets2023/data/urls.txt} hinterlegte 100-URL-Set von Jansen und Wails~\cite{jansen2023data} oder einen statisch gespiegelten Auszug einer Alexa-Top-N-Liste, und denselben Versuchsaufbau auf diesen Korpora wiederholen.
-So liesse sich quantifizieren, wie stark die gemessene Baseline auf der Homogenität der Wikipedia-Inhalte beruht und ob die Effektgrösse von \gls{circuitpadding} auf heterogeneren Inhalten erhalten bleibt.
-Der Aufwand liegt im mittleren Bereich, da der bestehende Versuchsaufbau weitgehend unverändert bleibt und lediglich die Bereitstellung der Inhalte im \gls{shadow}-Container angepasst werden muss.
-Bei Live-Inhalten ist zusätzlich ein vorgelagerter Spiegel- oder Caching-Schritt nötig, weil \gls{shadow}-Knoten keinen externen Netzzugang besitzen und Reproduzierbarkeit nur auf einer eingefrorenen Inhalts-Momentaufnahme gegeben ist.
-
-\section{Grössere Netzwerk-Skalierung}
+\section{Grössere Netzwerk-Skalierung und Speicher}
 \label{sec:ausblick_scale}
 
 Die Netzwerkgrösse von 0.01 entspricht rund einem Hundertstel des Live-Tor-Netzwerks und reduziert nach Jansen und Wails systematisch die Pfaddiversität~\cite{jansen2023data}.
-Eine Skalierung auf 0.05 oder 0.1 würde die Anzahl Relays in den Bereich mehrerer Hundert bis Tausend bringen und damit dem in Abschnitt~\ref{sec:realisierung_umgebung} skizzierten Strukturmerkmal des realen Tor-Netzwerks deutlich näher kommen.
-Voraussetzung dafür ist die in Abschnitt~\ref{sec:eval_performance} angeregte Umstellung der Verkehrsaufzeichnung auf Cell-Trace-Logs auf Tor-Ebene, ohne die der Speicherbedarf bereits bei der derzeitigen Skalierung an die 156-GB-Grenze stösst.
-Mit beiden Massnahmen zusammen liesse sich erstmals untersuchen, ob die hier gemessene Schutzwirkung von \gls{circuitpadding} mit wachsender Pfaddiversität abnimmt, gleich bleibt oder sich sogar invertiert.
+Eine Skalierung auf 0.05 oder 0.1 würde die Anzahl Relays in den Bereich mehrerer Hundert bis Tausend bringen und damit dem realen Netzwerk näher kommen.
+Voraussetzung ist die in Abschnitt~\ref{sec:eval_performance} angeregte Umstellung der Verkehrsaufzeichnung auf Cell-Trace-Logs, ohne die der Speicherbedarf bereits bei der derzeitigen Skalierung an die 156-GB-Grenze stösst.
+Wird am \gls{pcap}-Verfahren festgehalten, wäre für künftige Läufe eine deutlich grössere Disk von Vorteil, da die Paketmitschnitte den Speicher schneller füllen als alle übrigen Artefakte zusammen.
+Mit beiden Massnahmen liesse sich erstmals untersuchen, ob die hier gemessene Schutzwirkung von \gls{circuitpadding} mit wachsender Pfaddiversität abnimmt, gleich bleibt oder sich invertiert.
 
 \section{Weitere Verteidigungen}
 \label{sec:ausblick_defenses}
 
 Die Arbeit vergleicht \gls{circuitpadding} gegen die historisch bedeutsame \gls{tamaraw}-Verteidigung.
-Seit der ursprünglichen \gls{tamaraw}-Veröffentlichung sind weitere Schutzansätze publiziert worden, die einen günstigeren Kosten-Schutz-Punkt im in Abschnitt~\ref{sec:eval_bandwidth} aufgespannten Trade-off-Diagramm versprechen.
-Zu nennen sind insbesondere RegulaTor mit lastabhängiger Senderate und FRONT mit zufallsbasierter Padding-Verteilung am Anfang einer Sitzung.
-Eine Folgearbeit könnte die in dieser Arbeit aufgebaute Pipeline (\texttt{shadowctl.py}, \texttt{pcap\_to\_npz.py}, WFlib-Training) ohne grosse Änderungen auf diese Verteidigungen anwenden, sofern eine Referenzimplementierung als Tor-Patch oder als wfdefproxy-Plugin vorliegt~\cite{wfdefproxy}.
-Damit liesse sich der in Tabelle~\ref{tab:eval_bandwidth} aufgespannte Vergleich um zusätzliche Punkte ergänzen und die Einordnung von \gls{circuitpadding} gegenüber dem aktuellen Stand der Schutzverfahren schärfen.
+Seit deren Veröffentlichung sind weitere Schutzansätze publiziert worden, die einen günstigeren Kosten-Schutz-Punkt im in Abschnitt~\ref{sec:eval_bandwidth} aufgespannten Trade-off versprechen, insbesondere RegulaTor mit lastabhängiger Senderate und FRONT mit zufallsbasierter Padding-Verteilung am Sitzungsanfang.
+Eine Folgearbeit könnte die aufgebaute Pipeline ohne grosse Änderungen auf diese Verteidigungen anwenden, sofern eine Referenzimplementierung als Tor-Patch oder als wfdefproxy-Plugin vorliegt~\cite{wfdefproxy}, und so den in Tabelle~\ref{tab:eval_bandwidth} aufgespannten Vergleich erweitern.
+
+\section{Simulation von Korrelationsangriffen}
+\label{sec:ausblick_correlation}
+
+Die aus Sicht des Autors wertvollste Erweiterung wäre, die aufgebaute Simulationsumgebung so weiterzuentwickeln, dass sich Korrelationsangriffe untersuchen lassen.
+Während \gls{wf} einen lokalen Beobachter am Eingang des Schaltkreises voraussetzt, modelliert ein Korrelationsangriff einen Gegner, der die Verkehrszeitreihen am Eingang und am Ausgang vergleicht und so Sender und Empfänger einander zuordnet~\cite{murdoch2005low, nasr2018deepcorr}.
+Dieses Bedrohungsmodell ist besonders praxisrelevant, da entsprechende Angriffe gegen Tor nicht nur theoretisch sind, sondern in der realen Welt bereits mehrfach beobachtet wurden~\cite{torproject2014advisory}.
+\gls{shadow} bietet dafür eine günstige Ausgangslage, weil der Verkehr an beiden Enden eines Schaltkreises in einer kontrollierten, reproduzierbaren Umgebung aufgezeichnet werden kann, ohne den Verkehr realer Nutzender einzubeziehen.
+Eine solche Erweiterung würde es erlauben, das alternative Bedrohungsmodell des globalen passiven Beobachters quantitativ einzuordnen und der Wirkung der untersuchten Padding-Modi gegenüberzustellen, da \gls{circuitpadding} und \gls{tamaraw} primär auf andere Merkmale zielen als zeitliche Korrelation.
+
+\section{Erkennung von Tor-Verkehr}
+\label{sec:ausblick_detection}
+
+Eng verwandt mit \gls{wf}, aber mit eigenständigem praktischem Wert, ist die Frage, ob sich Tor-Verkehr mit einem fingerprinting-ähnlichen Verfahren überhaupt von gewöhnlichem Verkehr unterscheiden lässt.
+Diese Unterscheidung ist die Grundlage staatlicher Zensur, etwa durch die Great Firewall in China, und der Grund, weshalb Tor pluggable transports wie obfs4 einsetzt, die den Verkehr verschleiern sollen~\cite{saputra2016detecting}.
+Eine Folgearbeit könnte im \gls{shadow}-Aufbau sowohl Tor- als auch Nicht-Tor-Verkehr erzeugen und prüfen, wie zuverlässig ein Klassifikator beide trennt und wie stark obfs4 diese Trennung erschwert.
+Der praktische Nutzen liegt höher als beim reinen \gls{wf}, da Verkehrserkennung der erste Schritt jeder Blockade ist und damit unmittelbar die Erreichbarkeit von Tor in zensierten Netzen betrifft.
+
+\section{Fingerprinting von Onion-Services}
+\label{sec:ausblick_onion}
+
+Nicht betrachtet wurde, ob sich auch Onion-Services fingerprinten lassen, deren Schaltkreise sich durch die zusätzlichen Hops strukturell von gewöhnlichem Tor-Verkehr unterscheiden.
+Kwon et al.\ zeigen, dass sich Verbindungen zu Onion-Services bereits anhand des Schaltkreisaufbaus passiv erkennen lassen~\cite{kwon2015circuit}, und neuere Arbeiten dokumentieren weitergehende Deanonymisierungsangriffe~\cite{tippe2024onion}.
+Ob ein \gls{df}-ähnlicher Ansatz auf diesem Szenario einen Mehrwert gegenüber den bestehenden Verfahren liefert, ist offen und müsste zunächst gegen diese spezialisierten Angriffe abgegrenzt werden, bevor sich der Aufwand einer eigenen Untersuchung beurteilen lässt.
 
 \section{Übergang ins Live-Tor-Netzwerk}
 \label{sec:ausblick_live}
 
-Alle in dieser Arbeit berichteten Resultate stammen aus dem \gls{shadow}-Simulator und sind daher reproduzierbar, aber auf den simulierten Kontext beschränkt.
-Eine perspektivische Erweiterung wäre die Übertragung des Versuchsaufbaus auf das Live-Tor-Netzwerk unter Beibehaltung der bestehenden Pipeline.
-Dazu müssten der Monitor-Client und die zugehörige Verkehrsaufzeichnung in einer abgeschirmten Umgebung betrieben werden, etwa auf einer einzelnen Forschungs-VM mit eigenem Tor-Daemon, wobei sämtliche aufgezeichneten Inhalte aus einer eigens kontrollierten Quelle stammen müssen.
-Auf diese Weise liesse sich messen, in welchem Umfang die in Abschnitt~\ref{sec:eval_einordnung} benannten Limitationen die Schutzwirkung von \gls{circuitpadding} tatsächlich überschätzen oder unterschätzen, ohne dass dabei Verkehr realer Nutzender einbezogen wird.
+Alle berichteten Resultate stammen aus dem \gls{shadow}-Simulator und sind daher reproduzierbar, aber auf den simulierten Kontext beschränkt.
+Eine perspektivische Erweiterung wäre die Übertragung des Versuchsaufbaus auf das Live-Tor-Netzwerk unter Beibehaltung der bestehenden Pipeline, wobei Monitor-Client und Verkehrsaufzeichnung in einer abgeschirmten Umgebung mit eigenem Tor-Daemon betrieben würden und sämtliche Inhalte aus einer eigens kontrollierten Quelle stammen müssten.
+So liesse sich messen, in welchem Umfang die in Abschnitt~\ref{sec:eval_einordnung} benannten Limitationen die Schutzwirkung von \gls{circuitpadding} über- oder unterschätzen, ohne Verkehr realer Nutzender einzubeziehen.
 Aus ethischer Sicht ist eine solche Erweiterung sorgfältig zu planen, da bereits passive Messungen im Live-Netzwerk die Anonymität anderer Beteiligter berühren können.
 
 \section{Zusammenfassung der offenen Punkte}
 \label{sec:ausblick_summary}
 
 Tabelle~\ref{tab:ausblick} fasst die genannten Folgearbeiten geordnet nach Aufwand und erwartetem Erkenntnisgewinn zusammen.
-Mit überschaubarem Aufwand und hohem Erkenntnisgewinn lassen sich die Auswertung des Korrelationsangriffs und die Wiederholung der Hauptexperimente mit mehreren Seeds umsetzen.
-Beide Schritte schliessen unmittelbar an die bestehende Pipeline an und beheben die in Kapitel~\ref{cha:diskussion} explizit benannten methodischen Lücken.
-Die übrigen Punkte erfordern strukturelle Erweiterungen des Versuchsaufbaus, eröffnen aber einen Pfad, auf dem die in dieser Arbeit aufgebaute Infrastruktur schrittweise an realistischere Bedingungen herangeführt werden kann.
+Mit überschaubarem Aufwand und hohem Erkenntnisgewinn lässt sich die Datenbasis durch mehrere Seeds und mehr Visits verbreitern, was die in Kapitel~\ref{cha:diskussion} benannten methodischen Lücken unmittelbar adressiert.
+Den grössten Erkenntnisgewinn versprechen die Erweiterung der Umgebung um Korrelationsangriffe und die Erkennung von Tor-Verkehr, da beide ein praxisrelevantes und real bereits beobachtetes Bedrohungsmodell adressieren.
+Die übrigen Punkte erfordern strukturelle Erweiterungen, eröffnen aber einen Pfad, auf dem die aufgebaute Infrastruktur schrittweise an realistischere Bedingungen herangeführt werden kann.
 
 \begin{table}[H]
     \centering
@@ -91,14 +96,15 @@ Die übrigen Punkte erfordern strukturelle Erweiterungen des Versuchsaufbaus, er
         \hline
         Folgearbeit & Aufwand & Erkenntnisgewinn \\
         \hline
-        Auswertung Korrelationsangriff       & gering   & hoch   \\
-        Mehrere Seeds pro Konfiguration      & mittel   & hoch   \\
+        Mehrere Seeds und mehr Visits         & mittel   & hoch   \\
+        Simulation von Korrelationsangriffen  & hoch     & hoch   \\
+        Erkennung von Tor-Verkehr             & mittel   & hoch   \\
         Weitere Verteidigungen (RegulaTor, FRONT) & mittel   & hoch   \\
+        Realistischere Inhalte                & mittel   & mittel \\
         Cell-Trace-Logging und grössere Skala & mittel   & mittel \\
-        Dynamische Inhalte und Drift         & mittel   & mittel \\
-        Alternative URL-Korpora              & mittel   & mittel \\
-        Realistisches Browser-Modell         & hoch     & hoch   \\
-        Übergang ins Live-Tor-Netzwerk       & hoch     & hoch   \\
+        Fingerprinting von Onion-Services     & mittel   & offen  \\
+        Realistisches Browser-Modell          & hoch     & hoch   \\
+        Übergang ins Live-Tor-Netzwerk        & hoch     & hoch   \\
         \hline
     \end{tabular}
 \end{table}
