@@ -144,7 +144,23 @@ Schliesslich danke ich meiner Familie, meinen Freundinnen und Freunden für die 
 %	PREAMBLE
 %----------------------------------------------------------------------------------------
 \begin{abstractstyle}{\hsummary}
+Das \gls{tor}-Netzwerk anonymisiert Internetverbindungen, doch \gls{wf}-Angriffe können die besuchte Webseite allein aus den Paketrichtungen und Zeitverläufen des verschlüsselten Verkehrs ableiten.
+Für den \gls{df}-Klassifikator werden in kontrollierten Umgebungen Erkennungsraten von über 95\,\% berichtet.
+Als Gegenmassnahme fügt das in Tor integrierte \gls{circuitpadding} zusätzliche Zellen in den Verkehrsstrom ein, bisherige Simulationsstudien variierten diesen Padding-Modus jedoch nicht systematisch.
+
+Die vorliegende Arbeit schliesst diese Lücke und misst in einem kontrollierten Laborexperiment, wie sich die drei offiziellen Padding-Modi auf die Erkennungsrate eines \gls{df}-Angriffs auswirken.
+Ergänzend wird das aggressivere \gls{tamaraw}-Verfahren zum Vergleich herangezogen.
+Dazu wurde mit dem \gls{shadow}-Simulator ein vollständiges, deterministisches Tor-Netzwerk im Massstab von einem Prozent (79 Relays) auf moderater Hardware und mit einer unmodifizierten Tor-Version aufgebaut.
+Monitor-Knoten rufen Simple-English-Wikipedia-Artikel jeweils über einen frischen Circuit ab.
+Aus den aufgezeichneten Paketmitschnitten werden Richtungssequenzen extrahiert und mit der WFlib-Implementierung des \gls{df}-Klassifikators ausgewertet.
+
+Im \gls{closedworld} senkt Circuit Padding die Accuracy um 9.4~Prozentpunkte bei 20 Klassen (von 92.7\,\% auf 83.3\,\%) und um 3.8~Prozentpunkte bei 80 Klassen (von 82.4\,\% auf 78.6\,\%), bei einem Bandbreiten-Mehraufwand unter 5\,\%.
+Tamaraw senkt die Accuracy mit 39.3\,\% beziehungsweise 31.6\,\% deutlich stärker, allerdings um den Preis eines Mehraufwands von über 1000\,\%.
+Circuit Padding leistet damit einen messbaren, aber kleinen Beitrag zur Abwehr von \gls{df}-Angriffen.
+Die Ergebnisse sind als laborinterne Vergleichsmessungen zu verstehen und nicht als Vorhersagen für das Live-Tor-Netzwerk.
+Als eigenständiger Beitrag senkt die aufgebaute, wiederverwendbare Werkzeugkette die Einstiegshürde für weitere Shadow-basierte Untersuchungen zum \gls{wf}.
 \end{abstractstyle}
+\glsresetall
 
 \tableofcontents
 \listoffigures
