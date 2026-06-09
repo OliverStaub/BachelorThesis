@@ -234,47 +234,6 @@ Auf jedem Monitor-Host wird über das Shadow Konfigurationsfeld \texttt{host\_op
 
 Die so aufgezeichneten Pcaps werden im Anschluss an die Simulation per \texttt{shadowctl.py pull-results} auf die Arbeitsstation des Autors übertragen.
 
-\section{Tamaraw-Variante des Versuchsaufbaus}
-\label{sec:realisierung_tamaraw}
-
-Für die ergänzende Messreihe gegen das \gls{tamaraw}-Verfahren (Abschnitt~\ref{sec:wf_defenses_tamaraw}) muss der bisher beschriebene Versuchsaufbau um einen zusätzlichen Bridge-Knoten erweitert werden.
-Die übrigen Bestandteile, also Tor-Netzwerk aus Tornettools, Monitor-Clients, Zim-Server und \gls{pcap}-Aufzeichnung, bleiben unverändert.
-Abbildung~\ref{fig:tamarawsetup} zeigt die so erweiterte Topologie.
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{../../images/Tamaraw-Setup.png}
-\caption{Tamaraw-Variante des Versuchsaufbaus. Gegenüber der Baseline-Topologie aus Abbildung~\ref{fig:shadowsetup} kommt der orange dargestellte Bridge-Knoten \texttt{wfbridge0} hinzu. Der monitor-seitige Tor-Daemon verbindet sich nicht direkt zu einem Guard, sondern über den Bridge-Knoten, dessen Relay-Prozess die geformten Zellen anschliessend regulär in das simulierte Tor-Netzwerk einspeist.}
-\label{fig:tamarawsetup}
-\end{figure}
-
-\subsection{Bridge-Knoten}
-\label{sec:realisierung_tamaraw_bridge}
-
-Wie in Abschnitt~\ref{sec:konzepte_tamaraw_integration} begründet, wird \gls{tamaraw} als \gls{pt} realisiert.
-Dazu wird der Topologie ein zusätzlicher Bridge-Host hinzugefügt, auf dem zwei Prozesse parallel laufen.
-Der \gls{pt} formt den Zellfluss in Richtung Monitor nach dem \gls{tamaraw}-Regelwerk.
-Der lokal mitlaufende Tor-Daemon übernimmt die Guard-Rolle für den Monitor-Circuit und leitet die geformten Zellen anschliessend regulär in das simulierte Tor-Netzwerk weiter.
-
-\subsection{Implementierung: WFDefProxy}
-\label{sec:realisierung_tamaraw_obfs4}
-
-Als konkrete \gls{tamaraw}-Implementierung wird WFDefProxy verwendet, eine quelloffene Sammlung von Website-Fingerprinting-Verteidigungen aus dem öffentlichen Artefakt-Repository\footnote{\url{https://github.com/websitefingerprinting/wfdef}}~\cite{wfdefproxy}.
-WFDefProxy baut auf dem etablierten \gls{pt} \texttt{obfs4proxy} auf und stellt unter anderem \gls{tamaraw} als auswählbare Verteidigung bereit.
-Das Werkzeug wird einmalig auf dem Server gebaut und übernimmt im Versuch die in Abschnitt~\ref{sec:realisierung_tamaraw_bridge} beschriebene Rolle des \gls{pt}.
-
-Die \gls{tamaraw}-Parameter werden in den Voreinstellungen von WFDefProxy belassen.
-
-\subsection{Einbindung in die Shadow-Konfiguration}
-\label{sec:realisierung_tamaraw_shadow}
-
-Die Einbindung in die Shadow-Topologie übernimmt \texttt{generate-wf-config.py}, gesteuert über die Option \texttt{--defense tamaraw}.
-Der Bridge-Knoten wird der bestehenden Topologie hinzugefügt, und die Monitore werden so eingerichtet, dass sie ihren Tor-Verkehr nicht direkt zu einem Guard aus dem simulierten Netzwerk aufbauen, sondern zuerst über diesen Bridge-Knoten leiten.
-
-Zusätzlich wird auf den Monitor-Hosts das Circuit-Padding deaktiviert.
-Damit wirkt in dieser Messreihe ausschliesslich \gls{tamaraw} auf den Zellfluss, und es überlagern sich keine zwei Verteidigungsverfahren.
-Die \gls{tamaraw}-Variante steht so in direkter Vergleichsposition zu den drei Circuit-Padding-Modi aus Tabelle~\ref{tab:padding_modi}.
-
 \section{Aufbereitung der Daten für die Klassifikation}
 \label{sec:realisierung_aufbereitung}
 
@@ -373,3 +332,44 @@ Der gesamte Ablauf von der Konvertierung bis zur Auswertung läuft in einer einz
 Pro Trainingslauf werden Accuracy, Precision, Recall und F1-Wert auf der Testmenge ermittelt und in einer Ergebnis-JSON abgelegt.
 Diese vier Kennzahlen werden mit den Metadaten des Experiments (Anzahl Klassen, Padding-Modus, Anzahl Besuche, Anzahl Monitore, Random-Baseline) angereichert und in die zentrale Ergebnistabelle \texttt{ExperimentLogs.csv} geschrieben\footnote{\texttt{report.py}}.
 Diese Tabelle dient als Single Source of Truth für alle in Kapitel~\ref{cha:diskussion} präsentierten Diagramme.
+
+\section{Tamaraw-Variante des Versuchsaufbaus}
+\label{sec:realisierung_tamaraw}
+
+Für die ergänzende Messreihe gegen das \gls{tamaraw}-Verfahren (Abschnitt~\ref{sec:wf_defenses_tamaraw}) muss der bisher beschriebene Versuchsaufbau um einen zusätzlichen Bridge-Knoten erweitert werden.
+Die übrigen Bestandteile, also Tor-Netzwerk aus Tornettools, Monitor-Clients, Zim-Server und \gls{pcap}-Aufzeichnung, bleiben unverändert.
+Abbildung~\ref{fig:tamarawsetup} zeigt die so erweiterte Topologie.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{../../images/Tamaraw-Setup.png}
+\caption{Tamaraw-Variante des Versuchsaufbaus. Gegenüber der Baseline-Topologie aus Abbildung~\ref{fig:shadowsetup} kommt der orange dargestellte Bridge-Knoten \texttt{wfbridge0} hinzu. Der monitor-seitige Tor-Daemon verbindet sich nicht direkt zu einem Guard, sondern über den Bridge-Knoten, dessen Relay-Prozess die geformten Zellen anschliessend regulär in das simulierte Tor-Netzwerk einspeist.}
+\label{fig:tamarawsetup}
+\end{figure}
+
+\subsection{Bridge-Knoten}
+\label{sec:realisierung_tamaraw_bridge}
+
+Wie in Abschnitt~\ref{sec:konzepte_tamaraw_integration} begründet, wird \gls{tamaraw} als \gls{pt} realisiert.
+Dazu wird der Topologie ein zusätzlicher Bridge-Host hinzugefügt, auf dem zwei Prozesse parallel laufen.
+Der \gls{pt} formt den Zellfluss in Richtung Monitor nach dem \gls{tamaraw}-Regelwerk.
+Der lokal mitlaufende Tor-Daemon übernimmt die Guard-Rolle für den Monitor-Circuit und leitet die geformten Zellen anschliessend regulär in das simulierte Tor-Netzwerk weiter.
+
+\subsection{Implementierung: WFDefProxy}
+\label{sec:realisierung_tamaraw_obfs4}
+
+Als konkrete \gls{tamaraw}-Implementierung wird WFDefProxy verwendet, eine quelloffene Sammlung von Website-Fingerprinting-Verteidigungen aus dem öffentlichen Artefakt-Repository\footnote{\url{https://github.com/websitefingerprinting/wfdef}}~\cite{wfdefproxy}.
+WFDefProxy baut auf dem etablierten \gls{pt} \texttt{obfs4proxy} auf und stellt unter anderem \gls{tamaraw} als auswählbare Verteidigung bereit.
+Das Werkzeug wird einmalig auf dem Server gebaut und übernimmt im Versuch die in Abschnitt~\ref{sec:realisierung_tamaraw_bridge} beschriebene Rolle des \gls{pt}.
+
+Die \gls{tamaraw}-Parameter werden in den Voreinstellungen von WFDefProxy belassen.
+
+\subsection{Einbindung in die Shadow-Konfiguration}
+\label{sec:realisierung_tamaraw_shadow}
+
+Die Einbindung in die Shadow-Topologie übernimmt \texttt{generate-wf-config.py}, gesteuert über die Option \texttt{--defense tamaraw}.
+Der Bridge-Knoten wird der bestehenden Topologie hinzugefügt, und die Monitore werden so eingerichtet, dass sie ihren Tor-Verkehr nicht direkt zu einem Guard aus dem simulierten Netzwerk aufbauen, sondern zuerst über diesen Bridge-Knoten leiten.
+
+Zusätzlich wird auf den Monitor-Hosts das Circuit-Padding deaktiviert.
+Damit wirkt in dieser Messreihe ausschliesslich \gls{tamaraw} auf den Zellfluss, und es überlagern sich keine zwei Verteidigungsverfahren.
+Die \gls{tamaraw}-Variante steht so in direkter Vergleichsposition zu den drei Circuit-Padding-Modi aus Tabelle~\ref{tab:padding_modi}.
