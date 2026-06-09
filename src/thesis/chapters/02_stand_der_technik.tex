@@ -49,7 +49,7 @@ Abbildung~\ref{fig:tcp_vs_cells} stellt den Unterschied schematisch dar: \gls{tc
 \resizebox{\textwidth}{!}{%
 \input{figs/tcp_vs_cells_body.tex}%
 }
-\caption{Vergleich von \gls{tcp}-Segmenten und Tor-Zellen. Eigene Darstellung.}
+\caption{Vergleich von \gls{tcp}-Segmenten und Tor-Zellen. Segmentgrenzen (gepunktet) fallen nicht mit Zellgrenzen zusammen: ein TCP-Segment kann mehrere ganze oder Teile von Zellen enthalten. Eigene Darstellung.}
 \label{fig:tcp_vs_cells}
 \end{figure}
 
@@ -82,7 +82,7 @@ Abbildung~\ref{fig:onion_routing} veranschaulicht diesen Vorgang: Vom Client zum
 \resizebox{\textwidth}{!}{%
 \input{figs/onion_routing_body.tex}%
 }
-\caption{Onion Routing in Tor: Eine Nachricht wird vom Client mit den Schlüsseln aller drei Onion Router verschlüsselt. Jeder Hop entfernt genau eine Schicht, bis der Ausgangsknoten die Nachricht an das Ziel weiterleitet.}
+\caption{Onion Routing in Tor: Eine Nachricht wird vom Client mit den Schlüsseln aller drei Onion Router verschlüsselt. Jeder Hop entfernt genau eine Schicht, bis der Ausgangsknoten die Nachricht an das Ziel weiterleitet. Eigene Darstellung.}
 \label{fig:onion_routing}
 \end{figure}
 
@@ -159,13 +159,13 @@ Eine für die vorliegende Arbeit zentrale Einordnung ergibt sich aus einem Blick
 Trotz mehr als fünfzehn Jahren intensiver \gls{wf}-Forschung existiert kein öffentlich dokumentierter Fall, in dem die im akademischen Sinn definierte \gls{wf}-Klassifikation eingesetzt wurde, um eine reale Person zu deanonymisieren.
 
 Mehrere Faktoren erklären diese Lücke zwischen Labor und Praxis.
-Wang und Goldberg argumentieren, dass die in akademischen \gls{closedworld}-Experimenten ausgewiesenen Trefferquoten unter realistischen Bedingungen mit niedriger Basisrate sensitiver Seitenaufrufe rasch in unbrauchbar viele False Positives umschlagen~\cite{wang2016realistically}.
+Wang und Goldberg argumentieren, dass die in akademischen \gls{closedworld}-Experimenten ausgewiesenen Trefferquoten unter realistischen Bedingungen rasch in unbrauchbar viele False Positives umschlagen~\cite{wang2016realistically}.
 Cherubin et al.\ bestätigen diese Lücke 2022 mit einer Evaluation auf echtem Tor-Exit-Verkehr, bei der die Accuracy bereits ab 25~überwachten Seiten unter 80\,\% fiel~\cite{cherubin2022online}.
 
 Hinzu kommt, dass für staatliche angreifende Parteien einfacher zu betreibende Alternativen zur Verfügung stehen, die mit höherer Trefferwahrscheinlichkeit zu einer eindeutigen Identifikation führen (vgl.\ Abschnitt~\ref{sec:angriffe_praxis}).
 
 \gls{wf}-ähnliche Verfahren werden in der Praxis dennoch operativ eingesetzt, jedoch zu einem anderen Zweck.
-Zensurregime wie die Great Firewall of China nutzen Protokoll-Fingerprinting, um Tor-Verbindungen am verwendeten TLS-Handshake zu erkennen und zu blockieren, also an der Auswahl und Reihenfolge der angebotenen Ciphersuites sowie an weiteren Verbindungsparametern, die sich von gewöhnlichem HTTPS-Verkehr unterscheiden~\cite{winter2012china}.
+Zensurregimes wie die Great Firewall of China nutzen Protokoll-Fingerprinting, um Tor-Verbindungen am verwendeten TLS-Handshake zu erkennen und zu blockieren, also an der Auswahl und Reihenfolge der angebotenen Ciphersuites sowie an weiteren Verbindungsparametern, die sich von gewöhnlichem HTTPS-Verkehr unterscheiden~\cite{winter2012china}.
 Diese Erkennung zielt auf die Tatsache der Tor-Nutzung selbst und nicht auf den Inhalt der besuchten Webseiten und stellt damit ein anderes Bedrohungsmodell dar als das in der vorliegenden Arbeit untersuchte.
 
 Die experimentelle Auseinandersetzung mit \gls{wf}-Verteidigungen behält dennoch ihre Berechtigung.
@@ -223,7 +223,7 @@ Tik-Tok~\cite{rahman2019tik} verwendet die DF-Architektur, ergänzt die Eingabe 
 Vorab werden die in dieser Arbeit verwendeten Begriffe abgegrenzt.
 \emph{Webseite} bezeichnet das im Datensatz enthaltene Untersuchungsobjekt, also eine konkrete URL beziehungsweise einen Wikipedia-Artikel.
 \emph{\gls{klasse}} bezeichnet das vom Klassifikator unterschiedene Label.
-Im \gls{closedworld} fällt beides zusammen, im \gls{openworld} werden $K$ überwachte Webseiten als eigene Klassen geführt und alle übrigen Webseiten in einer Sammelklasse zusammengefasst, sodass der Klassifikator effektiv $K+1$ Klassen unterscheidet.
+Im \gls{closedworld} Szenario fällt beides zusammen, im \gls{openworld} Szenario werden $K$ überwachte Webseiten als eigene Klassen geführt und alle übrigen Webseiten in einer Sammelklasse zusammengefasst, sodass der Klassifikator effektiv $K+1$ Klassen unterscheidet.
 
 In der Website-Fingerprinting-Literatur werden zwei grundlegende
 Evaluationsszenarien unterschieden: das \gls{closedworld}- und das
