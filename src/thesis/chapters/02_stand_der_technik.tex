@@ -223,7 +223,7 @@ Tik-Tok~\cite{rahman2019tik} verwendet die DF-Architektur, ergänzt die Eingabe 
 Vorab werden die in dieser Arbeit verwendeten Begriffe abgegrenzt.
 \emph{Webseite} bezeichnet das im Datensatz enthaltene Untersuchungsobjekt, also eine konkrete URL beziehungsweise einen Wikipedia-Artikel.
 \emph{\gls{klasse}} bezeichnet das vom Klassifikator unterschiedene Label.
-Im \gls{closedworld} Szenario fällt beides zusammen, im \gls{openworld} Szenario werden $K$ überwachte Webseiten als eigene Klassen geführt und alle übrigen Webseiten in einer Sammelklasse zusammengefasst, sodass der Klassifikator effektiv $K+1$ Klassen unterscheidet.
+Im \gls{closedworld}-Szenario fällt beides zusammen, im \gls{openworld}-Szenario nicht.
 
 In der Website-Fingerprinting-Literatur werden zwei grundlegende
 Evaluationsszenarien unterschieden: das \gls{closedworld}- und das
@@ -244,7 +244,9 @@ Im \gls{openworld}-Szenario hingegen definiert die angreifende Partei
 eine Menge sensitiver Seiten $W_\alpha$, die erkannt werden sollen,
 während die nutzende Person beliebige weitere Seiten besuchen kann --
 sowohl der angreifenden Partei bekannte, nicht-sensitive Seiten $W_\beta$ als
-auch völlig unbekannte Seiten $W_\emptyset$. Der Klassifikator 
+auch völlig unbekannte Seiten $W_\emptyset$.
+In der Umsetzung werden die $K$ überwachten Seiten als eigene Klassen geführt und alle übrigen in einer Sammelklasse zusammengefasst, sodass effektiv $K+1$ Klassen unterschieden werden.
+Der Klassifikator
 muss somit zunächst eine binäre Entscheidung treffen: Gehört eine 
 beobachtete Zellsequenz zu einer sensitiven Seite oder nicht? Da 
 die Klassen in diesem Szenario stark unbalanciert sind -- die 
