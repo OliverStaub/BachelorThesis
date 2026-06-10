@@ -146,7 +146,7 @@ Schliesslich danke ich meiner Familie, meinen Freundinnen und Freunden für die 
 \begin{abstractstyle}{\hsummary}
 Das Tor Netzwerk anonymisiert Internetverbindungen. Mit Website Fingerprinting Angriffen können die besuchten Webseiten jedoch aus den Paketrichtungen und Zeitverläufen des verschlüsselten Verkehrs abgeleitet werden.
 Für den Deep Fingerprinting Klassifikator werden in kontrollierten Umgebungen Erkennungsraten von über 95\,\% berichtet.
-Als Gegenmassnahme fügt das in Tor integrierte Circuit Padding zusätzliche Zellen in den Verkehrsstrom ein, bisherige Simulations\-studien variierten diesen Padding-Modus jedoch nicht systematisch und nutzen eine proprietär abgeänderte Tor-Version.
+Als Gegenmassnahme fügt das in Tor integrierte Circuit Padding zusätzliche Zellen in den Verkehrsstrom ein, bisherige Simulations\-studien variierten diesen Padding-Modus jedoch nicht systematisch und nutzten eine proprietär abgeänderte Tor-Version.
 
 Die vorliegende Arbeit schliesst diese Lücke und misst in einem kontrollierten Laborexperiment, wie sich die drei offiziellen Padding-Modi auf die Erkennungsrate eines Deep Fingerprinting Angriffs auswirken.
 Ergänzend wird das aggressivere Tamaraw Verfahren zum Vergleich herangezogen.
@@ -154,7 +154,8 @@ Dazu wurde mit dem Shadow Simulator ein vollständiges, deterministisches Tor-Ne
 Statt direkter Tor Zellen werden PCAP-Dateien aufgezeichnet, was dem Modell einer passiven Beobachtung entspricht.
 Aus den aufgezeichneten Verkehrsmustern werden Richtungssequenzen extrahiert und mit der WFlib-Implementierung des Deep Fingerprinting Klassifikators ausgewertet.
 
-Die Resultate zeigen ein gemischtes Bild wonach das Padding nicht immer zu einer verringerten Erkennungsrate führt. Dies kann verschiedene Gründe haben, unter anderem die limitierte Grösse des simulierten Netzwerkes und die relativ homogenen Webseiten welche getestet wurden.
+Die Resultate zeigen ein gemischtes Bild, wonach das Padding nicht immer zu einer verringerten Erkennungsrate führt.
+Dies kann verschiedene Gründe haben, unter anderem die limitierte Grösse des simulierten Netzwerkes und die relativ homogenen Webseiten, welche getestet wurden.
 Tamaraw als alternative Verteidigungsmöglichkeit zeigte einen starken Effekt, allerdings zum Preis eines stark erhöhten Verkehrsaufkommens.
 
 Als eigenständiger Beitrag senkt die aufgebaute, wiederverwendbare Werkzeugkette die Einstiegshürde für weitere Shadow-basierte Untersuchungen zu Website Fingerprinting und anderen Angriffen auf Tor.

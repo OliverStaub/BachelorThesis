@@ -40,7 +40,7 @@ Abbildung~\ref{fig:tor_cell_layout} fasst diesen Aufbau zusammen.
 \label{fig:tor_cell_layout}
 \end{figure}
 
-Im Gegensatz zu \gls{tcp}-Segmenten, deren Nutzdaten-Grösse durch die Maximum Transmission Unit nach oben begrenzt ist besitzt jede Tor-Zelle dieselbe feste Länge.
+Im Gegensatz zu \gls{tcp}-Segmenten, deren Nutzdaten-Grösse durch die Maximum Transmission Unit nach oben begrenzt ist, besitzt jede Tor-Zelle dieselbe feste Länge.
 Zwischen jedem Paar aufeinanderfolgender Knoten eines Circuits, also auch zwischen Client und Eingangsknoten, werden Zellen über eine TLS-gesicherte \gls{tcp}-Verbindung transportiert, sodass ein einzelnes \gls{tcp}-Segment je nach Auslastung eine oder mehrere vollständige Zellen tragen kann~\cite{dingledine2004tor}.
 Abbildung~\ref{fig:tcp_vs_cells} stellt den Unterschied schematisch dar: \gls{tcp}-Segmente besitzen variable Länge und folgen der Anwendungslogik, während Tor-Zellen eine einheitliche Länge aufweisen und unabhängig von den Segmentgrenzen im Bytestrom liegen.
 
@@ -142,7 +142,7 @@ Genau diesem Muster begegnet der Tor Browser durch eine konsequente Isolation de
 \section{Website-Fingerprinting}
 \label{sec:website_fingerprinting}
 
-\gls{wf} Angriffe können herausfinden, welche Webseite über \gls{tor} aufgerufen wurde, trotz \gls{tor}-Verschlüsselung.
+\gls{wf}-Angriffe können herausfinden, welche Webseite über \gls{tor} aufgerufen wurde, trotz \gls{tor}-Verschlüsselung.
 Die angreifende Partei zeichnet dazu den Datenverkehr zwischen Client und Eingangsknoten auf, entweder am Eingangsknoten selbst~\cite{jansen2023data} oder als passive lokale beobachtende Instanz~\cite{wang2016realistically}.
 Aus Anzahl und Richtung der Tor-Zellen, optional ergänzt um Zeitstempel, leitet ein \gls{ml}-Klassifikator ein Verkehrsmuster pro Webseite ab.
 
@@ -313,7 +313,7 @@ Trifft innerhalb dieser Wartezeit eine weitere reale Zelle ein, wird sie sofort 
 Trifft hingegen keine reale Zelle ein, gilt der aktuelle Burst als beendet.
 
 Genau in diesem Moment wechselt \gls{wtfpad} in den Gap-Modus und sendet selbst Dummy-Zellen.
-Deren zeitliche Abstände stammen aus einem  Histogramm welches echte Burst-Verläufe nachbildet.
+Deren zeitliche Abstände stammen aus einem Histogramm, welches echte Burst-Verläufe nachbildet.
 So entsteht im sonst leeren Gap-Intervall ein künstlicher Pseudo-Burst, der für eine aussenstehende beobachtende Instanz wie weitere echte Aktivität aussieht.
 Sobald eine reale Zelle eintrifft, kehrt der Mechanismus in den Burst-Modus zurück und der Zyklus beginnt von vorne~\cite{juarez2015wtf}.
 Reale Zellen werden zu keinem Zeitpunkt aufgehalten, weshalb für die Anwendung kein Latenz-Overhead entsteht.

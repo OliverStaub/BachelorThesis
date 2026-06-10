@@ -6,7 +6,7 @@ Die Resultate sind in Tabelle~\ref{tab:experimentlogs} im Anhang vollständig au
 \section{Validierung des Versuchsaufbaus}
 \label{sec:eval_validierung}
 
-Um den Versuchsaufbau zu validieren werden drei Kennzahlen betrachtet.
+Um den Versuchsaufbau zu validieren, werden drei Kennzahlen betrachtet.
 Erstens liegt der Anteil fehlgeschlagener Seitenabrufe in allen \gls{closedworld}-Läufen unter 5\,\% und ist innerhalb einer Klasse zwischen den Padding-Modi vergleichbar.
 Zweitens liegt die mittlere Paketanzahl pro Sample für die Circuit-Padding-Modi konsistent zwischen 580 und 640, was dafür spricht, dass die Seitenabrufe vergleichbar gross sind und sich nicht systematisch zwischen den Vergleichsgruppen unterscheiden, während \gls{tamaraw} die Sequenz erwartungsgemäss bis zur 5000-Werte-Grenze füllt.
 Drittens erreichen alle Modelle Klassifikationsraten deutlich über der Random-Basis (vergleiche Tabelle~\ref{tab:experimentlogs}), lernen also tatsächlich Merkmale des Verkehrs und reagieren nicht zufällig.
@@ -136,7 +136,7 @@ Welcher dieser Effekte tatsächlich zum Tragen kommt, lässt sich klären, wenn 
 \subsection{Vergleich mit Tamaraw}
 \label{sec:eval_tamaraw}
 
-\gls{tamaraw} wurde als alternative Verteidigung in einer separaten Messreihe untersucht, um den beim \gls{circuitpadding} gemessenen Effekt zu vergleichen.
+\gls{tamaraw} wurde als alternative Verteidigung in einer separaten Messreihe untersucht, um den Effekt mit dem des \gls{circuitpadding}[s] zu vergleichen.
 
 
 Im \gls{closedworld} mit 20 Klassen sinkt die Accuracy unter \gls{tamaraw} auf 39.3\,\%, bei 80 Klassen auf 31.6\,\% und im \gls{openworld} auf 28.0\,\%.
@@ -185,7 +185,7 @@ Für die Läufe \texttt{exp-baseline-80}, \texttt{exp-padding-80} und \texttt{ex
     \end{tabular}
 \end{table}
 
-Volles und Reduced \gls{circuitpadding} erhöhen den mittleren Datenverkehr pro Besuch um lediglich 3.0\,\% beziehungsweise 1.3\,\% in Bytes und liegen damit innerhalb der Streubreite einzelner Besuche.
+Volles und reduziertes \gls{circuitpadding} erhöhen den mittleren Datenverkehr pro Besuch um lediglich 3.0\,\% beziehungsweise 1.3\,\% in Bytes und liegen damit innerhalb der Streubreite einzelner Besuche.
 \gls{tamaraw}-Padding vervielfacht den Datenverkehr hingegen um den Faktor 11.6 in Bytes und 18.7 in Paketen.
 
 Die gemessenen Werte liegen deutlich über den von Cai et al.\ ursprünglich angegebenen rund 199\,\%~\cite{cai2014systematic}.
@@ -286,7 +286,7 @@ Betrachtet werden die drei zeitlich nacheinander ausgeführten \gls{tamaraw}-Lä
         \end{groupplot}
         \node[anchor=north, yshift=-0.4cm] at (current bounding box.south) {\pgfplotslegendfromname{perfmonlegend}};
     \end{tikzpicture}
-    \caption{Auslastung von CPU, Arbeitsspeicher und Disk auf \texttt{shadowsrv-001} während den Tamaraw Simulationen. Eigene Darstellung aus den \texttt{perfmon}- und \texttt{dstat}-Logs.}
+    \caption{Auslastung von CPU, Arbeitsspeicher und Disk auf \texttt{shadowsrv-001} während der Tamaraw-Simulationen. Eigene Darstellung aus den \texttt{perfmon}- und \texttt{dstat}-Logs.}
     \label{fig:eval_perfmon_comparison}
 \end{figure}
 
