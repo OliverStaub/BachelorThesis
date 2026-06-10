@@ -129,7 +129,7 @@ Da pro Konfiguration nur ein einziger \gls{shadow}-Lauf mit festem Seed vorliegt
 Zufällige Anteile wie die Auswahl der Tor-Pfade oder die Streuung des Hintergrundverkehrs könnten zu Schwankungen führen.
 
 Ebenso kommen Eigenschaften des Versuchsaufbaus selbst in Frage.
-Die Netzwerkgrösse von 0.01, die mit 150 Visits pro Klasse knappe Stichprobe und der strukturell homogene Simple-English-Wikipedia-Korpus engen den Merkmalsraum ein, sodass welches die Ergebnisse unberechenbarer machen könnten.
+Die Netzwerkgrösse von 0.01, die mit 150 Visits pro Klasse knappe Stichprobe und der strukturell homogene Simple-English-Wikipedia-Korpus engen den Merkmalsraum ein, was die Ergebnisse unberechenbarer machen könnte.
 
 Welcher dieser Effekte tatsächlich zum Tragen kommt, lässt sich klären, wenn jede Konfiguration mit mehreren Seeds, einem grösseren Netzwerk und einem heterogeneren Korpus wiederholt wird (siehe Abschnitte~\ref{sec:ausblick_seeds}, \ref{sec:ausblick_inhalte} und~\ref{sec:ausblick_scale}).
 
@@ -290,7 +290,7 @@ Betrachtet werden die drei zeitlich nacheinander ausgeführten \gls{tamaraw}-Lä
     \label{fig:eval_perfmon_comparison}
 \end{figure}
 
-Über alle drei Läufe hinweg bildet die CPU mit konstant rund 99.8\,\% Auslastung hoch ausgelastet und bleibt am Anschlag.
+Über alle drei Läufe hinweg ist die CPU mit konstant rund 99.8 \% hoch ausgelastet und bleibt am Anschlag.
 Arbeitsspeicher und Disk wachsen während der Laufzeit annähernd linear, da sowohl Shadow-Datenstrukturen als auch die \gls{pcap}-Aufzeichnungen monoton anwachsen.
 
 
@@ -318,7 +318,7 @@ Anstelle eines vollwertigen Tor Browser wird ein gepatchter \texttt{wget2}-Clien
 Wang und Goldberg zeigen, dass bereits parallel offene Browser-Tabs die Erkennungsrate eines \gls{closedworld}-Klassifikators erheblich senken, da die resultierenden Verkehrsmuster Überlagerungen mehrerer Seiten darstellen~\cite{wang2016realistically}.
 Im realen Tor-Browser-Betrieb ist Multi-Tab-Verkehr die Regel und nicht die Ausnahme, weshalb die hier gemessenen Erkennungsraten den im Live-Netz erreichbaren Wert klar überschätzen dürften.
 
-\paragraph{Statisches Inhalte.}
+\paragraph{Statische Inhalte.}
 Die Monitor-Clients beziehen ihre Inhalte aus einem statischen Snapshot der Simple English Wikipedia, ausgeliefert über den eigens gebauten \texttt{zimsrv.py}.
 Damit fehlen reale Dynamiken wie sich verändernde Werbeflächen, A/B-Tests, Drittanbieter-Tracker, CDN-Lastverteilung oder personalisierte Inhalte, die im Live-Web jede Seite über die Zeit verändern.
 Juarez et al.\ benennen genau diese Inhaltsveränderungen über die Zeit (concept drift) als einen Hauptgrund dafür, dass \gls{closedworld}-Resultate im realen Tor-Browser-Betrieb nicht reproduzierbar sind~\cite{juarez2014critical}.
