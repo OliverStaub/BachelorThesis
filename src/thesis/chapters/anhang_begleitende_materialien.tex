@@ -1,39 +1,33 @@
 \chapter{Begleitende Materialien}
 \label{app:begleitmaterial}
 
-Dieser Anhang dokumentiert den Inhalt des dieser Arbeit beigelegten Datenträgers.
-Er ermöglicht es, die in Kapitel~\ref{cha:realisierung} beschriebene Pipeline nachzuvollziehen und die in Kapitel~\ref{cha:diskussion} dargestellten Resultate auf einer vergleichbaren Maschine zu reproduzieren.
-Sämtliche in dieser Arbeit beschriebenen Skripte und Dateien sowie die vollständige Resultattabelle \texttt{ExperimentLogs.csv} sind in dem beigelegten ZIP-File zu finden.
+Dieser Anhang dokumentiert den Inhalt des dieser Arbeit beigelegten ZIP-Archivs.
+Das Archiv enthält den im Rahmen dieser Arbeit entwickelten Quellcode, die zugehörige Dokumentation sowie die aggregierte Resultattabelle \texttt{ExperimentLogs.csv}.
+Es ermöglicht, die in Kapitel~\ref{cha:realisierung} beschriebene Pipeline nachzuvollziehen und die in Kapitel~\ref{cha:diskussion} dargestellten Resultate auf einer vergleichbaren Maschine zu reproduzieren.
+Bewusst nicht enthalten sind grosse oder von Dritten stammende Bestandteile wie rohe Verkehrsmitschnitte, Datensätze, trainierte Modelle und die WFlib-Codebasis, die sich aus dem enthaltenen Quellcode reproduzieren lassen und in Abschnitt~\ref{app:begleitmaterial_ausschluesse} einzeln aufgeführt sind.
+Die finale Bachelorarbeit als PDF und ihre LaTeX-Quellen werden separat abgegeben und sind nicht Teil dieses Code-Archivs.
 
 \section{Verzeichnisstruktur}
 \label{app:begleitmaterial_struktur}
 
-Tabelle~\ref{tab:begleitmaterial_struktur} listet die wichtigsten Pfade des Datenträgers und deren Inhalt.
-Die Wurzel des Datenträgers entspricht dem Wurzelverzeichnis des Projekt-Repositoriums.
+Tabelle~\ref{tab:begleitmaterial_struktur} listet die wichtigsten Pfade des Archivs und deren Inhalt.
+Die Pfadangaben sind relativ zur Wurzel des Archivs und entsprechen der Struktur des Projekt-Repositoriums, sodass die relativen Pfade in den Skripten und in \texttt{README.md} unverändert gelten.
 
 \begin{table}[H]
 \centering
-\caption{Inhalt des beigelegten Datenträgers.}
+\caption{Inhalt des beigelegten ZIP-Archivs.}
 \label{tab:begleitmaterial_struktur}
 \begin{tabular}{p{5.0cm}p{8.5cm}}
 \hline
 Pfad & Inhalt \\
 \hline
-\texttt{src/thesis/hslu\_thesis.pdf} & Finale Bachelorarbeit \\
-\texttt{src/thesis/} & LaTeX-Quellen der Bachelorarbeit \\
-\texttt{src/simulation/} & Skripte zur Steuerung der Shadow-Simulation (Abschnitt~\ref{sec:realisierung_uebersicht}) \\
-\texttt{src/simulation/exp-*/} & Konfiguration eines Experiments: \texttt{shadow.config.yaml}, \texttt{shadow.config.schedule.json}, \texttt{conf/}, \texttt{results/sim.log} \\
-\texttt{src/ml/} & Skripte der ML-Pipeline (\texttt{pcap\_to\_npz.py}, \texttt{run\_df.sh}, \texttt{correlation.py}, \texttt{pcap\_overhead.py}, \texttt{plot\_*.py}, \texttt{report.py}) \\
-\texttt{src/ml/datasets/} & Eigene Hilfsdatensätze (Cell-Trace-Vergleich) \\
-\texttt{src/ml/wflib/datasets/} & WFlib-Datensätze pro Experiment (\texttt{.npz}, \texttt{labels.json}, Train/Test/Valid-Splits) \\
-\texttt{src/ml/wflib/checkpoints/} & Trainierte \gls{df}-Modelle (\texttt{max\_f1.pth}) pro Experiment \\
-\texttt{src/ml/wflib/logs/} & Ergebnis-JSONs aus Trainings- und Testläufen \\
+\texttt{README.md} & Einstiegspunkt mit Aufbau, Bedienung und Reproduktionsanleitung \\
+\texttt{documentation.md} & Vertiefende Gesamtbeschreibung der Pipeline (Setup, Ablauf, Architektur) \\
 \texttt{ExperimentLogs.csv} & Aggregierte Resultattabelle aller Experimente \\
-\texttt{ExperimentLogs.xlsx} & Dieselben Daten im Excel-Format \\
-\texttt{documentation.md} & Gesamtbeschreibung der Pipeline (Setup, Ablauf, Architektur) \\
-\texttt{images/results/} & Generierte Diagramme der Resultate \\
-\texttt{confusion\_*.pdf} & Confusion-Matrix-Visualisierungen \\
-\texttt{INHALT.md} & Kurzübersicht des Datenträgers (Verweis auf diesen Anhang) \\
+\texttt{src/simulation/} & Skripte zur Steuerung der Shadow-Simulation (Abschnitt~\ref{sec:realisierung_uebersicht}) \\
+\texttt{src/simulation/conf/} & torrc-Vorlagen und Tamaraw-Bridge-Zertifikat \\
+\texttt{src/simulation/generated/urls.txt} & Aus der \gls{zim}-Datei erzeugte URL-Liste der Zielseiten \\
+\texttt{src/ml/} & Skripte der ML-Pipeline (\texttt{pcap\_to\_npz.py}, \texttt{run\_df.sh}, \texttt{correlation.py}, \texttt{pcap\_overhead.py}, \texttt{plot\_*.py}, \texttt{report.py}) \\
 \hline
 \end{tabular}
 \end{table}
@@ -41,7 +35,7 @@ Pfad & Inhalt \\
 \section{Nicht enthaltene Daten}
 \label{app:begleitmaterial_ausschluesse}
 
-Aus Platzgründen und zur Wahrung von Lizenz- und Urheberrechten werden die in Tabelle~\ref{tab:begleitmaterial_ausschluesse} aufgeführten Bestandteile nicht auf dem Datenträger ausgeliefert.
+Aus Platzgründen und zur Wahrung von Lizenz- und Urheberrechten werden die in Tabelle~\ref{tab:begleitmaterial_ausschluesse} aufgeführten Bestandteile nicht im Archiv ausgeliefert.
 Für jeden Eintrag wird der Grund und der reproduzierende Schritt angegeben.
 
 \begin{table}[H]
@@ -52,11 +46,12 @@ Für jeden Eintrag wird der Grund und der reproduzierende Schritt angegeben.
 \hline
 Bestandteil & Grund & Reproduktion \\
 \hline
-Rohe \glspl{pcap} der Monitor- und Exit-Hosts & Insgesamt rund 250 GB, sprengt die übliche Datenträgergrösse & \texttt{python3 src/simulation/shadowctl.py run <name>} mit der jeweiligen Konfiguration aus \texttt{src/simulation/exp-*} \\
+Rohe \glspl{pcap} der Monitor- und Exit-Hosts & Insgesamt rund 250 GB, sprengt die übliche Archivgrösse & \texttt{python3 shadowctl.py run <name>} mit der jeweiligen Konfiguration (Abschnitt~\ref{app:begleitmaterial_reproduktion}) \\
+Experiment-Konfigurationen (\texttt{exp-*/} mit \texttt{shadow.config.yaml}, \texttt{schedule.json}, \texttt{sim.log}) & Werden bei jedem Lauf aus den enthaltenen Skripten neu erzeugt & Entstehen automatisch bei \texttt{shadowctl.py run} \\
+Datensätze (\texttt{.npz}), trainierte \gls{df}-Modelle und Ergebnis-JSONs & Aus den \glspl{pcap} ableitbar, keine Primärdaten & \texttt{pcap\_to\_npz.py} und \texttt{run\_df.sh} (Abschnitt~\ref{app:begleitmaterial_reproduktion}) \\
 Python-Virtualenvs (\texttt{venv/}) & Maschinen- und versionsspezifisch & Neu anlegen via \texttt{python3 -m venv venv} und Pakete aus \texttt{documentation.md} \\
-WFlib-Codebasis (\texttt{src/ml/wflib/WFlib/}, \texttt{exp/}, \texttt{scripts/}, \texttt{figures/}) & Drittprojekt unter eigener Lizenz~\cite{deng2023robust} & Klonen aus \texttt{https://github.com/Xinhao-Deng/Website-Fingerprinting-Library}; die in dieser Arbeit verwendeten Datensätze und Checkpoints liegen unverändert unter \texttt{src/ml/wflib/datasets/} bzw.\ \texttt{src/ml/wflib/checkpoints/} \\
+WFlib-Codebasis (\texttt{src/ml/wflib/}) & Drittprojekt unter eigener Lizenz~\cite{deng2023robust} & Klonen aus \texttt{https://github.com/Xinhao-Deng/Website-Fingerprinting-Library} \\
 Tornettools-Eingabedaten (Konsensus, Server-Descriptors) & Drittprojekt, gross und versionsspezifisch & Bezug über \texttt{https://github.com/shadow/tornettools} und das dort dokumentierte CollecTor-Snapshot-Verfahren \\
-LaTeX-Hilfsdateien (\texttt{*.aux}, \texttt{*.log}, \texttt{*.toc}) & Werden beim Übersetzen neu erzeugt & \texttt{latexmk -pdf hslu\_thesis.tex} im Verzeichnis \texttt{src/thesis/} \\
 \hline
 \end{tabular}
 \end{table}
@@ -77,8 +72,8 @@ Zur Veranschaulichung wird hier exemplarisch die Reproduktion des \gls{closedwor
     \item Resultate ablesen: \texttt{cat wflib/logs/ExpBaseline80/DF/result.json} liefert die in Tabelle~\ref{tab:experimentlogs} verglichenen Kennzahlen.
 \end{enumerate}
 
-Wer den Trainingsschritt überspringen möchte, kann das mitgelieferte Modell \texttt{src/ml/wflib/checkpoints/ExpBaseline80/DF/max\_f1.pth} mit \texttt{wflib/exp/test.py} direkt auf der Testmenge auswerten.
-Damit lassen sich Accuracy, Precision, Recall und F1-Wert ohne erneutes Training reproduzieren.
+Da das Archiv aus Platzgründen weder vorkonvertierte Datensätze noch trainierte Modelle enthält, durchläuft die Reproduktion die vollständige Kette von der Simulation über die Konvertierung bis zum Testlauf.
+Die dafür benötigte WFlib-Codebasis und das Python-Environment werden zuvor gemäss \texttt{README.md} und \texttt{documentation.md} eingerichtet.
 
 \section{Tabellarische Gesamtsicht aller Hauptexperimente}
 \label{app:experimentlogs}

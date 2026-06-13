@@ -60,7 +60,7 @@
 
 - Schreiben und Text ordnen
 - Simulation aufbauen, wget2, tieferes Verständnis für den Simulationsaufbaue aufbuaen.
-- Ich werde vermutlich mein Angriffsmodell von einem ISP auf den Tor Entry Node betreiben ändern müssen weil es einfacher ist und es mehr Literatur dazu gibt.s
+- Ich werde vermutlich mein Angriffsmodell von einem ISP auf den Tor Entry Node betreiben ändern müssen weil es einfacher ist und es mehr Forschungsliteratur dazu gibt.s
 
 ## Apr 14 5h
 

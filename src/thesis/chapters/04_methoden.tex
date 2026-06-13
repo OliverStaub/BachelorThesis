@@ -4,7 +4,7 @@
 In diesem Kapitel wird beschrieben, mit welchen wissenschaftlichen Methoden die in Kapitel~\ref{cha:stand_der_technik} aufgeworfenen Fragen bearbeitet werden.
 Zwei Methoden werden eingesetzt.
 Die Literaturrecherche dient dazu, den aktuellen Stand der Forschung zu Tor, Website-Fingerprinting und \gls{circuitpadding} aufzuarbeiten und daraus die Forschungslücke abzuleiten.
-Das anschliessende Laborexperiment im Shadow-Simulator dient dazu, die aus dieser Literatur motivierten Forschungsfragen quantitativ zu beantworten.
+Das anschliessende Laborexperiment im Shadow-Simulator dient dazu, die aus dieser Forschungsliteratur motivierten Forschungsfragen quantitativ zu beantworten.
 Die konkrete Umsetzung dieses Versuchsaufbaus wird in Kapitel~\ref{cha:realisierung} beschrieben.
 Das vorliegende Kapitel beschränkt sich auf die methodische Begründung der Vorgehensweise.
 
@@ -16,13 +16,13 @@ Konstruktiv ist die Arbeit, weil eine eigene Werkzeugkette aus Shadow-Steuerung,
 Empirisch ist die Arbeit, weil mit dieser Werkzeugkette ein kontrolliertes Laborexperiment durchgeführt wird, dessen Ergebnisse die in der Aufgabenstellung definierten Forschungsfragen beantworten.
 
 Die Arbeit verwendet ein deduktives Vorgehen.
-Aus der Literatur, insbesondere aus den Arbeiten von Jansen und Wails~\cite{jansen2023data}, Sirinam et al.~\cite{sirinam2018deep} und Kadianakis et al.~\cite{kadianakis2021tor}, wird der theoretische Rahmen abgeleitet, in dem die Forschungsfragen aus Kapitel~\ref{cha:problem_fragestellung_vision} bearbeitet werden.
+Aus der Forschungsliteratur, insbesondere aus den Arbeiten von Jansen und Wails~\cite{jansen2023data}, Sirinam et al.~\cite{sirinam2018deep} und Kadianakis et al.~\cite{kadianakis2021tor}, wird der theoretische Rahmen abgeleitet, in dem die Forschungsfragen aus Kapitel~\ref{cha:problem_fragestellung_vision} bearbeitet werden.
 Die Messung selbst erfolgt quantitativ über etablierte Klassifikationsmetriken (Accuracy, Precision, Recall, F1-Wert).
 
 \section{Literaturrecherche}
 \label{sec:literaturrecherche}
 
-Die Literaturrecherche folgt dem in Balzert beschriebenen fünfstufigen Vorgehen aus den Schritten Was suche ich, wo suche ich, wie suche ich, was verwende ich, wie beschaffe ich~\cite{book}.
+Die Literaturrecherche folgt dem in Balzert beschriebenen fünfstufigen Vorgehen aus den Schritten was suche ich, wo suche ich, wie suche ich, was verwende ich, wie beschaffe ich~\cite{book}.
 Die einzelnen Stufen werden im Folgenden zusammengefasst.
 
 \subsection{Such\-strategie und Abgrenzung des Themenfelds}
@@ -87,7 +87,7 @@ Drittens das Welt-Szenario mit den Ausprägungen \gls{closedworld} und \gls{open
 
 \paragraph{Abhängige Variablen}
 Gemessen werden Accuracy, Precision, Recall und F1-Wert auf einer zurückgehaltenen Testmenge.
-Diese vier Klassifikationsmetriken sind in der \gls{wf}-Literatur etabliert und ergänzen sich gegenseitig.
+Diese vier Klassifikationsmetriken sind in der \gls{wf}-Forschungsliteratur etabliert und ergänzen sich gegenseitig.
 Sie werden aus den vier Grundgrössen True Positive (TP, korrekt als überwacht klassifiziert), True Negative (TN, korrekt als unüberwacht klassifiziert), False Positive (FP, fälschlich als überwacht klassifiziert) und False Negative (FN, fälschlich als unüberwacht klassifiziert) berechnet:
 
 \begin{align}

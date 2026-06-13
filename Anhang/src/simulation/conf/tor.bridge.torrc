@@ -1,0 +1,21 @@
+# Tor bridge torrc for WF defense experiments.
+#
+# Used by the wfbridge0 host added by generate-wf-config.py when
+# --defense tamaraw is in effect. The bridge terminates the Tamaraw
+# pluggable-transport link from each monitor, then forwards plain
+# Tor cells onward into the rest of the simulated network.
+#
+# This file is included via torrc-defaults; tor.common.torrc supplies
+# the shared bits (DataDirectory ., Log, AssumeReachable, etc.).
+
+ORPort 9001 IPv4Only
+DirPort 0
+SocksPort 0
+BridgeRelay 1
+PublishServerDescriptor 0
+ExitPolicy "reject *:*"
+ExtORPort auto
+
+ServerTransportListenAddr tamaraw 0.0.0.0:34000
+ServerTransportPlugin tamaraw exec /home/projectadmin/obfs4proxy_tamaraw
+ServerTransportOptions tamaraw rho-client=12 rho-server=4 nseg=200

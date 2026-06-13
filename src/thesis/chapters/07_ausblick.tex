@@ -26,7 +26,7 @@ Ergänzend liessen sich die in Abschnitt~\ref{sec:eval_einordnung} als knapp ben
 
 Die in dieser Arbeit verwendeten Klassen stammen aus einem Zufalls-Sample der Simple English Wikipedia und sind strukturell sehr homogen, da Markup, Pfadschema und Ressourcenprofil pro Artikel weitgehend identisch sind.
 Zudem schliesst das statische \gls{zim}-Snapshot-Modell jede zeitliche Drift der Inhalte aus, was Juarez et al.\ als einen der zentralen Gründe nennen, weshalb \gls{closedworld}-Resultate aus Laborbedingungen im Live-Web nicht reproduzierbar sind~\cite{juarez2014critical}.
-Beides erhöht die Reproduzierbarkeit, vergrössert aber den Abstand zu produktiven Verhältnissen und schränkt den direkten Vergleich mit Literatur-Resultaten ein, die wie Sirinam et al.\ auf heterogenen Live-Korpora wie Alexa Top 100 beruhen~\cite{sirinam2018deep}.
+Beides erhöht die Reproduzierbarkeit, vergrössert aber den Abstand zu produktiven Verhältnissen und schränkt den direkten Vergleich mit Forschungsliteratur-Resultaten ein, die wie Sirinam et al.\ auf heterogenen Live-Korpora wie Alexa Top 100 beruhen~\cite{sirinam2018deep}.
 Eine Folgearbeit könnte statt der Wikipedia andere Websites in den \gls{shadow}-Container spiegeln, etwa das rund 100 Seiten umfassende Set von Jansen und Wails~\cite{jansen2023data} oder einen statisch gespiegelten Auszug einer Alexa-Top-N-Liste.
 Da \gls{shadow}-Knoten keinen externen Netzzugang besitzen, ist dafür ein vorgelagerter Spiegel- oder Caching-Schritt nötig, der die Inhalte als eingefrorene Momentaufnahme bereitstellt.
 Ergänzend liesse sich diese Momentaufnahme kontrolliert variieren, etwa durch veränderte Ressourcenreihenfolge oder eine künstliche Aktualisierung zwischen Trainings- und Testfenster, um die Auswirkung zeitlicher Drift auf die Padding-Wirkung reproduzierbar zu untersuchen.
@@ -98,4 +98,4 @@ Damit lässt sich eine \gls{wf}-Simulation mit unterschiedlicher Klassenanzahl, 
 Diese Werkzeugkette versteht der Autor als eigenständigen Beitrag der Arbeit, da sie die Einstiegshürde für vergleichbare Experimente senkt und als Grundlage für die in den vorangehenden Abschnitten skizzierten Folgearbeiten dient.
 
 Die in der Aufgabenstellung (Anhang~\ref{app:aufgabenstellung}) vereinbarten Ziele und die daraus abgeleiteten Forschungsfragen wurden im Rahmen des gewählten Laboraufbaus erreicht, wie in Abschnitt~\ref{sec:eval_zielerreichung} im Einzelnen dargelegt wird.
-Auf dieser Grundlage können künftige Arbeiten unmittelbar aufsetzen und den Versuch entlang der genannten Richtungen vertiefen, ohne die Infrastruktur erneut von Grund auf aufbauen zu müssen.
+Auf dieser Grundlage können künftige Arbeiten unmittelbar aufbauen und den Versuch entlang der genannten Richtungen vertiefen, ohne die Infrastruktur erneut von Grund auf aufbauen zu müssen.

@@ -7,7 +7,7 @@ Die technische Umsetzung folgt in Kapitel~\ref{cha:realisierung}.
 \section{Bewertung des Stands der Forschung}
 \label{sec:konzepte_bewertung}
 
-Padding und Website-Fingerprinting wurden in der Literatur untersucht, aber nicht in einer Shadow-Simulation systematisch gekoppelt.
+Padding und Website-Fingerprinting wurden in der Forschungsliteratur untersucht, aber nicht in einer Shadow-Simulation systematisch gekoppelt.
 Jansen und Wails messen \gls{df} in Shadow, variieren aber den Padding-Modus nicht~\cite{jansen2023data}.
 Sie arbeiten zudem mit einem zellgenauen Cell-Trace aus einer gepatchten Tor-Version, während die vorliegende Arbeit am Monitor mitgeschnittene TCP-Pakete verwendet.
 Die vorliegende Arbeit füllt diese Lücke, indem sie die drei in Tor angebotenen Padding-Konfigurationen unter sonst konstanten Bedingungen gegen \gls{df} misst.
@@ -33,7 +33,7 @@ Shadow mit Tornettools erfüllt alle Anforderungen: unmodifizierter Tor-Code und
 Aus den in Kapitel~\ref{cha:stand_der_technik} verglichenen Klassifikatoren wird \gls{df} gewählt.
 \gls{df} arbeitet zeitunabhängig, weshalb simulationsbedingte Timing-Variationen die Ergebnisse nicht verfälschen.
 \gls{circuitpadding} wirkt zudem direkt auf die von \gls{df} genutzten Richtungsfeatures, was den Padding-Effekt besonders sichtbar macht.
-Die Validierung von \gls{df} in Shadow durch Jansen und Wails (76\,\% bis 82\,\% Accuracy auf Live-Tor) sichert die Vergleichbarkeit mit bestehender Literatur~\cite{jansen2023data}.
+Die Validierung von \gls{df} in Shadow durch Jansen und Wails (76\,\% bis 82\,\% Accuracy auf Live-Tor) sichert die Vergleichbarkeit mit bestehender Forschungsliteratur~\cite{jansen2023data}.
 
 \section{Wahl des Szenarios}
 \label{sec:konzepte_szenario}
@@ -125,7 +125,7 @@ Eine Markierung im Tor-Datenstrom selbst oder eine gepatchte Tor-Version, wie si
 
 Vor jedem Seitenbesuch wird über das Tor-Control-Interface ein neuer Circuit erzwungen.
 Damit sind die einzelnen Besuche statistisch unabhängig und Verkehr aus früheren Besuchen kontaminiert die Zuordnung nicht.
-Diese strikte Isolation ist eine Vereinfachung gegenüber dem realen Tor-Browser-Verhalten (First-Party-Bundling)~\cite{jansen2023data}, in der \gls{wf}-Literatur jedoch übliche Praxis.
+Diese strikte Isolation ist eine Vereinfachung gegenüber dem realen Tor-Browser-Verhalten (First-Party-Bundling)~\cite{jansen2023data}, in der \gls{wf}-Forschungsliteratur jedoch übliche Praxis.
 
 \section{Round-Robin-Schedule}
 \label{sec:konzepte_roundrobin}

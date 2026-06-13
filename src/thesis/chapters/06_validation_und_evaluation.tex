@@ -191,7 +191,7 @@ Volles und reduziertes \gls{circuitpadding} erhöhen den mittleren Datenverkehr 
 Die gemessenen Werte liegen deutlich über den von Cai et al.\ ursprünglich angegebenen rund 199\,\%~\cite{cai2014systematic}.
 Die eigene Messung erfasst jedoch nicht die protokollnahen Tor-Zellen, sondern \gls{tcp}- und TLS-Pakete inklusive Framing auf der Monitor-Schnittstelle.
 Sie summiert zudem über das gesamte 30-Sekunden-Visit-Fenster, in dem \gls{tamaraw} auch nach abgeschlossenem Seitenabruf weiter Dummy-Zellen sendet, und beruht für \gls{tamaraw} nur auf einem einzelnen Monitor mit 600 Besuchen statt auf fünf Monitoren wie bei den übrigen Modi.
-Der absolute Wert von rund 1000\,\% ist daher nur eingeschränkt aussagekräftig und nicht direkt mit dem in der Literatur berichteten Overhead vergleichbar, er belegt aber die Grössenordnung der Mehrkosten von \gls{tamaraw} gegenüber dem \gls{circuitpadding}.
+Der absolute Wert von rund 1000\,\% ist daher nur eingeschränkt aussagekräftig und nicht direkt mit dem in der Forschungsliteratur berichteten Overhead vergleichbar, er belegt aber die Grössenordnung der Mehrkosten von \gls{tamaraw} gegenüber dem \gls{circuitpadding}.
 
 Im Verhältnis von Kosten zu Schutzwirkung steht \gls{circuitpadding} bei rund einem Prozentpunkt Accuracy-Reduktion pro Prozentpunkt Mehrverkehr im 20-Klassen-Setup, \gls{tamaraw} dagegen nur bei rund 0.05~Prozentpunkten.
 \gls{tamaraw} erkauft seinen Schutz also mit einem überproportional hohen Bandbreitenaufschlag, der bereits in der ursprünglichen Auswertung von Cai et al.\ mit rund 199\,\% beziffert wird~\cite{cai2014systematic} und die Verteidigung für den realen Tor-Betrieb wenig praktikabel erscheinen lässt.
