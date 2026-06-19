@@ -1,0 +1,9 @@
+# Generierte Zwischenprodukte (kanonische SVGs liegen in ../abschlusspraesentation/public/images/)
+*.svg
+# LaTeX-Hilfsdateien
+*.pdf
+*.aux
+*.log
+*.fdb_latexmk
+*.fls
+*.synctex.gz

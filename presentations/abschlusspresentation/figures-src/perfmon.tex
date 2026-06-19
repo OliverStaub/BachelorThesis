@@ -1,0 +1,57 @@
+\documentclass[border={8pt 6pt 8pt 6pt}]{standalone}
+\input{preamble.tex}
+\begin{document}
+% Extrahiert 1:1 aus chapters/06_validation_und_evaluation.tex (fig:eval_perfmon_comparison).
+% Einziger Unterschied zur Arbeit: CSV-Pfade zeigen relativ auf src/thesis/data/.
+\begin{tikzpicture}
+    \pgfplotsset{
+        perfmon panel/.style={
+            width=0.92\textwidth,
+            height=4.2cm,
+            xmin=0, xmax=17,
+            ymin=0, ymax=105,
+            ytick={0,25,50,75,100},
+            xmajorgrids=true, ymajorgrids=true,
+            grid style={dashed, gray!35},
+            tick style={black!50},
+            every axis plot/.append style={line width=0.5pt},
+        },
+    }
+    \begin{groupplot}[
+        group style={
+            group size=1 by 3,
+            vertical sep=0.6cm,
+            x descriptions at=edge bottom,
+        },
+        perfmon panel,
+    ]
+        \nextgroupplot[ylabel={CPU [\%]},
+            title={Ressourcenauslastung der Tamaraw-Läufe auf \texttt{shadowsrv-001}},
+            title style={font=\small\bfseries, yshift=-2pt},
+            legend to name=perfmonlegend,
+            legend style={legend columns=3, draw=none,
+                          /tikz/every even column/.append style={column sep=12pt}},
+            legend image code/.code={\draw[#1, draw=black!40, line width=0.3pt] (0cm,-0.06cm) rectangle (0.3cm,0.14cm);}]
+            \addplot[draw=green!55!black, fill=green!55!black, fill opacity=0.22] table[col sep=comma, x=hours, y=cpu] {../../../src/thesis/data/perfmon_tamaraw20v2.csv} \closedcycle;
+            \addlegendentry{20 Klassen}
+            \addplot[draw=blue!60!black, fill=blue!60!black, fill opacity=0.22] table[col sep=comma, x=hours, y=cpu] {../../../src/thesis/data/perfmon_tamaraw80.csv} \closedcycle;
+            \addlegendentry{80 Klassen}
+            \addplot[draw=orange!80!black, fill=orange!80!black, fill opacity=0.22] table[col sep=comma, x=hours, y=cpu] {../../../src/thesis/data/perfmon_openworld.csv} \closedcycle;
+            \addlegendentry{Open-World}
+            \addplot[only marks, mark=*, mark size=1.8pt, draw=black!70, fill=black!70] coordinates {(8.12,99.91) (11.77,99.85)};
+            \addplot[only marks, mark=x, mark size=3pt, mark options={line width=1.2pt}, draw=red!75!black] coordinates {(16.10,99.80)};
+        \nextgroupplot[ylabel={RAM [\%]}]
+            \addplot[draw=green!55!black, fill=green!55!black, fill opacity=0.22] table[col sep=comma, x=hours, y=mem] {../../../src/thesis/data/perfmon_tamaraw20v2.csv} \closedcycle;
+            \addplot[draw=blue!60!black, fill=blue!60!black, fill opacity=0.22] table[col sep=comma, x=hours, y=mem] {../../../src/thesis/data/perfmon_tamaraw80.csv} \closedcycle;
+            \addplot[draw=orange!80!black, fill=orange!80!black, fill opacity=0.22] table[col sep=comma, x=hours, y=mem] {../../../src/thesis/data/perfmon_openworld.csv} \closedcycle;
+            \addplot[only marks, mark=*, mark size=1.8pt, draw=black!70, fill=black!70] coordinates {(8.12,78.42) (11.77,89.76)};
+            \addplot[only marks, mark=x, mark size=3pt, mark options={line width=1.2pt}, draw=red!75!black] coordinates {(16.10,96.41)};
+        \nextgroupplot[ylabel={Disk [\%]}, xlabel={Laufzeit seit Experimentstart [h]}]
+            \addplot[draw=blue!60!black, fill=blue!60!black, fill opacity=0.22] table[col sep=comma, x=hours, y=disk] {../../../src/thesis/data/perfmon_tamaraw80.csv} \closedcycle;
+            \addplot[draw=orange!80!black, fill=orange!80!black, fill opacity=0.22] table[col sep=comma, x=hours, y=disk] {../../../src/thesis/data/perfmon_openworld.csv} \closedcycle;
+            \addplot[only marks, mark=*, mark size=1.8pt, draw=black!70, fill=black!70] coordinates {(11.77,97.35)};
+            \addplot[only marks, mark=x, mark size=3pt, mark options={line width=1.2pt}, draw=red!75!black] coordinates {(16.10,99.79)};
+    \end{groupplot}
+    \node[anchor=north, yshift=-0.4cm] at (current bounding box.south) {\pgfplotslegendfromname{perfmonlegend}};
+\end{tikzpicture}
+\end{document}
