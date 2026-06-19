@@ -56,4 +56,8 @@ dist/
 .nuxt/
 package-lock.json
 
+# Presentation pipeline clips (recorded locally, large — keep out of git)
+presentations/abschlusspresentation/abschlusspraesentation/images/videos/*
+!presentations/abschlusspresentation/abschlusspraesentation/images/videos/README.md
+
 Claude.md

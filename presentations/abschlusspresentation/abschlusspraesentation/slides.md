@@ -239,19 +239,14 @@ python3 shadowctl.py run exp-demo \
 ```
 
 <div class="text-sm opacity-80 mt-2">
-Generiert das Tor-Netzwerk, fügt Monitor- und Wikipedia-Knoten hinzu, schiebt die Config auf den Server und startet die Simulation.
+Generiert die Shadow-Konfiguration, fügt Monitor- und Wikipedia-Knoten hinzu, schiebt die Config auf den Server und startet die Simulation.
 </div>
 
-<div class="border-2 border-dashed border-gray-400 rounded-lg p-6 text-center text-gray-500 mt-6">
-🎥 <b>Clip 1 — <code>shadowctl run</code></b><br/>
-<span class="text-xs">Aufnahme einfügen unter <code>images/videos/01-run.mp4</code></span>
-</div>
 
-<!-- Wenn aufgenommen: obige div ersetzen durch
 <video controls class="mt-6 mx-auto rounded-lg shadow-lg" style="max-height: 300px">
   <source src="./images/videos/01-run.mp4" type="video/mp4" />
 </video>
--->
+
 
 ---
 hideInToc: true
@@ -268,16 +263,10 @@ python3 shadowctl.py logs   --name exp-demo -f
 Zeigt, ob die Simulation läuft, abgeschlossen oder fehlgeschlagen ist, samt Fortschritt und fehlgeschlagenen Seitenabrufen.
 </div>
 
-<div class="border-2 border-dashed border-gray-400 rounded-lg p-6 text-center text-gray-500 mt-6">
-🎥 <b>Clip 2 — <code>status</code> / <code>logs -f</code></b><br/>
-<span class="text-xs">Aufnahme einfügen unter <code>images/videos/02-status.mp4</code></span>
-</div>
-
-<!-- Wenn aufgenommen: obige div ersetzen durch
 <video controls class="mt-6 mx-auto rounded-lg shadow-lg" style="max-height: 300px">
   <source src="./images/videos/02-status.mp4" type="video/mp4" />
 </video>
--->
+
 
 ---
 hideInToc: true
