@@ -59,9 +59,9 @@ Wie wirksam schützt **Circuit Padding** in einer mit Shadow simulierten Tor-Umg
 
 # Tor & Onion Routing
 
-<img src="./images/onion_routing.svg" class="w-7/10 mx-auto mt-6" />
+<img src="./images/onion_routing.svg" class="w-7/10 mx-auto mt-15" />
 
-<div class="text-sm opacity-80 mt-4 text-center">
+<div class="text-sm opacity-80 mt-8 text-center">
 Jede Relais-Schicht kennt nur Vorgänger und Nachfolger. Kein einzelnes Relais sieht Quelle und Ziel zugleich.
 </div>
 
@@ -73,7 +73,7 @@ hideInToc: true
 
 # Feste Zellengrösse als Angriffsfläche
 
-<div class="grid grid-cols-2 gap-6 mt-2">
+<div class="grid grid-cols-2 gap-6 mt-15">
 
 <div>
 
@@ -207,86 +207,25 @@ Zusätzlicher Bridge-Knoten (WFDefProxy) zwischen Client und Guard erzeugt das k
 
 # Werkzeug: die shadowctl-Pipeline
 
-<div class="grid grid-cols-2 gap-8 mt-2">
-
-<div>
-
-Ein Experiment durchläuft fünf Schritte, gesteuert über **ein** CLI:
-
-```text
-Idee  →  run  →  Shadow-Simulation
-              →  pull-results
-              →  pcap_to_npz + DF
-              →  report  →  ExperimentLogs.csv
-```
-
-`shadowctl.py` kapselt SSH, `tornettools`, Config-Generierung und Simulation.
-
+<div class="text-sm opacity-80 mb-3">
+Die Befehle in der Reihenfolge, in der wir sie ausführen, von der Idee bis zur Resultats-CSV:
 </div>
-
-<div>
 
 ```bash
-# Subcommands
-shadowctl.py run          # ganzes Experiment
-shadowctl.py status       # Status + Logzeilen
-shadowctl.py logs -f      # Live-Logs
-shadowctl.py pull-results # pcaps holen
-shadowctl.py stop         # abbrechen
-shadowctl.py list         # Experimente
+# 1 · Simulation durchführen
+python3 shadowctl.py run 
+python3 shadowctl.py status
+python3 shadowctl.py pull-results
+
+# 2 · WF-Angriff durchführen
+python3 pcap_to_npz.py  
+python3 dataset_split.py
+python3 train.py 
+python3 test.py
+
+# 3 · Report schreiben
+python3 report.py
 ```
-
-</div>
-
-</div>
-
-<div class="text-sm opacity-70 mt-4 text-center">
-Statt Live-Demo (Läufe dauern Stunden) folgen pro Schritt kurze Aufnahmen.
-</div>
-
----
-hideInToc: true
----
-
-# Installation & Setup
-
-<div class="text-sm opacity-70 mb-2">Einmalig eingerichtet — hier nur zur Übersicht, wird nicht erneut ausgeführt.</div>
-
-<div class="grid grid-cols-2 gap-6">
-
-<div>
-
-**Lokale ML-Umgebung**
-
-```bash
-cd src/ml
-python3 -m venv venv
-source venv/bin/activate
-pip install numpy torch torchvision \
-  --index-url https://download.pytorch.org/whl/cpu
-pip install tqdm pandas scikit-learn einops \
-  timm pytorch-metric-learning captum pyyaml dpkt
-pip install -e wflib/
-```
-
-</div>
-
-<div>
-
-**Simulationsserver (einmalig)**
-
-```bash
-# wget2 mit SOCKS-Patch bauen
-bash setup-wf-server.sh build
-# Helfer-Skripte kopieren
-bash setup-wf-server.sh copy
-# URLs aus Wikipedia-ZIM erzeugen
-bash setup-wf-server.sh urls 100
-```
-
-</div>
-
-</div>
 
 ---
 hideInToc: true
