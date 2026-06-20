@@ -314,16 +314,10 @@ bash run_df.sh --pcap \
 Konvertiert die Pcaps, splittet in Train/Valid/Test und trainiert das DF-Netz (<code>--feature DIR --seq_len 5000 --train_epochs 30</code>), danach Test mit Accuracy, Precision, Recall, F1.
 </div>
 
-<div class="border-2 border-dashed border-gray-400 rounded-lg p-6 text-center text-gray-500 mt-4">
-🎥 <b>Clip 4 — Training & Test</b><br/>
-<span class="text-xs">Aufnahme einfügen unter <code>images/videos/04-ml.mp4</code></span>
-</div>
-
-<!-- Wenn aufgenommen: obige div ersetzen durch
 <video controls class="mt-4 mx-auto rounded-lg shadow-lg" style="max-height: 260px">
   <source src="./images/videos/04-ml.mp4" type="video/mp4" />
 </video>
--->
+
 
 ---
 hideInToc: true
@@ -354,10 +348,10 @@ python3 report.py -e exp-demo -d ExpDemo >> ../../ExperimentLogs.csv
     <tr class="bg-green-100">
       <td class="px-3 py-1">exp-demo</td>
       <td class="px-3 py-1 text-center">20</td>
-      <td class="px-3 py-1 text-center">OFF</td>
+      <td class="px-3 py-1 text-center">ON (default)</td>
       <td class="px-3 py-1 text-center">1000</td>
-      <td class="px-3 py-1 text-center font-bold">92.7%</td>
-      <td class="px-3 py-1 text-center">92.7%</td>
+      <td class="px-3 py-1 text-center font-bold">67.0%</td>
+      <td class="px-3 py-1 text-center">65.4%</td>
       <td class="px-3 py-1 text-center text-gray-500">5.0%</td>
     </tr>
   </tbody>
@@ -367,15 +361,74 @@ python3 report.py -e exp-demo -d ExpDemo >> ../../ExperimentLogs.csv
 Die vollständige CSV hat 32 Spalten (Netzwerk, Stichprobe, Metriken). Vorlage: <code>ExperimentLogs.template.csv</code>
 </div>
 
-<div class="border-2 border-dashed border-gray-400 rounded-lg p-4 text-center text-gray-500 mt-3">
-🎥 <b>Clip 5 — neue Zeile erscheint in der CSV</b> · <span class="text-xs"><code>images/videos/05-report.mp4</code></span>
-</div>
-
-<!-- Wenn aufgenommen: obige div ersetzen durch
 <video controls class="mt-3 mx-auto rounded-lg shadow-lg" style="max-height: 220px">
   <source src="./images/videos/05-report.mp4" type="video/mp4" />
 </video>
--->
+
+
+---
+hideInToc: true
+---
+
+# Kennzahlen der Klassifikation
+
+<div class="text-sm opacity-80 mb-2">
+Der DF-Klassifikator ordnet jeden Besuch einer Seite zu. Pro Klasse zählt man richtige und falsche Zuordnungen:
+</div>
+
+<div class="grid grid-cols-2 gap-10 mt-2">
+
+<div>
+
+<table class="text-sm mx-auto">
+  <thead>
+    <tr>
+      <th class="px-3 py-2"></th>
+      <th class="px-3 py-2">wirklich X</th>
+      <th class="px-3 py-2">wirklich nicht X</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="px-3 py-2 font-semibold">vorhergesagt X</td>
+      <td class="px-3 py-2 text-center bg-green-100">TP</td>
+      <td class="px-3 py-2 text-center bg-red-100">FP</td>
+    </tr>
+    <tr>
+      <td class="px-3 py-2 font-semibold">vorhergesagt nicht X</td>
+      <td class="px-3 py-2 text-center bg-red-100">FN</td>
+      <td class="px-3 py-2 text-center bg-green-100">TN</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="text-xs text-gray-500 mt-2 text-center">
+TP / TN = richtig · FP = Fehlalarm · FN = verpasst
+</div>
+
+</div>
+
+<div class="text-sm leading-relaxed">
+
+**Accuracy** — Anteil aller korrekt zugeordneten Besuche  
+`(TP + TN) / alle`
+
+**Precision** — wie viele der als X erkannten wirklich X sind  
+`TP / (TP + FP)`
+
+**Recall** — wie viele der echten X erkannt werden  
+`TP / (TP + FN)`
+
+**F1** — harmonisches Mittel aus Precision und Recall  
+`2 · (Precision · Recall) / (Precision + Recall)`
+
+</div>
+
+</div>
+
+<div class="text-xs text-gray-500 mt-4 text-center">
+Werte makro-gemittelt über alle Klassen · Random-Basis = 1 / Klassenanzahl (5 % bei 20, 1.2 % bei 80 Klassen)
+</div>
 
 ---
 

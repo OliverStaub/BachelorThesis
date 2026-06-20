@@ -78,7 +78,11 @@
       "Bash(./venv/bin/python3 plot_confusion.py --dataset ExpBaseline80 ExpTamaraw80 --labels \"Padding OFF\" \"Tamaraw\" --output ../../confusion_comparison_tamaraw_80.pdf)",
       "Bash(:)",
       "Bash(./venv/bin/python3 plot_confusion.py --dataset ExpBaseline80 ExpPadding80 ExpTamaraw80 --labels OFF 'Padding ON' Tamaraw --output ../../confusion_comparison_off_on_tamaraw_80.pdf)",
-      "Bash(./venv/bin/python3 plot_confusion.py --dataset ExpBaseline80 ExpPadding80 ExpTamaraw80 --labels OFF 'Padding ON' Tamaraw --output /tmp/cmp_off_on_tamaraw_80.png)"
+      "Bash(./venv/bin/python3 plot_confusion.py --dataset ExpBaseline80 ExpPadding80 ExpTamaraw80 --labels OFF 'Padding ON' Tamaraw --output /tmp/cmp_off_on_tamaraw_80.png)",
+      "Bash(ls -la datasets/ExpDemo/)",
+      "Bash(ls -la checkpoints/ExpDemo/DF/)",
+      "Bash(ls -la logs/ExpDemo/DF/)",
+      "Bash(ls -la datasets/ExpDemo.npz datasets/ExpDemo.labels.json)"
     ]
   }
 }

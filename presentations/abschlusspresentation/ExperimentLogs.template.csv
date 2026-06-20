@@ -1,2 +1,2 @@
 Experiment,Network Scale,Relays,Directory Authorities,Nodes Total,Monitors (WF Clients),Pages (classes),Visits per page,Visit Interval (s),Circuit Padding,Tor version,Seed,ZIM file,Sim stop_time (s),Wall-clock time,Total samples,Samples per class,Failed fetches,Failed fetches %,Skipped (too few packets),Mean packets per sample,Train samples,Valid samples,Test samples,Accuracy,Precision,Recall,F1-score,Training epochs,Best epoch,Random baseline,Notes
-exp-demo,0.010,79,3,303,10,20,50,30,OFF,,1,simple_en_maxi_2026-02,,02:30:00,1000,50,18,1.8%,,620,810,90,100,92.7%,93.3%,92.7%,92.7%,30,,5.0%,Demo-Lauf für die Präsentation
+exp-demo,0.010,79,3,303,10,20,50,30,ON (default),,1,simple_en_maxi_2026-02,,03:19:00,1000,50,22,2.2%,,664,810,90,100,67.0%,70.7%,67.0%,65.4%,30,,5.0%,
