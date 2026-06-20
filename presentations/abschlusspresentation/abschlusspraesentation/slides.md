@@ -221,18 +221,25 @@ hideInToc: true
 
 # Schritt 1 — Experiment definieren & starten
 
-```bash
-python3 shadowctl.py run exp-demo \
-  --pages 20 --visits 50 --monitors 10 --padding off
-```
-
-<video controls class="mt-6 mx-auto rounded-lg shadow-lg" style="max-height: 300px">
-  <source src="./images/videos/01-run.mp4" type="video/mp4" />
-</video>
+<div class="flex justify-center mt-24">
+<div class="font-mono text-xl bg-gray-100 rounded-xl px-8 py-6 shadow-sm leading-relaxed">
+python3 shadowctl.py run exp-demo \<br/>
+&nbsp;&nbsp;--pages 20 --visits 50 --monitors 10 --padding off
+</div>
+</div>
 
 <!--
 Generiert die Shadow-Konfiguration, fügt Monitor- und Wikipedia-Knoten hinzu, schiebt die Config auf den Server und startet die Simulation.
 -->
+
+---
+layout: center
+hideInToc: true
+---
+
+<video controls autoplay muted playsinline class="mx-auto rounded-lg shadow-lg" style="max-height: 500px">
+  <source src="./images/videos/01-run.mp4" type="video/mp4" />
+</video>
 
 
 ---
@@ -241,11 +248,22 @@ hideInToc: true
 
 # Schritt 2 — Fortschritt überwachen
 
-```bash
+<div class="flex justify-center mt-24">
+<div class="font-mono text-xl bg-gray-100 rounded-xl px-8 py-6 shadow-sm leading-relaxed">
 python3 shadowctl.py status --name exp-demo --tail 20
-```
+</div>
+</div>
 
-<video controls class="mt-12 mx-auto rounded-lg shadow-lg" style="max-height: 300px">
+<!--
+Zeigt, ob die Simulation läuft, abgeschlossen oder fehlgeschlagen ist, samt Fortschritt und fehlgeschlagenen Seitenabrufen.
+-->
+
+---
+layout: center
+hideInToc: true
+---
+
+<video controls autoplay muted playsinline class="mx-auto rounded-lg shadow-lg" style="max-height: 500px">
   <source src="./images/videos/02-status.mp4" type="video/mp4" />
 </video>
 
@@ -256,15 +274,22 @@ hideInToc: true
 
 # Schritt 3 — Resultate herunterladen
 
-```bash
+<div class="flex justify-center mt-24">
+<div class="font-mono text-xl bg-gray-100 rounded-xl px-8 py-6 shadow-sm leading-relaxed">
 python3 shadowctl.py pull-results --name exp-demo
-```
-
-<div class="text-sm opacity-80 mt-2">
-Holt Monitor-pcaps, <code>schedule.json</code> und Logs vom Server auf den lokalen Rechner.
+</div>
 </div>
 
-<video controls class="mt-6 mx-auto rounded-lg shadow-lg" style="max-height: 300px">
+<!--
+Holt Monitor-pcaps, schedule.json und Logs vom Server auf den lokalen Rechner.
+-->
+
+---
+layout: center
+hideInToc: true
+---
+
+<video controls autoplay muted playsinline class="mx-auto rounded-lg shadow-lg" style="max-height: 500px">
   <source src="./images/videos/03-pull.mp4" type="video/mp4" />
 </video>
 
@@ -302,19 +327,26 @@ hideInToc: true
 
 # Schritt 4 — pcap → npz & DF trainieren/testen
 
-```bash
-cd src/ml && source venv/bin/activate
-bash run_df.sh --pcap \
-  --schedule   ../simulation/exp-demo/shadow.config.schedule.json \
-  --shadow-data ../simulation/exp-demo/results/shadow.data/ \
-  --dataset    ExpDemo
-```
-
-<div class="text-sm opacity-80 mt-2">
-Konvertiert die Pcaps, splittet in Train/Valid/Test und trainiert das DF-Netz (<code>--feature DIR --seq_len 5000 --train_epochs 30</code>), danach Test mit Accuracy, Precision, Recall, F1.
+<div class="flex justify-center mt-16">
+<div class="font-mono text-lg bg-gray-100 rounded-xl px-8 py-6 shadow-sm leading-relaxed">
+cd src/ml && source venv/bin/activate<br/>
+bash run_df.sh --pcap \<br/>
+&nbsp;&nbsp;--schedule&nbsp;&nbsp;&nbsp;../simulation/exp-demo/shadow.config.schedule.json \<br/>
+&nbsp;&nbsp;--shadow-data ../simulation/exp-demo/results/shadow.data/ \<br/>
+&nbsp;&nbsp;--dataset&nbsp;&nbsp;&nbsp;&nbsp;ExpDemo
+</div>
 </div>
 
-<video controls class="mt-4 mx-auto rounded-lg shadow-lg" style="max-height: 260px">
+<!--
+Konvertiert die Pcaps, splittet in Train/Valid/Test und trainiert das DF-Netz (--feature DIR --seq_len 5000 --train_epochs 30), danach Test mit Accuracy, Precision, Recall, F1.
+-->
+
+---
+layout: center
+hideInToc: true
+---
+
+<video controls autoplay muted playsinline class="mx-auto rounded-lg shadow-lg" style="max-height: 500px">
   <source src="./images/videos/04-ml.mp4" type="video/mp4" />
 </video>
 
@@ -348,7 +380,7 @@ python3 report.py -e exp-demo -d ExpDemo >> ../../ExperimentLogs.csv
     <tr class="bg-green-100">
       <td class="px-3 py-1">exp-demo</td>
       <td class="px-3 py-1 text-center">20</td>
-      <td class="px-3 py-1 text-center">ON (default)</td>
+      <td class="px-3 py-1 text-center">OFF</td>
       <td class="px-3 py-1 text-center">1000</td>
       <td class="px-3 py-1 text-center font-bold">67.0%</td>
       <td class="px-3 py-1 text-center">65.4%</td>
@@ -361,7 +393,12 @@ python3 report.py -e exp-demo -d ExpDemo >> ../../ExperimentLogs.csv
 Die vollständige CSV hat 32 Spalten (Netzwerk, Stichprobe, Metriken). Vorlage: <code>ExperimentLogs.template.csv</code>
 </div>
 
-<video controls class="mt-3 mx-auto rounded-lg shadow-lg" style="max-height: 220px">
+---
+layout: center
+hideInToc: true
+---
+
+<video controls autoplay muted playsinline class="mx-auto rounded-lg shadow-lg" style="max-height: 500px">
   <source src="./images/videos/05-report.mp4" type="video/mp4" />
 </video>
 

@@ -120,10 +120,16 @@ def parse_sim_log(log_path):
 
 
 def read_padding_setting(conf_dir):
-    """Check tor.client.torrc for CircuitPadding and ReducedCircuitPadding."""
+    """Check the torrc files for CircuitPadding and ReducedCircuitPadding.
+
+    tor.wf.torrc is read LAST: shadowctl.py writes the --padding setting there
+    and %includes it last in every monitor's torrc-defaults, so its value wins
+    (Tor last-value-wins). Reading only the client/common torrcs mislabelled
+    --padding off/on/reduced runs as "ON (default)".
+    """
     padding_on = None
     reduced = False
-    for name in ["tor.client.torrc", "tor.common.torrc"]:
+    for name in ["tor.client.torrc", "tor.common.torrc", "tor.wf.torrc"]:
         path = conf_dir / name
         try:
             with open(path) as f:
