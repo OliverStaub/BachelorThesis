@@ -193,18 +193,6 @@ hideInToc: true
 hideInToc: true
 ---
 
-# Tamaraw-Variante des Aufbaus
-
-<img src="./images/Tamaraw-Setup.png" class="h-90 mx-auto mt-4" />
-
-<div class="text-sm opacity-80 mt-2 text-center">
-Zusätzlicher Bridge-Knoten (WFDefProxy) zwischen Client und Guard erzeugt das konstante Tamaraw-Padding.
-</div>
-
-<div class="text-xs text-gray-500 mt-1 text-right">Eigene Darstellung (Bachelorarbeit, Kap. 5)</div>
-
----
-
 # Werkzeug: die shadowctl-Pipeline
 
 <div class="text-sm opacity-80 mb-3">
@@ -238,14 +226,13 @@ python3 shadowctl.py run exp-demo \
   --pages 20 --visits 50 --monitors 10 --padding off
 ```
 
-<div class="text-sm opacity-80 mt-2">
-Generiert die Shadow-Konfiguration, fügt Monitor- und Wikipedia-Knoten hinzu, schiebt die Config auf den Server und startet die Simulation.
-</div>
-
-
 <video controls class="mt-6 mx-auto rounded-lg shadow-lg" style="max-height: 300px">
   <source src="./images/videos/01-run.mp4" type="video/mp4" />
 </video>
+
+<!--
+Generiert die Shadow-Konfiguration, fügt Monitor- und Wikipedia-Knoten hinzu, schiebt die Config auf den Server und startet die Simulation.
+-->
 
 
 ---
@@ -256,14 +243,9 @@ hideInToc: true
 
 ```bash
 python3 shadowctl.py status --name exp-demo --tail 20
-python3 shadowctl.py logs   --name exp-demo -f
 ```
 
-<div class="text-sm opacity-80 mt-2">
-Zeigt, ob die Simulation läuft, abgeschlossen oder fehlgeschlagen ist, samt Fortschritt und fehlgeschlagenen Seitenabrufen.
-</div>
-
-<video controls class="mt-6 mx-auto rounded-lg shadow-lg" style="max-height: 300px">
+<video controls class="mt-12 mx-auto rounded-lg shadow-lg" style="max-height: 300px">
   <source src="./images/videos/02-status.mp4" type="video/mp4" />
 </video>
 
@@ -282,16 +264,10 @@ python3 shadowctl.py pull-results --name exp-demo
 Holt Monitor-pcaps, <code>schedule.json</code> und Logs vom Server auf den lokalen Rechner.
 </div>
 
-<div class="border-2 border-dashed border-gray-400 rounded-lg p-6 text-center text-gray-500 mt-6">
-🎥 <b>Clip 3 — <code>pull-results</code></b><br/>
-<span class="text-xs">Aufnahme einfügen unter <code>images/videos/03-pull.mp4</code></span>
-</div>
-
-<!-- Wenn aufgenommen: obige div ersetzen durch
 <video controls class="mt-6 mx-auto rounded-lg shadow-lg" style="max-height: 300px">
   <source src="./images/videos/03-pull.mp4" type="video/mp4" />
 </video>
--->
+
 
 ---
 layout: two-cols-header
