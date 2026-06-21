@@ -14,6 +14,17 @@ Experte: Enrico Senger
 
 HSLU · Bachelorarbeit · Juni 2026
 
+
+---
+layout: center
+hideInToc: true
+---
+
+<video controls autoplay muted playsinline class="mx-auto rounded-lg shadow-lg" style="max-height: 500px">
+  <source src="./images/videos/PitchBAA.mp4" type="video/mp4" />
+</video>
+
+
 ---
 hideInToc: true
 ---
@@ -24,54 +35,97 @@ hideInToc: true
 
 ---
 
-# Motivation
+# Forschungsfrage
 
-<div class="grid grid-cols-2 gap-12 mt-6">
-
-<div>
-
-**Tor verspricht Anonymität** — Millionen Menschen verlassen sich darauf:
-- Journalist:innen in autoritären Staaten
-- Whistleblower
-- Privatsphäre-bewusste Nutzer:innen
-
-</div>
-
-<div>
-
-**Aber:** Verkehrsmuster bleiben sichtbar.
-
-Ein passiver Beobachter zwischen Nutzer und Tor-Guard kann anhand von Paketrichtungen erkennen, **welche Website besucht wurde.**
-
-</div>
-
-</div>
-
-<div class="border-l-4 border-gray-400 pl-4 mt-10">
+<div class=" mt-8">
 
 **Forschungsfrage**
 
-Wie wirksam schützt **Circuit Padding** in einer mit Shadow simulierten Tor-Umgebung gegen einen **Deep-Fingerprinting**-Angriff?
+- Wie verändert sich die Erkennungsrate des **DF**-Angriffs mit unterschiedlichen **Circuit-Padding-Settings**?
+- Welche **Limitationen** simulierter und laborbasierter WF-Angriffe sind in der Literatur dokumentiert, und wie sind die Ergebnisse dieser Arbeit einzuordnen?
+</div>
+
+<div class="mt-5">
+
+**Ziele**
+
+- Aufbau einer **Shadow-Simulationsumgebung** in einer VM von labservices.ch
+- Erstellung eines **Website-Fingerprinting-Datasets**
+- Durchführung eines **Deep-Fingerprinting**-(DF)-Angriffs mit dem Tool **WFlib**
 
 </div>
 
 ---
 
-# Tor & Onion Routing
+# Motivation
 
-<img src="./images/onion_routing.svg" class="w-7/10 mx-auto mt-15" />
+<div class="grid grid-cols-2 gap-8 mt-8">
 
-<div class="text-sm opacity-80 mt-8 text-center">
-Jede Relais-Schicht kennt nur Vorgänger und Nachfolger. Kein einzelnes Relais sieht Quelle und Ziel zugleich.
+<div class="border border-gray-200 rounded-lg p-4">
+
+**Mehrere öffentlich bekannte Angriffe auf Tor**
+
+- z.B. aufwendige **Korrelationsangriffe**
+- Cookie-Tracking
+- Circuit Fingerprinting
+
 </div>
 
-<div class="text-xs text-gray-500 mt-2 text-right">Eigene Darstellung (Bachelorarbeit, Kap. 2)</div>
+<div class="border border-gray-200 rounded-lg p-4">
+
+**Alternative Angriffsmöglichkeit**
+
+- **Website-Fingerprinting** nutzt einen **lokalen, passiven** Beobachter am Eingang
+- Analysiert Paketrichtungen
+- Viele Untersuchungen in der wisschenschaftlichen Literatur
+
+</div>
+
+</div>
+
+---
+
+# Methodik
+
+<div class="grid grid-cols-2 gap-8 mt-4">
+
+<div>
+
+**Simulation: Shadow**
+
+- Reproduzierbare NetzwerkSimulationen
+- Modellierung Tor-Netzwerk via `tornettools` (Scale 0.01)
+
+**Szenarien**
+
+- Closed-World: 20 und 80 Seiten
+- Open-World: 80 überwachte Seiten in 280
+
+</div>
+
+<div>
+
+**Datenerhebung**
+
+- Clients besuchen Wikipedia-Seiten über Tor
+- pcap-Capture an den Monitor-Hosts
+
+**Klassifikation: Deep Fingerprinting**
+
+- DF aus WFlib
+- Vergleich der Padding-Modi: OFF · Reduced · ON · Tamaraw
+
+</div>
+
+</div>
+
+
 
 ---
 hideInToc: true
 ---
 
-# Feste Zellengrösse als Angriffsfläche
+# Tor Zellen vs TCP Pakete
 
 <div class="grid grid-cols-2 gap-6 mt-15">
 
@@ -97,87 +151,6 @@ hideInToc: true
 Tor sendet Daten in <b>fixen Zellen</b>. Inhalt und Länge sind verschleiert, aber <b>Richtung und Zeitpunkt</b> der Pakete bleiben beobachtbar.
 </div>
 
----
-hideInToc: true
----
-
-# Website-Fingerprinting & Circuit Padding
-
-<div class="grid grid-cols-2 gap-8 mt-4">
-
-<div>
-
-**Website-Fingerprinting (WF)**
-
-- Lokaler passiver Angreifer (ISP, WLAN-Betreiber)
-- Beobachtet nur verschlüsselten Tor-Traffic
-- Klassifiziert das Muster mit Deep Learning
-
-**Deep Fingerprinting (DF)**
-
-- Sirinam et al. 2018, CNN auf Paketrichtungen
-- > 98 % Accuracy im Closed-World-Setting
-
-</div>
-
-<div>
-
-**Verteidigung: Circuit Padding**
-
-- In Tor seit Version 0.4.1 verfügbar
-- Sendet Dummy-Zellen nach definierten Mustern
-- Verschleiert die reale Traffic-Charakteristik
-- Geringer Overhead (low-latency-tauglich)
-
-**Vergleich: Tamaraw**
-
-- Aggressive Verteidigung mit konstanter Senderate
-- Starker Schutz, aber hoher Bandbreiten-Preis
-
-</div>
-
-</div>
-
-<div class="text-xs text-gray-500 mt-6 text-right">Vgl. Sirinam et al. (2018), Kadianakis et al. (2021), Cai et al. (2014)</div>
-
----
-
-# Methodik
-
-<div class="grid grid-cols-2 gap-8 mt-4">
-
-<div>
-
-**Simulation: Shadow**
-
-- Diskrete Event-Simulation echter Tor-Software
-- Reproduzierbar, kontrollierbar, isoliert
-- Skaliertes Tor-Netzwerk via `tornettools` (Scale 0.01)
-
-**Szenarien**
-
-- Closed-World: 20 und 80 Seiten
-- Open-World: 80 überwachte Seiten in 280
-
-</div>
-
-<div>
-
-**Datenerhebung**
-
-- `wget2`-Clients besuchen Wikipedia-Seiten über Tor
-- pcap-Capture an den Monitor-Hosts
-- NEWNYM zwischen Besuchen (Schaltkreis-Isolation)
-
-**Klassifikation: Deep Fingerprinting**
-
-- DF-CNN aus WFlib
-- Train / Valid / Test-Split
-- Vergleich der Padding-Modi: OFF · Reduced · ON · Tamaraw
-
-</div>
-
-</div>
 
 ---
 hideInToc: true
@@ -188,6 +161,40 @@ hideInToc: true
 <img src="./images/ShadowSetup.png" class="h-90 mx-auto mt-4" />
 
 <div class="text-xs text-gray-500 mt-2 text-right">Eigene Darstellung (Bachelorarbeit, Kap. 5)</div>
+
+
+---
+hideInToc: true
+---
+
+# Beispiel: generierte Shadow-Konfiguration
+
+```yaml {all}
+monitor0:
+  bandwidth_down: 100 megabit
+  bandwidth_up: 100 megabit
+  host_options:
+    pcap_enabled: true
+    pcap_capture_size: 65535 B
+  processes:
+  - path: ~/.local/bin/tor
+    args: --defaults-torrc torrc-defaults -f torrc
+    start_time: 240
+    expected_final_state: running
+  - path: /home/projectadmin/wget2_noinstall
+    args: --page-requisites --max-threads=30 ...
+          http://129.114.108.192:8000/Eurovision_Song_Contest_2018
+    start_time: 1200
+  - path: /usr/bin/python3
+    args: /home/projectadmin/newnym.py
+    start_time: 1229
+  - path: /home/projectadmin/wget2_noinstall
+    args: --page-requisites --max-threads=30 ...
+          http://129.114.108.192:8010/Ionizing_radiation
+    start_time: 1230
+```
+
+<div class="text-xs text-gray-500 mt-1 text-right">Eigene Darstellung (Bachelorarbeit, Kap. 5, Listing 5.1)</div>
 
 ---
 hideInToc: true
@@ -301,23 +308,23 @@ hideInToc: true
 
 # Datenformat: von Pcaps zu Richtungssequenzen
 
+<img src="./images/data_pipeline.svg" class="w-full mt-3" />
+
+<div class="text-xs text-gray-500 mt-1 col-span-2">Eigene Darstellung (Bachelorarbeit, Kap. 5)</div>
+
 ::left::
 
-<img src="./images/data_pipeline.svg" class="w-full mt-6" />
-
-<div class="text-xs text-gray-500 mt-2 col-span-2">Eigene Darstellung (Bachelorarbeit, Kap. 5)</div>
-
-::right::
+<div class="text-sm font-semibold mt-3 mb-1">ExpDemo.npz <span class="text-gray-500 font-normal">— Richtungssequenzen (X, y)</span></div>
 
 ```txt
-Sample 150:  Website-Klasse = 40  (532 Pakete)
-Erste 100 Paketrichtungen:
+Sample 150:  Klasse = 12  (532 Pakete)
+Erste Paketrichtungen:
   +1 -1 -1 +1 -1 +1 -1 -1 +1 -1
   +1 -1 +1 -1 +1 -1 +1 +1 -1 -1
   ...
 ```
 
-<div class="text-xs text-gray-500 mt-2 col-span-2">
+<div class="text-xs text-gray-500 mt-1">
 +1 = ausgehend, -1 = eingehend, 5000 Werte pro Sample
 </div>
 
@@ -361,7 +368,7 @@ hideInToc: true
 python3 report.py -e exp-demo -d ExpDemo >> ../../ExperimentLogs.csv
 ```
 
-<table class="text-xs mx-auto mt-3">
+<table class="text-xs mx-auto mt-5">
   <thead class="border-b-2">
     <tr>
       <th class="px-3 py-1 text-left">Experiment</th>
@@ -374,10 +381,7 @@ python3 report.py -e exp-demo -d ExpDemo >> ../../ExperimentLogs.csv
     </tr>
   </thead>
   <tbody>
-    <tr class="opacity-40">
-      <td class="px-3 py-1 italic" colspan="7">… leeres Template (nur Kopfzeile) …</td>
-    </tr>
-    <tr class="bg-green-100">
+    <tr >
       <td class="px-3 py-1">exp-demo</td>
       <td class="px-3 py-1 text-center">20</td>
       <td class="px-3 py-1 text-center">OFF</td>
@@ -389,7 +393,7 @@ python3 report.py -e exp-demo -d ExpDemo >> ../../ExperimentLogs.csv
   </tbody>
 </table>
 
-<div class="text-xs opacity-70 mt-2 text-center">
+<div class="text-xs opacity-70 mt-2 text-left">
 Die vollständige CSV hat 32 Spalten (Netzwerk, Stichprobe, Metriken). Vorlage: <code>ExperimentLogs.template.csv</code>
 </div>
 
@@ -402,7 +406,7 @@ hideInToc: true
   <source src="./images/videos/05-report.mp4" type="video/mp4" />
 </video>
 
-
+<!-- 
 ---
 hideInToc: true
 ---
@@ -465,71 +469,13 @@ TP / TN = richtig · FP = Fehlalarm · FN = verpasst
 
 <div class="text-xs text-gray-500 mt-4 text-center">
 Werte makro-gemittelt über alle Klassen · Random-Basis = 1 / Klassenanzahl (5 % bei 20, 1.2 % bei 80 Klassen)
-</div>
+</div> -->
 
 ---
 
 # Resultate
 
-<div class="text-sm opacity-70 -mt-2 mb-1">Accuracy über Klassenstufen und Padding-Modi</div>
-
-<img src="./images/accuracy_overview.svg" class="w-9/10 mx-auto mt-1" />
-
-<div class="text-xs text-gray-500 mt-1 text-right">Eigene Darstellung (Bachelorarbeit, Kap. 6)</div>
-
----
-hideInToc: true
----
-
-# Effekt von Circuit Padding (Closed-World)
-
-<table class="text-sm mx-auto mt-6">
-  <thead class="border-b-2">
-    <tr>
-      <th class="px-5 py-2 text-left">Padding-Modus</th>
-      <th class="px-5 py-2">20 Klassen</th>
-      <th class="px-5 py-2">80 Klassen</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td class="px-5 py-2 font-semibold">OFF</td>
-      <td class="px-5 py-2 text-center bg-red-100 font-bold">92.7%</td>
-      <td class="px-5 py-2 text-center bg-red-100 font-bold">82.4%</td>
-    </tr>
-    <tr>
-      <td class="px-5 py-2 font-semibold">Reduced</td>
-      <td class="px-5 py-2 text-center bg-yellow-100">86.7%</td>
-      <td class="px-5 py-2 text-center bg-yellow-100">77.5%</td>
-    </tr>
-    <tr>
-      <td class="px-5 py-2 font-semibold">ON</td>
-      <td class="px-5 py-2 text-center bg-green-100 font-bold">83.3%</td>
-      <td class="px-5 py-2 text-center bg-green-100 font-bold">78.6%</td>
-    </tr>
-    <tr class="border-t">
-      <td class="px-5 py-2 text-gray-500">Δ OFF → ON</td>
-      <td class="px-5 py-2 text-center text-gray-600">−9.4 pp</td>
-      <td class="px-5 py-2 text-center text-gray-600">−3.8 pp</td>
-    </tr>
-  </tbody>
-</table>
-
-<div class="text-sm opacity-80 mt-6 text-center">
-Circuit Padding senkt die Accuracy spürbar, aber moderat. Der Effekt schrumpft mit steigender Klassenanzahl.
-</div>
-
----
-hideInToc: true
----
-
-# Open-World (80 überwacht in 280)
-
-<img src="./images/openworld_pr.svg" class="w-8/10 mx-auto mt-2" />
-
-<div class="text-sm opacity-80 mt-2 text-center">
-Im Open-World liegen OFF, Reduced und ON nah beieinander. Die Effektrichtung kehrt sich teils um.
-</div>
+<img src="./images/accuracy_overview.svg" class="w-6/10 mx-auto mt-1" />
 
 <div class="text-xs text-gray-500 mt-1 text-right">Eigene Darstellung (Bachelorarbeit, Kap. 6)</div>
 
@@ -600,66 +546,121 @@ hideInToc: true
 
 ---
 
-# Fazit
+# Fazit & Limitationen
 
 <div class="grid grid-cols-2 gap-8 mt-6">
 
 <div>
 
-**Kernergebnisse**
+**Fazit**
 
-- DF erreicht im Closed-World hohe Accuracy (92.7 % bei 20 Klassen)
-- Circuit Padding senkt die Accuracy moderat (−9.4 pp bzw. −3.8 pp) bei minimalem Overhead
-- Tamaraw schützt deutlich stärker, kostet aber das ~11-Fache an Bandbreite
-- Open-World ist klar schwieriger als Closed-World
-
-</div>
-
-<div>
-
-**Beitrag der Arbeit**
-
-- Reproduzierbare WF-Pipeline im Shadow-Simulator
-- `shadowctl` automatisiert den gesamten Ablauf bis zur Ergebnis-CSV
-- Quantitativer Vergleich der Padding-Modi unter kontrollierten Bedingungen
-
-</div>
-
-</div>
-
----
-hideInToc: true
----
-
-# Limitationen
-
-<div class="grid grid-cols-2 gap-8 mt-6">
-
-<div>
-
-**Aufbau**
-
-- Pro Konfiguration nur ein Lauf mit festem Seed
-- Netzwerk-Scale 0.01 (verkleinertes Tor-Netz)
-- Homogener Korpus (Simple-English-Wikipedia)
+- DF erreicht im Closed-World hohe Accuracy
+- Circuit Padding senkt diese nur moderat
+- Tamaraw schützt deutlich stärker
+- Beitrag: reproduzierbare WF-Pipeline
 
 </div>
 
 <div>
 
-**Geltungsbereich**
+**Limitationen**
 
+- Ein Lauf pro Konfiguration, fester Seed, Netzwerk-Scale 0.01
+- Homogener Korpus (Simple-English-Wikipedia), 150 Visits pro Klasse
 - Closed-World ≠ Real-World (Single-Tab, nur Wikipedia)
 - Simulation statt Live-Tor-Netzwerk
-- Knappe Stichprobe pro Klasse (150 Visits)
 
 </div>
 
 </div>
 
-<div class="text-sm opacity-80 mt-8 text-center">
-Die Resultate gelten unter Laborbedingungen und sind nicht direkt auf das produktive Tor-Netz übertragbar.
+
+
+<!-- ---
+layout: default
+---
+
+# Was das ausgerollte Circuit Padding wirklich tut
+
+<div class="text-sm opacity-70 mb-4">
+Einordnung der gemessenen Verteidigung — und warum der WF-Effekt klein ausfällt
 </div>
+
+- **Die zwei Maschinen-Paare verschleiern nur den _Setup_ client-seitiger
+  Onion-Service-Circuits** — die ersten 10 Zellen, damit Intro- und
+  Rendezvous-Circuits wie gewöhnliche Web-Circuits aussehen. Timing wird
+  dabei nicht verschleiert.
+  <span class="text-xs opacity-60">(padding-spec.txt, §3 + §3.3)</span>
+
+- **Auf Clearnet-Circuits werden sie nicht aktiv.** Die Maschinen starten erst
+  bei `INTRODUCE1` bzw. `REND_ESTABLISHED` — Zelltypen, die beim Surfen über
+  Exit-Knoten (z. B. Wikipedia) nie auftreten.
+  <span class="text-xs opacity-60">(§3.3.2, §3.3.3)</span>
+
+- **Konsistent dazu in den Messungen nur ~3 % Mehrverkehr bei `ON`.** Das
+  Padding greift auf diesem Verkehr faktisch nicht — daher der schwache,
+  innerhalb der Streuung liegende WF-Effekt.
+
+
+<div class="absolute bottom-8 right-6 text-xs opacity-50">
+Quelle: github.com/torproject/torspec → padding-spec.txt · Proposal 302
+</div>
+
+<!--
+PRESENTER NOTES — Belege aus padding-spec.txt (torproject/torspec):
+https://github.com/torproject/torspec/blob/main/padding-spec.txt
+
+
+Linie 352
+
+1) ZWECK DER MASCHINEN — §3 (Einleitung Circuit-level padding)
+   "At present, Tor uses this system to deploy two pairs of circuit padding
+   machines, to obscure differences between the setup phase of client-side
+   onion service circuits, up to the first 10 cells."
+   -> Nur ZWEI Maschinen-Paare ausgerollt. §3.3: Service-Seite NICHT abgedeckt.
+
+2) TIMING WIRD NICHT BERÜHRT — §3.3
+   "Note that inter-arrival timing is not obfuscated by this defense."
+   -> Eingriff beschränkt auf eine kurze Setup-Zellsequenz, nicht das Timing.
+   Gute Antwort auf "könnte es nicht subtil doch wirken?".
+
+3) AKTIVIERUNG NUR BEI ONION-SETUP — §3.3.2 / §3.3.3
+   Intro-Maschine: Padding startet, nachdem INTRODUCE1 gesendet wurde.
+   Rendezvous-Maschine: Negotiation erst nach REND_ESTABLISHED.
+   -> Auf Clearnet/Exit-Circuits treten diese Zellen nie auf -> keine Aktivierung.
+
+4) EIGENE MESSUNG — Tabelle 6.1 / Abb. 6.1
+   exp-padding-80 vs. exp-baseline-80 = +3.0 % Bytes. Bei 20 Klassen 635 vs.
+   638 Pakete. Mehrverkehr zu klein, um die Accuracy-Differenz (9.4 Pp bei 20
+   Klassen) zu erklären -> v. a. Seed-/Pfad-Streuung.
+
+5) REDUCED OHNE EIGENE WIRKUNG — §3.4, circpad_padding_reduced
+   "only circuit padding machines marked as 'reduced'/'low overhead' will be
+   used. (Currently no such machines are marked as 'reduced overhead')."
+   -> circuit-level Reduced selektiert nichts -> erklärt die "Inversion".
+
+=== WICHTIGE KLARSTELLUNG (häufige Falle) ===
+Es gibt ZWEI getrennte, laut §1 "completely orthogonal" Padding-Systeme:
+  - CONNECTION-level (§2): CELL_PADDING gegen Netflow-Metadaten.
+    Schalter ConnectionPadding / ReducedConnectionPadding (nf_ito_*-Parameter).
+    Läuft auf der Guard-Verbindung, AUCH bei Clearnet. HAT echte reduced-Werte.
+  - CIRCUIT-level (§3): RELAY_COMMAND_DROP, die Onion-Setup-Maschinen.
+    Schalter CircuitPadding / ReducedCircuitPadding. DAS variiert die Arbeit.
+Wenn ein Prüfer sagt "reduced padding tut doch etwas": ja — aber das ist
+ReducedCONNECTIONPadding (§2.5), NICHT der circuit-level-Schalter dieser Arbeit.
+
+=== WAHRSCHEINLICHE PRÜFERFRAGE ===
+"Warum verteidigt Tor dann gegen Website Fingerprinting kaum?"
+Antwort: Tut es im ausgelieferten Zustand auch nicht. Das Framework (WTF-PAD,
+Prop 254) KÖNNTE WF-Maschinen tragen, aber keine ist deployt, weil keine reine
+Padding-Verteidigung bisher ihren Overhead rechtfertigt. Die zwei aktiven
+Maschinen sind reine Circuit-Fingerprinting-Verteidigung für Onion-Setup.
+
+=== FALLE VERMEIDEN ===
+Nicht "Circuit Padding ist nur bei Onion Services aktiv" pauschal sagen.
+Besser: "die aktuell AUSGEROLLTEN circuit-level Maschinen". Das Framework ist
+allgemein; nur die deployten Maschinen sind onion-spezifisch.
+-->
 
 ---
 hideInToc: true
